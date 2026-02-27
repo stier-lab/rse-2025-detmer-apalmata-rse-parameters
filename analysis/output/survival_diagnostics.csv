@@ -1,0 +1,10 @@
+metric,value,status
+deviance_explained,0.08640722669726993,OK
+gcv_score,2342.860155909867,INFO
+edf,3.6076982696004976,OK
+mean_residual,0.15936330610308175,CHECK
+residual_sd,0.9341211853474968,INFO
+high_influence_pct,0.06811622089667116,HIGH
+bootstrap_cv,0.11971932806141998,OK
+method_agreement_range,1.1511827935261407,HIGH
+pct_near_threshold,0.1849143736771214,OK

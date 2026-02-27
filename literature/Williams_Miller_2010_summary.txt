@@ -1,0 +1,46 @@
+Citation
+Williams, D.E., & Miller, M.W. (2010).
+Stabilization of fragments to enhance asexual recruitment in Acropora palmata.
+Restoration Ecology 18(S2):446–451.
+DOI: 10.1111/j.1526-100X.2009.00579.x
+
+So what (one sentence)
+Simple stabilization of Acropora palmata fragments substantially improves tissue retention and attachment, demonstrating that low-cost intervention can enhance asexual recruitment in degraded reefs.
+
+Study context
+Species: Acropora palmata
+Region: Biscayne National Park, Florida
+Restoration context: Salvage and reattachment of storm-generated fragments
+Depth: ~3 m
+
+Methods (inference-relevant only)
+- Naturally occurring fragments (<40 cm) assigned to three treatments:
+  cable tie stabilization, epoxy stabilization, tethered unstabilized control
+- 18 replicated blocks; monitored for 44 weeks
+- Performance ranked by tissue retention and substrate attachment
+
+Key results (numbers first)
+- Stabilized fragments ranked higher in performance than controls
+- Both cable ties and epoxy were similarly effective
+- Unstabilized fragments lost more tissue and were more likely to flip or abrade
+
+Mechanisms / drivers
+- Stabilization prevents fragment movement and burial
+- Early attachment promotes tissue spread and growth
+- Tissue readily overgrew epoxy with no adverse effects
+
+Restoration-relevant takeaways
+- Fragment stabilization is a cost-effective restoration tool
+- Salvaging storm fragments can enhance local recovery
+- Simple methods scale well for management use
+
+Limitations / external validity
+- Short-term (44 weeks)
+- Single site and depth
+
+Anchor numbers & quotable facts
+- Stabilized fragments consistently outperformed controls
+- No detectable negative tissue response to epoxy
+
+Tags
+#Acropora_palmata #fragment_stabilization #asexual_recruitment #restoration_methods

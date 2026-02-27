@@ -1,0 +1,46 @@
+Citation
+Roth, L., Muller, E.M., & van Woesik, R. (2013).
+Tracking Acropora fragmentation and population structure through thermal-stress events.
+Ecological Modelling 263:223–232.
+DOI: 10.1016/j.ecolmodel.2013.05.002
+
+So what (one sentence)
+Thermal stress increases fragmentation in Acropora palmata, inflating colony counts while eroding size structure and masking true population vulnerability.
+
+Study context
+Species: Acropora palmata (Caribbean), corymbose Acropora spp. (Japan)
+Regions: US Virgin Islands; Aka Jima, Japan
+Disturbances: Thermal anomalies (1998 Japan; 2005 Caribbean)
+
+Methods (inference-relevant only)
+- Long-term field tracking of colony size, fragmentation, and mortality
+- Bayesian discrete-time model distinguishing genets from ramets
+- Size-frequency distributions analyzed pre-, during-, and post-thermal stress
+
+Key results (numbers first)
+- Fragmentation rates increased sharply during thermal stress for A. palmata
+- Caribbean A. palmata fragmented more frequently than Pacific corymbose Acropora
+- Thermal stress shifted size-frequency distributions toward small colonies
+- Fragmentation increased ramet density but not genet diversity
+
+Mechanisms / drivers
+- Partial mortality during bleaching weakens skeletons, increasing breakage
+- Small fragments suffer higher mortality, reducing long-term resilience
+- Apparent population growth can reflect cloning, not recovery
+
+Restoration-relevant takeaways
+- Fragment abundance is a misleading metric of recovery
+- Restoration monitoring must distinguish genets vs ramets
+- High fragmentation may signal stress rather than resilience
+- Protecting large colonies is critical for maintaining population structure
+
+Limitations / external validity
+- Model assumes initial genets are distinct
+- Limited species representation outside Acropora
+
+Anchor numbers & quotable facts
+- Peak fragmentation coincided with thermal anomaly years
+- Size distributions narrowed or shifted toward small colonies after stress
+
+Tags
+#Acropora #fragmentation #thermal_stress #population_models #genets_vs_ramets

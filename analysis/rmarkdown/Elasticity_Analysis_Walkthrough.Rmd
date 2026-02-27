@@ -1,0 +1,819 @@
+---
+title: "Elasticity Analysis for *Acropora palmata*"
+subtitle: "Understanding Which Vital Rates Drive Population Growth"
+author: "Detmer & Stier Lab"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+    theme: flatly
+    highlight: kate
+    code_folding: hide
+    fig_width: 10
+    fig_height: 7
+    df_print: kable
+    css: custom.css
+    includes:
+      in_header: header.html
+params:
+  output_dir: "../output"
+  fig_dir: "../figures"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  cache = TRUE,
+  cache.lazy = FALSE,
+  fig.retina = 2,
+  out.width = "100%"
+)
+
+set.seed(42)
+
+# Required packages
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(viridis)  # Colorblind-accessible palettes
+
+# Paths
+output_dir <- params$output_dir
+fig_dir <- params$fig_dir
+```
+
+```{r theme-setup}
+# Custom theme with colorblind-accessible palettes
+colors <- list(
+  ocean_deep = "#0a3d62",
+  ocean_mid = "#1a5276",
+  ocean_light = "#2e86ab",
+  coral_warm = "#e07a5f",
+  coral_pale = "#f4a261",
+  seagrass = "#2a9d8f",
+  sand = "#e9c46a"
+)
+
+# Semantic colors for vital rate types (colorblind-safe)
+vital_rate_colors <- c(
+  "Stasis" = "#3B528B",       # Mako blue - stability/persistence
+
+  "Growth" = "#21918C",       # Teal - positive development
+  "Fragmentation" = "#5DC863",# Green - reproduction/new life
+  "Shrinkage" = "#FDE725"     # Yellow - caution/regression
+)
+
+theme_coral <- theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, color = "#2C3E50"),
+    plot.subtitle = element_text(color = "#7F8C8D", size = 11),
+    plot.caption = element_text(color = "#95A5A6", size = 9, hjust = 0),
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom"
+  )
+theme_set(theme_coral)
+
+# Helper functions
+fmt_pct <- function(x, digits = 1) paste0(round(x * 100, digits), "%")
+
+#' Calculate text color for contrast against background
+#' Uses relative luminance formula (WCAG)
+get_text_color <- function(hex_color) {
+  # Convert hex to RGB
+  rgb_vals <- col2rgb(hex_color) / 255
+  # Calculate relative luminance
+  luminance <- 0.2126 * rgb_vals[1,] + 0.7152 * rgb_vals[2,] + 0.0722 * rgb_vals[3,]
+  # Return white for dark backgrounds, dark gray for light backgrounds
+  ifelse(luminance < 0.5, "white", "#2C3E50")
+}
+```
+
+<p class="reading-time">Estimated reading time: 15 minutes | <a href="#the-dominant-finding">Skip to Key Finding</a> | <a href="#management-recommendations">Skip to Recommendations</a></p>
+
+<div class="quick-nav">
+<strong>Jump to:</strong>
+<a href="#executive-summary">Summary</a>
+<a href="#the-dominant-finding">Key Finding</a>
+<a href="#management-recommendations">Recommendations</a>
+<a href="#technical-appendix">Technical Details</a>
+</div>
+
+# Executive Summary {#executive-summary .unnumbered}
+
+<div class="executive-summary">
+
+### Bottom Line for Practitioners
+
+**Protecting existing large adult colonies (>2,000 cm²) is the single most effective conservation strategy.**
+
+Large adult survival accounts for **~55% of elasticity** — improving this rate by 1% yields a 0.55% improvement in population growth rate. This is more than all other vital rates combined.
+
+| Key Finding | Value | What It Means |
+|-------------|-------|---------------|
+| Population trend | λ ≈ 0.986 | Declining ~1.4% per year |
+| Most critical vital rate | SC5 stasis | ~55% of total elasticity |
+| Large adult reproductive value | ~15× a recruit | Saving 1 adult = saving 15 recruits |
+| Improvement needed (adults only) | ~5% | Achievable target |
+
+**Quick Recommendations:**
+
+1. **Prioritize adult protection** — Disease management, physical protection, bleaching response
+2. **Size outplants appropriately** — Larger fragments skip high-mortality size classes
+3. **Budget for protection alongside outplanting** — Outplanting alone has only ~8% leverage
+
+</div>
+
+---
+
+# Introduction
+
+## What is Elasticity Analysis?
+
+**Elasticity analysis** is a core tool in population ecology that answers a critical question: *Which vital rates (survival, growth, reproduction) have the most influence on population growth?*
+
+For conservation and restoration planning, this tells us where to focus limited resources. If improving adult survival has 10× more impact on population growth than improving juvenile growth, we should prioritize protecting adults.
+
+### Key Concepts
+
+| Term | Definition | Why It Matters |
+|------|------------|----------------|
+| **λ (lambda)** | Population growth rate | λ < 1 means declining; λ > 1 means growing |
+| **Sensitivity** | How much λ changes per unit change in a vital rate | Tells us which rates matter most (in absolute terms) |
+| **Elasticity** | Proportional sensitivity (% change in λ per % change in rate) | Allows fair comparison across rates with different scales |
+
+Elasticities always sum to 1, making them directly comparable. A vital rate with elasticity 0.50 means a 1% improvement in that rate produces a 0.50% improvement in λ.
+
+## Why Elasticity Matters for *A. palmata*
+
+Elkhorn coral populations face multiple threats. Elasticity analysis helps us answer:
+
+1. **Should we focus on protecting large adults or outplanting juveniles?**
+2. **How much does improving nursery survival help vs. reducing adult mortality?**
+3. **What's the minimum improvement needed to stabilize the population?**
+
+---
+
+# Loading the Data
+
+First, let's load the pre-computed results from the transition matrix analysis.
+
+```{r load-data}
+# Load pre-computed results
+results <- readRDS(file.path(output_dir, "transition_matrix.rds"))
+
+# Extract key matrices
+A <- results$projection_matrix           # Projection matrix
+S <- results$survival_rates              # Survival by size class
+G <- results$growth_transitions          # Growth transition probabilities
+elasticity <- results$elasticity         # Elasticity matrix
+sensitivity <- results$sensitivity       # Sensitivity matrix
+lambda <- results$lambda                 # Population growth rate
+lambda_ci <- results$lambda_ci           # Bootstrap confidence interval
+w <- results$stable_distribution         # Stable size distribution
+v <- results$reproductive_values         # Reproductive values
+
+# Size class definitions
+size_labels <- results$size_class_labels
+size_breaks <- results$size_class_breaks
+```
+
+```{r display-lambda}
+cat(sprintf("Population growth rate (λ): %.4f\n", lambda))
+cat(sprintf("95%% Confidence Interval: [%.3f, %.3f]\n", lambda_ci[1], lambda_ci[2]))
+cat(sprintf("Interpretation: Population is %s at %.1f%% per year\n",
+            ifelse(lambda < 1, "DECLINING", "GROWING"),
+            abs(lambda - 1) * 100))
+```
+
+---
+
+# The Projection Matrix
+
+## Understanding the Matrix Structure
+
+A **Lefkovitch matrix** (size-structured projection matrix) describes how individuals transition between size classes over one time step (typically one year).
+
+$$
+\mathbf{A} = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{15} \\
+a_{21} & a_{22} & \cdots & a_{25} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{51} & a_{52} & \cdots & a_{55}
+\end{bmatrix}
+$$
+
+Where $a_{ij}$ = probability of transitioning FROM class $j$ TO class $i$ (including survival).
+
+- **Diagonal elements** ($a_{ii}$): Probability of staying in the same size class (stasis)
+- **Subdiagonal elements**: Probability of growing to a larger class
+- **Superdiagonal elements**: Probability of shrinking to a smaller class
+- **Top row**: Contribution from reproduction/fragmentation
+
+```{r display-matrix}
+# Display the projection matrix
+A_df <- as.data.frame(round(A, 4))
+colnames(A_df) <- c("SC1", "SC2", "SC3", "SC4", "SC5")
+rownames(A_df) <- c("→ SC1", "→ SC2", "→ SC3", "→ SC4", "→ SC5")
+
+kable(A_df, caption = "Projection Matrix (A) - Columns = FROM, Rows = TO") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(1, bold = TRUE) %>%
+  add_header_above(c(" " = 1, "From Size Class" = 5))
+```
+
+## Visualizing the Matrix
+
+```{r matrix-heatmap, fig.height=6}
+# Prepare data for plotting with conditional text colors
+A_plot <- as.data.frame(as.table(A)) %>%
+  rename(to = Var1, from = Var2, probability = Freq) %>%
+  mutate(
+    to = factor(to, levels = rev(size_labels)),
+    from = factor(from, levels = size_labels),
+    label = ifelse(probability > 0.005, sprintf("%.3f", probability), "")
+  )
+
+# Get mako colors for text contrast calculation
+n_colors <- 100
+mako_palette <- viridis::mako(n_colors, direction = -1)
+A_plot <- A_plot %>%
+  mutate(
+    # Map probability to color index (1-100)
+    color_idx = pmax(1, pmin(n_colors, ceiling(probability * n_colors))),
+    # Get corresponding hex color
+    fill_hex = mako_palette[color_idx],
+    # Calculate appropriate text color for contrast
+    text_color = get_text_color(fill_hex)
+  )
+
+# Heatmap with viridis::mako (colorblind-safe)
+ggplot(A_plot, aes(x = from, y = to, fill = probability)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  geom_text(aes(label = label, color = text_color), size = 4, fontface = "bold") +
+  scale_color_identity() +
+  scale_fill_viridis_c(
+    option = "mako", direction = -1,
+    limits = c(0, 1),
+    name = "Transition\nProbability"
+  ) +
+  scale_x_discrete(labels = c("SC1\n(Recruit)", "SC2\n(Sm. Juv)", "SC3\n(Lg. Juv)",
+                              "SC4\n(Sm. Adult)", "SC5\n(Lg. Adult)")) +
+  scale_y_discrete(labels = c("SC5\n(Lg. Adult)", "SC4\n(Sm. Adult)", "SC3\n(Lg. Juv)",
+                              "SC2\n(Sm. Juv)", "SC1\n(Recruit)")) +
+  labs(
+    title = "Projection Matrix: Annual Transition Probabilities",
+    subtitle = "Darker cells indicate higher probability of transition",
+    x = "From Size Class",
+    y = "To Size Class"
+  ) +
+  coord_fixed() +
+  theme(panel.grid = element_blank())
+```
+
+### Key Observations from the Matrix
+
+```{r matrix-interpretation}
+# Extract key probabilities
+p_sc5_stasis <- A["SC5_large_adult", "SC5_large_adult"]
+p_sc1_growth <- sum(A[2:5, "SC1_recruit"])  # SC1 growing to any larger class
+p_sc4_to_sc5 <- A["SC5_large_adult", "SC4_small_adult"]
+
+cat("Key transition probabilities:\n")
+cat(sprintf("  • Large adult (SC5) staying SC5: %.1f%%\n", p_sc5_stasis * 100))
+cat(sprintf("  • Small adult (SC4) growing to SC5: %.1f%%\n", p_sc4_to_sc5 * 100))
+cat(sprintf("  • Recruit (SC1) growing to larger class: %.1f%%\n", p_sc1_growth * 100))
+```
+
+---
+
+# Elasticity Analysis
+
+## The Mathematical Foundation
+
+### Sensitivity
+
+Sensitivity measures how much λ changes for a small absolute change in a matrix element:
+
+$$
+s_{ij} = \frac{\partial \lambda}{\partial a_{ij}} = \frac{v_i \cdot w_j}{\langle \mathbf{v}, \mathbf{w} \rangle}
+$$
+
+Where:
+- $v_i$ = reproductive value of class $i$ (left eigenvector)
+- $w_j$ = proportion of stable population in class $j$ (right eigenvector)
+
+### Elasticity
+
+Elasticity is the proportional sensitivity — it tells us the **percent change in λ** for a **percent change in the vital rate**:
+
+$$
+e_{ij} = \frac{a_{ij}}{\lambda} \cdot s_{ij} = \frac{a_{ij}}{\lambda} \cdot \frac{\partial \lambda}{\partial a_{ij}}
+$$
+
+**Critical property**: All elasticities sum to 1. This makes them directly comparable across different vital rates.
+
+## Computing Elasticity
+
+Let's walk through the calculation step by step.
+
+```{r compute-elasticity}
+# Step 1: Eigenanalysis of A
+eigen_A <- eigen(A)
+lambda_calc <- Re(eigen_A$values[1])  # Dominant eigenvalue (= λ)
+
+# Right eigenvector (stable size distribution)
+w_calc <- Re(eigen_A$vectors[, 1])
+w_calc <- w_calc / sum(w_calc)  # Normalize to proportions
+
+# Left eigenvector (reproductive values)
+eigen_At <- eigen(t(A))
+v_calc <- Re(eigen_At$vectors[, 1])
+v_calc <- v_calc / v_calc[1]  # Scale relative to SC1
+
+# Step 2: Sensitivity matrix
+vw_inner <- sum(v_calc * w_calc)  # Inner product <v, w>
+sensitivity_calc <- outer(v_calc, w_calc) / vw_inner
+
+# Step 3: Elasticity matrix
+elasticity_calc <- (A / lambda_calc) * sensitivity_calc
+
+cat(sprintf("Verification: λ from eigenanalysis = %.6f\n", lambda_calc))
+cat(sprintf("Sum of elasticities = %.4f (should equal 1)\n", sum(elasticity_calc)))
+```
+
+## The Elasticity Matrix
+
+```{r elasticity-matrix}
+# Display elasticity matrix
+E_df <- as.data.frame(round(elasticity, 4))
+colnames(E_df) <- c("SC1", "SC2", "SC3", "SC4", "SC5")
+rownames(E_df) <- c("→ SC1", "→ SC2", "→ SC3", "→ SC4", "→ SC5")
+
+kable(E_df, caption = "Elasticity Matrix - Which transitions matter most?") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(1, bold = TRUE)
+```
+
+```{r elasticity-heatmap, fig.height=6}
+# Visualize elasticity with conditional text colors
+E_plot <- as.data.frame(as.table(elasticity)) %>%
+  rename(to = Var1, from = Var2, elasticity = Freq) %>%
+  mutate(
+    to = factor(to, levels = rev(size_labels)),
+    from = factor(from, levels = size_labels),
+    label = ifelse(elasticity > 0.01, sprintf("%.2f", elasticity), "")
+  )
+
+# Calculate text colors for inferno palette
+n_colors <- 100
+inferno_palette <- viridis::inferno(n_colors, direction = 1)
+max_e <- max(E_plot$elasticity)
+E_plot <- E_plot %>%
+  mutate(
+    # Map elasticity to color index
+    color_idx = pmax(1, pmin(n_colors, ceiling((elasticity / max_e) * n_colors))),
+    fill_hex = inferno_palette[color_idx],
+    text_color = get_text_color(fill_hex),
+    # Flag the maximum cell for border highlight
+    is_max = elasticity == max(elasticity)
+  )
+
+# Find the max cell for annotation
+max_cell <- E_plot %>% filter(is_max)
+
+ggplot(E_plot, aes(x = from, y = to, fill = elasticity)) +
+  geom_tile(color = "white", linewidth = 0.5) +
+  # Highlight border on dominant cell
+  geom_tile(data = max_cell, aes(x = from, y = to),
+            fill = NA, color = "#FFFFFF", linewidth = 2.5) +
+  geom_text(aes(label = label, color = text_color), size = 4.5, fontface = "bold") +
+  scale_color_identity() +
+  scale_fill_viridis_c(
+    option = "inferno", direction = 1,
+    limits = c(0, max_e),
+    name = "Elasticity"
+  ) +
+  scale_x_discrete(labels = c("SC1\n(Recruit)", "SC2\n(Sm. Juv)", "SC3\n(Lg. Juv)",
+                              "SC4\n(Sm. Adult)", "SC5\n(Lg. Adult)")) +
+  scale_y_discrete(labels = c("SC5\n(Lg. Adult)", "SC4\n(Sm. Adult)", "SC3\n(Lg. Juv)",
+                              "SC2\n(Sm. Juv)", "SC1\n(Recruit)")) +
+  labs(
+    title = "Large Adult Survival Dominates Population Dynamics",
+    subtitle = sprintf("SC5→SC5 stasis accounts for %.0f%% of total elasticity | All values sum to 1.0",
+                       max_e * 100),
+    x = "From Size Class",
+    y = "To Size Class"
+  ) +
+  coord_fixed() +
+  theme(panel.grid = element_blank())
+```
+
+---
+
+# Interpreting Elasticities
+
+## Elasticity by Vital Rate Type
+
+We can group elasticities by the type of demographic transition:
+
+```{r elasticity-breakdown}
+# Calculate elasticity sums by type
+e_stasis <- sum(diag(elasticity))  # Diagonal = staying same class
+
+e_growth <- sum(elasticity[lower.tri(elasticity)])  # Below diagonal = growing
+
+# Fragmentation (SC4/SC5 producing fragments in SC1-SC3)
+e_frag <- sum(elasticity[1:3, 4]) + sum(elasticity[1:4, 5])
+
+# Shrinkage (upper triangle minus fragmentation)
+e_shrink <- sum(elasticity[upper.tri(elasticity)]) - e_frag
+
+# Create summary table
+elasticity_summary <- data.frame(
+  `Vital Rate Type` = c("Stasis (staying same size)",
+                        "Growth (moving to larger class)",
+                        "Fragmentation (asexual reproduction)",
+                        "Shrinkage (moving to smaller class)",
+                        "TOTAL"),
+  Elasticity = c(e_stasis, e_growth, e_frag, e_shrink,
+                 e_stasis + e_growth + e_frag + e_shrink),
+  Percent = c(e_stasis, e_growth, e_frag, e_shrink, 1) * 100,
+  check.names = FALSE
+)
+
+kable(elasticity_summary, digits = c(0, 4, 1),
+      caption = "Elasticity Breakdown by Vital Rate Type") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  row_spec(5, bold = TRUE, background = "#f0f0f0")
+```
+
+```{r elasticity-pie, fig.height=5, fig.width=8, fig.alt="Bar chart showing elasticity breakdown by vital rate type. Stasis dominates at approximately 76%, followed by Growth at 15%, Fragmentation at 8%, and Shrinkage near 0%."}
+# Visualize breakdown with semantic colors
+breakdown_df <- data.frame(
+  type = c("Stasis", "Growth", "Fragmentation", "Shrinkage"),
+  elasticity = c(e_stasis, e_growth, e_frag, e_shrink)
+) %>%
+  mutate(
+    # Flag the dominant category
+    is_dominant = elasticity == max(elasticity),
+    # Add alpha for non-dominant bars
+    bar_alpha = ifelse(is_dominant, 1.0, 0.7)
+  ) %>%
+  arrange(desc(elasticity)) %>%
+  mutate(cumulative = cumsum(elasticity))
+
+# Dominant value for annotation
+stasis_pct <- breakdown_df$elasticity[breakdown_df$type == "Stasis"] * 100
+top2_pct <- sum(breakdown_df$elasticity[breakdown_df$type %in% c("Stasis", "Growth")]) * 100
+
+p_bar <- ggplot(breakdown_df, aes(x = reorder(type, -elasticity), y = elasticity, fill = type)) +
+  # Reference lines for interpretation
+  geom_hline(yintercept = 0.25, linetype = "dashed", color = "#BDC3C7", linewidth = 0.5) +
+  geom_hline(yintercept = 0.50, linetype = "dashed", color = "#BDC3C7", linewidth = 0.5) +
+  geom_hline(yintercept = 0.75, linetype = "dashed", color = "#BDC3C7", linewidth = 0.5) +
+  geom_col(aes(alpha = bar_alpha), width = 0.7) +
+  # Add emphasis border on dominant bar
+  geom_col(data = filter(breakdown_df, is_dominant),
+           width = 0.7, fill = NA, color = "#2C3E50", linewidth = 1.5) +
+  geom_text(aes(label = sprintf("%.1f%%", elasticity * 100)),
+            vjust = -0.5, size = 4.5, fontface = "bold", color = "#2C3E50") +
+  # Annotation for top 2 categories (position with Inf for right side)
+  annotate("text", x = Inf, y = 0.26, label = "25%", size = 3, color = "#95A5A6", hjust = 1.2) +
+  annotate("text", x = Inf, y = 0.51, label = "50%", size = 3, color = "#95A5A6", hjust = 1.2) +
+  annotate("text", x = Inf, y = 0.76, label = "75%", size = 3, color = "#95A5A6", hjust = 1.2) +
+  scale_fill_manual(values = vital_rate_colors) +
+  scale_alpha_identity() +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1), expand = c(0, 0.08)) +
+  labs(
+    title = sprintf("Stasis (Staying Alive) Drives %.0f%% of Population Growth", stasis_pct),
+    subtitle = "Protecting existing colonies matters more than adding new ones",
+    x = "",
+    y = "Elasticity (contribution to λ)"
+  ) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(size = 12, face = "bold"))
+
+p_bar
+```
+
+## Most Important Individual Transitions
+
+```{r top-transitions}
+# Rank all transitions by elasticity
+transitions_df <- as.data.frame(as.table(elasticity)) %>%
+  rename(to = Var1, from = Var2, elasticity = Freq) %>%
+  filter(elasticity > 0.001) %>%
+  arrange(desc(elasticity)) %>%
+  mutate(
+    transition = paste(from, "→", to),
+    percent = elasticity * 100,
+    cumulative = cumsum(percent)
+  ) %>%
+  head(10)
+
+kable(transitions_df %>% select(transition, elasticity, percent, cumulative),
+      col.names = c("Transition", "Elasticity", "% of Total", "Cumulative %"),
+      digits = c(0, 4, 1, 1),
+      caption = "Top 10 Most Important Transitions") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  row_spec(1, bold = TRUE, color = "white", background = colors$coral_warm)
+```
+
+### The Dominant Finding
+
+```{r key-finding, results='asis'}
+top_transition <- transitions_df[1, ]
+
+cat('<div class="key-finding-box">\n')
+cat('<h4>THE DOMINANT FINDING</h4>\n')
+cat(sprintf('<p style="font-size: 1.25rem; margin-bottom: 0.5rem;">The most important transition is: <strong>%s</strong></p>\n',
+            top_transition$transition))
+cat(sprintf('<p class="finding-value">Elasticity: %.3f (%.1f%% of total)</p>\n',
+            top_transition$elasticity, top_transition$percent))
+cat('<hr style="border-color: rgba(255,255,255,0.3); margin: 1rem 0;">\n')
+cat('<p style="font-size: 1.1rem; line-height: 1.6;">')
+cat(sprintf('A <strong>1%% improvement</strong> in large adult survival produces a <strong>%.2f%% improvement</strong> in population growth rate. ',
+            top_transition$percent))
+cat('This means <em>protecting existing large adults</em> is the single most effective conservation strategy.</p>\n')
+cat('</div>\n')
+```
+
+---
+
+# Stable Size Distribution and Reproductive Values
+
+## Stable Size Distribution
+
+The **stable size distribution** ($\mathbf{w}$) represents the proportion of individuals in each size class at equilibrium.
+
+```{r stable-dist, fig.height=5, fig.alt="Bar chart showing stable size distribution. Most individuals are in smaller size classes, with the proportion decreasing for larger sizes."}
+stable_df <- data.frame(
+  size_class = factor(size_labels, levels = size_labels),
+  proportion = w,
+  label = c("Recruit", "Sm. Juvenile", "Lg. Juvenile", "Sm. Adult", "Lg. Adult"),
+  # Numeric position for gradient mapping
+  class_num = 1:5,
+  is_adult = c(FALSE, FALSE, FALSE, TRUE, TRUE)
+)
+
+# Find dominant size class for annotation
+dominant_class <- stable_df$label[which.max(stable_df$proportion)]
+dominant_pct <- max(stable_df$proportion) * 100
+adult_pct <- sum(stable_df$proportion[stable_df$is_adult]) * 100
+juvenile_pct <- sum(stable_df$proportion[!stable_df$is_adult]) * 100
+
+ggplot(stable_df, aes(x = size_class, y = proportion, fill = class_num)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f%%", proportion * 100)),
+            vjust = -0.5, size = 4, fontface = "bold", color = "#2C3E50") +
+  # Add bracket annotation for adults
+  annotate("segment", x = 3.7, xend = 5.3, y = max(w) * 1.12, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("segment", x = 3.7, xend = 3.7, y = max(w) * 1.08, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("segment", x = 5.3, xend = 5.3, y = max(w) * 1.08, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("text", x = 4.5, y = max(w) * 1.18,
+           label = sprintf("Adults: %.0f%%", adult_pct),
+           size = 3.5, fontface = "bold", color = "#e07a5f") +
+  # Add bracket for juveniles
+  annotate("segment", x = 0.7, xend = 3.3, y = max(w) * 1.12, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("segment", x = 0.7, xend = 0.7, y = max(w) * 1.08, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("segment", x = 3.3, xend = 3.3, y = max(w) * 1.08, yend = max(w) * 1.12,
+           color = "#2C3E50", linewidth = 0.5) +
+  annotate("text", x = 2, y = max(w) * 1.18,
+           label = sprintf("Juveniles/Recruits: %.0f%%", juvenile_pct),
+           size = 3.5, fontface = "bold", color = "#2e86ab") +
+  # Single sequential gradient representing size progression
+  scale_fill_viridis_c(option = "mako", direction = -1, guide = "none") +
+  scale_y_continuous(labels = scales::percent, limits = c(0, max(w) * 1.35)) +
+  scale_x_discrete(labels = stable_df$label) +
+  labs(
+    title = sprintf("Most Individuals Are %ss (%.0f%% of population)", dominant_class, dominant_pct),
+    subtitle = "Stable size distribution at demographic equilibrium",
+    x = "Size Class (small → large)",
+    y = "Proportion of Population"
+  ) +
+  theme(legend.position = "none")
+```
+
+## Reproductive Values
+
+**Reproductive value** ($\mathbf{v}$) measures the expected future contribution of an individual in each size class to population growth, relative to a recruit.
+
+```{r repro-values, fig.height=5, fig.alt="Bar chart showing reproductive values by size class. Large adults have approximately 15 times the reproductive value of recruits, meaning saving one adult equals saving 15 recruits."}
+repro_df <- data.frame(
+  size_class = factor(size_labels, levels = size_labels),
+  value = v,
+  label = c("Recruit", "Sm. Juvenile", "Lg. Juvenile", "Sm. Adult", "Lg. Adult"),
+  class_num = 1:5
+)
+
+# Key values for annotation
+sc5_value <- repro_df$value[5]
+y_max <- max(repro_df$value) * 1.35
+
+ggplot(repro_df, aes(x = size_class, y = value, fill = class_num)) +
+  # Baseline reference line at y = 1 (recruit value)
+  geom_hline(yintercept = 1, linetype = "dashed", color = "#7F8C8D", linewidth = 0.8) +
+  annotate("text", x = 0.6, y = 1.5, label = "Baseline (recruit = 1×)",
+           size = 3, color = "#7F8C8D", fontface = "italic", hjust = 0) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f×", value)),
+            vjust = -0.5, size = 4, fontface = "bold", color = "#2C3E50") +
+  # Callout box for key insight
+  annotate("label", x = 4.2, y = sc5_value * 0.55,
+           label = sprintf("Saving 1 large adult\n= saving %.0f recruits", sc5_value),
+           size = 3.5, fontface = "bold.italic",
+           fill = "#FFF3E0", color = "#E65100",
+           label.size = 0.5, label.padding = unit(0.5, "lines")) +
+  # Curved arrow pointing to SC5 bar
+  annotate("curve", x = 4.6, y = sc5_value * 0.7,
+           xend = 4.95, yend = sc5_value * 0.85,
+           curvature = -0.2, arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+           color = "#E65100", linewidth = 0.8) +
+  # Single sequential gradient representing increasing value
+  scale_fill_viridis_c(option = "inferno", direction = 1, begin = 0.2, end = 0.85, guide = "none") +
+  scale_x_discrete(labels = repro_df$label) +
+  scale_y_continuous(limits = c(0, y_max), expand = c(0, 0)) +
+  labs(
+    title = sprintf("One Large Adult = %.0f Recruits in Future Contribution", sc5_value),
+    subtitle = "Reproductive value measures expected lifetime contribution to population growth",
+    x = "Size Class (small → large)",
+    y = "Reproductive Value (relative to recruit)"
+  ) +
+  theme(legend.position = "none",
+        plot.margin = margin(10, 15, 10, 10))
+```
+
+```{r repro-interpretation}
+sc5_value <- v[5]
+sc4_value <- v[4]
+
+cat(sprintf("A large adult (SC5) has %.1f× the reproductive value of a recruit.\n", sc5_value))
+cat(sprintf("A small adult (SC4) has %.1f× the reproductive value of a recruit.\n", sc4_value))
+cat("\nThis means saving ONE large adult is worth as much as saving\n")
+cat(sprintf("%.0f recruits in terms of future population contribution.\n", sc5_value))
+```
+
+---
+
+# Restoration Implications
+
+## What Elasticity Tells Us About Strategy
+
+Based on our elasticity analysis, here's how different interventions compare:
+
+```{r intervention-comparison}
+# Calculate relative importance of different strategies
+strategies <- data.frame(
+  Strategy = c(
+    "Protect large adults from disease/bleaching",
+    "Reduce physical damage to colonies",
+    "Improve juvenile growth rates",
+    "Increase outplanting success",
+    "Enhance fragment production"
+  ),
+  `Target Elasticity` = c(
+    elasticity["SC5_large_adult", "SC5_large_adult"],  # SC5 stasis
+    elasticity["SC4_small_adult", "SC4_small_adult"] +  # SC4 + SC5 stasis
+      elasticity["SC5_large_adult", "SC5_large_adult"],
+    e_growth,
+    elasticity["SC2_small_juv", "SC1_recruit"] +
+      elasticity["SC3_large_juv", "SC1_recruit"],
+    e_frag
+  ),
+  check.names = FALSE
+)
+
+strategies <- strategies %>%
+  mutate(
+    `Relative Impact` = `Target Elasticity` / max(`Target Elasticity`),
+    Priority = case_when(
+      `Relative Impact` >= 0.8 ~ "HIGH",
+      `Relative Impact` >= 0.3 ~ "MEDIUM",
+      TRUE ~ "LOW"
+    )
+  ) %>%
+  arrange(desc(`Target Elasticity`))
+
+kable(strategies, digits = c(0, 3, 2, 0),
+      caption = "Conservation Strategy Priorities Based on Elasticity") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(4, bold = TRUE,
+              color = ifelse(strategies$Priority == "HIGH", "white", "black"),
+              background = ifelse(strategies$Priority == "HIGH", colors$coral_warm,
+                          ifelse(strategies$Priority == "MEDIUM", colors$sand, "white")))
+```
+
+## Minimum Improvement Needed to Stabilize Population
+
+How much do we need to improve vital rates to achieve λ = 1.0?
+
+```{r stabilization-calc}
+# Current deficit
+lambda_deficit <- 1 - lambda
+
+# For each vital rate type, calculate required proportional improvement
+# Using elasticity: Δλ/λ ≈ e × (Δa/a)
+# So: Δa/a = (Δλ/λ) / e
+
+improvement_needed <- data.frame(
+  `Vital Rate Type` = c("Large adult survival only",
+                        "All stasis rates",
+                        "All growth rates",
+                        "All rates equally"),
+  Elasticity = c(
+    elasticity["SC5_large_adult", "SC5_large_adult"],
+    e_stasis,
+    e_growth,
+    1.0
+  ),
+  check.names = FALSE
+)
+
+improvement_needed <- improvement_needed %>%
+  mutate(
+    `Required Improvement` = (lambda_deficit / lambda) / Elasticity * 100,
+    Feasible = ifelse(`Required Improvement` < 20, "Yes", "Challenging")
+  )
+
+kable(improvement_needed, digits = c(0, 3, 1, 0),
+      caption = sprintf("Improvement Needed to Achieve λ = 1.0 (currently %.3f)", lambda)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+---
+
+# Summary and Conclusions
+
+## Key Findings
+
+```{r summary-box, results='asis'}
+cat('<div class="alert alert-info">\n')
+cat('<h4>Summary of Elasticity Analysis</h4>\n')
+cat('<ol>\n')
+cat(sprintf('<li><strong>Stasis dominates</strong>: %.1f%% of elasticity comes from individuals staying in the same size class</li>\n', e_stasis * 100))
+cat(sprintf('<li><strong>Large adult survival is paramount</strong>: SC5 stasis alone accounts for %.1f%% of total elasticity</li>\n', elasticity["SC5_large_adult", "SC5_large_adult"] * 100))
+cat(sprintf('<li><strong>Growth matters, but less</strong>: Growth transitions contribute only %.1f%% to λ</li>\n', e_growth * 100))
+cat(sprintf('<li><strong>Fragmentation is minor</strong>: Asexual reproduction contributes just %.1f%% to population growth</li>\n', e_frag * 100))
+cat('</ol>\n')
+cat('</div>\n')
+```
+
+## Management Recommendations
+
+| Priority | Action | Expected Impact |
+|----------|--------|-----------------|
+| **1** | Protect existing large adult colonies (SC5) from disease, bleaching, and physical damage | Highest leverage (~58% of elasticity) |
+| **2** | Protect small adult colonies (SC4) | Second highest (~12% of elasticity) |
+| **3** | Improve growth conditions to help juveniles reach adult sizes | Moderate impact (~15% of elasticity) |
+| **4** | Outplanting/fragmentation programs | Lower direct impact (~8%) but may have indirect benefits |
+
+## Caveats
+
+1. **Elasticities are local measures** — they describe sensitivity at current parameter values. Large perturbations may behave differently.
+
+2. **Uncertainty in estimates** — confidence intervals for λ are wide (95% CI: `r sprintf("%.2f", lambda_ci[1])`–`r sprintf("%.2f", lambda_ci[2])`), reflecting data limitations.
+
+3. **Study heterogeneity** — most data come from NOAA monitoring in Florida. Results may differ in other regions.
+
+4. **Deterministic model** — does not account for environmental stochasticity, catastrophic events, or density dependence.
+
+---
+
+# Technical Appendix
+
+## Full Elasticity Matrix
+
+```{r full-elasticity}
+kable(round(elasticity, 5), caption = "Complete Elasticity Matrix") %>%
+  kable_styling(bootstrap_options = c("striped"))
+```
+
+## Sensitivity Matrix
+
+```{r full-sensitivity}
+kable(round(sensitivity, 4), caption = "Complete Sensitivity Matrix") %>%
+  kable_styling(bootstrap_options = c("striped"))
+```
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```

@@ -1,0 +1,469 @@
+/* =========================================
+   CUSTOM CSS FOR ELASTICITY ANALYSIS WALKTHROUGH
+   Professional scientific document styling
+   ========================================= */
+
+/* =========================================
+   TYPOGRAPHY & FONTS
+   ========================================= */
+
+body {
+  font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  font-size: 18px;
+  line-height: 1.75;
+  color: #2C3E50;
+  -webkit-font-smoothing: antialiased;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+/* Headings with stronger hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  color: #1a365d;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  border-bottom: 3px solid #e07a5f;
+  padding-bottom: 0.75rem;
+}
+
+h2 {
+  font-size: 1.875rem;
+  color: #2a4365;
+  border-left: 4px solid #2e86ab;
+  padding-left: 1rem;
+  margin-left: -1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  color: #3c5a7d;
+}
+
+h4 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #4a6785;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1.25rem;
+  max-width: 70ch;
+}
+
+/* Code blocks */
+pre, code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', monospace;
+  font-size: 0.875rem;
+}
+
+pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #3B528B;
+  border-radius: 0 6px 6px 0;
+  padding: 1.25rem;
+  overflow-x: auto;
+  line-height: 1.5;
+  margin: 1.5rem 0;
+}
+
+code {
+  background: #f1f5f9;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: #0f4c81;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Console output styling */
+pre:not(.sourceCode) {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-left-color: #2a9d8f;
+  font-size: 0.85rem;
+}
+
+/* Math equations */
+.MathJax {
+  font-size: 1.15em !important;
+}
+
+.MathJax_Display {
+  margin: 2rem 0 !important;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fafbfc 0%, #f0f4f8 100%);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+/* =========================================
+   VISUAL DESIGN
+   ========================================= */
+
+/* Main content area */
+.main-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Tables */
+table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+thead {
+  background: linear-gradient(135deg, #0a3d62 0%, #1a5276 100%);
+}
+
+thead th {
+  color: white;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody tr {
+  background: white;
+  transition: background 0.15s ease;
+}
+
+tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+
+tbody tr:hover {
+  background: #e8f4f8;
+}
+
+tbody td {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Figure containers */
+.figure, figure {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.07),
+              0 2px 4px -1px rgba(0,0,0,0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.figure img, figure img {
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Figure captions */
+.caption, figcaption, .figure p:last-child {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-style: normal;
+}
+
+/* Horizontal rules */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #2e86ab, transparent);
+  margin: 3rem 0;
+}
+
+/* =========================================
+   TABLE OF CONTENTS
+   ========================================= */
+
+#TOC {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+}
+
+#TOC > ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+#TOC li {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+#TOC a {
+  font-family: 'Source Sans 3', sans-serif;
+  color: #64748b;
+  text-decoration: none;
+  display: block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-size: 0.9rem;
+}
+
+#TOC a:hover {
+  color: #0a3d62;
+  background: #f1f5f9;
+}
+
+#TOC .active > a {
+  color: #0a3d62;
+  background: #e8f4f8;
+  font-weight: 500;
+}
+
+/* =========================================
+   SCIENTIFIC DOCUMENT ELEMENTS
+   ========================================= */
+
+/* Key Finding Callout Box */
+.alert-info {
+  background: linear-gradient(135deg, #e8f4f8 0%, #d1e9f0 100%);
+  border: none;
+  border-left: 5px solid #2e86ab;
+  border-radius: 0 12px 12px 0;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  color: #1a365d !important;  /* Force dark text */
+}
+
+.alert-info h4,
+.alert-info p,
+.alert-info li,
+.alert-info strong {
+  color: #1a365d !important;  /* Force dark text on all elements */
+}
+
+.alert-info h4 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.alert-info ol,
+.alert-info ul {
+  color: #2C3E50 !important;
+}
+
+/* Override Bootstrap's white text that may be inherited */
+.alert-info,
+.alert-info *,
+div.alert.alert-info,
+div.alert.alert-info * {
+  color: #1a365d !important;
+}
+
+/* Warning/Caveat Box */
+.alert-warning {
+  background: linear-gradient(135deg, #fef7ed 0%, #fcecd8 100%);
+  border: none;
+  border-left: 5px solid #f4a261;
+  border-radius: 0 12px 12px 0;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+}
+
+/* Executive Summary Box */
+.executive-summary {
+  background: linear-gradient(135deg, #fef3f0 0%, #fde8e4 100%);
+  border: 2px solid #e07a5f;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2.5rem 0;
+}
+
+.executive-summary h3 {
+  margin-top: 0;
+  color: #c44536;
+  border-left: none;
+  padding-left: 0;
+}
+
+/* Key Finding Box */
+.key-finding-box {
+  background: linear-gradient(135deg, #0a3d62 0%, #1a5276 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2.5rem 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.key-finding-box h4 {
+  color: white;
+  margin-top: 0;
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  padding-bottom: 0.75rem;
+}
+
+.key-finding-box .finding-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #f4a261;
+}
+
+/* Quick Navigation Bar */
+.quick-nav {
+  position: sticky;
+  top: 60px;
+  z-index: 100;
+  background: white;
+  padding: 0.75em 1.25em;
+  border-left: 4px solid #e07a5f;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9em;
+}
+
+.quick-nav strong {
+  color: #2C3E50;
+  margin-right: 0.5em;
+}
+
+.quick-nav a {
+  margin-right: 1.5em;
+  text-decoration: none;
+  color: #2e86ab;
+  transition: color 0.15s ease;
+}
+
+.quick-nav a:hover {
+  color: #e07a5f;
+}
+
+/* Code folding buttons */
+.code-folding-btn {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.75rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.code-folding-btn:hover {
+  background: #2e86ab;
+  color: white;
+  border-color: #2e86ab;
+}
+
+/* Reading time indicator */
+.reading-time {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+
+  .main-container {
+    padding: 1rem;
+  }
+
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+
+  pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .quick-nav {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* =========================================
+   PRINT STYLES
+   ========================================= */
+
+@media print {
+  .quick-nav,
+  .toc-float,
+  .code-folding-btn,
+  #TOC {
+    display: none !important;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.5;
+    background: white;
+  }
+
+  .figure, figure {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  h1 {
+    page-break-before: always;
+  }
+
+  .key-finding-box {
+    background: #f0f0f0 !important;
+    color: black !important;
+    border: 2px solid black;
+  }
+}

@@ -1,0 +1,4 @@
+moderator,coefficient,p_value,r_squared,interpretation
+Mean colony size (log),0.11389912507587052,0.5541124100796198,0,Not significant
+Fragment percentage,-0.009506811340469878,0.2982279032109738,0.18184715924570352,Not significant
+Study year (most recent),0.18457687816938664,0.10366114589960308,0.6109110572666114,Not significant

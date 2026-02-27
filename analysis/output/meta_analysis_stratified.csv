@@ -1,0 +1,4 @@
+population_type,k,n,pooled_survival,ci_lower,ci_upper,pi_lower,pi_upper,tau_sq,tau,I_sq,Q,p_Q,k_studies,is_single_study,comparison_caveat
+Natural colony,1,3968,0.8709677419354839,NA,NA,NA,NA,NA,NA,NA,NA,NA,1,TRUE,"Single-study estimate (NOAA only). Not a meta-analytic synthesis. Confounded by study identity, region, and era."
+Restoration fragment,4,1111,0.727382457712991,0.46115842336164714,0.8926830576553206,0.20143834654788798,0.965778946098701,0.4216649969867589,0.6493573723203263,86.22192224265443,22.742015583644644,4.570464198141807e-5,4,FALSE,Meta-analytic pooled estimate (k=4). Interpret with caution due to small k.
+Difference (Natural - Restoration),NA,NA,0.14358528422249284,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Observational comparison (14.4 pp). Natural colony estimate is from a SINGLE study (NOAA). Difference is confounded by study identity, region, methodology, and era. NOT a causal estimate of natural vs. restoration survival advantage."

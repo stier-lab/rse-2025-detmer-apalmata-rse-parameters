@@ -1,0 +1,3 @@
+scenario,lambda,difference,pct_contribution
+with_fragmentation,0.9855006937999741,NA,NA
+without_fragmentation,0.8932106609036372,0.09229003289633686,9.36478619213117

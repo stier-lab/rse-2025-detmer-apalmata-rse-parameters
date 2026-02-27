@@ -1,0 +1,7 @@
+region,n,n_size_classes,n_years,n_studies,has_field,has_nursery,survival,n_score,size_coverage,time_score,certainty_score,certainty_level
+Curacao,856,5,9,1,TRUE,FALSE,0.8457943925233645,4,5,5,14,HIGH
+Dominican Republic,44,2,1,1,FALSE,TRUE,0.8636363636363636,1,1,1,3,VERY LOW
+Florida,4031,5,19,3,TRUE,FALSE,0.803026544281816,5,5,5,15,HIGH
+Mexico,52,4,2,1,TRUE,TRUE,1,1,3,1,5,VERY LOW
+Navassa,102,5,2,1,TRUE,FALSE,0.9215686274509803,2,5,1,8,LOW
+USVI,46,3,2,1,TRUE,FALSE,0.6521739130434783,1,2,1,4,VERY LOW

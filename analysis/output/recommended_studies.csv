@@ -1,0 +1,6 @@
+priority,study_type,addresses_gap,suggested_design,estimated_n
+1,Transplant experiment: nursery-to-field transitions,"Nursery-to-field transition, size thresholds","Transplant fragments at 5 sizes to 3+ field sites, track 2 years",500
+2,Long-term monitoring: 5+ year individual tracking,"Long-term demographic rates, growth trajectories","Establish permanent plots at 5+ sites, annual surveys",1000
+3,Climate response study: pre/post-bleaching survival,"Climate sensitivity, disturbance response",Document survival before/during/after thermal events,200
+4,Regional expansion: Bahamas/Jamaica/BVI surveys,"Regional variation, genetic connectivity",Partner with local groups for standardized surveys,300
+5,Recruit survival experiment: fragment vs natural,"Recruit survival, propagation efficiency","Split fragments vs outplanted recruits, compare survival",200

@@ -1,0 +1,48 @@
+Citation
+Schutter, M., ter Hofstede, R., Bloemberg, J., Elzinga, J., van Koningsveld, M., & Osinga, R. (2023).
+Enhancing survival of ex-situ reared sexual recruits of Acropora palmata for reef rehabilitation.
+Ecological Engineering 191:106962.
+DOI: 10.1016/j.ecoleng.2023.106962
+
+So what (one sentence)
+Feeding during ex-situ culture strongly enhances growth and post-outplant survival of sexually produced Acropora palmata recruits, whereas elevated alkalinity alone does not.
+
+Study context
+Species: Acropora palmata
+Region: Bahamas
+Restoration context: Sexual propagation and reef rehabilitation
+Life stage: Larvae to juvenile recruits
+
+Methods (inference-relevant only)
+- Ex-situ fertilization, larval rearing, and settlement on aragonite plugs
+- Four aquaculture treatments: ambient vs high alkalinity, with vs without feeding
+- Three culture durations: 4, 9, 14 weeks
+- Survival tracked during aquaculture and up to 44 weeks post-settlement
+
+Key results (numbers first)
+- Feeding significantly increased polyp number and tissue area
+- High alkalinity alone reduced survival during aquaculture
+- Best performance: high alkalinity + feeding for 9 weeks
+  - ~2× higher survival and recruit size at 10 months vs ambient
+- No natural recruitment observed at field sites
+
+Mechanisms / drivers
+- Heterotrophic feeding accelerates early growth and size refuge
+- Larger size at outplanting reduces early post-settlement mortality
+- Elevated alkalinity without sufficient energy supply is detrimental
+
+Restoration-relevant takeaways
+- Feeding is a critical lever for sexual coral propagation
+- Optimal ex-situ culture duration balances cost and size benefits
+- Sexual restoration can outperform natural recruitment under degraded conditions
+
+Limitations / external validity
+- Single species and region
+- Costs of feeding and infrastructure not fully quantified
+
+Anchor numbers & quotable facts
+- Feeding doubled survival and size at 10 months
+- Ambient conditions outperformed natural recruitment (zero recruits)
+
+Tags
+#Acropora_palmata #sexual_restoration #aquaculture #feeding #early_life_stages

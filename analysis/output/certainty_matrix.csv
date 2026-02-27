@@ -1,0 +1,31 @@
+size_class,region,n,survival,certainty
+SC1,Curacao,16,0.625,Very Low
+SC1,Dominican Republic,36,0.8333333333333334,Low
+SC1,Florida,258,0.6976744186046512,Moderate
+SC1,Mexico,25,1,Very Low
+SC1,Navassa,6,1,Very Low
+SC1,USVI,23,0.5652173913043478,Very Low
+SC2,Curacao,56,0.6428571428571429,Low
+SC2,Dominican Republic,8,1,Very Low
+SC2,Florida,1234,0.646677471636953,High
+SC2,Mexico,6,1,Very Low
+SC2,Navassa,10,0.6,Very Low
+SC2,USVI,12,0.6666666666666666,Very Low
+SC3,Curacao,108,0.7870370370370371,Moderate
+SC3,Dominican Republic,0,NA,No Data
+SC3,Florida,752,0.7672872340425532,High
+SC3,Mexico,14,1,Very Low
+SC3,Navassa,21,0.8571428571428571,Very Low
+SC3,USVI,11,0.8181818181818182,Very Low
+SC4,Curacao,209,0.861244019138756,Moderate
+SC4,Dominican Republic,0,NA,No Data
+SC4,Florida,594,0.8922558922558923,High
+SC4,Mexico,7,1,Very Low
+SC4,Navassa,15,0.9333333333333333,Very Low
+SC4,USVI,0,NA,No Data
+SC5,Curacao,467,0.8843683083511777,High
+SC5,Dominican Republic,0,NA,No Data
+SC5,Florida,1193,0.9656328583403185,High
+SC5,Mexico,0,NA,No Data
+SC5,Navassa,50,1,Low
+SC5,USVI,0,NA,No Data

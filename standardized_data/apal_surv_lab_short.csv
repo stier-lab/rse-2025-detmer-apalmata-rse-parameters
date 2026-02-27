@@ -1,0 +1,7 @@
+"","study","region","location","treatment_1","treatment_2","spawn_yr","substrate_type","prop_survived","n_initial","time_interval_d","study_notes"
+"1","chamberland_et_al_2015","Curacao","Sea Aquarium Reef",NA,NA,2012,"clay pottery tripods",0.81,330,30,"survival estimated from Fig. 2A"
+"2","chamberland_et_al_2015","Curacao","Sea Aquarium Reef",NA,NA,2012,"clay pottery tripods",0.81,330,30,"survival estimated from Fig. 2A"
+"3","chamberland_et_al_2015","Curacao","Sea Aquarium Reef",NA,NA,2012,"clay pottery tripods",0.81,330,30,"survival estimated from Fig. 2A"
+"4","randall_szmant_2009","Puerto Rico","Tres Palmas Marine Reserve",28,NA,2008,"culture plate with CCA chip",0.94,74,4,"survival is midpoint of given range"
+"5","randall_szmant_2009","Puerto Rico","Tres Palmas Marine Reserve",30,NA,2008,"culture plate with CCA chip",0.94,51,4,"survival is midpoint of given range"
+"6","randall_szmant_2009","Puerto Rico","Tres Palmas Marine Reserve",31.5,NA,2008,"culture plate with CCA chip",0.94,44,4,"survival is midpoint of given range"

@@ -1,0 +1,742 @@
+treatment,nursery,line,species,depth,coral.id,colony,harvest.year,year,survival,colony.group,colony.depth,colony.year
+CastawayYear 1,Castaway,11,ACER,10.5,9,266,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,11,ACER,10.5,9,266,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,11,ACER,10.5,9,266,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,11,ACER,10.5,15,266,Not Harvested,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,11,ACER,10.5,15,266,,Year 2,0,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,11,ACER,10.5,15,266,,Year 3,0,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,11,APAL,10.5,58,251,Not Harvested,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,58,251,Not Harvested,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,58,251,Not Harvested,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,61,251,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,61,251,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,61,251,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,11,ACER,10.5,102,548,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,11,ACER,10.5,102,548,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,11,ACER,10.5,102,548,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,11,ACER,10.5,103,548,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,11,ACER,10.5,103,548,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,11,ACER,10.5,103,548,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,11,APAL,10.5,133,372,Not Harvested,Year 1,1,Rocky2,Rocky210.5,Rocky2Year 1
+CastawayYear 2,Castaway,11,APAL,10.5,133,372,Not Harvested,Year 2,1,Rocky2,Rocky210.5,Rocky2Year 2
+CastawayYear 3,Castaway,11,APAL,10.5,133,372,Not Harvested,Year 3,1,Rocky2,Rocky210.5,Rocky2Year 3
+CastawayYear 1,Castaway,11,APAL,10.5,134,372,2,Year 1,1,Rocky2,Rocky210.5,Rocky2Year 1
+CastawayYear 2,Castaway,11,APAL,10.5,134,372,2,Year 2,1,Rocky2,Rocky210.5,Rocky2Year 2
+CastawayYear 3,Castaway,11,APAL,10.5,134,372,2,Year 3,1,Rocky2,Rocky210.5,Rocky2Year 3
+CastawayYear 1,Castaway,11,APAL,10.5,161,260,Not Harvested,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,161,260,Not Harvested,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,161,260,Not Harvested,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,164,260,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,164,260,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,164,260,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,177,363,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,177,363,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,177,363,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,180,363,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,180,363,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,180,363,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,197,253,2,Year 1,1,Gorda,Gorda10.5,GordaYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,197,253,2,Year 2,1,Gorda,Gorda10.5,GordaYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,197,253,2,Year 3,1,Gorda,Gorda10.5,GordaYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,198,253,Not Harvested,Year 1,1,Gorda,Gorda10.5,GordaYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,198,253,Not Harvested,Year 2,1,Gorda,Gorda10.5,GordaYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,198,253,Not Harvested,Year 3,1,Gorda,Gorda10.5,GordaYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,251,475,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,251,475,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,251,475,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,11,APAL,10.5,252,475,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,11,APAL,10.5,252,475,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,11,APAL,10.5,252,475,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,12,ACER,10.5,3,266,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,12,ACER,10.5,3,266,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,12,ACER,10.5,3,266,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,12,ACER,10.5,5,266,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,12,ACER,10.5,5,266,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,12,ACER,10.5,5,266,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,12,ACER,10.5,13,266,,Year 1,0,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,12,ACER,10.5,13,266,,Year 2,0,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,12,ACER,10.5,13,266,,Year 3,0,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,12,APAL,10.5,56,251,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,56,251,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,56,251,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,63,251,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,63,251,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,63,251,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,12,ACER,10.5,97,548,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,12,ACER,10.5,97,548,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,12,ACER,10.5,97,548,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,12,ACER,10.5,112,548,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+CastawayYear 2,Castaway,12,ACER,10.5,112,548,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+CastawayYear 3,Castaway,12,ACER,10.5,112,548,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+CastawayYear 1,Castaway,12,APAL,10.5,143,372,Not Harvested,Year 1,1,Rocky2,Rocky210.5,Rocky2Year 1
+CastawayYear 2,Castaway,12,APAL,10.5,143,372,Not Harvested,Year 2,1,Rocky2,Rocky210.5,Rocky2Year 2
+CastawayYear 3,Castaway,12,APAL,10.5,143,372,Not Harvested,Year 3,1,Rocky2,Rocky210.5,Rocky2Year 3
+CastawayYear 1,Castaway,12,APAL,10.5,181,363,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,181,363,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,181,363,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,184,363,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,184,363,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,184,363,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,207,253,Not Harvested,Year 1,1,Gorda,Gorda10.5,GordaYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,207,253,Not Harvested,Year 2,1,Gorda,Gorda10.5,GordaYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,207,253,Not Harvested,Year 3,1,Gorda,Gorda10.5,GordaYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,208,253,2,Year 1,1,Gorda,Gorda10.5,GordaYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,208,253,2,Year 2,1,Gorda,Gorda10.5,GordaYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,208,253,2,Year 3,1,Gorda,Gorda10.5,GordaYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,245,475,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,245,475,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,245,475,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,248,475,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,248,475,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,248,475,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,,260,,Year 1,0,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,,260,,Year 2,0,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,,260,,Year 3,0,Midway,Midway10.5,MidwayYear 3
+CastawayYear 1,Castaway,12,APAL,10.5,,260,,Year 1,0,Midway,Midway10.5,MidwayYear 1
+CastawayYear 2,Castaway,12,APAL,10.5,,260,,Year 2,0,Midway,Midway10.5,MidwayYear 2
+CastawayYear 3,Castaway,12,APAL,10.5,,260,,Year 3,0,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,27,258,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,27,258,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,27,258,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,28,258,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,28,258,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,28,258,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,43,268,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,43,268,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,43,268,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,44,268,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,44,268,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,44,268,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,75,530,2,Year 1,1,530,53010.5,530Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,75,530,2,Year 2,1,530,53010.5,530Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,75,530,2,Year 3,1,530,53010.5,530Year 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,76,530,2,Year 1,1,530,53010.5,530Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,76,530,2,Year 2,1,530,53010.5,530Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,76,530,2,Year 3,0,530,53010.5,530Year 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,85,272,2,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,85,272,2,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,85,272,2,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,13,ACER,10.5,86,272,Not Harvested,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,13,ACER,10.5,86,272,Not Harvested,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,13,ACER,10.5,86,272,Not Harvested,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,115,256,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,115,256,2,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,115,256,2,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,126,256,2,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,126,256,2,Year 2,0,Rocky,Rocky10.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,126,256,2,Year 3,0,Rocky,Rocky10.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,151,260,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,151,260,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,151,260,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,152,260,2,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,152,260,2,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,152,260,2,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,212,401,2,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,212,401,2,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,212,401,2,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,220,401,2,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,220,401,2,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,220,401,2,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,228,369,2,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,228,369,2,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,228,369,2,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,13,APAL,10.5,238,369,2,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,13,APAL,10.5,238,369,2,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,13,APAL,10.5,238,369,2,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,29,258,1,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,29,258,1,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,29,258,1,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,30,258,1,Year 1,1,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,30,258,1,Year 2,1,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,30,258,1,Year 3,1,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,47,268,"1,2",Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,47,268,"1,2",Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,47,268,"1,2",Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,48,268,1,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,48,268,1,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,48,268,1,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,77,530,"1,2",Year 1,1,530,53010.5,530Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,77,530,"1,2",Year 2,1,530,53010.5,530Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,77,530,"1,2",Year 3,1,530,53010.5,530Year 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,79,530,"1,2",Year 1,1,530,53010.5,530Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,79,530,"1,2",Year 2,1,530,53010.5,530Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,79,530,"1,2",Year 3,1,530,53010.5,530Year 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,81,272,"1,2",Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,81,272,"1,2",Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,81,272,"1,2",Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,14,ACER,10.5,82,272,1,Year 1,1,ACER1,ACER110.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,14,ACER,10.5,82,272,1,Year 2,1,ACER1,ACER110.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,14,ACER,10.5,82,272,1,Year 3,1,ACER1,ACER110.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,113,256,1,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,113,256,1,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,113,256,1,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,128,256,1,Year 1,1,Rocky,Rocky10.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,128,256,1,Year 2,1,Rocky,Rocky10.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,128,256,1,Year 3,1,Rocky,Rocky10.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,145,260,,Year 1,0,Midway,Midway10.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,145,260,,Year 2,0,Midway,Midway10.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,145,260,,Year 3,0,Midway,Midway10.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,221,401,1,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,221,401,1,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,221,401,1,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,222,401,1,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,222,401,1,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,222,401,1,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,227,369,1,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,227,369,1,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,227,369,1,Year 3,1,unknown,unknown10.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,14,APAL,10.5,233,369,1,Year 1,1,unknown,unknown10.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,14,APAL,10.5,233,369,1,Year 2,1,unknown,unknown10.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,14,APAL,10.5,233,369,1,Year 3,1,unknown,unknown10.5,unknownYear 3
+CastawayYear 1,Castaway,21,ACER,9,10,266,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,21,ACER,9,10,266,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,21,ACER,9,10,266,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,21,ACER,9,13,266,Not Harvested,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,21,ACER,9,13,266,Not Harvested,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,21,ACER,9,13,266,Not Harvested,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,21,APAL,9,51,251,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,21,APAL,9,51,251,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,21,APAL,9,51,251,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,21,APAL,9,55,251,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,21,APAL,9,55,251,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,21,APAL,9,55,251,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,21,ACER,9,109,548,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,21,ACER,9,109,548,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,21,ACER,9,109,548,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,21,ACER,9,110,548,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,21,ACER,9,110,548,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,21,ACER,9,110,548,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,21,APAL,9,137,372,2,Year 1,1,Rocky2,Rocky29,Rocky2Year 1
+CastawayYear 2,Castaway,21,APAL,9,137,372,2,Year 2,1,Rocky2,Rocky29,Rocky2Year 2
+CastawayYear 3,Castaway,21,APAL,9,137,372,2,Year 3,1,Rocky2,Rocky29,Rocky2Year 3
+CastawayYear 1,Castaway,21,APAL,9,138,372,2,Year 1,1,Rocky2,Rocky29,Rocky2Year 1
+CastawayYear 2,Castaway,21,APAL,9,138,372,2,Year 2,1,Rocky2,Rocky29,Rocky2Year 2
+CastawayYear 3,Castaway,21,APAL,9,138,372,2,Year 3,1,Rocky2,Rocky29,Rocky2Year 3
+CastawayYear 1,Castaway,21,APAL,9,163,260,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,21,APAL,9,163,260,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,21,APAL,9,163,260,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,21,APAL,9,170,260,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,21,APAL,9,170,260,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,21,APAL,9,170,260,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,21,APAL,9,178,363,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,21,APAL,9,178,363,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,21,APAL,9,178,363,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,21,APAL,9,187,363,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,21,APAL,9,187,363,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,21,APAL,9,187,363,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,21,APAL,9,193,253,2,Year 1,1,Gorda,Gorda9,GordaYear 1
+CastawayYear 2,Castaway,21,APAL,9,193,253,2,Year 2,1,Gorda,Gorda9,GordaYear 2
+CastawayYear 3,Castaway,21,APAL,9,193,253,2,Year 3,1,Gorda,Gorda9,GordaYear 3
+CastawayYear 1,Castaway,21,APAL,9,194,253,Not Harvested,Year 1,1,Gorda,Gorda9,GordaYear 1
+CastawayYear 2,Castaway,21,APAL,9,194,253,Not Harvested,Year 2,1,Gorda,Gorda9,GordaYear 2
+CastawayYear 3,Castaway,21,APAL,9,194,253,Not Harvested,Year 3,1,Gorda,Gorda9,GordaYear 3
+CastawayYear 1,Castaway,21,APAL,9,250,475,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,21,APAL,9,250,475,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,21,APAL,9,250,475,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,21,APAL,9,254,475,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,21,APAL,9,254,475,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,21,APAL,9,254,475,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,22,ACER,9,11,266,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,22,ACER,9,11,266,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,22,ACER,9,11,266,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,22,ACER,9,16,266,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,22,ACER,9,16,266,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,22,ACER,9,16,266,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,22,APAL,9,53,251,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,22,APAL,9,53,251,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,22,APAL,9,53,251,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,22,APAL,9,59,251,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,22,APAL,9,59,251,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,22,APAL,9,59,251,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,22,ACER,9,101,548,No Data,Year 1,1,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,22,ACER,9,101,548,No Data,Year 2,0,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,22,ACER,9,101,548,No Data,Year 3,0,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,22,ACER,9,104,548,,Year 1,0,ACER1,ACER19,ACER1Year 1
+CastawayYear 2,Castaway,22,ACER,9,104,548,,Year 2,0,ACER1,ACER19,ACER1Year 2
+CastawayYear 3,Castaway,22,ACER,9,104,548,,Year 3,0,ACER1,ACER19,ACER1Year 3
+CastawayYear 1,Castaway,22,APAL,9,131,372,No Data,Year 1,1,Rocky2,Rocky29,Rocky2Year 1
+CastawayYear 2,Castaway,22,APAL,9,131,372,No Data,Year 2,0,Rocky2,Rocky29,Rocky2Year 2
+CastawayYear 3,Castaway,22,APAL,9,131,372,No Data,Year 3,0,Rocky2,Rocky29,Rocky2Year 3
+CastawayYear 1,Castaway,22,APAL,9,132,372,No Data,Year 1,1,Rocky2,Rocky29,Rocky2Year 1
+CastawayYear 2,Castaway,22,APAL,9,132,372,No Data,Year 2,0,Rocky2,Rocky29,Rocky2Year 2
+CastawayYear 3,Castaway,22,APAL,9,132,372,No Data,Year 3,0,Rocky2,Rocky29,Rocky2Year 3
+CastawayYear 1,Castaway,22,APAL,9,167,260,No Data,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,22,APAL,9,167,260,No Data,Year 2,0,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,22,APAL,9,167,260,No Data,Year 3,0,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,22,APAL,9,171,260,2,Year 1,1,Midway,Midway9,MidwayYear 1
+CastawayYear 2,Castaway,22,APAL,9,171,260,2,Year 2,1,Midway,Midway9,MidwayYear 2
+CastawayYear 3,Castaway,22,APAL,9,171,260,2,Year 3,1,Midway,Midway9,MidwayYear 3
+CastawayYear 1,Castaway,22,APAL,9,186,363,No Data,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,22,APAL,9,186,363,No Data,Year 2,0,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,22,APAL,9,186,363,No Data,Year 3,0,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,22,APAL,9,189,363,,Year 1,0,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,22,APAL,9,189,363,,Year 2,0,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,22,APAL,9,189,363,,Year 3,0,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,22,APAL,9,200,253,Not Harvested,Year 1,1,Gorda,Gorda9,GordaYear 1
+CastawayYear 2,Castaway,22,APAL,9,200,253,Not Harvested,Year 2,1,Gorda,Gorda9,GordaYear 2
+CastawayYear 3,Castaway,22,APAL,9,200,253,Not Harvested,Year 3,1,Gorda,Gorda9,GordaYear 3
+CastawayYear 1,Castaway,22,APAL,9,253,475,No Data,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,22,APAL,9,253,475,No Data,Year 2,0,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,22,APAL,9,253,475,No Data,Year 3,0,Rocky,Rocky9,RockyYear 3
+CastawayYear 1,Castaway,22,APAL,9,256,475,No Data,Year 1,1,Rocky,Rocky9,RockyYear 1
+CastawayYear 2,Castaway,22,APAL,9,256,475,No Data,Year 2,0,Rocky,Rocky9,RockyYear 2
+CastawayYear 3,Castaway,22,APAL,9,256,475,No Data,Year 3,0,Rocky,Rocky9,RockyYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,17,258,1,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,17,258,1,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,17,258,1,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,23,258,1,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,23,258,1,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,23,258,1,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,41,268,"1,2",Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,41,268,"1,2",Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,41,268,"1,2",Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,42,268,1,Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,42,268,1,Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,42,268,1,Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,69,530,1,Year 1,1,530,5309,530Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,69,530,1,Year 2,1,530,5309,530Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,69,530,1,Year 3,1,530,5309,530Year 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,70,530,1,Year 1,1,530,5309,530Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,70,530,1,Year 2,1,530,5309,530Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,70,530,1,Year 3,1,530,5309,530Year 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,87,272,"1,2",Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,87,272,"1,2",Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,87,272,"1,2",Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,23,ACER,9,88,272,"1,2",Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,23,ACER,9,88,272,"1,2",Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,23,ACER,9,88,272,"1,2",Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,116,256,1,Year 1,1,Rocky,Rocky9,RockyYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,116,256,1,Year 2,1,Rocky,Rocky9,RockyYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,116,256,1,Year 3,1,Rocky,Rocky9,RockyYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,125,256,1,Year 1,1,Rocky,Rocky9,RockyYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,125,256,1,Year 2,1,Rocky,Rocky9,RockyYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,125,256,1,Year 3,1,Rocky,Rocky9,RockyYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,149,260,1,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,149,260,1,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,149,260,1,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,150,260,1,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,150,260,1,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,150,260,1,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,218,401,1,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,218,401,1,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,218,401,1,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,219,401,1,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,219,401,1,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,219,401,1,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,230,369,1,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,230,369,1,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,230,369,1,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,23,APAL,9,239,369,1,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,23,APAL,9,239,369,1,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,23,APAL,9,239,369,1,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,18,258,2,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,18,258,2,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,18,258,2,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,22,258,Not Harvested,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,22,258,Not Harvested,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,22,258,Not Harvested,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,39,268,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,39,268,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,39,268,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,40,268,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,40,268,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,40,268,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,71,530,2,Year 1,1,530,5309,530Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,71,530,2,Year 2,1,530,5309,530Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,71,530,2,Year 3,1,530,5309,530Year 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,80,530,2,Year 1,1,530,5309,530Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,80,530,2,Year 2,1,530,5309,530Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,80,530,2,Year 3,1,530,5309,530Year 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,89,272,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,89,272,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,89,272,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,24,ACER,9,90,272,2,Year 1,1,ACER1,ACER19,ACER1Year 1
+GlassbottomYear 2,Glassbottom,24,ACER,9,90,272,2,Year 2,1,ACER1,ACER19,ACER1Year 2
+GlassbottomYear 3,Glassbottom,24,ACER,9,90,272,2,Year 3,1,ACER1,ACER19,ACER1Year 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,117,256,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,117,256,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,117,256,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,124,256,2,Year 1,1,Rocky,Rocky9,RockyYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,124,256,2,Year 2,1,Rocky,Rocky9,RockyYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,124,256,2,Year 3,1,Rocky,Rocky9,RockyYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,153,260,2,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,153,260,2,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,153,260,2,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,154,260,2,Year 1,1,Midway,Midway9,MidwayYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,154,260,2,Year 2,1,Midway,Midway9,MidwayYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,154,260,2,Year 3,1,Midway,Midway9,MidwayYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,213,401,2,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,213,401,2,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,213,401,2,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,217,401,2,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,217,401,2,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,217,401,2,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,225,369,2,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,225,369,2,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,225,369,2,Year 3,1,unknown,unknown9,unknownYear 3
+GlassbottomYear 1,Glassbottom,24,APAL,9,240,369,2,Year 1,1,unknown,unknown9,unknownYear 1
+GlassbottomYear 2,Glassbottom,24,APAL,9,240,369,2,Year 2,1,unknown,unknown9,unknownYear 2
+GlassbottomYear 3,Glassbottom,24,APAL,9,240,369,2,Year 3,1,unknown,unknown9,unknownYear 3
+CastawayYear 1,Castaway,31,ACER,7.5,12,266,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,31,ACER,7.5,12,266,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,31,ACER,7.5,12,266,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,31,ACER,7.5,14,266,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,31,ACER,7.5,14,266,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,31,ACER,7.5,14,266,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,31,APAL,7.5,57,251,Not Harvested,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,57,251,Not Harvested,Year 2,1,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,57,251,Not Harvested,Year 3,1,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,64,251,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,64,251,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,64,251,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,31,ACER,7.5,107,548,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,31,ACER,7.5,107,548,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,31,ACER,7.5,107,548,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,31,APAL,7.5,135,372,2,Year 1,1,Rocky2,Rocky27.5,Rocky2Year 1
+CastawayYear 2,Castaway,31,APAL,7.5,135,372,2,Year 2,1,Rocky2,Rocky27.5,Rocky2Year 2
+CastawayYear 3,Castaway,31,APAL,7.5,135,372,2,Year 3,1,Rocky2,Rocky27.5,Rocky2Year 3
+CastawayYear 1,Castaway,31,APAL,7.5,136,372,,Year 1,0,Rocky2,Rocky27.5,Rocky2Year 1
+CastawayYear 2,Castaway,31,APAL,7.5,136,372,,Year 2,0,Rocky2,Rocky27.5,Rocky2Year 2
+CastawayYear 3,Castaway,31,APAL,7.5,136,372,,Year 3,0,Rocky2,Rocky27.5,Rocky2Year 3
+CastawayYear 1,Castaway,31,APAL,7.5,162,260,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,162,260,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,162,260,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,165,260,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,165,260,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,165,260,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,179,363,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,179,363,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,179,363,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,190,363,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,190,363,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,190,363,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,195,253,2,Year 1,1,Gorda,Gorda7.5,GordaYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,195,253,2,Year 2,1,Gorda,Gorda7.5,GordaYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,195,253,2,Year 3,1,Gorda,Gorda7.5,GordaYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,196,253,2,Year 1,1,Gorda,Gorda7.5,GordaYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,196,253,2,Year 2,1,Gorda,Gorda7.5,GordaYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,196,253,2,Year 3,1,Gorda,Gorda7.5,GordaYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,249,475,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,249,475,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,249,475,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,31,APAL,7.5,255,475,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,31,APAL,7.5,255,475,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,31,APAL,7.5,255,475,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,32,ACER,7.5,2,266,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,32,ACER,7.5,2,266,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,32,ACER,7.5,2,266,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,32,ACER,7.5,7,266,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,32,ACER,7.5,7,266,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,32,ACER,7.5,7,266,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,32,APAL,7.5,49,251,No Data,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,49,251,No Data,Year 2,0,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,49,251,No Data,Year 3,0,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,50,251,No Data,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,50,251,No Data,Year 2,0,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,50,251,No Data,Year 3,0,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,32,ACER,7.5,99,548,No Data,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,32,ACER,7.5,99,548,No Data,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,32,ACER,7.5,99,548,No Data,Year 3,0,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,32,ACER,7.5,106,548,No Data,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+CastawayYear 2,Castaway,32,ACER,7.5,106,548,No Data,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+CastawayYear 3,Castaway,32,ACER,7.5,106,548,No Data,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+CastawayYear 1,Castaway,32,APAL,7.5,140,372,No Data,Year 1,1,Rocky2,Rocky27.5,Rocky2Year 1
+CastawayYear 2,Castaway,32,APAL,7.5,140,372,No Data,Year 2,0,Rocky2,Rocky27.5,Rocky2Year 2
+CastawayYear 3,Castaway,32,APAL,7.5,140,372,No Data,Year 3,0,Rocky2,Rocky27.5,Rocky2Year 3
+CastawayYear 1,Castaway,32,APAL,7.5,141,372,No Data,Year 1,1,Rocky2,Rocky27.5,Rocky2Year 1
+CastawayYear 2,Castaway,32,APAL,7.5,141,372,No Data,Year 2,0,Rocky2,Rocky27.5,Rocky2Year 2
+CastawayYear 3,Castaway,32,APAL,7.5,141,372,No Data,Year 3,0,Rocky2,Rocky27.5,Rocky2Year 3
+CastawayYear 1,Castaway,32,APAL,7.5,166,260,No Data,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,166,260,No Data,Year 2,0,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,166,260,No Data,Year 3,0,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,173,260,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,173,260,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,173,260,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,183,363,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,183,363,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,183,363,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,191,363,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,191,363,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,191,363,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,203,253,No Data,Year 1,1,Gorda,Gorda7.5,GordaYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,203,253,No Data,Year 2,0,Gorda,Gorda7.5,GordaYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,203,253,No Data,Year 3,0,Gorda,Gorda7.5,GordaYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,204,253,No Data,Year 1,1,Gorda,Gorda7.5,GordaYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,204,253,No Data,Year 2,0,Gorda,Gorda7.5,GordaYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,204,253,No Data,Year 3,0,Gorda,Gorda7.5,GordaYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,243,475,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,243,475,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,243,475,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+CastawayYear 1,Castaway,32,APAL,7.5,244,475,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+CastawayYear 2,Castaway,32,APAL,7.5,244,475,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+CastawayYear 3,Castaway,32,APAL,7.5,244,475,2,Year 3,0,Rocky,Rocky7.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,24,258,1,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,24,258,1,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,24,258,1,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,25,258,1,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,25,258,1,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,25,258,1,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,33,268,"1,2",Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,33,268,"1,2",Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,33,268,"1,2",Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,34,268,"1,2",Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,34,268,"1,2",Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,34,268,"1,2",Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,65,530,"1,2",Year 1,1,530,5307.5,530Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,65,530,"1,2",Year 2,1,530,5307.5,530Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,65,530,"1,2",Year 3,1,530,5307.5,530Year 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,73,530,"1,2",Year 1,1,530,5307.5,530Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,73,530,"1,2",Year 2,1,530,5307.5,530Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,73,530,"1,2",Year 3,1,530,5307.5,530Year 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,95,272,"1,2",Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,95,272,"1,2",Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,95,272,"1,2",Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,33,ACER,7.5,96,272,1,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,33,ACER,7.5,96,272,1,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,33,ACER,7.5,96,272,1,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,120,256,1,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,120,256,1,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,120,256,1,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,121,256,"1,2",Year 1,1,Rocky,Rocky7.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,121,256,"1,2",Year 2,1,Rocky,Rocky7.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,121,256,"1,2",Year 3,1,Rocky,Rocky7.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,155,260,1,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,155,260,1,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,155,260,1,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,156,260,1,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,156,260,1,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,156,260,1,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,209,401,1,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,209,401,1,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,209,401,1,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,215,401,1,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,215,401,1,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,215,401,1,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,232,369,1,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,232,369,1,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,232,369,1,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,33,APAL,7.5,237,369,1,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,33,APAL,7.5,237,369,1,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,33,APAL,7.5,237,369,1,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,31,258,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,31,258,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,31,258,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,32,258,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,32,258,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,32,258,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,45,268,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,45,268,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,45,268,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,46,268,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,46,268,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,46,268,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,74,530,2,Year 1,1,530,5307.5,530Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,74,530,2,Year 2,1,530,5307.5,530Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,74,530,2,Year 3,1,530,5307.5,530Year 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,78,530,2,Year 1,1,530,5307.5,530Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,78,530,2,Year 2,1,530,5307.5,530Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,78,530,2,Year 3,1,530,5307.5,530Year 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,83,272,2,Year 1,1,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,83,272,2,Year 2,1,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,83,272,2,Year 3,1,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,34,ACER,7.5,84,272,,Year 1,0,ACER1,ACER17.5,ACER1Year 1
+GlassbottomYear 2,Glassbottom,34,ACER,7.5,84,272,,Year 2,0,ACER1,ACER17.5,ACER1Year 2
+GlassbottomYear 3,Glassbottom,34,ACER,7.5,84,272,,Year 3,0,ACER1,ACER17.5,ACER1Year 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,114,256,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,114,256,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,114,256,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,127,256,2,Year 1,1,Rocky,Rocky7.5,RockyYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,127,256,2,Year 2,1,Rocky,Rocky7.5,RockyYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,127,256,2,Year 3,1,Rocky,Rocky7.5,RockyYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,147,260,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,147,260,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,147,260,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,148,260,2,Year 1,1,Midway,Midway7.5,MidwayYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,148,260,2,Year 2,1,Midway,Midway7.5,MidwayYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,148,260,2,Year 3,1,Midway,Midway7.5,MidwayYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,210,401,2,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,210,401,2,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,210,401,2,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,223,401,2,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,223,401,2,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,223,401,2,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,226,369,2,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,226,369,2,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,226,369,2,Year 3,1,unknown,unknown7.5,unknownYear 3
+GlassbottomYear 1,Glassbottom,34,APAL,7.5,234,369,2,Year 1,1,unknown,unknown7.5,unknownYear 1
+GlassbottomYear 2,Glassbottom,34,APAL,7.5,234,369,2,Year 2,1,unknown,unknown7.5,unknownYear 2
+GlassbottomYear 3,Glassbottom,34,APAL,7.5,234,369,2,Year 3,1,unknown,unknown7.5,unknownYear 3
+CastawayYear 1,Castaway,41,ACER,6,1,266,,Year 1,0,ACER1,ACER16,ACER1Year 1
+CastawayYear 2,Castaway,41,ACER,6,1,266,,Year 2,0,ACER1,ACER16,ACER1Year 2
+CastawayYear 3,Castaway,41,ACER,6,1,266,,Year 3,0,ACER1,ACER16,ACER1Year 3
+CastawayYear 1,Castaway,41,ACER,6,6,266,,Year 1,0,ACER1,ACER16,ACER1Year 1
+CastawayYear 2,Castaway,41,ACER,6,6,266,,Year 2,0,ACER1,ACER16,ACER1Year 2
+CastawayYear 3,Castaway,41,ACER,6,6,266,,Year 3,0,ACER1,ACER16,ACER1Year 3
+CastawayYear 1,Castaway,41,APAL,6,54,251,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,41,APAL,6,54,251,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,41,APAL,6,54,251,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,41,APAL,6,60,251,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,41,APAL,6,60,251,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,41,APAL,6,60,251,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,41,ACER,6,105,548,No Data,Year 1,1,ACER1,ACER16,ACER1Year 1
+CastawayYear 2,Castaway,41,ACER,6,105,548,No Data,Year 2,0,ACER1,ACER16,ACER1Year 2
+CastawayYear 3,Castaway,41,ACER,6,105,548,No Data,Year 3,0,ACER1,ACER16,ACER1Year 3
+CastawayYear 1,Castaway,41,APAL,6,139,372,2,Year 1,1,Rocky2,Rocky26,Rocky2Year 1
+CastawayYear 2,Castaway,41,APAL,6,139,372,2,Year 2,1,Rocky2,Rocky26,Rocky2Year 2
+CastawayYear 3,Castaway,41,APAL,6,139,372,2,Year 3,1,Rocky2,Rocky26,Rocky2Year 3
+CastawayYear 1,Castaway,41,APAL,6,168,260,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,41,APAL,6,168,260,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,41,APAL,6,168,260,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,41,APAL,6,172,260,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,41,APAL,6,172,260,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,41,APAL,6,172,260,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,41,APAL,6,185,363,,Year 1,0,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,41,APAL,6,185,363,,Year 2,0,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,41,APAL,6,185,363,,Year 3,0,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,41,APAL,6,192,363,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,41,APAL,6,192,363,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,41,APAL,6,192,363,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,41,APAL,6,201,253,2,Year 1,1,Gorda,Gorda6,GordaYear 1
+CastawayYear 2,Castaway,41,APAL,6,201,253,2,Year 2,1,Gorda,Gorda6,GordaYear 2
+CastawayYear 3,Castaway,41,APAL,6,201,253,2,Year 3,1,Gorda,Gorda6,GordaYear 3
+CastawayYear 1,Castaway,41,APAL,6,202,253,2,Year 1,1,Gorda,Gorda6,GordaYear 1
+CastawayYear 2,Castaway,41,APAL,6,202,253,2,Year 2,1,Gorda,Gorda6,GordaYear 2
+CastawayYear 3,Castaway,41,APAL,6,202,253,2,Year 3,1,Gorda,Gorda6,GordaYear 3
+CastawayYear 1,Castaway,41,APAL,6,241,475,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,41,APAL,6,241,475,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,41,APAL,6,241,475,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,41,APAL,6,242,475,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,41,APAL,6,242,475,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,41,APAL,6,242,475,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,42,APAL,6,52,251,Not Harvested,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,42,APAL,6,52,251,Not Harvested,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,42,APAL,6,52,251,Not Harvested,Year 3,0,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,42,APAL,6,62,251,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,42,APAL,6,62,251,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,42,APAL,6,62,251,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,42,APAL,6,142,372,Not Harvested,Year 1,1,Rocky2,Rocky26,Rocky2Year 1
+CastawayYear 2,Castaway,42,APAL,6,142,372,Not Harvested,Year 2,1,Rocky2,Rocky26,Rocky2Year 2
+CastawayYear 3,Castaway,42,APAL,6,142,372,Not Harvested,Year 3,0,Rocky2,Rocky26,Rocky2Year 3
+CastawayYear 1,Castaway,42,APAL,6,144,372,No Data,Year 1,1,Rocky2,Rocky26,Rocky2Year 1
+CastawayYear 2,Castaway,42,APAL,6,144,372,No Data,Year 2,0,Rocky2,Rocky26,Rocky2Year 2
+CastawayYear 3,Castaway,42,APAL,6,144,372,No Data,Year 3,0,Rocky2,Rocky26,Rocky2Year 3
+CastawayYear 1,Castaway,42,APAL,6,175,260,Not Harvested,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,42,APAL,6,175,260,Not Harvested,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,42,APAL,6,175,260,Not Harvested,Year 3,0,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,42,APAL,6,176,260,2,Year 1,1,Midway,Midway6,MidwayYear 1
+CastawayYear 2,Castaway,42,APAL,6,176,260,2,Year 2,1,Midway,Midway6,MidwayYear 2
+CastawayYear 3,Castaway,42,APAL,6,176,260,2,Year 3,1,Midway,Midway6,MidwayYear 3
+CastawayYear 1,Castaway,42,APAL,6,182,363,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,42,APAL,6,182,363,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,42,APAL,6,182,363,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,42,APAL,6,188,363,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,42,APAL,6,188,363,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,42,APAL,6,188,363,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,42,APAL,6,205,253,2,Year 1,1,Gorda,Gorda6,GordaYear 1
+CastawayYear 2,Castaway,42,APAL,6,205,253,2,Year 2,1,Gorda,Gorda6,GordaYear 2
+CastawayYear 3,Castaway,42,APAL,6,205,253,2,Year 3,1,Gorda,Gorda6,GordaYear 3
+CastawayYear 1,Castaway,42,APAL,6,206,253,Not Harvested,Year 1,1,Gorda,Gorda6,GordaYear 1
+CastawayYear 2,Castaway,42,APAL,6,206,253,Not Harvested,Year 2,1,Gorda,Gorda6,GordaYear 2
+CastawayYear 3,Castaway,42,APAL,6,206,253,Not Harvested,Year 3,1,Gorda,Gorda6,GordaYear 3
+CastawayYear 1,Castaway,42,APAL,6,246,475,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,42,APAL,6,246,475,2,Year 2,,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,42,APAL,6,246,475,2,Year 3,,Rocky,Rocky6,RockyYear 3
+CastawayYear 1,Castaway,42,APAL,6,247,475,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+CastawayYear 2,Castaway,42,APAL,6,247,475,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+CastawayYear 3,Castaway,42,APAL,6,247,475,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,19,258,2,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,19,258,2,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,19,258,2,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,21,258,2,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,21,258,2,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,21,258,2,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,37,268,2,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,37,268,2,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,37,268,2,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,38,268,2,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,38,268,2,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,38,268,2,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,67,530,2,Year 1,1,530,5306,530Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,67,530,2,Year 2,1,530,5306,530Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,67,530,2,Year 3,1,530,5306,530Year 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,72,530,2,Year 1,1,530,5306,530Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,72,530,2,Year 2,1,530,5306,530Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,72,530,2,Year 3,1,530,5306,530Year 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,91,272,2,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,91,272,2,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,91,272,2,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,43,ACER,6,92,272,2,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,43,ACER,6,92,272,2,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,43,ACER,6,92,272,2,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,118,256,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,118,256,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,118,256,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,123,256,2,Year 1,1,Rocky,Rocky6,RockyYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,123,256,2,Year 2,1,Rocky,Rocky6,RockyYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,123,256,2,Year 3,1,Rocky,Rocky6,RockyYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,159,260,2,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,159,260,2,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,159,260,2,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,160,260,2,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,160,260,2,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,160,260,2,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,211,401,2,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,211,401,2,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,211,401,2,Year 3,,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,214,401,2,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,214,401,2,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,214,401,2,Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,229,369,2,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,229,369,2,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,229,369,2,Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,43,APAL,6,235,369,2,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,43,APAL,6,235,369,2,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,43,APAL,6,235,369,2,Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,20,258,1,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,20,258,1,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,20,258,1,Year 3,0,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,26,258,1,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,26,258,1,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,26,258,1,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,35,268,1,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,35,268,1,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,35,268,1,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,36,268,Not Harvested,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,36,268,Not Harvested,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,36,268,Not Harvested,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,66,530,1,Year 1,1,530,5306,530Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,66,530,1,Year 2,1,530,5306,530Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,66,530,1,Year 3,1,530,5306,530Year 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,68,530,1,Year 1,1,530,5306,530Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,68,530,1,Year 2,1,530,5306,530Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,68,530,1,Year 3,1,530,5306,530Year 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,93,272,1,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,93,272,1,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,93,272,1,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,44,ACER,6,94,272,Not Harvested,Year 1,1,ACER1,ACER16,ACER1Year 1
+GlassbottomYear 2,Glassbottom,44,ACER,6,94,272,Not Harvested,Year 2,1,ACER1,ACER16,ACER1Year 2
+GlassbottomYear 3,Glassbottom,44,ACER,6,94,272,Not Harvested,Year 3,1,ACER1,ACER16,ACER1Year 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,119,256,"1,2",Year 1,1,Rocky,Rocky6,RockyYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,119,256,"1,2",Year 2,1,Rocky,Rocky6,RockyYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,119,256,"1,2",Year 3,1,Rocky,Rocky6,RockyYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,122,256,1,Year 1,1,Rocky,Rocky6,RockyYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,122,256,1,Year 2,1,Rocky,Rocky6,RockyYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,122,256,1,Year 3,1,Rocky,Rocky6,RockyYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,157,260,1,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,157,260,1,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,157,260,1,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,158,260,1,Year 1,1,Midway,Midway6,MidwayYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,158,260,1,Year 2,1,Midway,Midway6,MidwayYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,158,260,1,Year 3,1,Midway,Midway6,MidwayYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,216,401,"1,2",Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,216,401,"1,2",Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,216,401,"1,2",Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,224,401,1,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,224,401,1,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,224,401,1,Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,231,369,1,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,231,369,1,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,231,369,1,Year 3,1,unknown,unknown6,unknownYear 3
+GlassbottomYear 1,Glassbottom,44,APAL,6,236,369,1,Year 1,1,unknown,unknown6,unknownYear 1
+GlassbottomYear 2,Glassbottom,44,APAL,6,236,369,1,Year 2,1,unknown,unknown6,unknownYear 2
+GlassbottomYear 3,Glassbottom,44,APAL,6,236,369,1,Year 3,1,unknown,unknown6,unknownYear 3

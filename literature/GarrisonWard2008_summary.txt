@@ -1,0 +1,18 @@
+CITATION
+Garrison, V. & Ward, G. (2008). Storm-generated coral fragments – A viable source of transplants for reef rehabilitation. Biological Conservation, 141, 3089-3100.
+DOI: 10.1016/j.biocon.2008.09.020
+
+ABSTRACT
+Coral reefs throughout the world have been damaged by storms, diseases, coral predators, temperature anomalies, and human activities. During the past three decades, recovery has been limited and patchy. Although a damaged coral reef cannot be restored to its original condition, interest in reef restoration is increasing. In a pilot project in the Caribbean (US Virgin Islands), storm-produced fragments of Acropora palmata, A. cervicornis, and Porites porites were collected from donor reefs and transplanted to nearby degraded reefs. Sixty coral fragments were attached to dead-coral substrate (usually A. palmata skeletons), at similar depths from which they had been collected (1–3.5 m), using nylon cable ties. Seventy-five intact colonies were designated as controls. Study colonies were assessed at 6-month intervals for 2 years (1999–2001) and annually thereafter (through 2004). One-fourth of the 135 colonies and fragments monitored were alive at the conclusion of the 5-year study. Survival of control and transplanted A. cervicornis and P. porites was very low (median survival 2.4 and 1.8 years, respectively), with no significant differences between transplant and control colonies. Site and depth did not contribute significantly to A. palmata colony survival, but colony size and transplant/control status did. Probability of survival increased with colony size. Median survival for A. palmata was 1.3 years for transplant and 4.3 years for natural colonies when not controlled for size. A. palmata was the only viable candidate for reef rehabilitation. Storm swells were the primary cause of mortality.
+
+KEY FINDINGS FOR ACROPORA PULCHRA RESTORATION CONTEXT
+
+1. A. PALMATA IS THE ONLY VIABLE CARIBBEAN ACROPORID FOR TRANSPLANT: A. cervicornis and P. porites showed ~100% mortality over 5 years for both transplants and controls. Only A. palmata showed sufficient survival (25% overall at 5 years) to justify restoration investment. This suggests species-specific suitability for restoration must be empirically evaluated for A. pulchra.
+
+2. SIZE IS A STRONG PREDICTOR OF SURVIVAL: For every 0.1 unit increase in log-colony size, probability of mortality decreased by 15%. Larger fragments have more resources and greater ability to recover from damage. Size-dependent survival is a critical demographic parameter for restoration modeling.
+
+3. TRANSPLANT PENALTY EXISTS BUT IS TIME-LIMITED: Transplanted A. palmata had 2.3× higher mortality probability in year 1 vs. controls (median survival 1.3 vs. 4.3 years). However, this difference was partly confounded by size differences between groups. After year 2, survival trajectories converged.
+
+4. PHYSICAL DISLODGEMENT IS PRIMARY MORTALITY SOURCE: 58% of all mortality (83% for P. porites) was from storm swells displacing entire colonies. Cable tie attachments worked well—2/3 of A. palmata overgrew ties within 3.3 months; 50% completely overgrew by 7.3 months. Attachment security is critical in high-energy environments.
+
+5. COST-EFFECTIVE METHODS ARE VIABLE: Total cost ~$21/transplant ($5 excluding salary, <$1 for materials only). Time: 0.6 hours per fragment from collection to attachment. Cable ties are simple, cheap, and effective. This demonstrates feasibility for community-based/volunteer restoration of branching Acropora species.

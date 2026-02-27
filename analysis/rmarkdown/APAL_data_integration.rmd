@@ -1,0 +1,2491 @@
+---
+title: "APAL_data_integration"
+output: html_document
+date: "2025-10-31"
+---
+
+README: standardizing and integrating data on Acropora palmata
+
+https://latlongdata.com/lat-long-converter/
+
+```{r setup, include=FALSE}
+
+# command + option + i for new code chunk
+# command + shift + enter to run entire code chunk
+# command + enter to run single line of code
+
+library(tidyverse) # command + shift + m for %>%
+
+library(readxl)
+
+library(janitor)
+
+
+```
+
+
+# individual sizes
+
+## NOAA demographic survey
+
+```{r}
+# import the data
+
+noaa_dt0 <- read.csv("original_data/NOAA_Tagged_Colony_Data.csv") # tagged colony data
+noaa_dates0 <- read.csv("original_data/NOAA_Dem_Survey_Dates.csv") # survey dates
+noaa_coords0 <- read.csv("original_data/NOAA_Plot_Locations_Survey_Coverage.csv") # plot coordinates
+
+```
+
+
+data prep
+
+```{r}
+
+#View(noaa_dates)
+#View(noaa_coords)
+
+# add the survey date and coordinate information to the survey data
+noaa_coords <- noaa_coords0 %>% select(Region, Reef, Plot, Latitude, Longitude, Depth.m.)
+
+noaa_dt <- noaa_dt0 %>% left_join(noaa_dates0, by = c("Region", "Reef", "Plot", "Q")) %>% left_join(noaa_coords, by = c("Region", "Reef", "Plot"))
+
+#View(noaa_dt)
+
+# change the percent alive column from "x%" character to 0.x numeric
+noaa_dt$X..Live <- as.numeric(gsub("%", "", noaa_dt$X..Live))/100
+
+# format the date column
+noaa_dt$Date <- as.Date(noaa_dt$Date, format = '%m/%d/%Y')
+# add columns with survey year and month
+noaa_dt$year <- year(noaa_dt$Date)
+noaa_dt$month <- month(noaa_dt$Date)
+
+# calculate coral size
+noaa_dt$size_cm2 <- noaa_dt$L*noaa_dt$W#pi*noaa_dt$L/2*noaa_dt$W/2
+noaa_dt$size_live_cm2 <- noaa_dt$L*noaa_dt$W*noaa_dt$X..Live
+
+# add a column with time elapsed since last sampling point
+noaa_dt1.1 <- noaa_dt %>% filter(is.na(Date) == F) %>% group_by(Region, Reef, Plot, TagID) %>% mutate(Date_last = dplyr::lag(Date, n = 1L)) %>% ungroup() %>% mutate(sample_interval_d = Date - Date_last)
+
+noaa_dt1.1$sample_interval_d = as.numeric(noaa_dt1.1$sample_interval_d)
+
+# now add a column that's the cumulative number of days since the last sampling event
+noaa_dt1 <- noaa_dt1.1 %>% group_by(Region, Reef, Plot, TagID) %>% mutate(cum_days = cumsum(replace_na(sample_interval_d, 0))) %>% mutate(cum_yr = cum_days/365)
+
+# find the sampling dates closest to 1yr, 2 yr, etc.
+# if cum_yrs is between 0.5 and 1.5, take the closest value to 1
+# if cum_yrs is between 1.5 and 2, take the closest value to 2, etc.
+
+# first make a summary df with region, reef, plot, and TagID, then for each row subset those data and pick out the 1, 2, 3, etc. year intervals and also include a column with the actual time interval
+noaa_dt2 <- noaa_dt1 
+
+noaa_dt2$sample_yr <- rep(NA, nrow(noaa_dt2)) # holding vector for sample years (0, 1, 2, etc.)
+noaa_dt2$sample_yr[which(noaa_dt2$cum_yr==0)] <- 0 # if there have been 0 years since the first sampling point, the sample_yr is 0
+
+#View(noaa_dt2)
+
+# all combinations of regions, reefs, plots, and corals that were sampled:
+summ_df <- noaa_dt2 %>% group_by(Region, Reef, Plot, TagID) %>% summarize(n_obs = n()) 
+#View(summ_df)
+
+
+# max(noaa_dt2$cum_yr) # 19.66
+
+for(i in 1:nrow(summ_df)){ # for each unique coral
+  
+  # filter out the data for this coral
+  dt_sub <- noaa_dt2 %>% filter(Region == summ_df$Region[i], Reef == summ_df$Reef[i], Plot == summ_df$Plot[i], TagID == summ_df$TagID[i])
+  
+    for(j in 1:20){ # for each possible year this coral could have been sampled (max(noaa_dt2$cum_yr)= 19.66)
+      
+      yr_int <- c(j-0.5, j + 0.5) # range of cum_yr values to be considered for this sample year
+      
+      yr_set <- dt_sub$cum_yr[which(dt_sub$cum_yr >= yr_int[1] & dt_sub$cum_yr <= yr_int[2])] # cum_yr values that fall within this range
+      
+      if(length(yr_set)> 0){
+        
+        # get the year closest to j
+        yr_j <- yr_set[which(abs(j - yr_set) == min(abs(j - yr_set)))][1] # [1] in case two points were equally distant
+        
+        dt_sub$sample_yr[which(dt_sub$cum_yr == yr_j)] <- j # label this year as the jth sample year
+        
+      } 
+      
+    }
+    
+  #View(dt_sub)
+  
+  if(i == 1){
+    
+    noaa_dt3 <- dt_sub
+    
+  } else{
+    
+    noaa_dt3 <- rbind(noaa_dt3, dt_sub)
+  }
+
+  
+}
+
+
+
+#View(noaa_dt3)
+
+# check this worked
+#noaa_dt3 %>% filter(TagID == "NW2-t316") %>% select(Date, Date_last, sample_interval_d, Q, cum_days, cum_yr, sample_yr) %>% view()
+#noaa_dt3 %>% filter(TagID == "CF1-t023") %>% select(Date, Date_last, sample_interval_d, Q, cum_days, cum_yr, sample_yr) %>% view()
+
+#noaa_dt3 %>% filter(TagID == "GR1-t209") %>% select(Date, Date_last, sample_interval_d, Q, cum_days, cum_yr, sample_yr) %>% view()
+
+#noaa_dt3 %>% filter(TagID == "SI2-t960") %>% select(Date, Date_last, sample_interval_d, Q, cum_days, cum_yr, sample_yr) %>% view()
+
+# filter out only rows where is.na(sample_yr) = F, then calculate the difference between the cum_days to get the actual interval between each of these sample years
+noaa_dt4 <- noaa_dt3 %>% filter(is.na(sample_yr)==F) %>% select(-sample_interval_d) %>% group_by(Region, Reef, Plot, TagID) %>% arrange(sample_yr) %>% mutate(cum_yr_last = dplyr::lag(cum_yr, n = 1L), time_interval_yr = if_else(sample_yr == 0, 0, cum_yr - cum_yr_last)) %>% ungroup()
+
+# now calculate the change in size between each sample year
+# also add a column for whether the coral survived
+noaa_dt4 <- noaa_dt4 %>% group_by(Region, Reef, Plot, TagID) %>% mutate(Date_last = dplyr::lag(Date, n = 1L), size_cm2_last = dplyr::lag(size_cm2, n = 1L), size_live_cm2_last = dplyr::lag(size_live_cm2, n = 1L), Colony.Type_last = dplyr::lag(Colony.Type, n = 1L)) %>% ungroup() %>% mutate(survived = if_else(Colony.Type %in% c("D", "G"), 0, 1)) # from metadata: "D" = at least part of the colony's skeleton found with no tissue remaining; "G" = no skeleton or live tissue remaining where the colony was originally located
+
+#View(noaa_dt4)
+ 
+# check all this worked
+#noaa_dt4 %>% filter(TagID == "NW2-t316") %>% select(Date, Date_last, Q, cum_days, cum_yr, sample_yr, time_interval_yr, size_cm2, size_cm2_last, size_live_cm2, size_live_cm2_last, survived) %>% view()
+#noaa_dt %>% filter(TagID == "NW2-t316") %>% view()
+
+#noaa_dt4 %>% filter(TagID == "BB1-t237") %>% select(Date, Date_last, Q, cum_days, cum_yr, sample_yr, time_interval_yr, size_cm2, size_cm2_last, size_live_cm2, size_live_cm2_last, survived) %>% view()
+
+#noaa_dt4 %>% filter(TagID == "FR1-t923") %>% select(Date, Date_last, Q, cum_days, cum_yr, sample_yr, time_interval_yr, size_cm2, size_cm2_last, size_live_cm2, size_live_cm2_last,survived) %>% view()
+
+#noaa_dt4 %>% filter(TagID == "SM1-t289") %>% select(Date, Date_last, Q, cum_days, cum_yr, sample_yr, time_interval_yr, size_cm2, size_cm2_last, size_live_cm2, size_live_cm2_last,survived) %>% view()
+
+#noaa_dt %>% filter(TagID == "SM1-t289") %>% view()
+
+```
+
+
+data standardization
+
+
+```{r}
+
+# survival
+#colnames(noaa_dt4)
+
+# fill in years with disturbance (from Vardi 2011 Fig. 4-2)
+noaa_dist <- data.frame(
+  region = c("Florida Keys", "Florida Keys", "Curacao"),
+  year = c(2004, 2005, 2008) +1 # year of disturbance + 1 for survey year
+)
+
+noaa_surv <- noaa_dt4 %>% filter(sample_yr > 0) %>% mutate(fragment = if_else(Colony.Type %in% c("AF", "SF"), "Y", "N")) %>% select(Region, Reef, Plot, TagID, Latitude, Longitude, year, Depth.m., year, time_interval_yr, size_cm2_last, size_live_cm2_last, survived, fragment) %>% rename(region = Region, location = Reef, plot = Plot, coral_id = TagID, latitude = Latitude, longitude = Longitude, depth_m = Depth.m., survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last) %>% mutate(disturbance = if_else(region %in% noaa_dist$region & survey_yr %in% noaa_dist$year, "storm", NA))
+# from metadata info: AF = attached fragment, SF = stable fragment
+
+noaa_surv$study <- rep("NOAA_survey", nrow(noaa_surv))
+noaa_surv$treatment_1 <- rep(NA, nrow(noaa_surv))
+noaa_surv$treatment_2 <- rep(NA, nrow(noaa_surv))
+noaa_surv$data_type <- rep("field", nrow(noaa_surv))
+#noaa_surv$disturbance <- rep(NA, nrow(noaa_surv))
+noaa_surv$study_notes <- rep("dead = complete mortality or lost", nrow(noaa_surv))
+
+#View(noaa_surv)
+#colnames(noaa_surv)
+
+# reorder the columns for consistency across studies
+noaa_surv <- noaa_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+# growth
+noaa_growth <- noaa_dt4 %>% filter(sample_yr > 0)%>% mutate(fragment = if_else(Colony.Type %in% c("AF", "SF"), "Y", "N")) %>% mutate(growth_cm2_yr = (size_cm2-size_cm2_last)/time_interval_yr, growth_live_cm2_yr = (size_live_cm2-size_live_cm2_last)/time_interval_yr) %>% select(Region, Reef, Plot, TagID, Latitude, Longitude, year, Depth.m., year, time_interval_yr, size_cm2_last, size_live_cm2_last, growth_cm2_yr, growth_live_cm2_yr, fragment) %>% rename(region = Region, location = Reef, plot = Plot, coral_id = TagID, latitude = Latitude, longitude = Longitude, depth_m = Depth.m., survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last) %>% mutate(disturbance = if_else(region %in% noaa_dist$region & survey_yr %in% noaa_dist$year, "storm", NA))
+
+noaa_growth$study <- rep("NOAA_survey", nrow(noaa_surv))
+noaa_growth$treatment_1 <- rep(NA, nrow(noaa_surv))
+noaa_growth$treatment_2 <- rep(NA, nrow(noaa_surv))
+noaa_growth$data_type <- rep("field", nrow(noaa_surv))
+#noaa_growth$disturbance <- rep(NA, nrow(noaa_surv))
+noaa_growth$study_notes <- rep("dead = complete mortality or lost", nrow(noaa_surv))
+
+
+noaa_growth <- noaa_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+noaa_growth <- noaa_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases where size wasn't measured
+
+#View(noaa_growth)
+
+
+#unique(noaa_growth$region)
+
+```
+
+
+## Pausch et al. 2018 size
+
+```{r}
+# import the data
+# size experiment
+pausch2018S_dt0 <- read.csv("original_data/Pausch_2018_Data_Table_Size.csv")
+# genet/habitat experiment
+pausch2018G_dt0 <- read.csv("original_data/Pausch_2018_Data_Table_Genet.csv")
+
+#View(pausch2018S_dt0)
+#View(pausch2018G_dt0)
+
+```
+
+
+data prep
+
+```{r}
+# fix formatting of length and width columns
+pausch2018S_dt <- pausch2018S_dt0 %>% filter(Length != "N/A")
+pausch2018S_dt$Length <- as.numeric(pausch2018S_dt$Length)
+pausch2018S_dt$Width <- as.numeric(pausch2018S_dt$Width)
+pausch2018S_dt$Proprtion_Live <- as.numeric(pausch2018S_dt$Proprtion_Live)
+
+# format the dates
+pausch2018S_dt$Survey.Date <- as.Date(pausch2018S_dt$Survey.Date, format = '%m/%d/%Y')
+pausch2018S_dt$month <- month(pausch2018S_dt$Survey.Date)
+pausch2018S_dt$year <- year(pausch2018S_dt$Survey.Date)
+
+# calculate coral size
+pausch2018S_dt$size_cm2 <- pausch2018S_dt$Length*pausch2018S_dt$Width
+pausch2018S_dt$size_live_cm2 <- pausch2018S_dt$Length*pausch2018S_dt$Width*pausch2018S_dt$Proprtion_Live
+
+#unique(pausch2018S_dt$Survey.Date) # want 6/2014 and 6/2015 (the sampling dates that are one year apart)
+
+# check that the data match Pausch et al. 2018
+# length(unique(pausch2018S_dt$TagID))/2
+# mean(pausch2018S_dt$size_cm2[which(pausch2018S_dt$Treatment=="Lg" & pausch2018S_dt$year==2014 & pausch2018S_dt$month==6)])
+# mean(pausch2018S_dt$size_cm2[which(pausch2018S_dt$Treatment=="Sm" & pausch2018S_dt$year==2014 & pausch2018S_dt$month==6)])
+
+
+#pausch2018S_dt %>% filter(year < 2016) %>% group_by(TagID) %>% summarize(n = n()) %>% view()
+
+pausch2018S_dt2 <- pausch2018S_dt %>% filter(year %in% c(2014, 2015), month == 6)
+
+#View(pausch2018S_dt2)
+
+pausch2018S_dt2 <- pausch2018S_dt2 %>% group_by(Reef, TagID) %>% mutate(Date_last = dplyr::lag(Survey.Date, n = 1L), size_cm2_last = dplyr::lag(size_cm2, n = 1L), size_live_cm2_last = dplyr::lag(size_live_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_d = as.numeric(Survey.Date-Date_last), survived = if_else(Status %in% c("D", "G"), 0, 1)) %>% mutate(time_interval_yr = time_interval_d/365)
+
+#View(pausch2018S_dt2)
+
+# check output
+#pausch2018S_dt2 %>% filter(TagID == "PI1-206-L") %>% select(Survey.Date, Reef, Date_last, size_cm2_last, size_cm2, size_live_cm2_last, size_live_cm2, time_interval_d, Status) %>% view()
+#pausch2018S_dt2 %>% filter(TagID == "PI1-209-S") %>% select(Survey.Date, Reef, Date_last, size_cm2_last, size_cm2, time_interval_d, Status) %>% view()
+
+# survival rates seem too high compared to what Pausch et al. reported and some fragments weren't surveyed in both years -- guessing that fragments that died were removed from future sampling so need to account for that
+
+# 2014 = first sample year, 2015 = second sample year
+pausch2018S_dt3.0 <- pausch2018S_dt2 %>% mutate(sample_yr = if_else(year == 2014, 1, 2))
+pausch2018S_dt3.1 <- pausch2018S_dt3.0 %>% filter(sample_yr == 1) # data from first year
+pausch2018S_dt3.2 <- pausch2018S_dt3.0 %>% filter(sample_yr == 2) # data from second year
+
+#View(pausch2018S_dt3.2)
+
+#base::setdiff(c(1, 2), c(2, 3)) # in 1 not 2
+# base::setdiff(c(2, 3), c(1, 2))
+
+# fragments that were sampled in year 1 but not year 2
+missing_frags <- base::setdiff(pausch2018S_dt3.1$TagID, pausch2018S_dt3.2$TagID)
+
+#pausch2018S_dt %>% filter(TagID == unique(missing_frags)[20]) %>% view()
+
+# add rows for the fragments that weren't recorded in year 2
+pausch2018S_dt3.1.m <- pausch2018S_dt3.1 %>% filter(TagID %in% missing_frags) %>% mutate(sample_yr =2, survived = 0, Status = NA, Proprtion_Live = NA, Bleaching_Rank = NA, Length = NA, Width = NA, Height = NA, Snails = NA, size_cm2_last = size_cm2, size_live_cm2_last = size_live_cm2, Date_last = Survey.Date, size_cm2 = NA, size_live_cm2 = NA, Survey.Date = NA, year = 2015, time_interval_yr = mean(pausch2018S_dt3.2$time_interval_yr)) # since there's no data for the dead fragments, use the average time interval from the surviving fragments for the time interval for the dead fragments
+
+#pausch2018S_dt3 <- pausch2018S_dt3.2 %>% left_join(pausch2018S_dt3.1, by = c("Reef", "Latitude", "Longitude", "Full.Genet.Name", "TagID", "Treatment"))
+
+# add these to the second year data
+pausch2018S_dt3 <- rbind(pausch2018S_dt3.0, pausch2018S_dt3.1.m)
+
+#View(pausch2018S_dt3)
+
+# check this worked
+#pausch2018S_dt3 %>% filter(TagID == "PI1-209-S") %>% view()
+
+# compare proportion surviving to the data reported in Pausch et al. 2018
+rf_choice <- "Pickles Reef"# Pickles Reef, Molasses Reef, French Reef
+
+length(pausch2018S_dt3$survived[which(pausch2018S_dt3$Reef==rf_choice & pausch2018S_dt3$Treatment=="Sm"& pausch2018S_dt3$sample_yr==2 & pausch2018S_dt3$survived==1)])/length(pausch2018S_dt3$survived[which(pausch2018S_dt3$Reef==rf_choice & pausch2018S_dt3$Treatment=="Sm" & pausch2018S_dt3$sample_yr==2)])
+
+length(pausch2018S_dt3$survived[which(pausch2018S_dt3$Reef==rf_choice & pausch2018S_dt3$Treatment=="Lg"& pausch2018S_dt3$sample_yr==2 & pausch2018S_dt3$survived==1)])/length(pausch2018S_dt3$survived[which(pausch2018S_dt3$Reef==rf_choice & pausch2018S_dt3$Treatment=="Lg" & pausch2018S_dt3$sample_yr==2)])
+
+# all the survival values match Fig. S2 in Pausch et al. 2018 except the large treatment at French reef (figure shows survival of ~0.8, data say 0.7)
+
+#pausch2018S_dt3 %>% filter(Reef == "French Reef", Treatment == "Lg") %>% view()
+
+#View(pausch2018S_dt3)
+
+
+# repeat for the genet data
+# fix formatting of length and width columns
+pausch2018G_dt <- pausch2018G_dt0 %>% filter(Length != "N/A")
+pausch2018G_dt$Length <- as.numeric(pausch2018G_dt$Length)
+pausch2018G_dt$Width <- as.numeric(pausch2018G_dt$Width)
+pausch2018G_dt$Proprtion_Live <- as.numeric(pausch2018G_dt$Proportion_Live)
+
+# format the dates
+pausch2018G_dt$Survey.Date <- as.Date(pausch2018G_dt$Survey.Date, format = '%m/%d/%Y')
+pausch2018G_dt$month <- month(pausch2018G_dt$Survey.Date)
+pausch2018G_dt$year <- year(pausch2018G_dt$Survey.Date)
+
+# calculate coral size
+pausch2018G_dt$size_cm2 <- pausch2018G_dt$Length*pausch2018G_dt$Width
+pausch2018G_dt$size_live_cm2 <- pausch2018G_dt$Length*pausch2018G_dt$Width*pausch2018G_dt$Proprtion_Live
+
+#unique(pausch2018G_dt$Survey.Date) # want 5/2015 and 6/2016 (the sampling dates that are approximately 1 yr apart)
+
+pausch2018G_dt2 <- pausch2018G_dt %>% filter(year %in% c(2015, 2016), month %in% c(5, 6))
+
+#View(pausch2018G_dt2)
+
+pausch2018G_dt2 <- pausch2018G_dt2 %>% group_by(Reef, TagID) %>% mutate(Date_last = dplyr::lag(Survey.Date, n = 1L), size_cm2_last = dplyr::lag(size_cm2, n = 1L), size_live_cm2_last = dplyr::lag(size_live_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_d = as.numeric(Survey.Date-Date_last), survived = if_else(Status %in% c("D", "G"), 0, 1)) %>% mutate(time_interval_yr = time_interval_d/365)
+
+pausch2018G_dt3.0 <- pausch2018G_dt2 %>% mutate(sample_yr = if_else(year == 2015, 1, 2))
+pausch2018G_dt3.1 <- pausch2018G_dt3.0 %>% filter(sample_yr == 1) # data from first year
+pausch2018G_dt3.2 <- pausch2018G_dt3.0 %>% filter(sample_yr == 2) # data from second year
+
+missing_fragsG <- base::setdiff(pausch2018G_dt3.1$TagID, pausch2018G_dt3.2$TagID)
+#length(missing_fragsG)
+
+pausch2018G_dt3.1.m <- pausch2018G_dt3.1 %>% filter(TagID %in% missing_fragsG) %>% mutate(sample_yr =2, survived = 0, Status = NA, Proportion_Live = NA, Bleaching_Rank = NA, Length = NA, Width = NA, Height = NA, Snails = NA, size_cm2_last = size_cm2, size_live_cm2_last = size_live_cm2, Date_last = Survey.Date, size_cm2 = NA, size_live_cm2 = NA, Survey.Date = NA, year = 2016, time_interval_yr = mean(pausch2018S_dt3.2$time_interval_yr))
+
+# add these to the second year data
+pausch2018G_dt3 <- rbind(pausch2018G_dt3.0, pausch2018G_dt3.1.m)
+
+# compare to Pausch et al. 2018
+rf_choice <- "North Dry Rocks"# Pickles Reef, Molasses Reef, French Reef, etc.
+hb_choice <- "Nearshore"# Offshore, Nearshore
+g_choice <- "Conch Reef 2"# "Conch Reef 1", "Snapper Ledge", "Conch Reef 2", "Horseshoe Reef"
+
+length(pausch2018G_dt3$survived[which(pausch2018G_dt3$Reef==rf_choice & pausch2018G_dt3$Full_Genet_Name==g_choice& pausch2018G_dt3$Habitat==hb_choice& pausch2018G_dt3$sample_yr==2 & pausch2018G_dt3$survived==1)])/length(pausch2018G_dt3$survived[which(pausch2018G_dt3$Reef==rf_choice & pausch2018G_dt3$Full_Genet_Name==g_choice& pausch2018G_dt3$Habitat==hb_choice & pausch2018G_dt3$sample_yr==2)])
+
+
+
+```
+
+
+data standardization
+
+
+```{r}
+
+# survival
+#colnames(noaa_dt4)
+
+#View(pausch2018S_dt3)
+
+#View(pausch2018G_dt3)
+
+pausch2018S_surv <- pausch2018S_dt3 %>% filter(sample_yr == 2) %>% select(Reef, TagID, Latitude, Longitude, Full.Genet.Name, Treatment, year, Depth, time_interval_yr, size_cm2_last, size_live_cm2_last, survived) %>% rename(location = Reef, coral_id = TagID, treatment_1 = Treatment, treatment_2 = Full.Genet.Name, latitude = Latitude, longitude = Longitude, depth_m = Depth, survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last)
+
+pausch2018G_surv <- pausch2018G_dt3 %>% filter(sample_yr == 2) %>% select(Reef, TagID, Latitide, Longitude, Habitat, Full_Genet_Name, year, Depth, time_interval_yr, size_cm2_last, size_live_cm2_last, survived) %>% rename(location = Reef, coral_id = TagID, latitude = Latitide, longitude = Longitude, treatment_1 = Habitat, treatment_2 = Full_Genet_Name, depth_m = Depth, survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last)
+
+pausch2018_surv <- rbind(pausch2018S_surv, pausch2018G_surv)
+
+pausch2018_surv$study <- rep("pausch_et_al_2018", nrow(pausch2018_surv))
+pausch2018_surv$region <- rep("Florida Keys", nrow(pausch2018_surv))
+pausch2018_surv$plot <- rep(NA, nrow(pausch2018_surv))
+pausch2018_surv$data_type <- rep("field", nrow(pausch2018_surv))
+pausch2018_surv$fragment <- rep("Y", nrow(pausch2018_surv))
+pausch2018_surv$disturbance <- rep(NA, nrow(pausch2018_surv))
+pausch2018_surv$study_notes <- rep("dead = complete mortality or missing; treatment_2 = genet", nrow(pausch2018_surv))
+
+#View(pausch2018_surv)
+#colnames(noaa_surv)
+
+# reorder the columns for consistency across studies
+pausch2018_surv <- pausch2018_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+# growth
+pausch2018S_growth <- pausch2018S_dt3 %>% filter(sample_yr == 2) %>% mutate(growth_cm2_yr = (size_cm2-size_cm2_last)/time_interval_yr, growth_live_cm2_yr = (size_live_cm2-size_live_cm2_last)/time_interval_yr) %>% select(Reef, TagID, Latitude, Longitude, Full.Genet.Name, Treatment, year, Depth, time_interval_yr, size_cm2_last, size_live_cm2_last, growth_cm2_yr, growth_live_cm2_yr) %>% rename(location = Reef, coral_id = TagID, treatment_1 = Treatment, treatment_2 = Full.Genet.Name, latitude = Latitude, longitude = Longitude, depth_m = Depth, survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last)
+
+#View(pausch2018S_growth)
+
+pausch2018G_growth <- pausch2018G_dt3 %>% filter(sample_yr == 2) %>% mutate(growth_cm2_yr = (size_cm2-size_cm2_last)/time_interval_yr, growth_live_cm2_yr = (size_live_cm2-size_live_cm2_last)/time_interval_yr) %>% select(Reef, TagID, Latitide, Longitude, Habitat, Full_Genet_Name, year, Depth, time_interval_yr, size_cm2_last, size_live_cm2_last, growth_cm2_yr, growth_live_cm2_yr) %>% rename(location = Reef, coral_id = TagID, latitude = Latitide, longitude = Longitude, treatment_1 = Habitat, treatment_2 = Full_Genet_Name, depth_m = Depth, survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last)
+
+#View(pausch2018G_growth)
+
+pausch2018_growth <- rbind(pausch2018S_growth, pausch2018G_growth)
+
+pausch2018_growth$study <- rep("pausch_et_al_2018", nrow(pausch2018_growth))
+pausch2018_growth$region <- rep("Florida Keys", nrow(pausch2018_growth))
+pausch2018_growth$plot <- rep(NA, nrow(pausch2018_growth))
+pausch2018_growth$data_type <- rep("field", nrow(pausch2018_growth))
+pausch2018_growth$fragment <- rep("Y", nrow(pausch2018_growth))
+pausch2018_growth$disturbance <- rep(NA, nrow(pausch2018_growth))
+pausch2018_growth$study_notes <- rep("dead = complete mortality or missing; treatment_2 = genet", nrow(pausch2018_growth))
+
+pausch2018_growth <- pausch2018_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+pausch2018_growth <- pausch2018_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases where size wasn't measured (because the coral died)
+
+#View(pausch2018_growth)
+
+# fill in years with disturbance?
+
+```
+
+
+## USGS USVI experiment
+
+```{r}
+usgs_dt0 <- read.csv("original_data/USGS_Palmata_growth_VI_USA.csv")
+
+#View(usgs_dt0)
+```
+
+
+data prep
+
+```{r}
+
+# sizes estimated from the photographs:
+usgs_sizes <- data.frame(
+  Coral_ID = unique(usgs_dt0$Coral_ID), # coral id
+  length_cm_6_19 = rep(NA, length(unique(usgs_dt0$Coral_ID))), # colony length in 6/19
+  width_cm_6_19 = rep(NA, length(unique(usgs_dt0$Coral_ID))), # colony width in 6/19
+  prop_alive_6_19 = rep(NA, length(unique(usgs_dt0$Coral_ID))) # proportion of colony with live tisse in 6/19
+  
+)
+
+usgs_sizes[1,] <- c(111, 4, 6, 1) # ID, length, width, prop. alive
+usgs_sizes[2,] <- c(112, 5.5, 5, 1)
+usgs_sizes[3,] <- c(113, 4, 5, 1)
+usgs_sizes[4,] <- c(114, 5, 6, 1)
+usgs_sizes[5,] <- c(115, 6, 4, 1)
+usgs_sizes[6,] <- c(116, 4.75, 5.75, 1)
+usgs_sizes[7,] <- c(117, 6, 4, 1) 
+usgs_sizes[8,] <- c(119, 4.75, 4, 1)
+usgs_sizes[9,] <- c(120, 4.5, 3.25, 1)
+usgs_sizes[10,] <- c(163, 5.75, 4, 1) 
+usgs_sizes[11,] <- c(164, 6, 4, 1)
+usgs_sizes[12,] <- c(166, 5, 4.75, 1)
+usgs_sizes[13,] <- c(167, 6, 3, 0.5)
+usgs_sizes[14,] <- c(168, 5.75, 4, 1)
+usgs_sizes[15,] <- c(170, 4.25, 4, 1)
+usgs_sizes[16,] <- c(171, 4.5, 4, 1)
+usgs_sizes[17,] <- c(172, 5.75, 3.75, 1)
+usgs_sizes[18,] <- c(173, 5.5, 4.5, 1)
+usgs_sizes[19,] <- c(174, 5, 3.25, 1)
+usgs_sizes[20,] <- c(175, 5.25, 4, 1) 
+usgs_sizes[21,] <- c(177, 4, 4.5, 1)
+usgs_sizes[22,] <- c(178, 5, 3.5, 1)
+usgs_sizes[23,] <- c(180, 4.5, 3, 1)
+usgs_sizes[24,] <- c(181, 6.25, 4.25, 1)
+usgs_sizes[25,] <- c(182, 6.5, 6.5, 1)
+usgs_sizes[26,] <- c(183, 3.5, 4, 1)
+usgs_sizes[27,] <- c(184, 5.5, 4.5, 1)
+usgs_sizes[28,] <- c(185, 6.5, 4.25, 1)
+usgs_sizes[29,] <- c(186, 5.75, 4.5, 1)
+usgs_sizes[30,] <- c(187, 4.75, 4, 1)
+
+
+usgs_dt <- left_join(usgs_dt0, usgs_sizes, by = "Coral_ID")
+
+usgs_dt <- usgs_dt %>% mutate(live_cm2_6_19 = prop_alive_6_19*length_cm_6_19*width_cm_6_19, cm2_6_19 = length_cm_6_19*width_cm_6_19)
+
+
+# calculate sizes of living colonies at the start of the second year
+usgs_sizes2 <- data.frame(
+  Coral_ID = unique(usgs_dt$Coral_ID), 
+  cm2_6_20 = rep(NA, length(unique(usgs_dt$Coral_ID)))
+)
+
+
+#usgs_dt$Coral_ID[which(usgs_dt$Time_interval=="2" & usgs_dt$Condition != "dead")] # checked the images of these corals and all had 100% proportion live tissue so size_cm2 and size_live_cm2 are the same
+
+# for each colony, calculate size at the 6/20 survey (growth over interval 1 + growth over interval 2)
+
+for(i in 1:length(unique(usgs_dt$Coral_ID))){
+  
+  id.i <- usgs_sizes2$Coral_ID[i]
+  
+  usgs_sizes2$cm2_6_20[i] <- usgs_dt$live_cm2_6_19[which(usgs_dt$Coral_ID == id.i)][1] + usgs_dt$Calcif_del_SA_cm2_hy[which(usgs_dt$Coral_ID == id.i & usgs_dt$Time_interval==1)] + usgs_dt$Calcif_del_SA_cm2_hy[which(usgs_dt$Coral_ID == id.i & usgs_dt$Time_interval==2)] # SA_cm2_hy = change in planar surface area over half a year
+  
+}
+
+usgs_dt2 <- left_join(usgs_dt, usgs_sizes2, by = "Coral_ID")
+
+# check this worked
+#usgs_dt2 %>% filter(Coral_ID == 166) %>% view()
+#usgs_dt2 %>% filter(Coral_ID == 111) %>% view()
+
+# split up into the 2 survey years
+# initial sizes for first year pair with growth rates/survival from time intervals 1 and 2
+# initial sizes for second year pair with growth rates/survival from time intervals 3 and 4
+
+usgs_dt2_yr1 <- usgs_dt2 %>% filter(Time_interval %in% c("1", "2")) %>% rename(size_live_cm2 = live_cm2_6_19, size_cm2 = cm2_6_19) %>% mutate(survived = if_else(Condition == "dead", 0, 1)) %>% group_by(Coral_ID) %>% mutate(growth_cm2_yr = mean(Calcif_del_SA_cm2_hy)) %>% ungroup() %>% filter(Time_interval == "2") %>% mutate(time_interval_yr = 1, survey_yr = 2020) %>% select(Site_ID, Latitude, Longitude, Coral_ID, Genet_ID, Time_interval, Condition, size_live_cm2, size_cm2, survived, growth_cm2_yr, time_interval_yr, survey_yr) # June 2019 to June 2020 (don't have exact days so assume 1)
+
+# alive at end of interval 2:
+alive2 <- usgs_dt$Coral_ID[which(usgs_dt$Time_interval=="2" & usgs_dt$Condition != "dead")]
+
+#View(usgs_dt2_yr1)
+
+usgs_dt2_yr2 <- usgs_dt2 %>% filter(Coral_ID %in% alive2) %>% filter(Time_interval %in% c("3", "4")) %>% rename(size_cm2 = cm2_6_20) %>% mutate(size_live_cm2 = size_cm2, survived = if_else(Condition == "dead", 0, 1)) %>% group_by(Coral_ID) %>% mutate(growth_cm2_yr = mean(Calcif_del_SA_cm2_hy)) %>% ungroup() %>% filter(Time_interval == "4") %>% mutate(time_interval_yr = 13/12, survey_yr = 2021)%>% select(Site_ID, Latitude, Longitude, Coral_ID, Genet_ID, Time_interval, Condition, size_live_cm2, size_cm2, survived, growth_cm2_yr, time_interval_yr, survey_yr)  # June 2020 to August 2021 (don't have exact days so assume 13 months)
+
+#View(usgs_dt2_yr2)
+
+# join back together
+usgs_dt3 <- rbind(usgs_dt2_yr1, usgs_dt2_yr2)
+
+
+# 
+# # repeat for corals alive at start of 3rd interval
+# usgs_sizes2 <- data.frame(
+#   Coral_ID = unique(usgs_dt0$Coral_ID), # coral id
+#   length_cm_6_20 = rep(NA, length(unique(usgs_dt0$Coral_ID))), # colony length in 6/19
+#   width_cm_6_20 = rep(NA, length(unique(usgs_dt0$Coral_ID))), # colony width in 6/19
+#   prop_alive_6_20 = rep(NA, length(unique(usgs_dt0$Coral_ID))) # proportion of colony with live tisse in 6/19
+#   
+# )
+# 
+# usgs_sizes2[1,] <- c(180, 12, 10, 1) # ID, length, width, prop. alive
+# usgs_sizes2[2,] <- c(166, 18, 16, 1)
+# usgs_sizes2[3,] <- c(184, 17.5, 13, 1)
+# usgs_sizes2[4,] <- c(164, 15, 13, 1)
+# usgs_sizes2[5,] <- c(187, NA, NA, NA)
+# usgs_sizes2[6,] <- c(174, 13, 8, 1)
+# usgs_sizes2[7,] <- c(171, NA, NA, NA) 
+# usgs_sizes2[8,] <- c(182, NA, NA, NA)
+# usgs_sizes2[9,] <- c(178, NA, NA, NA)
+# usgs_sizes2[10,] <- c(175, NA, NA, NA) 
+# usgs_sizes2[11,] <- c(183, NA, NA, NA)
+# usgs_sizes2[12,] <- c(117, NA, NA, NA)
+# usgs_sizes2[13,] <- c(163, NA, NA, NA)
+# usgs_sizes2[14,] <- c(186, NA, NA, NA)
+# usgs_sizes2[15,] <- c(116, NA, NA, NA)
+# usgs_sizes2[16,] <- c(170, NA, NA, NA)
+# 
+# # make sure all corals alive at end of interval 2 were included
+# #base::setdiff(usgs_dt$Coral_ID[which(usgs_dt$Time_interval=="2" & usgs_dt$Condition != "dead")], usgs_sizes2$Coral_ID)
+
+
+```
+
+
+data standardization
+
+```{r}
+
+#View(usgs_dt3)
+#colnames(usgs_dt3)
+
+# survival
+usgs_surv <- usgs_dt3 %>% select(-Time_interval, -Condition, -growth_cm2_yr) %>% rename(location = Site_ID, latitude = Latitude, longitude = Longitude, coral_id = Coral_ID, treatment_1 = Genet_ID)
+
+usgs_surv$study <- rep("USGS_USVI_exp", nrow(usgs_surv))
+usgs_surv$region <- rep("USVI", nrow(usgs_surv))
+usgs_surv$plot <- rep(NA, nrow(usgs_surv))
+usgs_surv$treatment_2 <- rep(NA, nrow(usgs_surv))
+usgs_surv$depth_m <- rep(NA, nrow(usgs_surv))
+usgs_surv$data_type <- rep("field", nrow(usgs_surv))
+usgs_surv$fragment <- rep("Y", nrow(usgs_surv))
+usgs_surv$disturbance <- rep(NA, nrow(usgs_surv))
+usgs_surv$study_notes <- rep("initial sizes from photos; time_interval_yr approximate; treatment_1 = genet", nrow(usgs_surv))
+
+# reorder the columns for consistency across studies
+usgs_surv <- usgs_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(usgs_surv)
+
+# growth
+usgs_growth <- usgs_dt3 %>% select(-Time_interval, -Condition, -survived) %>% rename(location = Site_ID, latitude = Latitude, longitude = Longitude, coral_id = Coral_ID, treatment_1 = Genet_ID) %>% mutate(growth_live_cm2_yr = growth_cm2_yr) # from the photos, it looks like all fragments except one had 100% live cover (and the one that didn't died in first time interval so wasn't included in growth calculations) so can assume growth_live is the same as growth
+
+usgs_growth$study <- rep("USGS_USVI_exp", nrow(usgs_growth))
+usgs_growth$region <- rep("USVI", nrow(usgs_growth))
+usgs_growth$plot <- rep(NA, nrow(usgs_growth))
+usgs_growth$treatment_2 <- rep(NA, nrow(usgs_growth))
+usgs_growth$depth_m <- rep(NA, nrow(usgs_growth))
+usgs_growth$data_type <- rep("field", nrow(usgs_growth))
+usgs_growth$fragment <- rep("Y", nrow(usgs_growth))
+usgs_growth$disturbance <- rep(NA, nrow(usgs_growth))
+usgs_growth$study_notes <- rep("initial sizes from photos; time_interval_yr approximate; treatment_1 = genet", nrow(usgs_growth))
+
+# reorder the columns for consistency across studies
+usgs_growth <- usgs_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+usgs_growth <- usgs_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases where growth wasn't measured (because the coral died)
+
+#View(usgs_growth)
+
+```
+
+
+## Kuffner et al. 2020
+
+
+```{r}
+# import the data
+# growth and survival data
+kuffner_dt0 <- read.csv("original_data/Kuffner_et_al_2020_Palmata_growth_FL_USA.csv")
+kuffner_dt0 <- kuffner_dt0[,c(1:8)] # remove extra empty columns
+
+# initial sizes (estimated from photos)
+kuffner_sz0 <- read.csv("original_data/Kuffner_et_al_2020_sizes.csv")
+kuffner_sz0 <- kuffner_sz0[, c(1:5)] # remove extra empty columns
+
+```
+
+
+data prep
+
+```{r}
+#View(kuffner_dt0)
+#View(kuffner_sz)
+
+# initial sizes
+kuffner_sz <- kuffner_sz0 %>% mutate(size_cm2 = Length_cm*Width_cm, size_live_cm2 = Length_cm*Width_cm*Prop_alive) %>% select(Coral_ID, Site_ID, size_cm2, size_live_cm2)
+
+kuffner_dt <- kuffner_dt0 %>% left_join(kuffner_sz, by = c("Coral_ID", "Site_ID")) %>% filter(Time_interval %in% c(1, 2)) %>% group_by(Coral_ID) %>% mutate(growth_cm2_yr = mean(del_SA_mm2_d*0.01*365)) %>% ungroup() %>% filter(Time_interval == 2) %>% mutate(survived = if_else(Condition == "live", 1, 0)) %>% select(-Calcif_mg_cm2_d, -del_SA_mm2_d, -del_height_mm_d)
+# 0.01 cm2 per mm2, 365 days per yr
+
+#View(kuffner_dt)
+#kuffner_dt$Coral_ID[which(kuffner_dt$survived==0)] # from the photos, all look like they have 100% mortality 
+
+
+#colnames(kuffner_dt)
+```
+
+
+data standardization
+
+```{r}
+#unique(kuffner_dt$Site_ID) # "PLW" "PLS" "SMK" "CRK" "FWY"
+
+# coordinates available here: https://coastal.er.usgs.gov/data-release/doi-P9KZEGXY/
+kuffner_coords <- data.frame(
+  Site_ID = c("PLW", "PLS", "SMK", "CRK", "FWY"),
+  latitude = c(24.70280, 24.69355, 24.62687, 24.90908, 25.59047),
+  longitude = c(-82.79883, -82.77280, -81.10893, -80.52665, -80.09560)
+)
+
+# survival
+kuffner_surv <- kuffner_dt %>% select(-Time_interval, -Condition, -growth_cm2_yr) %>% left_join(kuffner_coords, by = "Site_ID") %>% rename(location = Site_ID, coral_id = Coral_ID, treatment_1 = Genet_ID) %>% mutate(survey_yr = 2019, time_interval_yr = 1) %>% filter(is.na(size_cm2) == F) # remove the one observation with no size info
+
+#View(kuffner_surv)
+
+kuffner_surv$study <- rep("kuffner_et_al_2020", nrow(kuffner_surv))
+kuffner_surv$region <- ifelse(kuffner_surv$location %in% c("PLW", "PLS"), "Dry Tortugas", "Florida Keys")
+kuffner_surv$plot <- rep(NA, nrow(kuffner_surv))
+kuffner_surv$treatment_2 <- rep(NA, nrow(kuffner_surv))
+kuffner_surv$depth_m <- rep(NA, nrow(kuffner_surv))
+kuffner_surv$data_type <- rep("field", nrow(kuffner_surv))
+kuffner_surv$fragment <- rep("Y", nrow(kuffner_surv))
+kuffner_surv$disturbance <- rep(NA, nrow(kuffner_surv))
+kuffner_surv$study_notes <- rep("initial sizes from photos; time_interval_yr approximate; treatment_1 = genet", nrow(kuffner_surv))
+
+# reorder the columns for consistency across studies
+kuffner_surv <- kuffner_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(kuffner_surv)
+
+# growth
+kuffner_growth <- kuffner_dt %>% select(-Time_interval, -Condition, -survived) %>% left_join(kuffner_coords, by = "Site_ID") %>% rename(location = Site_ID, coral_id = Coral_ID, treatment_1 = Genet_ID)%>% mutate(survey_yr = 2019, time_interval_yr = 1) 
+
+kuffner_growth$growth_live_cm2_yr <- rep(NA, nrow(kuffner_growth)) # growth data are planar footprint and not all colonies had 100% live cover so can't infer live growth?
+
+kuffner_growth$study <- rep("kuffner_et_al_2020", nrow(kuffner_growth))
+kuffner_growth$region <- ifelse(kuffner_growth$location %in% c("PLW", "PLS"), "Dry Tortugas", "Florida Keys")
+kuffner_growth$plot <- rep(NA, nrow(kuffner_growth))
+kuffner_growth$treatment_2 <- rep(NA, nrow(kuffner_growth))
+kuffner_growth$depth_m <- rep(NA, nrow(kuffner_growth))
+kuffner_growth$data_type <- rep("field", nrow(kuffner_growth))
+kuffner_growth$fragment <- rep("Y", nrow(kuffner_growth))
+kuffner_growth$disturbance <- rep(NA, nrow(kuffner_growth))
+kuffner_growth$study_notes <- rep("initial sizes from photos; time_interval_yr approximate; treatment_1 = genet", nrow(kuffner_growth))
+
+# reorder the columns for consistency across studies
+kuffner_growth <- kuffner_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+kuffner_growth <- kuffner_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases where growth wasn't measured (because the coral died)
+
+#View(kuffner_growth)
+```
+
+
+
+## Mendoza Quiroz et al. 2023
+
+```{r}
+# import the data
+
+MQ_in0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 4) # Growth in-situ (in marine nursery)
+#View(MQ_in0)
+colnames(MQ_in0) <- MQ_in0[8,] # fix column names
+MQ_in0 <- MQ_in0[9:length(MQ_in0$Cohort), ] # remove header rows from .xlsx file
+
+MQ_cuev0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 5) # Growth on Cuevones reef
+colnames(MQ_cuev0) <- MQ_cuev0[9,]
+MQ_cuev0 <- MQ_cuev0[10:length(MQ_cuev0$Cohort), ]
+
+#View(MQ_cuev0)
+# for one year interval, want 8-Apr-15 to 7-Apr-16 = 42102 to 42467
+#as.numeric(as.Date("04/07/2016", format = '%m/%d/%Y')) - as.numeric(as.Date("04/08/2015", format = '%m/%d/%Y')) 
+#42467 - 42102
+
+MQ_pic0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 7) # Survival & growth on Picudas reef
+colnames(MQ_pic0) <- MQ_pic0[9,]
+MQ_pic0 <- MQ_pic0[10:length(MQ_pic0$Cohort), ]
+
+#View(MQ_pic0)
+# for ~one year interval, want Sep 2020 to Sep 2021
+```
+
+
+data prep
+
+```{r}
+
+
+# Picudas reef
+# for ~one year interval, want Sep 2020 to Sep 2021
+
+MQ_pic <- MQ_pic0 %>% clean_names()
+MQ_pic$length_cm <- as.numeric(MQ_pic$length_cm)
+MQ_pic$width_cm <- as.numeric(MQ_pic$width_cm)
+
+#max(as.numeric(MQ_pic$number_colonies))
+# length(which(is.na(MQ_pic$length_cm)==T))
+# length(which(MQ_pic$monitoring_date=="September 2020"))
+# length(which(MQ_pic$monitoring_date=="September 2021")) # 100% survival
+
+
+MQ_pic1 <- MQ_pic %>% filter(monitoring_date %in% c("September 2020", "September 2021")) %>% mutate(size_cm2 = length_cm*width_cm) %>% group_by(substrate_id) %>% mutate(size_cm2_last = dplyr::lag(size_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_yr = 1, growth_cm2_yr = (size_cm2 - size_cm2_last)/time_interval_yr, survived = 1, survey_yr = 2021) %>% filter(monitoring_date == "September 2021") %>% select(-size_cm2) %>% rename(size_cm2 = size_cm2_last)
+
+#View(MQ_pic1)
+#MQ_pic %>% filter(monitoring_date %in% c("September 2020", "September 2021")) %>% filter(substrate_id == "14") %>% view()
+#MQ_pic %>% filter(monitoring_date %in% c("September 2020", "September 2021")) %>% filter(substrate_id == "36/441") %>% view()
+
+# only the data for the Picudas reef colonies has length and width measurements, so use these to calculate and average width:length ratio to use for converting max diameter (the only size measurement for Cuevones reef and the nursery) to area
+
+MQ_pic_WL <- MQ_pic %>% group_by(monitoring_date, substrate_id) %>%  mutate(length = max(length_cm, width_cm), width = min(length_cm, width_cm)) %>% ungroup() %>% mutate(ratio = width/length) %>% select(ratio, length, width) 
+
+# plot(x = MQ_pic_WL$length, y = MQ_pic_WL$ratio, pch = 16, ylim = c(0, 1), las = 1) # doesn't seem to vary much with length
+# abline(h = mean(MQ_pic_WL$ratio))
+
+MQ_WL_mean <- mean(MQ_pic_WL$ratio)
+
+# Cuevones reef
+MQ_cuev <- MQ_cuev0 %>% clean_names()
+MQ_cuev$monitoring_date <- as.numeric(MQ_cuev$monitoring_date)
+MQ_cuev$dmax_cm <- as.numeric(MQ_cuev$dmax_cm)
+# for one year interval, want 8-Apr-15 to 7-Apr-16 = 42102 to 42467
+#as.numeric(as.Date("04/07/2016", format = '%m/%d/%Y')) - as.numeric(as.Date("04/08/2015", format = '%m/%d/%Y')) 
+# 42467 - 42102
+#View(MQ_cuev)
+
+# length(which(is.na(MQ_cuev$dmax_cm)==T))
+# length(which(MQ_cuev$monitoring_date==42102))
+# length(which(MQ_cuev$monitoring_date==42467)) # 100% survival
+
+
+MQ_cuev1 <- MQ_cuev %>% filter(monitoring_date %in% c(42102,42467)) %>% mutate(size_cm2 = dmax_cm*MQ_WL_mean*dmax_cm) %>% group_by(id_colony) %>% mutate(size_cm2_last = dplyr::lag(size_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_yr = (42467-42102)/365, growth_cm2_yr = (size_cm2 - size_cm2_last)/time_interval_yr, survived = 1, survey_yr = 2016) %>% filter(monitoring_date == 42467) %>% select(-size_cm2) %>% rename(size_cm2 = size_cm2_last)
+
+#View(MQ_cuev1)
+# check this worked
+#MQ_cuev %>% filter(monitoring_date %in% c(42102,42467)) %>% filter(id_colony == "AP1126") %>% view()
+#MQ_cuev %>% filter(monitoring_date %in% c(42102,42467)) %>% filter(id_colony == "AP1265") %>% view()
+
+
+# in situ nursery
+MQ_in <- MQ_in0 %>% clean_names()
+MQ_in$monitoring_date <- as.numeric(MQ_in$monitoring_date)
+MQ_in$dmax_cm <- as.numeric(MQ_in$dmax_cm)
+
+#View(MQ_in) # monitoring dates got turned into days but time intervals are accurate
+#as.numeric(as.Date("03/28/2016", format = '%m/%d/%Y')) - as.numeric(as.Date("02/27/2015", format = '%m/%d/%Y')) 
+# 42457 - 42062
+#as.Date(42457)
+#as.numeric(as.Date("01/01/1970", format = '%m/%d/%Y'))
+
+#View(MQ_in)
+# length(which(is.na(MQ_in$dmax_cm)==T))
+# length(which(MQ_in$monitoring_date==42062))
+# length(which(MQ_in$monitoring_date==42457)) # 100% survival
+
+MQ_in1 <- MQ_in %>% filter(monitoring_date %in% c(42062,42457)) %>% mutate(size_cm2 = dmax_cm*MQ_WL_mean*dmax_cm) %>% group_by(id_colony) %>% mutate(size_cm2_last = dplyr::lag(size_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_yr = (42457-42062)/365, growth_cm2_yr = (size_cm2 - size_cm2_last)/time_interval_yr, survived = 1, survey_yr = 2016) %>% filter(monitoring_date == 42457) %>% select(-size_cm2) %>% rename(size_cm2 = size_cm2_last)
+
+#View(MQ_in1)
+
+# check this worked
+#MQ_in %>% filter(monitoring_date %in% c(42062,42457)) %>% filter(id_colony == "AP1210") %>% view()
+#MQ_in %>% filter(monitoring_date %in% c(42062,42457)) %>% filter(id_colony == "AP1236") %>% view()
+
+
+
+
+```
+
+
+
+data standardization
+
+```{r}
+# coordinates and depths from the main text 
+MQ_coords <- data.frame(
+  location = c("Puerto Morelos Nursery", "Cuevones Reef", "Picudas Reef"),
+  latitude = c(20.88, 21.15, 20.88),
+  longitude = c(-86.85, -86.74, -86.85), # in the paper they said the coordinates for Puerto Morelos/Picudas reef were -87.85W, but that's on land. From google maps it looks like it's actually -86.85W
+  depth_m = c(5, 10, 4) # nursery depth = 5m, Cuevones depth = 10m, Picudas depth = 3-5m
+)
+
+
+# survival
+MQ_in_surv <- MQ_in1 %>% select(-cohort, -location, -monitoring_date, -dmax_cm, -growth_cm2_yr) %>%  rename(coral_id = id_colony) %>% mutate(location = "Puerto Morelos Nursery") %>% left_join(MQ_coords, by = "location")
+
+MQ_in_surv$size_live_cm2 <- rep(NA, nrow(MQ_in_surv))
+
+MQ_in_surv$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_in_surv))
+MQ_in_surv$region <- rep("Mexican Caribbean", nrow(MQ_in_surv))
+MQ_in_surv$plot <- rep(NA, nrow(MQ_in_surv))
+MQ_in_surv$treatment_1 <- rep(NA, nrow(MQ_in_surv))
+MQ_in_surv$treatment_2 <- rep(NA, nrow(MQ_in_surv))
+MQ_in_surv$data_type <- rep("nursery", nrow(MQ_in_surv))
+MQ_in_surv$fragment <- rep("N", nrow(MQ_in_surv))
+MQ_in_surv$disturbance <- rep(NA, nrow(MQ_in_surv))
+MQ_in_surv$study_notes <- rep("size estimated from diameter", nrow(MQ_in_surv))
+
+# reorder the columns for consistency across studies
+MQ_in_surv <- MQ_in_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_cuev_surv <- MQ_cuev1 %>% select(-location, -dmax_cm, -growth_cm2_yr) %>%  rename(coral_id = id_colony, treatment_1 = cohort, treatment_2 = initial_nursery) %>% mutate(location = "Cuevones Reef") %>% left_join(MQ_coords, by = "location")
+
+MQ_cuev_surv$size_live_cm2 <- rep(NA, nrow(MQ_cuev_surv))
+
+MQ_cuev_surv$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_cuev_surv))
+MQ_cuev_surv$region <- rep("Mexican Caribbean", nrow(MQ_cuev_surv))
+MQ_cuev_surv$plot <- rep(NA, nrow(MQ_cuev_surv))
+MQ_cuev_surv$data_type <- rep("field", nrow(MQ_cuev_surv))
+MQ_cuev_surv$fragment <- rep("N", nrow(MQ_cuev_surv))
+MQ_cuev_surv$disturbance <- rep(NA, nrow(MQ_cuev_surv))
+MQ_cuev_surv$study_notes <- rep("size estimated from diameter; treatment_1 = cohort; treatment_2 = initial nursery", nrow(MQ_cuev_surv))
+
+MQ_cuev_surv <- MQ_cuev_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_pic_surv <- MQ_pic1 %>% select(substrate_id, cohort, size_cm2, survived, time_interval_yr, survey_yr) %>%  rename(coral_id = substrate_id, treatment_1 = cohort) %>% mutate(location = "Picudas Reef") %>% left_join(MQ_coords, by = "location")
+
+MQ_pic_surv$size_live_cm2 <- rep(NA, nrow(MQ_pic_surv))
+
+MQ_pic_surv$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_pic_surv))
+MQ_pic_surv$region <- rep("Mexican Caribbean", nrow(MQ_pic_surv))
+MQ_pic_surv$plot <- rep(NA, nrow(MQ_pic_surv))
+MQ_pic_surv$treatment_2 <- rep(NA, nrow(MQ_pic_surv))
+MQ_pic_surv$data_type <- rep("field", nrow(MQ_pic_surv))
+MQ_pic_surv$fragment <- rep("N", nrow(MQ_pic_surv))
+MQ_pic_surv$disturbance <- rep(NA, nrow(MQ_pic_surv))
+MQ_pic_surv$study_notes <- rep("treatment_1 = cohort; time_interval_yr is approximate", nrow(MQ_pic_surv))
+
+
+MQ_pic_surv <- MQ_pic_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_surv <- rbind(MQ_in_surv, MQ_cuev_surv, MQ_pic_surv)
+#View(MQ_surv)
+
+# growth
+
+MQ_in_growth <- MQ_in1 %>% select(-cohort, -location, -monitoring_date, -dmax_cm, -survived) %>%  rename(coral_id = id_colony) %>% mutate(location = "Puerto Morelos Nursery") %>% left_join(MQ_coords, by = "location")
+
+MQ_in_growth$size_live_cm2 <- rep(NA, nrow(MQ_in_growth))
+MQ_in_growth$growth_live_cm2_yr <- rep(NA, nrow(MQ_in_growth))
+
+MQ_in_growth$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_in_growth))
+MQ_in_growth$region <- rep("Mexican Caribbean", nrow(MQ_in_growth))
+MQ_in_growth$plot <- rep(NA, nrow(MQ_in_growth))
+MQ_in_growth$treatment_1 <- rep(NA, nrow(MQ_in_growth))
+MQ_in_growth$treatment_2 <- rep(NA, nrow(MQ_in_growth))
+MQ_in_growth$data_type <- rep("nursery", nrow(MQ_in_growth))
+MQ_in_growth$fragment <- rep("N", nrow(MQ_in_growth))
+MQ_in_growth$disturbance <- rep(NA, nrow(MQ_in_growth))
+MQ_in_growth$study_notes <- rep("size estimated from diameter", nrow(MQ_in_growth))
+
+# reorder the columns for consistency across studies
+MQ_in_growth <- MQ_in_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_cuev_growth <- MQ_cuev1 %>% select(-location, -dmax_cm, -survived) %>%  rename(coral_id = id_colony, treatment_1 = cohort, treatment_2 = initial_nursery) %>% mutate(location = "Cuevones Reef") %>% left_join(MQ_coords, by = "location")
+
+MQ_cuev_growth$size_live_cm2 <- rep(NA, nrow(MQ_cuev_growth))
+MQ_cuev_growth$growth_live_cm2_yr <- rep(NA, nrow(MQ_cuev_growth))
+
+MQ_cuev_growth$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_cuev_growth))
+MQ_cuev_growth$region <- rep("Mexican Caribbean", nrow(MQ_cuev_growth))
+MQ_cuev_growth$plot <- rep(NA, nrow(MQ_cuev_growth))
+MQ_cuev_growth$data_type <- rep("field", nrow(MQ_cuev_growth))
+MQ_cuev_growth$fragment <- rep("N", nrow(MQ_cuev_growth))
+MQ_cuev_growth$disturbance <- rep(NA, nrow(MQ_cuev_growth))
+MQ_cuev_growth$study_notes <- rep("size estimated from diameter; treatment_1 = cohort; treatment_2 = initial nursery", nrow(MQ_cuev_growth))
+
+MQ_cuev_growth <- MQ_cuev_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_pic_growth <- MQ_pic1 %>% select(substrate_id, cohort, size_cm2, growth_cm2_yr, time_interval_yr, survey_yr) %>%  rename(coral_id = substrate_id, treatment_1 = cohort) %>% mutate(location = "Picudas Reef") %>% left_join(MQ_coords, by = "location")
+
+MQ_pic_growth$size_live_cm2 <- rep(NA, nrow(MQ_pic_growth))
+MQ_pic_growth$growth_live_cm2_yr <- rep(NA, nrow(MQ_pic_growth))
+
+MQ_pic_growth$study <- rep("mendoza_quiroz_et_al_2023", nrow(MQ_pic_growth))
+MQ_pic_growth$region <- rep("Mexican Caribbean", nrow(MQ_pic_growth))
+MQ_pic_growth$plot <- rep(NA, nrow(MQ_pic_growth))
+MQ_pic_growth$treatment_2 <- rep(NA, nrow(MQ_pic_growth))
+MQ_pic_growth$data_type <- rep("field", nrow(MQ_pic_growth))
+MQ_pic_growth$fragment <- rep("N", nrow(MQ_pic_growth))
+MQ_pic_growth$disturbance <- rep(NA, nrow(MQ_pic_growth))
+MQ_pic_growth$study_notes <- rep("treatment_1 = cohort; time_interval_yr is approximate", nrow(MQ_pic_growth))
+
+
+MQ_pic_growth <- MQ_pic_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_growth <- rbind(MQ_in_growth, MQ_cuev_growth, MQ_pic_growth)
+
+#View(MQ_growth)
+
+
+
+```
+
+
+## Fundemar fragments
+
+```{r}
+fundF_dt0 <- read_excel("original_data/Fundemar_Crecimiento_Fragmentos_APAL.xlsx", sheet = 1) # crecimiento = growth
+
+#View(fundF_dt0)
+
+```
+
+
+data prep
+
+```{r}
+
+fundF_dt <- fundF_dt0 %>% clean_names()
+fundF_dt$size_live_cm2 <- as.numeric(fundF_dt$live_area_cm2)
+fundF_dt$size_cm2 <- as.numeric(fundF_dt$toral_area)
+fundF_dt$percent_mortality <- as.numeric(fundF_dt$percent_mortality)
+fundF_dt$date <- as.Date(paste(fundF_dt$month, fundF_dt$day, fundF_dt$year, sep = "/"), format = '%m/%d/%Y')
+fundF_dt$coral_id <- paste(fundF_dt$table_number, fundF_dt$tag, fundF_dt$row, fundF_dt$fragment, sep = ".")
+
+# length(unique(paste(fundF_dt$table_number, fundF_dt$tag, fundF_dt$row, fundF_dt$fragment, sep = ".")))
+# 
+# length(unique(paste(fundF_dt$table_number, fundF_dt$tag, fundF_dt$fragment, sep = ".")))
+
+#fundF_dt %>% group_by(date, table_number, time) %>% summarize(n = n()) %>% view() # only table 1 spans a whole year; tables 2-6 only have 5 months of data
+
+fundF12_dt <- fundF_dt %>% filter(table_number == 1, date %in% c("2020-02-03", "2021-02-10")) %>% select(year, month, day, date, coral_id, size_live_cm2, size_cm2, percent_mortality) %>% group_by(coral_id) %>% mutate(date_last = dplyr::lag(date, n = 1L), size_cm2_last = dplyr::lag(size_cm2, n = 1L), size_live_cm2_last = dplyr::lag(size_live_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_yr = as.numeric(date-date_last)/365, survived = if_else(percent_mortality ==100, 0, 1)) %>% mutate(growth_cm2_yr = (size_cm2 - size_cm2_last)/time_interval_yr, growth_live_cm2_yr = (size_live_cm2 - size_live_cm2_last)/time_interval_yr) %>% filter(year == 2021, is.na(size_cm2)==F)
+
+#View(fundF12_dt)
+
+fundF5_dt <- fundF_dt %>% filter(table_number > 1, time %in% c(0, 5)) %>% select(year, month, day, date, coral_id, size_live_cm2, size_cm2, percent_mortality) %>% group_by(coral_id) %>% mutate(date_last = dplyr::lag(date, n = 1L), size_cm2_last = dplyr::lag(size_cm2, n = 1L), size_live_cm2_last = dplyr::lag(size_live_cm2, n = 1L)) %>% ungroup() %>% mutate(time_interval_yr = as.numeric(date-date_last)/365, survived = if_else(percent_mortality ==100, 0, 1)) %>% mutate(growth_cm2_yr = (size_cm2 - size_cm2_last)/time_interval_yr, growth_live_cm2_yr = (size_live_cm2 - size_live_cm2_last)/time_interval_yr) %>% filter(year == 2021, is.na(size_cm2)==F)
+
+# note something happened with the rows/tags/fragments in Tables 4 and 5 so they don't match between sampling intervals
+
+# fundF_dt %>% filter(table_number == 4) %>% view()
+
+#View(fundF5_dt)
+
+
+```
+
+data standardization
+
+```{r}
+
+# F12: survival and growth data sets (remember to make sure growth only includes corals that lived)
+
+fundF12_surv <- fundF12_dt %>% filter(year == 2021) %>% select(year, coral_id, size_cm2_last, size_live_cm2_last, time_interval_yr, survived) %>% rename(survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last) %>% mutate(study = "fundemar_fragments", region = "Dominican Republic", location = "Sombrero Reef", plot = NA, data_type = "nursery", fragment = "Y", disturbance = NA, treatment_1 = NA, treatment_2 = NA, depth_m = NA, study_notes = NA, latitude = 18.37072, longitude = -68.84651) 
+
+
+fundF12_surv <- fundF12_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "survived", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+# View(fundF12_surv)
+
+fundF12_growth <- fundF12_dt %>% filter(year == 2021, survived == 1) %>% select(year, coral_id, size_cm2_last, size_live_cm2_last, time_interval_yr, growth_cm2_yr, growth_live_cm2_yr) %>% rename(survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last) %>% mutate(study = "fundemar_fragments", region = "Dominican Republic", location = "Sombrero Reef", plot = NA, data_type = "nursery", fragment = "Y", disturbance = NA, treatment_1 = NA, treatment_2 = NA, depth_m = NA, study_notes = NA, latitude = 18.37072, longitude = -68.84651)
+
+fundF12_growth <- fundF12_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+# F5: growth only (no annual survival)
+
+fundF5_growth <- fundF5_dt %>% filter(year == 2021, survived == 1) %>% select(year, coral_id, size_cm2_last, size_live_cm2_last, time_interval_yr, growth_cm2_yr, growth_live_cm2_yr) %>% rename(survey_yr = year, size_cm2 = size_cm2_last, size_live_cm2 = size_live_cm2_last) %>% mutate(study = "fundemar_fragments", region = "Dominican Republic", location = "Sombrero Reef", plot = NA, data_type = "nursery", fragment = "Y", disturbance = NA, treatment_1 = NA, treatment_2 = NA, depth_m = NA, study_notes = NA, latitude = 18.37072, longitude = -68.84651) %>% filter(is.na(growth_cm2_yr)==F)
+
+fundF5_growth <- fundF5_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "coral_id", "size_cm2", "size_live_cm2", "growth_cm2_yr", "growth_live_cm2_yr", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+fundF_growth <- rbind(fundF12_growth, fundF5_growth)
+
+#View(fundF_growth)
+
+```
+
+
+
+
+## combine and export
+
+combine the data from each study into 1) a survival dataset and 2) a growth data set
+
+```{r}
+
+# full individual survival data
+apal_survI <- rbind(noaa_surv, pausch2018_surv, usgs_surv, kuffner_surv, MQ_surv, fundF12_surv)
+
+# add columns with sample sizes
+apal_surv_studyN <- apal_survI %>% group_by(study) %>% summarize(study_N = n_distinct(coral_id))
+#View(apal_surv_studyN)
+apal_surv_groupN <- apal_survI %>% group_by(study, region, location, treatment_1, treatment_2, data_type) %>% summarize(group_N = n_distinct(coral_id))
+
+apal_survI <- apal_survI %>% left_join(apal_surv_studyN, by = c("study")) %>% left_join(apal_surv_groupN, by = c("study", "region", "location", "treatment_1", "treatment_2", "data_type"))
+
+#View(apal_survI)
+
+#apal_survI %>% group_by(region) %>% summarize(N = n_distinct(coral_id)) %>% view()
+
+# full individual growth data
+apal_growthI <- rbind(noaa_growth, pausch2018_growth, usgs_growth, kuffner_growth, MQ_growth, fundF_growth)
+
+# add columns with sample sizes
+apal_growth_studyN <- apal_growthI %>% group_by(study) %>% summarize(study_N = n_distinct(coral_id))
+#View(apal_surv_studyN)
+apal_growth_groupN <- apal_growthI %>% group_by(study, region, location, treatment_1, treatment_2, data_type) %>% summarize(group_N = n_distinct(coral_id))
+
+apal_growthI <- apal_growthI %>% left_join(apal_growth_studyN, by = c("study")) %>% left_join(apal_growth_groupN, by = c("study", "region", "location", "treatment_1", "treatment_2", "data_type"))
+
+#View(apal_growthI)
+
+
+# export these
+write.csv(apal_survI, file = "standardized_data/apal_surv_ind.csv")
+write.csv(apal_growthI, file = "standardized_data/apal_growth_ind.csv")
+
+#plot(x = apal_survI$size_cm2, y = apal_survI$survived, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.25))
+
+#plot(x = log(apal_survI$size_cm2 + 1), y = apal_survI$survived, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.25))
+
+```
+
+
+# no individual sizes
+
+## ratios
+
+Fragement ratios: for studies that only report fragment length, use data from studies that record individual fragment length and width to estimate width-to-length ratios in order to approximate fragment area based on fragment length
+
+
+```{r}
+
+# estimates of fragment length to width ratios
+# data sets with length and width of individual fragments:pausch2018S_dt, pausch2018G_dt, usgs_sizes, kuffner_sz0, fundF_dt
+
+#View(pausch2018S_dt)
+
+pausch2018S_ratios <- pausch2018S_dt %>% filter(Proprtion_Live > 0.5) %>% group_by(Survey.Date, TagID) %>%  mutate(length = max(Length, Width), width = min(Length, Width)) %>% ungroup() %>% mutate(ratio = width/length) %>% select(ratio, length, width) %>% mutate(data = "pausch2018S") 
+
+pausch2018G_ratios <- pausch2018G_dt %>% filter(Proportion_Live > 0.5) %>% group_by(Survey.Date, TagID) %>%  mutate(length = max(Length, Width), width = min(Length, Width)) %>% ungroup() %>% mutate(ratio = width/length) %>% select(ratio, length, width) %>% mutate(data = "pausch2018G")  
+
+usgs_sizes_ratios <- usgs_sizes %>% filter(prop_alive_6_19 > 0.5) %>% group_by(Coral_ID) %>%  mutate(length = max(length_cm_6_19, width_cm_6_19), width = min(length_cm_6_19, width_cm_6_19)) %>% ungroup() %>% mutate(ratio = width/length, data = "usgs_sizes") %>% select(data, length, width, ratio)
+
+kuffner_sz0_ratios <- kuffner_sz0 %>% filter(Prop_alive > 0.5) %>% group_by(Coral_ID) %>%  mutate(length = max(Length_cm, Width_cm), width = min(Length_cm, Width_cm)) %>% ungroup() %>% mutate(ratio = width/length, data = "usgs_sizes") %>% select(data, length, width, ratio)
+
+fundF_dt_ratios <- fundF_dt %>% filter(percent_mortality < 0.5) %>% mutate(min_diameter_cm = as.numeric(min_diameter_cm), max_diameter_cm = as.numeric(max_diameter_cm)) %>% group_by(table_number, tag, row, fragment, time) %>% mutate(width = min(min_diameter_cm, max_diameter_cm), length = max(min_diameter_cm, max_diameter_cm)) %>% ungroup()  %>% mutate(ratio = width/length) %>%  mutate(data = "fundF_dt") %>% select(data, length, width, ratio)
+
+#View(fundF_dt)
+
+#fundF_dt %>% filter(min_diameter_cm == "0") %>% view()
+
+fragment_ratios <- rbind(pausch2018S_ratios, pausch2018G_ratios, usgs_sizes_ratios, kuffner_sz0_ratios, fundF_dt_ratios) %>% filter(is.na(ratio)==F)
+
+#View(fragment_ratios)
+
+#fragment_ratios %>% filter(ratio > 1) %>% view()
+
+plot(x = fragment_ratios$length, y = fragment_ratios$ratio, pch = 16, las = 1,  col = adjustcolor("black", alpha.f = 0.5), xlab = "fragment length (cm)", ylab = "fragment width to length ratio")
+abline(h = 1, lty = 2)
+
+#fragment_ratios %>% filter(ratio < 0.2) %>% view()
+
+quantile(fragment_ratios$ratio, 0.25) 
+quantile(fragment_ratios$ratio, 0.75)
+quantile(fragment_ratios$ratio, 0.5)
+mean(fragment_ratios$ratio)
+
+Fwl_min <- unname(quantile(fragment_ratios$ratio, 0.25)) # min width to length ratio
+Fwl_max <- unname(quantile(fragment_ratios$ratio, 0.75)) # max width to length ratio
+Fwl_mean <- mean(fragment_ratios$ratio) # mean width to length ratio
+
+hist(fragment_ratios$ratio)
+
+#hist(fragment_ratios$ratio[which(fragment_ratios$length < 10)])
+#hist(fragment_ratios$ratio[which(fragment_ratios$length > 10)])
+
+```
+
+
+whole colony ratios: for studies that only report longest fragment diameter, use data from studies that record colony length and width to estimate width-to-length ratios in order to approximate colony area based on max diameter
+
+```{r}
+
+# data sets with length and width of individual colonies: noaa_surv, Mendoza Quiroz (Picudas reef)
+
+noaa_surv_ratios <- noaa_dt %>% filter(X..Live > 0.5) %>% group_by(Region, Reef, TagID, Date) %>%  mutate(length = max(L, W), width = min(L, W)) %>% ungroup() %>% mutate(ratio = width/length) %>% select(ratio, length, width) %>% mutate(data = "noaa_surv") 
+
+MQ_pic_ratios <- MQ_pic %>% group_by(monitoring_date, substrate_id) %>%  mutate(length = max(length_cm, width_cm), width = min(length_cm, width_cm)) %>% ungroup() %>% mutate(ratio = width/length) %>% select(ratio, length, width) %>% mutate(data = "MQ_pic")  
+
+colony_ratios <- rbind(noaa_surv_ratios, MQ_pic_ratios) %>% filter(is.na(ratio)==F)
+
+plot(x = colony_ratios$length, y = colony_ratios$ratio, pch = 16, las = 1,  col = adjustcolor("black", alpha.f = 0.25), xlab = "colony length (cm)", ylab = "colony width to length ratio")
+abline(h = 1, lty = 2)
+
+quantile(colony_ratios$ratio, 0.25) 
+quantile(colony_ratios$ratio, 0.75)
+quantile(colony_ratios$ratio, 0.5)
+mean(colony_ratios$ratio)
+
+hist(colony_ratios$ratio)
+
+Cwl_min <- unname(quantile(colony_ratios$ratio, 0.25)) # min width to length ratio
+Cwl_max <- unname(quantile(colony_ratios$ratio, 0.75)) # max width to length ratio
+Cwl_mean <- mean(colony_ratios$ratio) # mean width to length ratio
+
+
+```
+
+
+## Rosales et al. 2024
+
+this study provides raw data for some fragments but couldn't find any metadata on how sizes were calculated, so just use the raw data to get a range of initial sizes and then look at survival over an annual time interval (instead of the 1.5 years reported in the study)
+
+```{r}
+rosales_dt0 <- read.csv("original_data/Rosales_et_al_2024.csv")
+#View(rosales_dt0)
+
+# rosales_N0 <- rosales_dt0 %>% filter(Survey. == 1) %>% group_by(reef, Genotype) %>% summarize(N0 = n()) 
+# rosales_dt0 %>% filter(Genotype %in% c("CN2", "CN4", "HS1", "ML2"), reef != "gr") %>% filter(Survey. == 10, LiveFrag == 1) %>% group_by(Genotype, reef) %>% summarize(N0 = n()) %>% view()
+
+# update: can't figure out how to get the data to match the values shown in Table S3, so just use the values published in Table S3 (only seemed to match for the ML2 genotype) so just use these data to get estimates of initial sizes
+
+rosales_cm0 <- mean(rosales_dt0$L[which(rosales_dt0$Survey.==1)], na.rm = T)
+rosales_cm0_sd <- sd(rosales_dt0$L[which(rosales_dt0$Survey.==1)], na.rm = T)
+rosales_cm0_min <- min(rosales_dt0$L[which(rosales_dt0$Survey.==1)], na.rm = T)
+rosales_cm0_max <- max(rosales_dt0$L[which(rosales_dt0$Survey.==1)], na.rm = T)
+
+```
+
+
+data standardization
+
+```{r}
+
+rosales2024_surv <- data.frame(
+  location = c(rep("Carysfort Reef", 4), rep("North Dry Rocks Reef", 4), rep("Pickles Reef", 4)),
+  latitude = c(rep(25.2209, 4), rep(25.1304, 4), rep(24.9845, 4)), # lat, lon, depth from main text
+  longitude = c(rep(-80.2102, 4), rep(-80.2940, 4), rep(-80.4164, 4)),
+  depth_m = c(rep(19/3.281, 4), rep(12/3.281, 4), rep(17/3.281, 4)),
+  treatment_1 = rep(c("CN2", "CN4", "HS1", "ML2"), 3),
+  n_initial = c(36, 31, 32, 20, 38, 42, 58, 20, 42, 42, 58, 21),
+  prop_survived = c(0.611, 0.097, 0.594, 0.1, 0.842, 0.595, 0.966, 0.95, 1, 0.833, 0.879, 0.81)#^(1/18))^12
+)
+
+#View(rosales2024_surv)
+
+
+rosales2024_surv <- rosales2024_surv %>% mutate(study = "rosales_et_al_2024", region = "Florida Keys", plot = NA, treatment_2 = NA, survey_yr = 2019, data_type = "field", size_cm2_mean = rosales_cm0*Fwl_mean*rosales_cm0, size_cm2_max = rosales_cm0_max*Fwl_max*rosales_cm0_max, size_cm2_sd = rosales_cm0_sd*Fwl_max*rosales_cm0_sd, size_cm2_min = rosales_cm0_min*Fwl_min*rosales_cm0_min, size_live = "unknown",fragment = "Y", time_interval_yr = 18/12, disturbance = NA, study_notes = "size estimated from approximate length; treatment_1 = genotype")
+# # main text: "data were used to estimate survivorship across all fragments from June of 2018 through December of 2019.", so time interval is approximately 18/12 years
+
+
+rosales2024_surv <- rosales2024_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(rosales2024_surv)
+
+```
+
+
+## Maurer et al. 2022
+
+```{r}
+# import the data
+
+maurer_dt0 <- read.csv("original_data/Maurer2022_SurvivalData.csv")
+
+#View(maurer_dt0)
+
+```
+
+
+
+data prep
+```{r}
+maurer_dt <- maurer_dt0 %>% filter(species == "APAL", year == "Year 1") # survival after 1 year (from the methods: colonies were harvested in May 2016, end of year 1 was June 2017)
+
+#View(maurer_dt)
+
+# total 
+#Mr.surv1_N <- Mr.surv1 %>% group_by(nursery, colony.group) %>% summarize(n_tot = n()) # group by nursery and donor colony? 
+
+maurer_dt1 <- maurer_dt %>% group_by(nursery, depth) %>% summarize(n_tot = n()) # group by nursery and donor colony
+
+# number dead
+maurer_dt_dead <- maurer_dt %>% filter(survival == 0) %>% group_by(nursery, depth) %>% summarize(n_dead = n())
+
+maurer_surv <- maurer_dt1 %>% left_join(maurer_dt_dead, by = c("nursery", "depth")) %>% mutate(survival = 1-n_dead/n_tot) %>% filter(is.na(survival) == F)
+
+#View(maurer_surv)
+
+```
+
+data standardization
+
+```{r}
+
+maurer2022_surv <- maurer_surv %>% select(-n_dead) %>% rename(location = nursery, n_initial = n_tot, prop_survived = survival, depth_m = depth) %>% mutate(study = "maurer_et_al_2022", region = "Bahamas", plot=NA, treatment_1 = NA, treatment_2 = NA, survey_yr = 2017, data_type = "nursery", size_cm2_mean = 5*5, size_cm2_sd = NA, size_live = "unknown", size_cm2_min = NA, size_cm2_max = NA, fragment = "Y", time_interval_yr = 1, disturbance = NA, study_notes = "only size info was that fragments were approx. 5x5cm") 
+
+maurer2022_surv$latitude <- ifelse(maurer2022_surv$location == "Castaway", 26.093889, 26.101806)
+maurer2022_surv$longitude <- ifelse(maurer2022_surv$location == "Castaway", -77.549861, -77.551889)
+maurer2022_surv$depth_m <- ifelse(maurer2022_surv$location == "Castaway", 26.093889, 26.101806)
+
+
+maurer2022_surv <- maurer2022_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(maurer2022_surv)
+```
+
+
+## Mendoza Quiroz et al. 2023
+
+```{r}
+# import data
+# estimates of recruit sizes for cohort 12
+MQ_ex0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 3) # sizes at different time intervals from the ex situ nursery
+
+#View(MQ_ex0)
+colnames(MQ_ex0) <- MQ_ex0[8,]
+MQ_ex0 <- MQ_ex0[9:length(MQ_ex0$Cohort), ]
+MQ_ex0 <- MQ_ex0 %>% clean_names()
+
+```
+
+data prep
+
+```{r}
+
+#View(MQ_ex0)
+
+# want average size of cohort 12 at age of 3 months:
+MQ_ex3 <- MQ_ex0 %>% filter(monitoring_date == "41255") %>% mutate(area_mm2 = as.numeric(area_mm2))
+MQ_ex3 <- MQ_ex3 %>% filter(area_mm2 < 90) # most have area of in 2-10mm2 range; one was reported as area of 92mm2 but its diameter was similar to the rest of the observations so seems to be an error  -- just remove this data point
+
+#View(MQ_ex3)
+
+# average, sd, max, and min sizes of cohort 12 at age of 3 months:
+MQ_size_cm2_3 <- mean(MQ_ex3$area_mm2)*0.01
+MQ_size_cm2_sd_3 <- sd(MQ_ex3$area_mm2)*0.01
+MQ_size_cm2_max_3 <- max(MQ_ex3$area_mm2)*0.01
+MQ_size_cm2_min_3 <- min(MQ_ex3$area_mm2)*0.01
+
+# growth: have much did average size increase between 3 months and 12 months?
+MQ_ex12 <- MQ_ex0 %>% filter(monitoring_date == "41537") %>% mutate(area_mm2 = as.numeric(area_mm2))
+#View(MQ_ex12) 
+
+MQ_size_cm2_12 <- mean(MQ_ex12$area_mm2)*0.01
+
+MQ_growth_cm2_yr <- (MQ_size_cm2_12 - MQ_size_cm2_3)/9*12
+
+```
+
+data standardization
+
+```{r}
+# for cohort 11: know size information, but have information on the number of settlers at 1 month so assume they have a diameter of 1mm at that age (based on photos of 2 week old and 26 day old settlers from Chamberland et al. 2015 and Albright et al. 2010)
+
+MQ_lab_surv <- data.frame(
+  treatment_1 = c(2011, 2012), # cohort
+  size_cm2_mean = c(pi*(0.5*(0.1))^2, MQ_size_cm2_3),
+  size_cm2_sd = c(NA, MQ_size_cm2_sd_3),
+  size_cm2_max = c(NA, MQ_size_cm2_max_3),
+  size_cm2_min = c(NA, MQ_size_cm2_min_3),
+  n_initial = c(1155, 393), # number at 1 month for cohort 2011, 3 months for cohort 2012 (Table 1)
+  prop_survived = c(12/1155, ((107/393)^(1/11))^12), # number at 12 months (and 25 months so this was also the number at 13 months = 1 yr later) for cohort 2011, 14 months for cohort 2012
+  time_interval_yr = c(1, 11/12), # 1 month to 13 months, 3 months to 14 months
+  survey_yr = c(2012, 2013)
+  
+)
+
+#View(MQ_lab_surv)
+
+MQ_lab_surv <- MQ_lab_surv %>% mutate(study = "mendoza_quiroz_et_al_2023", region = "Mexican Caribbean", location = "lab", plot = NA, treatment_2 = NA, latitude = NA, longitude = NA, depth_m = NA, data_type = "lab", fragment = "N", size_live = "both", disturbance = NA, study_notes = "treatment_1 = cohort; size for 2011 cohort estimated from other studies")
+
+#View(MQ_lab_surv)
+
+MQ_lab_surv <- MQ_lab_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+MQ_lab_growth <- data.frame(
+  treatment_1 = c(2012), # cohort
+  size_cm2_mean = c(MQ_size_cm2_3),
+  size_cm2_sd = c(MQ_size_cm2_sd_3),
+  size_cm2_max = c(MQ_size_cm2_max_3),
+  size_cm2_min = c(MQ_size_cm2_min_3),
+  growth_cm2_yr_mean = MQ_growth_cm2_yr,
+  time_interval_yr = c(9/12), # time interval was from month 3 to month 12
+  survey_yr = c(2013),
+  n_final = c(5) # nrow(MQ_ex12)
+  
+)
+
+#View(MQ_ex12)
+
+MQ_lab_growth <- MQ_lab_growth %>% mutate(study = "mendoza_quiroz_et_al_2023", region = "Mexican Caribbean", location = "lab", plot = NA, treatment_2 = NA, latitude = NA, longitude = NA, depth_m = NA, data_type = "lab", fragment = "N",size_live="both", growth_cm2_yr_sd = NA, growth_cm2_yr_min = NA, growth_cm2_yr_max = NA, disturbance = NA, study_notes = "treatment_1 = cohort; growth estimated as change in mean size")
+
+MQ_lab_growth <- MQ_lab_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "growth_cm2_yr_mean", "growth_cm2_yr_sd", "growth_cm2_yr_min", "growth_cm2_yr_max", "n_final", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+#View(MQ_lab_growth)
+
+```
+
+
+## Fundemar recruits
+
+```{r}
+
+# settler survival
+fundR_dt0 <- read_excel("original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
+#View(fundR_dt0)
+
+fundR_dt0 <- fundR_dt0 %>% clean_names()
+
+# settler sizes
+fund_sz_dt0 <- read_excel("original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
+
+fund_sz_dt0 <- fund_sz_dt0 %>% clean_names()
+
+```
+
+
+data prep
+
+
+```{r}
+
+fundR_dt <- fundR_dt0 %>% filter(coral_species=="Acropora palmata") %>% mutate(number_settlers = as.numeric(number_settlers)) %>% filter(is.na(number_settlers)==F)
+
+#View(fundR_dt)
+
+#unique(fundR_dt$outplanting_site)
+#fundR_dt %>% filter(outplanting_site == "Mesa de sustrato 2") %>% view() # looks like there's no data on initial outplant numbers at this site
+
+# make data frame with the initial numbers of settlers
+fundR_N0 <- fundR_dt %>% filter(months_after_outplanting==0) %>% mutate(N0 = number_settlers) %>% select(-"number_settlers", -"survey_date_year", -"survey_date_month", -"survey_date_day", -"survey_date_day", -"months_after_outplanting", -"remarks", -"time_point")
+
+# now join back together with the main dataset
+fundR_dt1 <- fundR_dt %>% left_join(fundR_N0, by = c("coral_species", "outplanting_site", "settlement_technique", "settlement_container_id", "transect", "outplant_date_year", "outplant_date_month", "outplant_date_day", "treatment_1", "treatment_2", "plot_tag_number", "substrate_number_temporary_flag"), relationship="many-to-many") %>% mutate(survival = number_settlers/N0)
+
+#View(fundR_dt1)
+
+# check this worked
+#fundR_dt1 %>% filter(plot_tag_number==8, substrate_number_temporary_flag=="1") %>% view()
+
+
+# now flag cases where the number of settlers increases over time (probably due to natural recruits?)
+fundR_dt2 <- fundR_dt1 %>% mutate(outplant_date = as.Date(paste(outplant_date_month, outplant_date_day, outplant_date_year, sep = "/"), format = '%m/%d/%Y')) %>% group_by(settlement_technique, transect, treatment_2, outplanting_site, outplant_date, treatment_1, plot_tag_number, substrate_number_temporary_flag) %>% arrange(months_after_outplanting) %>% mutate(survival1 = dplyr::lag(survival, n = 1L)) %>% ungroup() %>% mutate(new_recruits = if_else(survival - survival1 > 0, "Y", "N")) %>% group_by(settlement_technique, transect, treatment_2, outplanting_site, outplant_date, treatment_1, plot_tag_number, substrate_number_temporary_flag) %>% mutate(new_recruits_tot = if_else("Y" %in% new_recruits, "Y", "N")) %>% ungroup() # negative values of survival - survival1 means less recruits at current timepoint, positive values means more recruits (i.e., somehow a new recruit appeared). new_recruits_tot indicates whether a new recruit ever appeared on that tile
+fundR_dt2$new_recruits <- ifelse(is.na(fundR_dt2$new_recruits)==T, "N", fundR_dt2$new_recruits)
+
+# check this worked
+#fundR_dt2 %>% filter(plot_tag_number==8, substrate_number_temporary_flag=="1") %>% view()
+#fundR_dt2 %>% filter(plot_tag_number==2, substrate_number_temporary_flag=="60") %>% view()
+#fundR_dt2 %>% filter(plot_tag_number==5, substrate_number_temporary_flag=="16") %>% view()
+
+# select substrates that never had an increase in number of recruits and look at survival one year after outplanting
+
+#noaa_dt$Date <- as.Date(noaa_dt$Date, format = '%m/%d/%Y')
+
+fundR_dt3 <- fundR_dt2 %>% mutate(outplant_date = as.Date(paste(outplant_date_month, outplant_date_day, outplant_date_year, sep = "/"), format = '%m/%d/%Y'), survey_date = as.Date(paste(survey_date_month, survey_date_day, survey_date_year, sep = "/"), format = '%m/%d/%Y')) %>% filter(new_recruits_tot == "N", months_after_outplanting == 12) %>% select(outplanting_site, settlement_technique, settlement_container_id, transect, outplant_date, survey_date, survey_date_year, treatment_1, treatment_2, plot_tag_number, substrate_number_temporary_flag, number_settlers, N0)
+
+#View(fundR_dt3)
+
+
+# now estimate the initial sizes
+
+fund_sz_dt <- fund_sz_dt0 %>% filter(especie == "Acropora palmata") %>% mutate(area_mm2 = as.numeric(area_mm2)) %>%  filter(is.na(area_mm2)==F)
+
+#View(fund_sz_dt) # doesn't look like there are individual identifiers for measuring growth, so just estimate growth rates as changes in mean size
+
+#fund_sz_dt %>% group_by(meses, codigo_evento_desove, tipo_de_sustrato) %>% summarize(n = n()) %>% view()
+
+# they don't have size at 0 months, so just use the sizes from the first time point they have (5 months)
+
+fund_sz0_dt <- fund_sz_dt %>% filter(meses ==5) 
+
+#View(fund_sz0_dt)
+
+# add to the survival data frame
+fundR_dt3 <- fundR_dt3 %>% mutate(size_cm2_min = min(fund_sz0_dt$area_mm2)*0.01, size_cm2_max = max(fund_sz0_dt$area_mm2)*0.01, size_cm2_mean = mean(fund_sz0_dt$area_mm2)*0.01, size_cm2_sd = sd(fund_sz0_dt$area_mm2)*0.01)
+
+# now estimate growth as difference in mean size between months 5 and 12 (2020 cohort) and between months 10 and 16 (2019 cohort)
+apal2020_5 <- mean(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==5)])*0.01
+apal2020_12 <- mean(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==12)])*0.01
+# need to calculate exact time intervals
+apal2020_int_yr <- as.numeric((fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==12)][1] - fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==5)][1])/365)
+
+apal2020_surv_yr <- year(fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==12)][1])
+
+apal2020_5_min <- min(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==5)])*0.01
+apal2020_5_max <- max(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==5)])*0.01
+apal2020_5_sd <- sd(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==5)])*0.01
+
+apal2020_12_N <- length(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2020" & fund_sz_dt$meses==12)])
+
+apal2019_10 <- mean(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==10)])*0.01
+apal2019_16 <- mean(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==16)])*0.01
+apal2019_int_yr <- as.numeric((fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==16)][1] - fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==10)][1])/365)
+
+apal2019_surv_yr <- year(fund_sz_dt$fecha_evaluacion[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==16)][1])
+
+apal2019_10_min <- min(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==10)])*0.01
+apal2019_10_max <- max(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==10)])*0.01
+apal2019_10_sd <- sd(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==10)])*0.01
+
+apal2020_16_N <- length(fund_sz_dt$area_mm2[which(fund_sz_dt$codigo_evento_desove=="APAL_08_2019" & fund_sz_dt$meses==16)])
+
+```
+
+
+data standardization
+
+```{r}
+
+# survival
+# for location, combine reef and transects (e.g., Sombrero_1 for transect 1 on Sombrero reef)
+# for plots, combine plot and substrate tags to maintain unique identifiers
+
+fundR_surv <- fundR_dt3 %>% rename(treatment_11 = treatment_1, treatment_21 = treatment_2) %>% mutate(tile_type = if_else(treatment_21=="NA", treatment_11, paste(treatment_11, treatment_21, sep = " "))) %>% mutate(study = "fundemar_recruits", region = "Dominican Republic", location = paste("Sombrero Reef", transect, sep = "_"), plot = paste(plot_tag_number, substrate_number_temporary_flag, sep = "."), treatment_1 = settlement_technique, treatment_2 = tile_type, latitude = 18.37048, longitude = -68.84673, depth_m = NA, time_interval_yr = (survey_date-outplant_date)/365, fragment = "N", data_type = "field", prop_survived = number_settlers/N0, disturbance = NA, study_notes = "sizes estimated from small sample of recruits; treatment 1 = settlement technique, treatment 2 = substrate type", size_live = "unknown") %>% rename(survey_yr = survey_date_year, n_initial = N0) %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_cm2_mean, size_cm2_sd, size_live, size_cm2_min, size_cm2_max, prop_survived, n_initial, fragment, time_interval_yr, disturbance, study_notes)
+
+#View(fundR_surv)
+
+fundR_surv <- fundR_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+fundR_growth <- data.frame(
+  treatment_1 = c("APAL_08_2020", "APAL_08_2019"),
+  size_cm2_mean = c(apal2020_5, apal2019_10), # initial sizes
+  size_cm2_min = c(apal2020_5_min, apal2019_10_min),
+  size_cm2_max = c(apal2020_5_max, apal2019_10_max),
+  size_cm2_sd = c(apal2020_5_sd, apal2019_10_sd),
+  growth_cm2_yr_mean = c((apal2020_12-apal2020_5)/apal2020_int_yr, (apal2019_16-apal2019_10)/apal2019_int_yr),
+  time_interval_yr = c(apal2020_int_yr, apal2019_int_yr),
+  n_final = c(apal2020_12_N, apal2020_16_N),
+  survey_yr = c(apal2020_surv_yr, apal2019_surv_yr)
+)
+
+fundR_growth <- fundR_growth %>% mutate(study = "fundemar_recruits", region = "Dominican Republic", location = "Sombrero Reef", plot = NA, treatment_2 = NA, latitude = 18.37048, longitude = -68.84673, depth_m = NA, fragment = "N", data_type = "field", growth_cm2_yr_sd = NA, growth_cm2_yr_min = NA, growth_cm2_yr_max = NA, disturbance = NA, study_notes = "sizes estimated from small sample of recruits; treatment 1 = cohort", size_live = "unknown")
+
+
+fundR_growth <- fundR_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "growth_cm2_yr_mean", "growth_cm2_yr_sd", "growth_cm2_yr_min", "growth_cm2_yr_max", "n_final", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(fundR_growth)
+
+```
+
+
+
+## Chamberland et al. 2015
+
+```{r}
+
+# survival
+chamberland2015_surv <- data.frame(
+  location = c("lab", "Sea Aquarium Reef"),
+  latitude = c(NA, 12.083),
+  longitude = c(NA, -68.896),
+  depth_m = c(NA, 2.5),
+  data_type = c("lab", "field"),
+  size_cm2_mean = rep(pi*(0.5*(0.1))^2, 2), # estimated from photo in Fig. 1E
+  n_initial = c(11*30, 11*30), # used RSUs with similar settler densities (mean of 11.1 per substrate unit); 30 were assigned to the reef and 30 to the land-based nursery
+  prop_survived = c((0.037^(1/11))^12, (0.11^(1/11))^12), # in lab, on reef after 11 months. Shown in Fig 2A; actual values were stated in https://www.academia.edu/69150106/Restoration_of_critically_endangered_Elkhorn_coral_Acropora_palmata_using_sexually_produced_recruits  
+  time_interval_yr = rep(11/12, 2), 
+  survey_yr = rep(2013, 2)
+)
+
+chamberland2015_surv <- chamberland2015_surv %>% mutate(study = "chamberland_et_al_2015", region = "Curacao", plot = NA, treatment_1 = NA, treatment_2 = NA, fragment = "N",size_live = "both", size_cm2_sd = NA, size_cm2_min = NA, size_cm2_max = NA, disturbance = NA, study_notes = "size estimated from Fig. 1E")
+
+chamberland2015_surv <- chamberland2015_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(chamberland2015_surv)
+
+
+# growth
+chamberland2015_growth <- data.frame(
+  location = c("lab", "Sea Aquarium Reef"),
+  latitude = c(NA, 12.083),
+  longitude = c(NA, -68.896),
+  depth_m = c(NA, 2.5),
+  data_type = c("lab", "field"),
+  size_cm2_mean = rep(pi*(0.5*(0.1))^2, 2), # estimated from photo in Fig. 1E
+  growth_cm2_yr_mean = c((12.9 - pi*(0.5*(0.1)^2))/31*12, (16.7 - pi*(0.5*(0.1)^2))/31*12), # size after 31 months - initial sizes
+  growth_cm2_yr_sd = c(NA, (20.1 - pi*(0.5*(0.1)^2))/31*12), # SD in final size was 20.1
+  time_interval_yr = rep(31/12, 2), 
+  survey_yr = rep(2014, 2),
+  n_final = c(1, 9)
+)
+
+
+chamberland2015_growth <- chamberland2015_growth %>% mutate(study = "chamberland_et_al_2015", region = "Curacao", plot = NA, treatment_1 = NA, treatment_2 = NA, fragment = "N",size_live = "unknown", size_cm2_sd = NA, size_cm2_min = NA, size_cm2_max = NA, growth_cm2_yr_min = NA,  growth_cm2_yr_max = NA, disturbance = NA, study_notes = "growth estimated as change in size")
+
+chamberland2015_growth <- chamberland2015_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "growth_cm2_yr_mean", "growth_cm2_yr_sd", "growth_cm2_yr_min", "growth_cm2_yr_max", "n_final", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+
+
+```
+
+## Forrester et al. 2013
+
+
+```{r}
+forrester2013_surv <- data.frame(
+  size_cm2_mean = c(198, 78, 117, 106, 87, 79, 113), # from Table 1
+  size_cm2_sd = c(37, 17, 16, 17, 22, 10, 10), # from Table 1
+  size_cm2_min = c(7, 2, 8, 15, 2, 4, 12), # from Table 1
+  size_cm2_max = c(961, 300, 950, 823, 561, 1004, 1015), # from Table 1
+  n_initial = c(35, 19, 88, 254, 44, 135, 257), # from Table 1
+  prop_survived = c(0.85, 0.58, 0.21, 0.5, 0.68, 0.3, 0.7), # from Table 2
+  disturbance = c(NA, NA, "storm", NA, NA, "storm", NA), # from Table 2
+  time_interval_yr = rep(1, 7), 
+  survey_yr = c(2006, 2007, 2008, 2009, 2010, 2011, 2012) # from table 2 (transplant year + 1)
+)
+
+forrester2013_surv <- forrester2013_surv %>% mutate(study = "forrester_et_al_2013", region = "British Virgin Islands", location = "Guana Island", depth_m = median(c(0.4, 1.6)), plot = NA, treatment_1 = NA, treatment_2 = NA, fragment = "Y",size_live = "Y", study_notes = "size measured as LAI; depth is midpoint of reported range", latitude = 18.4833, longitude = -64.5833, data_type = "field")
+
+forrester2013_surv <- forrester2013_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+```
+
+
+## Forrester et al. 2011
+
+```{r}
+
+forrester2011_surv <- data.frame(
+  size_cm2_mean = c(117.8, 117.8, 106.4, 106.4), # exp 1, exp 2: The fragments used in the experiments ranged in initial LAI from 8.5 to 950 cm2 in 2007/exp1 (mean ± SD = 117.8 ± 148.2), and from 5.2 to 822.0 cm2 in 2008/exp2 (mean ± SD = 106.4 ± 113.3).
+  size_cm2_sd = c(148.2, 148.2, 113.3, 113.3), 
+  size_cm2_min = c(8.5, 8.5, 5.2, 5.2), 
+  size_cm2_max = c(950, 950, 822.0, 822.0), 
+  n_initial = c(29 + 13 + 14, 15 + 15, 43 + 4 +4 + 11+11+9+9+11+11, 25 + 25 + 39 + 42 + 9 +9+9+9), # exp 1, not moved; exp 1, moved; exp2, not moved; exp 2, moved (from Fig 1)
+  prop_survived = c(0.56, 0.3, 0.62, 0.54), # After a year, fragments at the source site survived about as well (56 and 62% surviving in experiments 1 and 2, respectively) as those moved to the restoration site (30 and 54% in experiments 1 and 2, respectively), and relocation had no detectable influence on survival
+  time_interval_yr = rep(1, 4), 
+  survey_yr = c(2008, 2008, 2009, 2009),
+  plot = c("source site", "restoration site", "source site", "restoration site"),
+  treatment_1 = c("control", "relocated", "control", "relocated")
+)
+
+forrester2011_surv <- forrester2011_surv %>% mutate(study = "forrester_et_al_2013", region = "British Virgin Islands", location = "Guana Island", depth_m = median(c(0.4, 1.6)), treatment_2 = NA, disturbance = NA, fragment = "Y",size_live = "Y", study_notes = "size measured as LAI; depth is midpoint of reported range", latitude = 18.4833, longitude = -64.5833, data_type = "field")
+
+forrester2011_surv <- forrester2011_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+```
+
+
+## Garrison & Ward 2008
+
+```{r}
+
+
+GarrisonWard2008_surv <- data.frame(
+  size_cm2_mean = c(25.4*25.4*Cwl_mean, 17.9*17.9*Fwl_mean), # Table 2
+  size_cm2_sd = c(1.9*1.9*Cwl_mean, 1.7*1.7*Fwl_mean), 
+  size_cm2_min = c(NA, NA), 
+  size_cm2_max = c(NA, NA), 
+  n_initial = c(45, 30), # control, transplanted (Table 2)
+  prop_survived = c(0.8, 0.55), # estimated from Fig. 4b
+  time_interval_yr = rep(1, 2), 
+  survey_yr = c(2000, 2000),
+  treatment_1 = c("control", "relocated"),
+  fragment = c("N", "Y")
+)
+
+GarrisonWard2008_surv <- GarrisonWard2008_surv %>% mutate(study = "garrison_ward_2008", region = "USVI", location = "St. John Island", depth_m = median(c(1, 3.5)), treatment_2 = NA, plot = NA, disturbance = NA, size_live = "Y", study_notes = "size measured as max linear dimension of live tissue; depth is midpoint of reported range", latitude = 18.35, longitude = -64.7, data_type = "field")
+
+GarrisonWard2008_surv <- GarrisonWard2008_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+```
+
+
+## Williams & Miller 2010
+
+```{r}
+
+
+WilliamsMiller2010_surv <- data.frame(
+  treatment_1 = c("cable-tied", "epoxy", "control"),
+  size_cm2_mean = rep(NA, 3), 
+  size_cm2_sd = rep(NA, 3), 
+  size_cm2_min = rep(7*7*Fwl_min, 3), # fragments ranged in length from 7 to 36 cm 
+  size_cm2_max = rep(36*36*Fwl_max, 3), 
+  n_initial = rep(18, 3), # 54/3
+  prop_survived = c((((18-3)/18)^(1/44))^52, (((18-2)/18)^(1/44))^52, (((18-5)/18)^(1/44))^52), # "Out of 54 total fragments, only one (in the cable tied treatment) suffered complete mortality in situ. Nine were physically lost from the experiment (of which 5 were tethered, two were epoxied, and two were cable tied)"
+  time_interval_yr = rep(44/52, 3), 
+  survey_yr = rep(2007, 3),
+  fragment = rep("Y", 3)
+)
+
+WilliamsMiller2010_surv <- WilliamsMiller2010_surv %>% mutate(study = "williams_miller_2010", region = "Florida Keys", location = "Biscayne National Park", depth_m = NA, treatment_2 = NA, plot = NA, disturbance = NA, size_live = "N", study_notes = "size measured as fragment length; treatment_1 is stabilization method", latitude = 25.355983, longitude = -80.1776, data_type = "field")
+
+WilliamsMiller2010_surv <- WilliamsMiller2010_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(WilliamsMiller2010_surv)
+
+
+```
+
+
+## Bruckner & Bruckner 2001
+
+
+
+```{r}
+
+# fragments ranged in length from 15 cm to 3.4m
+
+BrucknerBruckner2001_surv <- data.frame(
+  size_cm2_mean = rep(NA, 11),
+  #size_cm2_mean = c(15, 20, 30, 40, 50, 60 , 70 , 80, 90, 100, 110)^2*Fwl_mean, # midpoints 
+  size_cm2_sd = rep(NA, 11), 
+  size_cm2_min = c(10, 15, 25, 35, 45, 55 , 65 , 75, 85, 95, 105)^2*Fwl_min, 
+  size_cm2_max = c(20, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115)^2*Fwl_max,
+  n_initial = c(10, 40, 65, 105, 90, 72, 48, 45, 20, 20, 18), # estimated from Fig. 3
+  prop_survived = (c(3/7, 16/28, 25/47, 38.5/73, 45/65, 40/52, 28/35, 26/32, 11.5/14, 9.5/14, 11/13))^(1/2), # measured mm of total and surviving from Fig. 3 histogram, ratio = proportion surviving
+  time_interval_yr = rep(2, 11), 
+  survey_yr = rep(1999, 11),
+  fragment = rep("Y", 11)
+)
+
+BrucknerBruckner2001_surv <- BrucknerBruckner2001_surv %>% mutate(study = "bruckner_bruckner_2001", region = "Puerto Rico", location = "Mona Island", depth_m = (2+7)/2, treatment_1 = NA, treatment_2 = NA, plot = NA, disturbance = NA, size_live = "N", study_notes = "size measured as fragment length; depth_m is midpoint of given range", latitude = 18.05, longitude = -67.867, data_type = "field")
+
+BrucknerBruckner2001_surv <- BrucknerBruckner2001_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(BrucknerBruckner2001_surv)
+
+```
+
+
+## Schutter et al. 2023
+
+
+```{r}
+
+schutter2023_growth <- data.frame(
+  location = c("lab", "New Providence Island"),
+  size_cm2_mean = c(1.15*0.01, 1.15*0.01), # initial sizes
+  size_cm2_sd = c(0.03*0.01, 0.03*0.01), 
+  growth_cm2_yr_mean = c((1.31*0.01-1.15*0.01)/53*365/1, (3*0.01-1.15*0.01)/44*52/1),
+  growth_cm2_yr_sd = c(0.05*0.01/53*365, 1*0.01/44*52),
+  n_final = c(floor((42 + 49 + 35 + 35)*0.85), 6), # "The initial number of recruits differed between treatments: n =42 for ambient, n =49 for AxF, n =35 for TA and n =35 for TAxF.", but couldn't find information on the number of recruits at subsequent time points, so just assume the proportion surviving was the same as the proportion of plugs with at least one recruit (shown in Fig 6; estimate midpoint between survival at 4 and 9 weeks to correspond to day 53). For the outplants, just says n = 3-10 for the different aquaculture periods and conditions so just approximate as 6
+  time_interval_yr = c(53/365, 44/52), # x-axis of Fig. 7 shows number of days after settlement; Fig 8 shows sizes at 44 weeks after settlement
+  survey_yr = c(2016, 2016), # gametes were collected at the end of Oct, 2015
+  data_type = c("lab", "nursery")
+)
+
+# size values
+# recruit size during aquaculture: "living tissue area did not increase significantly between the first and second observation, but between the first and the third observation (1.1 times increase, from 1.15 mm2 ±0.03 SE to 1.31 mm2 ±0.05 SE)." --> so use 1.15mm2 as initial size in lab. 
+
+# for the outplants, values are estimated from the bar graph in Fig. 8. Only used the ones outplanted at 4 weeks because they were in the field the longest. Assumed same initial size as the ones that stayed in the lab
+
+schutter2023_growth <- schutter2023_growth %>% mutate(study = "schutter_et_al_2023", region = "Bahamas", depth_m = NA, fragment = "N", treatment_1 = NA, treatment_2 = NA, plot = NA, size_cm2_min = NA, size_cm2_max = NA, disturbance = NA, size_live = "Y", study_notes = "samples sizes are approximate", latitude = 25.02167, longitude = -77.57299, growth_cm2_yr_min = NA, growth_cm2_yr_max = NA)
+
+schutter2023_growth <- schutter2023_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "growth_cm2_yr_mean", "growth_cm2_yr_sd", "growth_cm2_yr_min", "growth_cm2_yr_max", "n_final", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+```
+
+
+## Papke et al. 2021
+
+
+
+```{r}
+
+# survival
+papke2021_surv <- data.frame(
+  treatment_1 = rep(c("ceramic", "cement"), 4), # substrate
+  treatment_2 = rep(c("14-3", "14-4", "14-5", "XA"), each = 2), # genet
+  size_cm2_mean = c(0.58, 0.62, 0.55, 0.6, 0.55, 0.61, 0.49, 0.52), # from Table 1
+  size_cm2_sd = rep(NA, 8), 
+  size_cm2_min = rep(NA, 8), 
+  size_cm2_max = rep(NA, 8), 
+  n_initial = c(28, 28, 28, 28, 26, 30, 27, 26),# from Table S1
+  prop_survived = rep(1, 8), # "all corals in this experiment survived and experienced positive growth over the course of the experiment." 
+  time_interval_yr = rep(193/365, 8), 
+  survey_yr = rep(2020, 8), # experiment started in July 2019; final timepoint was 193 days later
+  fragment = rep("Y", 8)
+)
+
+papke2021_surv <- papke2021_surv %>% mutate(study = "papke_et_al_2021", region = "Florida Keys", location = "MOTE", depth_m = NA, plot = NA, disturbance = NA, size_live = "unknown", study_notes = "treatment_1 is substrate type; treatment_2 is genet", latitude = NA, longitude = NA, data_type = "lab")
+
+papke2021_surv <- papke2021_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(papke2021_surv)
+
+# growth
+papke2021_growth <- data.frame(
+  treatment_1 = rep(c("ceramic", "cement"), 4), # substrate
+  treatment_2 = rep(c("14-3", "14-4", "14-5", "XA"), each = 2), # genet
+  size_cm2_mean = c(0.58, 0.62, 0.55, 0.6, 0.55, 0.61, 0.49, 0.52), # from Table 1
+  size_cm2_sd = rep(NA, 8), 
+  size_cm2_min = rep(NA, 8), 
+  size_cm2_max = rep(NA, 8), 
+  growth_cm2_yr_mean = c(0.0161, 0.0171, 0.0123, 0.0137, 0.0112, 0.0136, 0.0075, 0.008)*365, # from Table 1 (reported in units of cm2/d so convert to cm2/yr)
+  growth_cm2_yr_sd = c(0.008, 0.0079, 0.0057, 0.0049, 0.0041, 0.0044, 0.0019, 0.0024)*365, # from Table 1
+  n_final = c(28, 28, 28, 28, 26, 30, 27, 26), 
+  time_interval_yr = rep(193/365, 8), 
+  survey_yr = rep(2020, 8), 
+  fragment = rep("Y", 8)
+)
+
+
+papke2021_growth <- papke2021_growth %>% mutate(study = "papke_et_al_2021", region = "Florida Keys", location = "MOTE", depth_m = NA, plot = NA, disturbance = NA, size_live = "unknown", study_notes = "treatment_1 is substrate type; treatment_2 is genet", latitude = NA, longitude = NA, data_type = "lab", growth_cm2_yr_min = NA, growth_cm2_yr_max = NA)
+
+papke2021_growth <- papke2021_growth[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "growth_cm2_yr_mean", "growth_cm2_yr_sd", "growth_cm2_yr_min", "growth_cm2_yr_max", "n_final", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(papke2021_growth)
+
+```
+
+
+## Ortiz Prosper 2005
+
+```{r}
+
+# table 4.1 (pg 66 of pdf) and table 4.2 (pg 68 of pdf)
+
+# estimate mean size of largest size classes from fig 3.4 (estimate average number in each of the >600 size classes then take weighted average)
+
+# 600-800, 800-1000, 1000-1200, 1200-1400, 1400-1600, 1600-1800, 1800-2000, 2000-2200, 2200-2400, 2400-2600, 2600-2800, 2800-3000
+# midpoints = 700, 900, 1100, 1300, 1500, 1700, 1900, 2100, 2300, 2500, 2700, 2900, 3000
+# 25, 10, 8, 5, 5, 5, 1, 1, 0, 1, 0, 1, 2
+
+#(25*700 + 10*900 + 8*1100 + 5*1300 + 5*1500 + 5*1700 + 1*1900 + 1*2100 + 0*2300 + 1*2500 + 0*2700 + 1*2900 + 2*3000)/(25 + 10 + 8 + 5 + 5 + 5 + 1 + 1 + 0 + 1 + 0 + 1 + 2) # = 1143.75
+
+
+# need three types of growth: ones that grew, stayed the same, and shrank. But it seems like the intervals are too wide to get any informative growth/shrinkage information (e.g., a coral that grew to the next size class could have only grown 1cm2, whereas a coral that stayed in the same size class could have grown almost the entire range of that size class) so just use these matrices for survival information. But if estimating growth, remember the sample size would be after mortality had occurred
+
+
+ortiz2005_surv <- data.frame(
+  location = c(rep("San Cristobal Reef", 4), rep("San Cristobal, Media Luna, and Laurel Reefs", 4)),
+  #size_cm2_mean = rep(c(100, 300, 500, 1144), 2), # midpoints of size classes; last is a weighted average of observed numbers (estimated from Fig. 3.4) in all size classes >600cm2 
+  size_cm2_mean = rep(c(NA, NA, NA, 1144), 2), # means are unknown for first three size classes; last is a weighted average of observed numbers (estimated from Fig. 3.4) in all size classes >600cm2 
+  size_cm2_sd = rep(NA, 8), 
+  size_cm2_min = rep(c(10*10*Fwl_min, 200, 400, 600), 2), # lower bounds of the size classes. For lowest size class, said "Fragments under 10 cm long were not observed" so convert to min surface area using fragment width:length ratio
+  size_cm2_max = rep(c(200, 400, 600, 3000), 2), # upper bounds of the size classes. For largest size class, used max value on x-axis of Fig. 3.4
+  n_initial = c(c(57, 57, 11, 24), c(207, 77, 33, 47)),# from Tables 4.1 and 4.2
+  prop_survived = c(c(0.4737, 0.8246, 0.9091, 0.8750), c(0.3197, 0.5882, 0.6316, 0.871)^(1/2)), # from Tables 4.1 and 4.2 (values from Table 4.2 interpolated to be annual)
+  time_interval_yr = c(rep(1, 4), rep(2, 4)), # first matrix is from 1998 to 1999, second is from 1999 to 2001
+  survey_yr = c(rep(1999, 4), rep(2001, 4)), # experiment started in July 2019; final timepoint was 193 days later
+  fragment = rep("Y", 8),
+  depth_m = c(rep(mean(c(1.8, 3.35)), 4), rep(mean(c(3.35, 3.35, 1.95, 1.65, 1.8, 3.35)), 4)) # from Table 2.1
+)
+
+ortiz2005_surv <- ortiz2005_surv %>% mutate(study = "ortiz_prosper_2005", region = "Puerto Rico", plot = NA, treatment_1 = NA, treatment_2 = NA, disturbance = NA, size_live = "Y", study_notes = "depth_m is averaged across reported values; upper and lower size boundaries are estimated", latitude = 17.940833, longitude = -67.07765, data_type = "field") # for lat and lon, just used the coordinates for San Cristobal reef (the others are nearby)
+#; size_cm2_mean is midpoint for size classes 1-3
+
+ortiz2005_surv <- ortiz2005_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(ortiz2005_surv)
+
+```
+
+
+
+## Roth 2013
+
+```{r}
+
+# estimating numbers of individuals in each size class from fig 5 (excluding the thermal anomaly year)
+
+# ratio with ruler: zoomed in so 50 individuals on y-axis is ~75mm so multiply the height of each bar in mm by 50/75
+
+roth_n <- data.frame(
+  #class = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+  yr_2003 = c(4, 20, 30, 25, 9, 9, 5, 2, 5, 0, 0, 1)*50/75,
+  yr_2004 = c(33, 17, 18, 22, 15, 9, 4, 4, 2, 5, 0, 4)*50/75,
+  yr_2006 = c(71, 29, 12, 15, 14, 9, 5, 5, 6, 11, 4, 10)*50/75,
+  yr_2007 = c(39, 36, 25, 18, 11, 14, 9, 0, 11, 5, 9, 14)*50/75,
+  yr_2010 = c(35, 73, 33, 18, 20, 13, 13, 10, 4, 8, 6, 25)*50/75
+  
+)
+
+
+roth_n <- as.matrix(roth_n)
+# the transition matrix values are averaged, so calculate the average value in each size class (then round up so they are whole numbers)
+
+roth_n_means <- ceiling(c(mean(roth_n[1, ]), mean(roth_n[2, ]), mean(roth_n[3, ]), mean(roth_n[4, ]), mean(roth_n[5, ]), mean(roth_n[6, ]), mean(roth_n[7, ]), mean(roth_n[8, ]), mean(roth_n[9, ]), mean(roth_n[10, ]), mean(roth_n[11, ]), mean(roth_n[12, ])))
+
+#roth_n_means
+#View(roth_n)
+
+roth2013_surv <- data.frame(
+  size_cm2_mean = rep(NA, 12), 
+  #size_cm2_mean = Cwl_mean*c(5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115)^2, # midpoints of size classes; last is a just a guess (last size class is >110cm)
+  size_cm2_sd = rep(NA, 12), 
+  size_cm2_min = Cwl_min*c(0.1, 10.1, 20.1, 30.1, 40.1, 50.1, 60.1, 70.1, 80.1, 90.1, 100.1, 110.1)^2, # lower bounds of the size classes (from the histograms in Fig. 5)
+  size_cm2_max = Cwl_max*c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120)^2, # upper bounds of the size classes. Largest size class is just a guess
+  n_initial = roth_n_means,
+  prop_survived = c(1-c(0.4, 0.29, 0.27, 0.14, 0.07, 0, 0, 0, 0, 0, 0, 0)) # from Table 3
+
+)
+
+
+roth2013_surv <- roth2013_surv %>% mutate(study = "roth_et_al_2013", region = "USVI", location = "Haulover Bay, St. John Island", plot = NA, treatment_1 = NA, treatment_2 = NA, disturbance = NA, survey_yr = 2010, time_interval_yr = 1, depth_m = 1, size_live = "N", fragment = "N",study_notes = "uppermost and lowermost size boundaries are estimated; depth_m is midpoints of given ranges; number of individuals estimated", latitude = 18.348, longitude = -64.677, data_type = "field") # for lat and lon, just used the coordinates for San Cristobal reef (the others are nearby)
+
+# note for survey year, just used the last year (results were averaged over several years)
+
+roth2013_surv <- roth2013_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(roth2013_surv)
+
+
+# add thermal anomaly year
+
+roth2013_survT <- data.frame(
+  size_cm2_mean = rep(NA, 12), 
+  #size_cm2_mean = Cwl_mean*c(5, 15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115)^2, # midpoints of size classes; last is a just a guess (last size class is >110cm)
+  size_cm2_sd = rep(NA, 12), 
+  size_cm2_min = Cwl_min*c(0.1, 10.1, 20.1, 30.1, 40.1, 50.1, 60.1, 70.1, 80.1, 90.1, 100.1, 110.1)^2, # lower bounds of the size classes (from the histograms in Fig. 5)
+  size_cm2_max = Cwl_max*c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120)^2, # upper bounds of the size classes. Largest size class is just a guess
+  n_initial = ceiling(c(40, 17, 14, 18, 13, 6, 5, 8, 10, 5, 1, 7)*50/75), # estimated from the histogram in Fig. 5
+  prop_survived = c(1-c(0.36, 0.42, 0.3, 0, 0.33, 0, 0, 0, 0, 0, 0, 0)) # from Table 3
+
+)
+
+
+roth2013_survT <- roth2013_survT %>% mutate(study = "roth_et_al_2013", region = "USVI", location = "Haulover Bay, St. John Island", plot = NA, treatment_1 = NA, treatment_2 = NA, disturbance = "MHW", survey_yr = 2010, time_interval_yr = 1, depth_m = 1, size_live = "N", fragment = "N",study_notes = "uppermost and lowermost size boundaries are estimated; depth_m is midpoints of given ranges; number of individuals estimated", latitude = 18.348, longitude = -64.677, data_type = "field") # for lat and lon, just used the coordinates for San Cristobal reef (the others are nearby)
+
+roth2013_surv <- rbind(roth2013_surv, roth2013_survT)
+
+#View(roth2013_surv)
+
+```
+
+
+## Vardi 2011
+
+Vardi 2011 (anything that doesn't overlap with the noaa survey data)
+
+```{r}
+# compare noaa coordinates to GPS waypoints given in Table 4-A4
+#View(noaa_coords)
+
+# and compare the years
+#noaa_dt %>% group_by(Region, Reef, Plot, year) %>% summarize(n = n()) %>% view()
+
+
+# all the sites/years in Fl, Curacao, and Navassa in Vardi 2011 seem to be included in the noaa survy data
+# so the only unique data from Vardi 2011 are the data from Jamaica, Puerto Rico, and Virgin Gorda
+# see Fig. 4-2 for sample sizes
+
+
+# Jamaica
+vardi2011_JA <- data.frame(
+  region = rep("Jamaica", 12),
+  location = rep("Pear Tree Bottom, Rio Bueno, and Split Rock", 12),
+  latitude = rep(18.46293 , 12), # from Table 4-A4; just used the coordinates from Pear Tree Bottom since the results weren't broken down by location
+  longitude = rep(-77.35728, 12),
+  survey_yr = c(rep(2008, 4), rep(2009, 4), rep(2010, 4)), # from Table 4-A3
+  time_interval_yr = c(rep(0.75, 4), rep(1.25, 4), rep(1, 4)), # from Table 4-A3
+  size_cm2_mean = rep(Cwl_mean*c(7, 20, 45, 100)^2, 3), # across all regions, say "These size classes have an average diameter (assuming an approximately circular morphology) of 7, 20, 45, and 100 cm, respectively". But don't given more detailed informatio for specific regions so just use the overall average
+  size_cm2_sd = rep(NA, 12), 
+  size_cm2_min = rep(c(0, 100.0001, 900.001, 4000.001), 3), # lower bounds of the size classes (adjust slightly so they don't overlap with maxes)
+  size_cm2_max = rep(c(100, 900, 4000, 50000), 3), # upper bounds of the size classes. Guessed 50,000 as max from Fig 4-3
+  n_initial = floor(c(102*c(0.16, 0.62-0.16, 0.79-0.62, 1-0.79), 215*c(0.15, 0.56-0.15, 0.83-0.56, 1-0.83), 203*c(0.14, 0.54-0.14, 0.82-0.54, 1-0.82))), # total number of corals at beginning of each time interval (2007, 2008, and 2009) from Fig 4-2; prop. of total in each size class estimated from the stacked bar plot in that figure
+  prop_survived = c(c(1-c(0.5, 0.17, 0, 0.05))^(1/0.75), c(1-c(0.35, 0.32, 0.13, 0))^(1/1.25), c(1-c(0.64, 0.39, 0.19, 0.08))) # from Table 4-A3
+
+)
+
+
+# Fig. 4-2 bar plot estimates
+# JA '07: 0.16, 0.62, 0.79
+# sum(c(0.16, 0.62-0.16, 0.79-0.62, 1-0.79)) # check these sum to 1
+# # JA '08: 0.15, 0.56, 0.83
+# sum(c(0.15, 0.56-0.15, 0.83-0.56, 1-0.83)) # check these sum to 1
+# # JA '09: 0.14, 0.54, 0.82
+# sum(c(0.14, 0.54-0.14, 0.82-0.54, 1-0.82)) # check these sum to 1
+
+
+# Puerto Rico
+vardi2011_PR <- data.frame(
+  region = rep("Puerto Rico", 4),
+  location = rep("Tres Palmas, Cayo Ron, and La Cordillera", 4),
+  latitude = rep(18.35047, 4), # from Table 4-A4; just used the coordinates from Tres Palmas since the results weren't broken down by location
+  longitude = rep(-67.26656, 4),
+  survey_yr = rep(2010, 4), # from Fig. 4-2
+  time_interval_yr = rep(2.75, 4), # from Table 4-2
+  size_cm2_mean = rep(Cwl_mean*c(7, 20, 45, 100)^2, 1), # across all regions, say "These size classes have an average diameter (assuming an approximately circular morphology) of 7, 20, 45, and 100 cm, respectively". But don't given more detailed informatio for specific regions so just use the overall average
+  size_cm2_sd = rep(NA, 4), 
+  size_cm2_min = rep(c(0, 100.0001, 900.001, 4000.001), 1), # lower bounds of the size classes 
+  size_cm2_max = rep(c(100, 900, 4000, 50000), 1), # upper bounds of the size classes. Guessed 50,000 as max from Fig 4-3
+  n_initial = floor(408*c(0.18, 0.5-0.18, 0.74-0.5, 1-0.74)), # total number of corals at beginning of time interval (2007) from Fig 4-2; prop. of total in each size class estimated from the stacked bar plot in that figure
+  prop_survived = c(1-c(0.58, 0.5, 0.37, 0.3))^(1/2.75) # from Table 4-1
+
+)
+
+# PR '07: 0.18, 0.5, 0.74
+#sum(c(0.18, 0.5-0.18, 0.74-0.5, 1-0.74)) # check these sum to 1
+#View(vardi2011_PR)
+
+# Virgin Gorda
+vardi2011_VG <- data.frame(
+  region = rep("Virgin Gorda", 4),
+  location = rep("Mountain Point and West Dog", 4),
+  latitude = rep(18.50337, 4), # from Table 4-A4; just used the coordinates from Mountain Point since the results weren't broken down by location
+  longitude = rep(-64.41600, 4),
+  survey_yr = rep(2007, 4), # from Fig. 4-2
+  time_interval_yr = rep(1.75, 4), # from Table 4-2
+  size_cm2_mean = rep(Cwl_mean*c(7, 20, 45, 100)^2, 1), # across all regions, say "These size classes have an average diameter (assuming an approximately circular morphology) of 7, 20, 45, and 100 cm, respectively". But don't given more detailed informatio for specific regions so just use the overall average
+  size_cm2_sd = rep(NA, 4), 
+  size_cm2_min = rep(c(0, 100.0001, 900.001, 4000.001), 1), # lower bounds of the size classes 
+  size_cm2_max = rep(c(100, 900, 4000, 50000), 1), # upper bounds of the size classes. Guessed 50,000 as max from Fig 4-3
+  n_initial = floor(60*c(0.15, 0.61-0.15, 0.82-0.61, 1-0.82)), # total number of corals at beginning of time interval (2006) from Fig 4-2; prop. of total in each size class estimated from the stacked bar plot in that figure
+  prop_survived = c(1-c(0.44, 0.04, 0.08, 0))^(1/1.75) # from Table 4-2
+
+)
+
+# VG '06: 0.15, 0.61, 0.82
+#sum(c(0.15, 0.61-0.15, 0.82-0.61, 1-0.82)) # check these sum to 1
+
+#View(vardi2011_VG)
+
+# combine
+vardi2011_surv <- rbind(vardi2011_JA, vardi2011_PR, vardi2011_VG) %>% mutate(study = "vardi_2011", plot = NA, treatment_1 = NA, treatment_2 = NA, disturbance = if_else(region == "Puerto Rico", "storm", NA), depth_m = NA, fragment = "N", size_live = "Y", study_notes = "upper and lower size boundaries are estimated; size_cm2_mean are averages from multiple regions; coordinates are for first location listed", data_type = "field")
+
+vardi2011_surv <- vardi2011_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(vardi2011_surv)
+
+```
+
+
+
+## combine and export
+
+
+
+```{r}
+
+
+# full summarized survival data
+apal_survS <- rbind(rosales2024_surv, maurer2022_surv, MQ_lab_surv, fundR_surv, chamberland2015_surv, forrester2013_surv, forrester2011_surv, GarrisonWard2008_surv, WilliamsMiller2010_surv, BrucknerBruckner2001_surv, papke2021_surv, ortiz2005_surv, roth2013_surv, vardi2011_surv)
+
+# add columns with sample sizes
+apal_survS_studyN <- apal_survS %>% group_by(study) %>% summarize(study_N = sum(n_initial))
+#apal_survS_studyN <- apal_survS %>% group_by(study, survey_yr, region) %>% mutate(min_yr = min(survey_yr)) %>% summarize(study_N = sum(n_initial))
+#View(apal_survS_studyN)
+
+apal_survS <- apal_survS %>% left_join(apal_survS_studyN, by = c("study")) 
+
+#View(apal_survS)
+
+# full summarized growth data
+apal_growthS <- rbind(MQ_lab_growth, fundR_growth, chamberland2015_growth, schutter2023_growth, papke2021_growth)
+
+# add columns with sample sizes
+apal_growthS_studyN <- apal_growthS %>% group_by(study) %>% summarize(study_N = sum(n_final))
+#View(apal_survS_studyN)
+
+apal_growthS <- apal_growthS %>% left_join(apal_growthS_studyN, by = c("study"))
+
+#View(apal_growthS)
+
+# export these
+write.csv(apal_survS, file = "standardized_data/apal_surv_summ.csv")
+write.csv(apal_growthS, file = "standardized_data/apal_growth_summ.csv")
+
+
+```
+
+
+```{r}
+
+# check values are reasonable
+
+#summary(apal_survS)
+
+#summary(apal_growthS)
+
+```
+
+
+
+# Fragmentation
+
+Use the fragmentation rates reported in Vardi et al. 2012 and Vardi 2011 
+
+Methods form Vardi 2011: "New fragments are assumed to arise from the existing stand of colonies and can be of any size class. New SC3 fragments are assumed to derive solely from pre-existing SC4 colonies. New fragments of SC1 and SC2 were assumed to derive from existing SC3 and SC4 colonies proportionally, based on the ratio of mean size of SC4 colonies to that of SC3 at the beginning of the time interval"
+-- NOTE: I split the smallest size class in the Vardi studies (SC1_V) into two size classes. Since there isn't any information on whether SC1_V fragments would be in SC1_new or SC2_new, I assumed the fraction of SC1_V fragments in SC1_new was proportional to the fraction of the SC1_V range covered by SC1_new (i.e., SC1_V was from 0 to 100, and SC1_new is 0 to 10, so assume 10% of SC1_V fragments went to SC1_new and 90% went to SC2_new)
+
+
+
+
+```{r}
+
+# Florida
+vardi2011_FL_F <- data.frame(
+  region = rep("Florida Keys", 7),
+  location = rep("Carysfort, Elbow, French, Key Largo Dry Rocks, Molasses", 7),
+  latitude = rep(25.22194 , 7), # from Table 4-A2; just used the coordinates from Carysfort Reef since the results weren't broken down by location
+  longitude = rep(-80.21055, 7),
+  survey_yr = c(2005, 2006, 2007, 2008, 2009, 2010, 2011), # from Table 4-A2
+  time_interval_yr = c(0.75, 0.75, 1, 1, 1, 1, 1), # from Table 4-A2
+  F4_SC1 = 0.1*c(0.023/0.75, 0.075/0.75, 0.01, 0.046, 0.087, 0.027, 0.083), # SC1 fragments produced by SC4 per yr (from Table 4-A2)
+  F4_SC2 = 0.9*c(0.023/0.75, 0.075/0.75, 0.01, 0.046, 0.087, 0.027, 0.083),# SC2 fragments produced by SC4 per yr
+  F4_SC3 = c(0.026/0.75, 0.08/0.75, 0.026, 0.04, 0.063, 0.022, 0.045),
+  F4_SC4 = c(0, 0, 0, 0, 0, 0, 0),
+  F5_SC1 = 0.1*c(0.137/0.75, 0.394/0.75, 0.047, 0.23, 0.413, 0.137, 0.439), # SC1 fragments produced by SC5 per yr
+  F5_SC2 = 0.9*c(0.137/0.75, 0.394/0.75, 0.047, 0.23, 0.413, 0.137, 0.439), # SC2 fragments produced by SC5 per yr
+  F5_SC3 = c(0.155/0.75, 0.419/0.75, 0.126, 0.202, 0.297, 0.109, 0.238),
+  F5_SC4 = c(0.031/0.75, 0.062/0.75, 0, 0.036, 0.031, 0.063, 0.113),
+  F5_SC5 = c(0, 0.031/0.75, 0, 0, 0, 0, 0),
+  disturbance = c("storm", "storm", NA, NA, NA, NA, NA)
+)
+
+#View(vardi2011_FL_F)
+
+
+# Curacao
+vardi2011_CW_F <- data.frame(
+  region = rep("Curacao", 5),
+  location = rep("Blue Baai, Boca Santa Marta, Sea Aquarium Reef", 5),
+  latitude = rep(12.13511 , 5), # from Table 4-A1; just used the coordinates from Blue Baai Reef since the results weren't broken down by location
+  longitude = rep(-68.98682, 5),
+  survey_yr = c(2007, 2008, 2009, 2010, 2011), # from Table 4-A1
+  time_interval_yr = c(1, 1, 1.25, 0.75, 1), # from Table 4-A1
+  F4_SC1 = 0.1*c(0.02, 0, 0.07/1.25, 0.03/0.75, 0.04), # SC1 fragments produced by SC4 per yr (from Table 4-A1)
+  F4_SC2 = 0.9*c(0.02, 0, 0.07/1.25, 0.03/0.75, 0.04),# SC2 fragments produced by SC4 per yr
+  F4_SC3 = c(0.05, 0.01, 0.11/1.25, 0.07/0.75, 0.05),
+  F4_SC4 = c(0, 0, 0, 0, 0),
+  F5_SC1 = 0.1*c(0.16, 0.01, 0.46/1.25, 0.16/0.75, 0.18), # SC1 fragments produced by SC5 per yr
+  F5_SC2 = 0.9*c(0.16, 0.01, 0.46/1.25, 0.16/0.75, 0.18), # SC2 fragments produced by SC5 per yr
+  F5_SC3 = c(0.37, 0.07, 0.73/1.25, 0.35/0.75, 0.24),
+  F5_SC4 = c(0.18, 0.02, 0.25/1.25, 0.08/0.75, 0.02),
+  F5_SC5 = c(0.02, 0, 0.11/1.25, 0/0.75, 0.02),
+  disturbance = c(NA, NA, "storm", NA, NA) # storm in 08
+)
+
+#View(vardi2011_CW_F)
+
+# Jamaica
+vardi2011_JA_F <- data.frame(
+  region = rep("Jamaica", 3),
+  location = rep("Pear Tree Bottom, Rio Bueno, and Split Rock", 3),
+  latitude = rep(18.46293 , 3), # from Table 4-A4; just used the coordinates from Pear Tree Bottom since the results weren't broken down by location
+  longitude = rep(-77.35728, 3),
+  survey_yr = c(2008, 2009, 2010), # from Table 4-A3
+  time_interval_yr = c(0.75, 1.25, 1), # from Table 4-A3
+  F4_SC1 = c(0.1*0.1/0.75, 0.05*0.1/1.25, 0.04*0.1), # SC1 fragments produced by SC4 per yr (from Table 4-A3)
+  F4_SC2 = c(0.1*0.9/0.75, 0.05*0.90/1.25, 0.04*0.9),# SC2 fragments produced by SC4 per yr
+  F4_SC3 = c(0.17/0.75, 0.08/1.25, 0.03),
+  F4_SC4 = c(0, 0, 0),
+  F5_SC1 = c(0.45*0.1/0.75, 0.29*0.1/1.25, 0.16*0.1), # SC1 fragments produced by SC5 per yr
+  F5_SC2 = c(0.45*0.9/0.75, 0.29*0.9/1.25, 0.16*0.9), # SC2 fragments produced by SC5 per yr
+  F5_SC3 = c(0.81/0.75, 0.43/1.25, 0.12),
+  F5_SC4 = c(0.11/0.75, 0.06/1.25, 0),
+  F5_SC5 = c(0, 0.03/1.25, 0),
+  disturbance = rep(NA, 3)
+)
+
+
+# Puerto Rico
+vardi2011_PR_F <- data.frame(
+  region = rep("Puerto Rico", 1),
+  location = rep("Tres Palmas, Cayo Ron, and La Cordillera", 1),
+  latitude = rep(18.35047, 1), # from Table 4-A4; just used the coordinates from Tres Palmas since the results weren't broken down by location
+  longitude = rep(-67.26656, 1),
+  survey_yr = rep(2010, 1), # from Fig. 4-2
+  time_interval_yr = rep(2.75, 1), # from Table 4-1
+  F4_SC1 = 0.1*c(0.07)/2.75, # SC1 fragments produced by SC4 per yr (from Table 4-A3)
+  F4_SC2 = 0.9*c(0.07)/2.75,# SC2 fragments produced by SC4 per yr
+  F4_SC3 = c(0.09)/2.75,
+  F4_SC4 = c(0),
+  F5_SC1 = 0.1*c(0.38)/2.75, # SC1 fragments produced by SC5 per yr
+  F5_SC2 = 0.9*c(0.38)/2.75, # SC2 fragments produced by SC5 per yr
+  F5_SC3 = c(0.51)/2.75,
+  F5_SC4 = c(0.4)/2.75,
+  F5_SC5 = c(0.15)/2.75,
+  disturbance = c("storm")
+
+)
+
+
+# Navassa
+vardi2011_NV_F <- data.frame(
+  region = rep("Navassa", 1),
+  location = rep("LuLu Bay and Northwest Point", 1),
+  latitude = rep(18.39664, 1), # from Table 4-A4; just used the coordinates from LuLu Bay since the results weren't broken down by location
+  longitude = rep(-75.01895, 1),
+  survey_yr = rep(2009, 1), # from Fig. 4-2
+  time_interval_yr = rep(2.5, 1), # from Table 4-1
+  F4_SC1 = 0.1*c(0.01)/2.5, # SC1 fragments produced by SC4 per yr (from Table 4-1)
+  F4_SC2 = 0.9*c(0.01)/2.5,# SC2 fragments produced by SC4 per yr
+  F4_SC3 = c(0.03)/2.5,
+  F4_SC4 = c(0),
+  F5_SC1 = 0.1*c(0.07)/2.5, # SC1 fragments produced by SC5 per yr
+  F5_SC2 = 0.9*c(0.07)/2.5, # SC2 fragments produced by SC5 per yr
+  F5_SC3 = c(0.17)/2.5,
+  F5_SC4 = c(0)/2.5,
+  F5_SC5 = c(0)/2.5,
+  disturbance = c(NA)
+
+)
+
+
+# fragments were not recorded in Virgin Gorda (Table 4-2)
+
+
+# combine
+vardi2011_frag <- rbind(vardi2011_FL_F, vardi2011_CW_F, vardi2011_JA_F, vardi2011_PR_F, vardi2011_NV_F) %>% mutate(study = "vardi_2011", plot = NA, treatment_1 = NA, treatment_2 = NA, depth_m = NA, study_notes = "proportion SC1 fragments going to size class 1 and 2 estimated based on the relative range of sizes they cover", data_type = "field")
+
+vardi2011_frag <- vardi2011_frag[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "F4_SC1", "F4_SC2", "F4_SC3", "F4_SC4", "F5_SC1", "F5_SC2", "F5_SC3", "F5_SC4", "F5_SC5", "time_interval_yr", "disturbance", "study_notes")]
+
+#View(vardi2011_frag)
+
+# filter out years with storms
+vardi2011_frag2 <- vardi2011_frag %>% filter(is.na(disturbance)==T)
+
+# convert to long format
+vardi2011_fragL <- vardi2011_frag %>% pivot_longer(cols = starts_with("F"), names_to = "frag_type", values_to = "rate")
+
+#View(vardi2011_fragL)
+
+# summarized version
+vardi2011_frag_summ <- vardi2011_fragL %>% group_by(frag_type) %>% summarise(mean = mean(rate), Q05 = quantile(rate, 0.05), Q95 = quantile(rate, 0.95))
+
+#View(vardi2011_frag_summ)
+
+# export
+write.csv(vardi2011_frag2, file = "standardized_data/apal_fragmentation.csv")
+write.csv(vardi2011_frag_summ, file = "standardized_data/apal_fragmentation_summ.csv")
+
+```
+
+
+# short-term lab survival
+
+want to estimate survival rates over the ~2 weeks between settlement and outplanting
+
+additional studies that measured survival of new settlers in the lab over short time scales (few days to few months)
+-- Randall & Szmant 2009
+-- Miller 2014? (reject: just look at short-term survival on the reef, not in the lab)
+-- Ritzon -Williams et al. 2010? (reject: short-term survival on the reef, not in lab)
+
+
+## Chamberland  et al. 2015
+(use data from shorter time interval) 
+
+```{r}
+# survival
+chamberland2015_Lsurv <- data.frame(
+  n_initial = c(11*30), # used RSUs with similar settler densities (mean of 11.1 per substrate unit); 30 were assigned to the reef and 30 to the land-based nursery
+  prop_survived = c(0.81), # estimated from Fig. 2A
+  time_interval_d = rep(30, 3), # one month
+  substrate_type = rep("clay pottery tripods", 1),
+  spawn_yr = rep(2012, 1) 
+)
+
+chamberland2015_Lsurv <- chamberland2015_Lsurv %>% mutate(study = "chamberland_et_al_2015", region = "Curacao", location = "Sea Aquarium Reef", treatment_1 = NA, treatment_2 = NA, study_notes = "survival estimated from Fig. 2A")
+
+chamberland2015_Lsurv <- chamberland2015_Lsurv[, c("study", "region", "location", "treatment_1", "treatment_2", "spawn_yr", "substrate_type", "prop_survived", "n_initial", "time_interval_d", "study_notes")]
+
+```
+
+
+## Randall & Szmant
+
+```{r}
+
+RandallSzmant2009_Lsurv <- data.frame(
+  treatment_1 = c(28, 30, 31.5), # temperature
+  treatment_2 = rep(NA, 3),
+  n_initial = floor(c(12*10*0.62, 12*10*0.43, 12*10*0.37)), # “12 samples per temperature of 10 larvae were counted into the wells of 6-well culture plates. Mean percent settlement in the temperature treatments were 0.62, 0.43, and 0.37”.
+  prop_survived = rep((0.88 + 1)/2, 3), # "post-settlement survival was high for all treatments (88%–100%)." 
+  time_interval_d = rep(4, 3), 
+  substrate_type = rep("culture plate with CCA chip", 3),
+  spawn_yr = rep(2008, 3) # experiment started in July 2019; final timepoint was 193 days later
+)
+
+RandallSzmant2009_Lsurv <- RandallSzmant2009_Lsurv %>% mutate(study = "randall_szmant_2009", region = "Puerto Rico", location = "Tres Palmas Marine Reserve", study_notes = "survival is midpoint of given range")
+
+RandallSzmant2009_Lsurv <- RandallSzmant2009_Lsurv[, c("study", "region", "location", "treatment_1", "treatment_2", "spawn_yr", "substrate_type", "prop_survived", "n_initial", "time_interval_d", "study_notes")]
+
+#View(RandallSzmant2009_Lsurv)
+
+
+```
+
+
+
+combine and export
+
+```{r}
+# short term settler survival in lab
+apal_surv_lab_short <- rbind(chamberland2015_Lsurv, RandallSzmant2009_Lsurv)
+
+write.csv(apal_surv_lab_short, file = "standardized_data/apal_surv_lab_short.csv")
+
+```
+
+
+```{r}
+# apal_survS %>% filter(data_type == "lab") %>% view()
+# apal_survI %>% filter(data_type == "lab") %>% view()
+```
+
+
+# settlement rates
+
+settlement on cement vs. ceramic substrates
+
+note Randall & Szmant has settlement information but just in well plates
+
+Papke et al. 2021 compares survival on ceramic vs. cement but they use microfragments not new recruits so no settlement info
+
+Fundemar's data: need to ask whether percent settlement can be calculated (the Matriz_Asentamiento_Unificada data doesn't appear to have initial numbers)
+
+
+
+# density dependence
+
+estimating density dependent mortality rates from Fundemar's outplanting data
+
+
+```{r}
+# settler survival
+fundR_dt0 <- read_excel("original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
+#View(fundR_dt0)
+
+fundR_dt0 <- fundR_dt0 %>% clean_names()
+
+# settler sizes
+fund_sz_dt0 <- read_excel("original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
+
+fund_sz_dt0 <- fund_sz_dt0 %>% clean_names()
+
+
+fundR_dt <- fundR_dt0 %>% filter(coral_species=="Acropora palmata") %>% mutate(number_settlers = as.numeric(number_settlers)) %>% filter(is.na(number_settlers)==F)
+
+#View(fundR_dt)
+
+#unique(fundR_dt$outplanting_site)
+#fundR_dt %>% filter(outplanting_site == "Mesa de sustrato 2") %>% view() # looks like there's no data on initial outplant numbers at this site
+
+# make data frame with the initial numbers of settlers
+fundR_N0 <- fundR_dt %>% filter(months_after_outplanting==0) %>% mutate(N0 = number_settlers) %>% select(-"number_settlers", -"survey_date_year", -"survey_date_month", -"survey_date_day", -"survey_date_day", -"months_after_outplanting", -"remarks", -"time_point")
+
+# now join back together with the main dataset
+fundR_dt1 <- fundR_dt %>% left_join(fundR_N0, by = c("coral_species", "outplanting_site", "settlement_technique", "settlement_container_id", "transect", "outplant_date_year", "outplant_date_month", "outplant_date_day", "treatment_1", "treatment_2", "plot_tag_number", "substrate_number_temporary_flag"), relationship="many-to-many") %>% mutate(survival = number_settlers/N0)
+
+#View(fundR_dt1)
+
+# check this worked
+#fundR_dt1 %>% filter(plot_tag_number==8, substrate_number_temporary_flag=="1") %>% view()
+
+
+# now flag cases where the number of settlers increases over time (probably due to natural recruits?)
+fundR_dt2 <- fundR_dt1 %>% mutate(outplant_date = as.Date(paste(outplant_date_month, outplant_date_day, outplant_date_year, sep = "/"), format = '%m/%d/%Y')) %>% group_by(settlement_technique, transect, treatment_2, outplanting_site, outplant_date, treatment_1, plot_tag_number, substrate_number_temporary_flag) %>% arrange(months_after_outplanting) %>% mutate(survival1 = dplyr::lag(survival, n = 1L)) %>% ungroup() %>% mutate(new_recruits = if_else(survival - survival1 > 0, "Y", "N")) %>% group_by(settlement_technique, transect, treatment_2, outplanting_site, outplant_date, treatment_1, plot_tag_number, substrate_number_temporary_flag) %>% mutate(new_recruits_tot = if_else("Y" %in% new_recruits, "Y", "N")) %>% ungroup() # negative values of survival - survival1 means less recruits at current timepoint, positive values means more recruits (i.e., somehow a new recruit appeared). new_recruits_tot indicates whether a new recruit ever appeared on that tile
+fundR_dt2$new_recruits <- ifelse(is.na(fundR_dt2$new_recruits)==T, "N", fundR_dt2$new_recruits)
+
+# check this worked
+#fundR_dt2 %>% filter(plot_tag_number==8, substrate_number_temporary_flag=="1") %>% view()
+#fundR_dt2 %>% filter(plot_tag_number==2, substrate_number_temporary_flag=="60") %>% view()
+#fundR_dt2 %>% filter(plot_tag_number==5, substrate_number_temporary_flag=="16") %>% view()
+
+# select substrates that never had an increase in number of recruits and look at survival one year after outplanting
+
+#noaa_dt$Date <- as.Date(noaa_dt$Date, format = '%m/%d/%Y')
+
+fundR_dt3.2 <- fundR_dt2 %>% mutate(outplant_date = as.Date(paste(outplant_date_month, outplant_date_day, outplant_date_year, sep = "/"), format = '%m/%d/%Y'), survey_date = as.Date(paste(survey_date_month, survey_date_day, survey_date_year, sep = "/"), format = '%m/%d/%Y')) %>% filter(new_recruits_tot == "N") %>% select(outplanting_site, months_after_outplanting, settlement_technique, settlement_container_id, transect, outplant_date, survey_date, survey_date_year, treatment_1, treatment_2, plot_tag_number, substrate_number_temporary_flag, number_settlers, N0)
+```
+
+
+```{r}
+#View(fundR_dt3)
+
+#hist(fundR_dt2$months_after_outplanting)
+
+#unique(fundR_dt3.2$months_after_outplanting)
+
+#fundR_dt3.2 %>% group_by(months_after_outplanting, outplant_date) %>% summarize(n = n()) %>% view()
+
+# just use data from one month after outplanting (less time for other factors to influence mortality); all are from the same outplant date
+fundDD <- fundR_dt3.2 %>% mutate(prop_surv = number_settlers/N0) %>%filter(months_after_outplanting == 1) %>% mutate(n_dead = N0-number_settlers) #%>% mutate(prop_surv_yr = prop_surv^12) #filter(months_after_outplanting > 0 & months_after_outplanting < 2)
+
+# fundDD %>% group_by(treatment_1) %>% summarize(n = n()) %>% view() # almost all are cookie or tetrapod cement
+
+
+# fit nls model
+# dd_mod <- nls(prop_surv ~ exp(m*N0), data = fundDD, start = list(m = -0.1))
+# 
+# summary(dd_mod)
+# 
+plot(x = fundDD$N0, y = fundDD$prop_surv, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.5))
+# lines(x = seq(from = 0, to = 80, length.out = 1000), y = exp(-0.97*seq(from = 0, to = 80, length.out = 1000)), type = "l")
+
+# dd_mod2 <- lm(n_dead ~ N0, data = fundDD)
+# 
+# summary(dd_mod2)
+# 
+# plot(x = fundDD$N0, y = fundDD$n_dead, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.5))
+# abline(a = 0, b = 1)
+# abline(a = dd_mod2$coefficients[1], b = dd_mod2$coefficients[2], col = "blue")
+
+
+
+# should first convert prop surviving over one month to proportion surviving after 1 yr?
+
+# plot with y on the log scale and fit a line to this? but have issue of the 0's
+# plot(x = fundDD$N0, y = log(fundDD$prop_surv + 1), las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.5))
+
+```
+
+tile sizes (from "FW: Data for RSE" email sent on 9/15/25): "for Tetrapod cement we use 130 cm2, the cookies are not standardized", email also included some diagrams for gear
+
+
+problem with using proportions: for low densities, it's easier to get 0% or 100% mortality because there aren't very many individuals...
+
+try making it binary?
+
+```{r}
+
+# fundDD
+
+plot(x = fundDD$N0, y = rep(0, length(fundDD$N0)), ylim = c(0, 1), col = NA, las = 1)
+for(i in 1:nrow(fundDD)){
+  points(x = rep(fundDD$N0[i], fundDD$number_settlers[i]), y = rep(1, fundDD$number_settlers[i]), pch = 16, col = adjustcolor("black", alpha.f = 0.15))
+  points(x = rep(fundDD$N0[i], fundDD$n_dead[i]), y = rep(0, fundDD$n_dead[i]), pch = 16, col = adjustcolor("black", alpha.f = 0.15))
+}
+
+
+```
+
+
+could group into bins (e.g., 0-10, 10-20, etc.) and calculate prop surviving in each bin? Then fit exp to the values from each bin? Check what bin size gives reasonable numbers per bin in the lower sizes
+
+
+```{r}
+
+# make data frame with 1's and 0's
+# can use a for loop: for each row, make a data frame with number of rows = N0, then fill in with 1's and 0's, then join them all together
+
+#dd_bounds <- c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90) 
+
+dd_bounds <- c(0, 15, 30, 45, 60, 75, 90) 
+
+# means in each of these regions
+dd_means <- rep(NA, length(dd_bounds)-1)
+
+for(j in 2:length(dd_bounds)){
+  dd_means[j-1] <- mean(fundDD$N0[which(fundDD$N0 >= dd_bounds[j-1] & fundDD$N0 < dd_bounds[j])])
+}
+
+for(i in 1:nrow(fundDD)){
+  
+  dt_sub <- fundDD[i,]
+  
+  #dt_sub$N_class <- ifelse(dt_sub$N0 >= 0 & dt_sub$N0 < 10, dd_means[1], ifelse(dt_sub$N0 >= 10 & dt_sub$N0 < 20, dd_means[2], ifelse(dt_sub$N0 >= 20 & dt_sub$N0 < 30, dd_means[3], ifelse(dt_sub$N0 >= 30 & dt_sub$N0 < 40, dd_means[4], ifelse(dt_sub$N0 >= 40 & dt_sub$N0 < 50, dd_means[5], ifelse(dt_sub$N0 >= 50 & dt_sub$N0 < 60, dd_means[6], ifelse(dt_sub$N0 >= 60 & dt_sub$N0 < 70, dd_means[7], ifelse(dt_sub$N0 >= 70 & dt_sub$N0 < 80, dd_means[8], ifelse(dt_sub$N0 >= 80, dd_means[9], NA)))))))))
+  
+  dt_sub$N_class <- ifelse(dt_sub$N0 >= 0 & dt_sub$N0 < 15, dd_means[1], ifelse(dt_sub$N0 >= 15 & dt_sub$N0 < 30, dd_means[2], ifelse(dt_sub$N0 >= 30 & dt_sub$N0 < 45, dd_means[3], ifelse(dt_sub$N0 >= 45 & dt_sub$N0 < 60, dd_means[4], ifelse(dt_sub$N0 >= 60 & dt_sub$N0 < 75, dd_means[5], ifelse(dt_sub$N0 >= 75 & dt_sub$N0 < 90, dd_means[6], NA))))))
+  
+  fundDD_ind_i <- data.frame(
+    N0 = rep(dt_sub$N0, dt_sub$N0),
+    survived = c(rep(0, dt_sub$n_dead), rep(1, dt_sub$number_settlers)),
+    N_class = dt_sub$N_class
+  )
+  
+  if(i == 1){
+    fundDD_ind <- fundDD_ind_i
+  } else{
+    
+    fundDD_ind <- rbind(fundDD_ind, fundDD_ind_i)
+  }
+  
+}
+
+#View(fundDD_ind)
+
+#sort(unique(fundDD_ind$N0))
+#View(fundDD_ind)
+
+fundDD_summ <- fundDD_ind %>% group_by(N_class) %>% summarize(N_tot = n(), N_survived = sum(survived[survived == 1])) %>% mutate(prop_survived = N_survived/N_tot) %>% mutate(prop_survived_yr = prop_survived^12)# %>% view()
+
+#View(fundDD_summ)
+  
+```
+
+
+```{r}
+
+#dd_mod3 <- nls(prop_survived ~ exp(m*N_class), data = fundDD_summ, start = list(m = -0.1))
+
+#summary(dd_mod3)
+
+#dd_mod3 <- lm(log(prop_survived + 1) ~ N_class, data = fundDD_summ)
+
+
+# dd_mod3 <- lm(log(prop_survived_yr) ~ N_class, data = fundDD_summ)
+# 
+# 
+# summary(dd_mod3)
+# 
+# plot(x = fundDD_summ$N_class, y = log(fundDD_summ$prop_survived_yr), las = 1, pch = 16)
+# abline(a = dd_mod3$coefficients[1], b = dd_mod3$coefficients[2], col = "blue")
+
+fundDD_summ
+
+dd_mod3 <- lm(log(prop_survived) ~ N_class, data = fundDD_summ)
+
+plot(x = fundDD_summ$N_class, y = log(fundDD_summ$prop_survived), las = 1, pch = 16)
+abline(a = dd_mod3$coefficients[1], b = dd_mod3$coefficients[2], col = "blue")
+
+summary(dd_mod3)
+
+```
+
+slope is approx. -0.026
+
+y = exp(mx)*exp(b)
+
+log(y) = mx + b
+
+
+```{r}
+
+# plot(x = fundDD_summ$N_class, y = fundDD_summ$prop_survived_yr, las = 1, pch = 16)
+# lines(x = seq(from = 0, to = 80, length.out = 1000), y = exp(dd_mod3$coefficients[1])*exp(dd_mod3$coefficients[2]*seq(from = 0, to = 80, length.out = 1000)), type = "l", col = "blue")
+
+plot(x = fundDD_summ$N_class, y = fundDD_summ$prop_survived, las = 1, pch = 16)
+lines(x = seq(from = 0, to = 80, length.out = 1000), y = exp(dd_mod3$coefficients[1])*exp(dd_mod3$coefficients[2]*seq(from = 0, to = 80, length.out = 1000)), type = "l", col = "blue")
+
+```
+
+
+
+
+density dependence is formulated as
+
+```{r}
+# S_i[1] <- S_i[1]*exp(-m*sum(N_all)); want to estimate m
+```
+
+ 
+
+
+
+
+
+
+
+
+
+

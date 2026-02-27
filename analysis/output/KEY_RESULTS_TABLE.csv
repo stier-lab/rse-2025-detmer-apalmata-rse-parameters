@@ -1,0 +1,76 @@
+Category,Metric,Value,Units,95% CI Lower,95% CI Upper,Notes
+Database,Total survival observations,5196,records,,,
+Database,Total growth observations,4344,records,,,
+Database,Number of studies,7,studies,,,
+Database,Geographic regions,7,regions,,,
+Database,Temporal coverage,2004-2024,years,,,
+Population Model,Lambda (growth rate),0.986,,0.741,1.029,Population declining ~1.4%/year
+Population Model,P(decline),80.4,%,,,80.4% of bootstrap replicates show decline
+Population Model,Elasticity - SC5 adult survival,56.9,%,,,Most critical parameter for recovery
+Population Model,Elasticity - SC4 survival,11.4,%,,,
+Population Model,Elasticity - Growth transitions,14.5,%,,,
+Survival by Size,SC1 (0-25 cm2) survival,72.4,%,,,n=366
+Survival by Size,SC2 (25-100 cm2) survival,64.4,%,,,n=1342
+Survival by Size,SC3 (100-500 cm2) survival,76.8,%,,,n=920
+Survival by Size,SC4 (500-2000 cm2) survival,87.6,%,,,n=837
+Survival by Size,SC5 (>2000 cm2) survival,93.7,%,,,n=1731
+Survival by Region,Florida Keys,79.3,%,,,n=4072
+Survival by Region,Curacao,84.6,%,,,n=856
+Survival by Region,Navassa,92.2,%,,,n=102
+Survival by Region,USVI,65.2,%,,,n=46
+Survival by Region,Dominican Republic,86.4,%,,,n=44
+Growth,SC1 mean growth,53.3,cm2/year,,,n=299; 88.6% positive growth
+Growth,SC2 mean growth,61.1,cm2/year,,,n=890; 86.3% positive growth
+Growth,SC3 mean growth,91.2,cm2/year,,,n=641; 68.3% positive growth
+Growth,SC4 mean growth,306.0,cm2/year,,,n=661; 69.9% positive growth
+Growth,SC5 mean growth,356.0,cm2/year,,,n=1553; 71.0% positive growth
+Growth,Overall % positive growth,75.1,%,,,After excluding impossible values
+Growth,% corals shrinking,7-28,%,,,Varies by size class
+Growth,Records excluded (impossible),300,records,,,6.9% had losses > initial size
+Growth Rate Analysis,AGR R-squared,1.5,%,,,Absolute growth poorly predicted by size
+Growth Rate Analysis,RGR R-squared,33.9,%,,,Relative growth well predicted by size
+Growth Rate Analysis,RGR 22x better predictor,22,fold,,,RGR explains 22x more variance than AGR
+Growth Rate Analysis,SC1 mean RGR,2.58,yr-1,,,Can double size annually
+Growth Rate Analysis,SC2 mean RGR,1.15,yr-1,,,~100% size increase per year
+Growth Rate Analysis,SC3 mean RGR,0.46,yr-1,,,~30-45% size increase per year
+Growth Rate Analysis,SC4 mean RGR,0.30,yr-1,,,~25-30% size increase per year
+Growth Rate Analysis,SC5 mean RGR,0.09,yr-1,,,~10% size increase per year
+Growth Rate Analysis,RGR threshold,86,cm2,,,Where RGR changes most rapidly
+Growth Rate Analysis,Natural colonies mean RGR,0.31,yr-1,,,n=3111
+Growth Rate Analysis,Restoration fragments mean RGR,1.59,yr-1,,,n=891; higher due to smaller size
+Allometry,Size measurement method,2D planar area,,,,L x W x % Live (Vardi et al. 2012)
+Allometry,Large colony bias,underestimates 3D tissue,,,,Complex branching not captured
+Allometry,Overall allometric slope,0.865,,,,Negative allometry: small colonies grow proportionally faster
+Allometry,Allometry R-squared,82.1,%,,,log(final) vs log(initial) relationship
+Allometry,NOAA survey slope,0.918,,0.901,0.935,n=3148; closest to isometric
+Allometry,Pausch et al. slope,0.500,,0.411,0.590,n=557; strong negative allometry
+Allometry,Fundemar fragments slope,0.249,,0.091,0.407,n=172; very strong negative allometry
+Allometry,ANCOVA study x size p-value,<0.0001,,,,Significant but CONFOUNDED by different size ranges
+Allometry,ANCOVA region x size p-value,<0.0001,,,,Significant but CONFOUNDED by different size ranges
+Allometry,Restricted ANCOVA (25-500 cm2),<0.001,,,,TRUE difference within comparable sizes (n=1522)
+Allometry,Common size range across ALL studies,13.5-38.5,cm2,,,Only 11.4% of data falls in overlap
+Allometry,Natural colonies slope,0.911,,,,n=3111; steeper allometry (1-85120 cm2)
+Allometry,Restoration fragments slope,0.751,,,,n=891; shallower allometry (5-47970 cm2)
+Allometry,Natural vs Restored restricted p-value,<0.0001,,,,TRUE difference even in overlapping sizes
+Allometry,Navassa slope,1.041,,0.898,1.184,Only region showing isometric growth
+Advanced Analysis,Mixed-effects fixed slope,0.866,,,,"Overall allometry accounting for study variation"
+Advanced Analysis,GAM vs linear AIC difference,44.1,AIC units,,,Substantial nonlinearity detected
+Advanced Analysis,Within-SC ANCOVA significant,0,out of 3,,,No differences within comparable size classes
+Advanced Analysis,Bootstrap NOAA-Fragment diff,0.301,,0.230,0.373,Slopes significantly different (confounded)
+Advanced Analysis,Size-matched pairs,480,pairs,,,Natural-Restored comparison at equivalent sizes
+Advanced Analysis,Size-matched ANCOVA p-value,<0.0001,,,,TRUE biological differences persist after matching
+Advanced Analysis,Natural matched slope,0.941,,,,n=480 matched pairs
+Advanced Analysis,Restored matched slope,0.776,,,,n=480 matched pairs
+Advanced Analysis,Paired t-test p-value,<0.0001,,,,Restored have higher final size at same initial
+Meta-Analysis,I-squared (heterogeneity),97.8,%,,,Considerable heterogeneity
+Meta-Analysis,Pooled survival (random effects),76.9,%,56.9,89.4,
+Meta-Analysis,Prediction interval,27.0-96.8,%,,,Wide expected range for new study
+Meta-Analysis,Natural colony survival,87.1,%,,,n=3968 (single study: NOAA)
+Meta-Analysis,Restoration fragment survival,72.8,%,56.6,84.6,n=1111
+Threshold Analysis,Survival threshold,44,cm2 live tissue,10,33100,High uncertainty (CV=48%)
+Threshold Analysis,Size explains variance,8.6,%,,,Low explanatory power
+Threshold Analysis,RGR explains variance,31.7,%,,,Better predictor
+Data Gaps,Priority 1,Climate event survival,,,,"Impact=5, Feasibility=3"
+Data Gaps,Priority 2,SC1 recruit field data,,,,"Impact=4, Feasibility=4"
+Data Gaps,Priority 2,Nursery-to-field transition,,,,"Impact=4, Feasibility=4"
+Data Gaps,Priority 4,Long-term monitoring >5yr,,,,"Impact=5, Feasibility=3"

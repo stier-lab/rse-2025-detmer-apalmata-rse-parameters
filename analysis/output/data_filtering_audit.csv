@@ -1,0 +1,8 @@
+stage,dataset,n_before,n_removed,n_after,reason
+load_raw,survival,5213,0,5213,Raw data loaded
+deduplication,survival,5213,66,5147,"Exact duplicate removal (study, coral_id, survey_yr, location)"
+load_raw,growth,4344,0,4344,Raw data loaded
+deduplication,growth,4344,19,4325,"Exact duplicate removal (study, coral_id, survey_yr, location)"
+cleaning,survival,5147,16,5131,Remove missing/zero size and missing survival
+cleaning,growth,4325,0,4325,Remove missing/zero size and missing growth
+impossible_flagging,growth,4325,501,3824,"Flagged impossible growth (not removed, flag only)"

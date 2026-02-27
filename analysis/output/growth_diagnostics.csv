@@ -1,0 +1,7 @@
+metric,value,status
+r2_absolute,0.011127821588177092,LOW
+r2_rgr,0.31745714189614477,OK
+r2_pos_growth,0.03239569951427883,LOW
+heteroscedasticity_ratio,87.8526146138698,HIGH
+bootstrap_cv,0.06440274563380395,OK
+pct_outliers,0.10219368646334938,HIGH

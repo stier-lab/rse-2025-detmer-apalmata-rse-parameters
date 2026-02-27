@@ -1,0 +1,7 @@
+"Response","Model","df","AIC","Delta_AIC","Best"
+"Annual Survival","Null (intercept only)",1,4936.38454128278,506.43597429628,""
+"Annual Survival","Linear (log size)",2,4461.52579510894,31.577228122439,""
+"Annual Survival","Threshold (100 cm²)",3,4429.9485669865,0,"✓"
+"Annual Growth","Null (intercept only)",1,83520.5080340943,10.6163852688915,""
+"Annual Growth","Linear (log size)",2,83509.8916488254,0,"✓"
+"Annual Growth","Categorical (5 classes)",5,83523.0557459226,13.1640970972367,""

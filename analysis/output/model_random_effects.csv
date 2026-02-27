@@ -1,0 +1,17 @@
+"model","group","variance","std_dev"
+"S_ME1_null","study",1.29795121689276,1.1392766200062
+"S_ME2_linear","study",1.54361826462663,1.24242434965942
+"S_ME3_categorical","study",1.45251939237556,1.20520512460558
+"S_ME4_random_slope","study",1.3603051637988,1.16632120952969
+"S_ME4_random_slope","study",0.129334567256565,0.359631154457681
+"S_ME4_random_slope","study",-0.211005192701842,-0.503057539895273
+"G_ME1_null","study",11485.5374836534,107.170599903394
+"G_ME1_null","Residual",14249206.3251208,3774.81209136572
+"G_ME2_linear","study",0,0
+"G_ME2_linear","Residual",14215502.5080128,3770.34514441487
+"G_ME3_categorical","study",0,0
+"G_ME3_categorical","Residual",14248957.370978,3774.7791155216
+"G_ME4_random_slope","study",0,0
+"G_ME4_random_slope","study",2.53799666579843e-10,1.59310911923773e-05
+"G_ME4_random_slope","study",0,NA
+"G_ME4_random_slope","Residual",14215502.5080128,3770.34514441487

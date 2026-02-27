@@ -1,0 +1,17 @@
+CITATION:
+Kuffner, I. B., Stathakopoulos, A., Toth, L. T., & Bartlett, L. A. (2020). Reestablishing a stepping-stone population of the threatened elkhorn coral Acropora palmata to aid regional recovery. Endangered Species Research, 43, 461–473. https://doi.org/10.3354/esr01083
+
+ABSTRACT:
+Recovery of the elkhorn coral Acropora palmata is critical to reversing coral reef ecosystem collapse in the western Atlantic, but the species is severely threatened. To gauge potential for the species' restoration in Florida, USA, we conducted an assisted migration experiment where 50 coral fragments of 5 nursery-raised genetic strains (genets) from the upper Florida Keys were moved to 5 sites across 350 km of the offshore reef. Additionally, 4 fragments from the 1 remaining colony of A. palmata in Dry Tortugas National Park (DRTO) were added to the 2 DRTO experimental sites to test for local adaptation. To measure coral performance, we tracked coral survival, calcification, growth, and condition from May 2018 to October 2019. All 24 corals relocated to the DRTO sites survived and calcified ~85% faster than the fewer surviving corals transplanted to the 2 upper Keys sites. While coral survival across the entire experiment did not depend on genet, there was a weak but statistically significant genetic effect on calcification rate among the corals relocated to DRTO. The DRTO native genet was among the fastest growing genets, but it was not the fastest, suggesting a lack of local adaptation at this scale. Our results indicate that DRTO, a remote reef system inhabited by the species during the Holocene and located at the nexus of major ocean currents, may be a prime location for reestablishing A. palmata. Assisted migration of A. palmata to DRTO could restore a sexually reproducing population in <10 yr, thereby promoting the species' regional recovery.
+
+KEY FINDINGS FOR ACROPORA PULCHRA RESTORATION:
+
+1. SITE SELECTION TRUMPS GENETICS FOR SURVIVAL: All corals at Dry Tortugas (100% survival) vs. 30-40% survival at upper Keys sites, despite identical genets. Site environmental conditions—water quality, temperature regime, predator abundance—can override genetic advantages, suggesting site selection should be prioritized in restoration planning for A. pulchra.
+
+2. CALCIFICATION RATES HIGHLY SITE-DEPENDENT: DRTO corals calcified 80-85% faster (29 kg/m²/yr) than upper Keys survivors (16 kg/m²/yr). For A. pulchra restoration, identifying optimal growth environments could dramatically accelerate population recovery timelines.
+
+3. WEAK GENETIC EFFECTS ON GROWTH: Among DRTO corals, genet explained some calcification variance but no genet consistently outperformed others across all metrics. The native DRTO genet performed well but wasn't superior, suggesting local adaptation may be weak at 100s-km scales. Genetic diversity may matter more than selecting "super genets."
+
+4. HEIGHT CORRELATES WITH CALCIFICATION (r² = 0.52): Simple height measurements can predict calcification rates for Acropora, providing a practical field metric for monitoring restoration success without complex buoyant weighing.
+
+5. ASSISTED MIGRATION VIABLE ACROSS HISTORIC RANGE: Corals thrived 300 km from their source population, supporting translocation as a restoration tool. For A. pulchra, this suggests fragments could be moved across broad geographic scales within historic/Holocene ranges without fitness penalties from local adaptation mismatch.

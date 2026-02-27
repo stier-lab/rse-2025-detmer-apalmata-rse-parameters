@@ -1,0 +1,5 @@
+"model","aic","coef_size","significant","delta_aic","best"
+"Threshold (breakpoint at 100 cm2)",4429.9485669865,0.0683411209774876,TRUE,0,TRUE
+"Categorical (5 size classes)",4437.88630381619,NA,TRUE,7.93773682969277,FALSE
+"Quadratic (log size + log size²)",4446.4959117668,-0.0080346047540667,FALSE,16.547344780307,FALSE
+"Linear (log size)",4461.52579510894,0.37641010775025,TRUE,31.577228122439,FALSE

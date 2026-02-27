@@ -1,0 +1,53 @@
+Citation
+Rosales, S.M., Young, B.D., Bright, A.J., Montes, E., Zhang, J.-Z., Traylor-Knowles, N., & Williams, D.E. (2024).
+Reef site and habitat influence effectiveness of Acropora palmata restoration and its microbiome in the Florida Keys.
+Communications Earth & Environment 5:689.
+DOI: 10.1038/s43247-024-01816-7
+
+So what (one sentence)
+Survivorship of outplanted Acropora palmata is driven more by reef-scale habitat conditions and associated microbiomes than by coral genotype, highlighting current velocity, depth, and nutrient regime as key levers for restoration success.
+
+Study context
+Species: Acropora palmata
+Region: Upper Florida Keys, USA
+Restoration context: Nursery-grown fragments outplanted by Coral Restoration Foundation
+Genets: CN2, CN4, ML2, HS1
+Habitats/Reefs: Carysfort Reef, North Dry Rocks, Pickles Reef
+Study duration: 2018–2019
+
+Methods (inference-relevant only)
+- Longitudinal survivorship tracking of outplanted fragments (~532 days)
+- Environmental monitoring: SST, chlorophyll-a, nutrients (NO3-, NO2-, PO4^3-, Si), current velocity
+- Microbiome characterization via 16S rRNA sequencing
+- Cox proportional hazards models and correlations between microbiome composition and survivorship
+
+Key results (numbers first)
+- Survivorship varied strongly among reefs; Carysfort Reef had the lowest survivorship
+- Higher survivorship correlated with:
+  - Higher current velocity
+  - Shallower outplant depth
+- Relative abundance of Rhodobacterales was negatively correlated with survivorship
+- Higher nutrients and temperature were associated with increased Alteromonadales (putative pathogens)
+- Genotype effects were weak compared to habitat effects
+
+Mechanisms / drivers
+- Physical flushing (currents) likely reduces pathogen buildup and thermal stress
+- Microbiome shifts reflect environmental filtering rather than host genet identity
+- Nutrient enrichment promotes microbial taxa associated with stress or disease
+
+Restoration-relevant takeaways
+- Prioritize sites with high current velocity and shallow depth
+- Avoid sites with elevated nitrate/nitrite concentrations
+- Microbiome composition can serve as an early-warning indicator of site suitability
+- Genotype choice alone is insufficient to ensure restoration success
+
+Limitations / external validity
+- Observational correlations limit causal inference
+- Restricted to Florida Keys reef settings and four genets
+
+Anchor numbers & quotable facts
+- Habitat explained more survivorship variation than genotype
+- Rhodobacterales abundance inversely related to survivorship
+
+Tags
+#Acropora_palmata #restoration #microbiome #habitat_quality #Florida_Keys

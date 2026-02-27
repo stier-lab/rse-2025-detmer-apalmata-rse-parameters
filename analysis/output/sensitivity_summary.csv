@@ -1,0 +1,8 @@
+"analysis","metric","assessment"
+"Leave-one-out (influential studies)","2/6 influential","MODERATE"
+"Size boundaries (CV across schemes)","Mean CV = 5.0%","ROBUST"
+"Outlier removal (max change)","Max change = 2.8%","ROBUST"
+"Model specification (AIC range)","ΔAIC range = 31.6","MODERATE"
+"Temporal (max decade change)","Max change = 10.5%","MODERATE"
+"Geographic (max region change)","Max change = 22.4%","SENSITIVE"
+"Bootstrap (95% CI width)","Width = 29.9%","INFORMATIVE"

@@ -1,0 +1,18 @@
+CITATION
+Chamberland, V.F., Vermeij, M.J.A., Brittsan, M., Carl, M., Schick, M., Snowden, S., Schrier, A. & Petersen, D. (2015). Restoration of critically endangered elkhorn coral (Acropora palmata) populations using larvae reared from wild-caught gametes. Global Ecology and Conservation, 4, 526-537.
+DOI: 10.1016/j.gecco.2015.10.005
+
+ABSTRACT
+Elkhorn coral (Acropora palmata) populations provide important ecological functions on shallow Caribbean reefs, many of which were lost when a disease reduced their abundance by more than 95% beginning in the mid-1970s. Since then, a lack of significant recovery has prompted rehabilitation initiatives throughout the Caribbean. Here, we report the first successful outplanting and long-term survival of A. palmata settlers reared from gametes collected in the field. A. palmata larvae were settled on clay substrates (substrate units) and either outplanted on the reef two weeks after settlement or kept in a land-based nursery. After 2.5 years, the survival rate of A. palmata settlers outplanted two weeks after settlement was 6.8 times higher (3.4%) than that of settlers kept in a land-based nursery (0.5%). Furthermore, 32% of the substrate units on the reef still harbored one or more well-developed recruit compared to 3% for substrate units kept in the nursery. In addition to increasing survival, outplanting A. palmata settlers shortly after settlement reduced the costs to produce at least one 2.5-year-old A. palmata individual from $325 to $13 USD. Thus, this study not only highlights the first successful long-term rearing of this critically endangered coral species, but also shows that early outplanting of sexually reared coral settlers can be more cost-effective than the traditional approach of nursery rearing for restoration efforts aimed at rehabilitating coral populations.
+
+KEY FINDINGS FOR ACROPORA PULCHRA RESTORATION CONTEXT
+
+1. EARLY OUTPLANTING DRAMATICALLY IMPROVES SURVIVAL: Settlers transferred to the reef at 2 weeks had 6.8× higher survival (3.4%) than those kept in land-based nursery (0.5%) after 2.5 years. Extended nursery periods exposed recruits to unpredictable stressors (ciliate infections, temperature spikes, competition from hydroids/anemones) that reduced survival more than natural reef conditions.
+
+2. CRYPTIC SETTLEMENT SURFACES ARE CRITICAL: Settlers on undersides of tripod substrates had 2× higher survival during the first month (72% vs. 35%) than those on exposed upper surfaces. Substrate design for A. pulchra restoration should incorporate cryptic microhabitats that protect settlers from turf algae and predation during early post-settlement.
+
+3. COST-EFFECTIVENESS FAVORS EARLY OUTPLANTING: Cost per surviving recruit dropped from $325 (nursery-reared 2.5 yr) to $13 (early outplant). Nursery maintenance accounted for 79% of costs in extended grow-out. This has major implications for scaling A. pulchra restoration—sexual propagation becomes economically viable with early outplanting.
+
+4. HIGH INITIAL MORTALITY IS NORMAL BUT STABILIZES: 86% settler mortality occurred in the first 6 months on reef, but mortality rates dropped dramatically after 11 months. This early mortality bottleneck is a critical demographic parameter for modeling restoration success and planning appropriate propagule numbers.
+
+5. SUBSTRATE ATTACHMENT AFFECTS LONG-TERM SUCCESS: Recruits on substrates permanently fixed with epoxy showed 67% survival and ~20× greater growth than those on ropes. For A. pulchra restoration, securing substrates firmly to reef framework allows coral tissue to overgrow substrates and attach to natural substrate, dramatically improving outcomes.

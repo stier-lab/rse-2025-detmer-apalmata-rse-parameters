@@ -1,0 +1,2 @@
+response,r_squared,deviance_explained,edf,n_obs,family
+survival,0.05831838338160511,0.07251747230484913,2.795648495902675,3926,binomial

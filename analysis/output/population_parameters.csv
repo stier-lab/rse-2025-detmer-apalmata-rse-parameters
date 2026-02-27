@@ -1,0 +1,22 @@
+parameter,value,notes
+lambda,0.9855006937999741,deterministic dominant eigenvalue
+lambda_ci_lower,0.8188571662020969,percentile bootstrap 2.5%
+lambda_ci_upper,1.0198066362388214,percentile bootstrap 97.5%
+lambda_ci_bc_lower,0.8685315647969301,bias-corrected 2.5%
+lambda_ci_bc_upper,1.0391476052362072,bias-corrected 97.5%
+p_decline,0.8728870858688302,P(lambda < 1)
+generation_time_NOTE_unreliable,0.16782764646993698,Cochran-Ellner method; unreliable when fragmentation elasticity near zero
+damping_ratio,1.4907972949296053,Mod(eigenvalue1) / Mod(eigenvalue2); rate of convergence to stable distribution
+elasticity_stasis,0.7463789055509163,diagonal elasticity sum
+elasticity_growth,0.1560219825579267,below-diagonal elasticity sum
+elasticity_shrink,0.09759911189115691,above-diagonal elasticity sum
+elasticity_frag,0.06886348690870306,total fragmentation elasticity
+parametric_uncertainty_lambda,0.9181486298672462,NOT environmental stochasticity; parametric uncertainty only
+parametric_uncertainty_lambda_ci_lower,0.8254113090306245,NOT environmental stochasticity; parametric uncertainty only
+parametric_uncertainty_lambda_ci_upper,0.9827460769840919,NOT environmental stochasticity; parametric uncertainty only
+jensens_inequality_effect,0.06735206393272786,lambda_deterministic minus parametric_uncertainty_lambda
+lambda_boot_se,0.057443528258040666,bootstrap standard error of lambda
+lambda_boot_cv,0.06031765111486841,bootstrap coefficient of variation of lambda
+n_boot_valid,1479,bootstrap iterations that produced valid lambda
+n_boot_total,2000,total bootstrap iterations attempted
+lambda_no_fragmentation,0.8932106609036372,lambda without fragmentation matrix (G %*% diag(S) only)

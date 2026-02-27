@@ -1,0 +1,7 @@
+parameter,value
+effect_size_measure,PLO (proportional log-odds)
+estimation_method,REML
+small_sample_adjustment,Knapp-Hartung (test='knha')
+continuity_correction,Haldane 0.5 when zero cells
+k_studies,5
+total_N,5079

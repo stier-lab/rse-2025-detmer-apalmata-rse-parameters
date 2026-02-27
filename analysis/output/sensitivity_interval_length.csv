@@ -1,0 +1,3 @@
+scenario,lambda,n_records,pct_change_from_full
+full_data,0.9855006937999741,5131,0
+short_intervals_only,0.974250145424766,4900,-1.1416073520788028

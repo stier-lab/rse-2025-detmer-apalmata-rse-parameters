@@ -1,0 +1,71 @@
+# R artifacts
+.Rhistory
+.Rdata
+.RData
+.Ruserdata
+Rplots.pdf
+*.Rproj.user/
+
+# R package cache
+packrat/
+renv/
+.Rproj.user/
+
+# Compiled R files
+*.Rcheck/
+
+# R Markdown artifacts
+*_cache/
+*_files/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# Environment files
+.env
+*.env
+
+# Logs
+logs/
+*.log
+
+# IDE / tool config
+.claude/
+
+# MCP artifacts
+.mcp.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Analysis ephemera
+analysis/output/pipeline_log_*.csv
+analysis/output/baseline/
+
+# Generated exploratory/diagnostic figures (superseded by manuscript/ and supplementary/)
+analysis/figures/supplementary/diagnostics/
+analysis/figures/supplementary/exploratory/
+analysis/figures/supplementary/meta_analysis/
+analysis/figures/publication/
+
+# Playwright MCP artifacts (web platform moved to separate repo)
+.playwright-mcp/

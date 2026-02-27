@@ -1,0 +1,2602 @@
+---
+title: "APAL_data_analysis"
+output: html_document
+date: "2025-10-31"
+---
+
+README: analyzing the standardized A. palmata data to estimate RSE model parameters
+
+```{r setup, include=FALSE}
+
+# command + option + i for new code chunk
+# command + shift + enter to run entire code chunk
+# command + enter to run single line of code
+
+library(tidyverse) # command + shift + m for %>%
+
+library(readxl)
+
+library(janitor)
+
+library("maps") # https://rdrr.io/cran/maps/man/
+
+library("sf")
+
+library("ggspatial")# for adding scale bar and north arrow to maps
+
+
+```
+
+
+to get variability from proportions, just take random subsets of the data, calculate proportions surviving, and repeat? compare to binomial GLMM
+
+histograms or ridgeline plots (separate for each size class?) where x = proportion surviving and proportions are calculated by grouping values by study, region, fragment or not, etc?
+
+
+# define size classes
+
+```{r}
+
+# lower bounds of each size class (cm2)
+SC1 <- 0
+SC2 <- 10
+SC3 <- 100
+SC4 <- 900
+SC5 <- 4000
+
+SC_lower <- c(SC1, SC2, SC3, SC4, SC5)
+SC_upper <- c(SC2, SC3, SC4, SC5, max(c(apal_surv_ind$size_live_cm2, apal_surv_summ$size_cm2_max), na.rm = T))
+
+#quantile(c(apal_surv_ind$size_live_cm2[which(apal_surv_ind$size_live_cm2 > SC5)], apal_surv_summ$size_cm2_max[which(apal_surv_summ$size_cm2_max > SC5)]), 0.5)
+
+# function for assigning sizes to size classes
+SC_fun <- function(size){
+  
+  if(is.na(size)==F){
+    if(size <= SC2){
+      size_class <- 1
+    } 
+    
+    if(size <= SC3 & size > SC2){
+      size_class <- 2
+    }
+    
+    if(size <= SC4 & size > SC3){
+      size_class <- 3
+    }
+    
+    if(size <= SC5 & size > SC4){
+      size_class <- 4
+    }
+    
+    if(size > SC5){
+      size_class <- 5
+    }
+  } else{
+    size_class <- NA
+  }
+  
+  return(size_class)
+}
+
+# vectorize this function
+SC_funV <- Vectorize(SC_fun, "size")
+
+```
+
+# import data & prep data
+
+```{r}
+
+apal_surv_ind <- read.csv("standardized_data/apal_surv_ind.csv") # individual survival
+apal_growth_ind <- read.csv("standardized_data/apal_growth_ind.csv") # individual growth rates
+
+apal_surv_summ <- read.csv("standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual data
+apal_growth_summ <- read.csv("standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report individual data
+
+
+# update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
+apal_surv_ind <- apal_surv_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
+apal_growth_ind <- apal_growth_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
+
+```
+
+
+
+Dealing with non-annual time intervals in the individual survival data
+-- since we are interested in ~annual survival rates, need to deal with cases in the individual survival data where the sample interval was <11 months or >13 months  
+
+-- if sampling interval was less than a year and the coral died, know that survival at exactly one year would also have been 0
+-- if sampling interval was greater than a year and the coral survived, know that survival at exactly 1 year would have also been 1 
+-- for the other cases (survived less than a year or died after more than a year) use proportions surviving from that region/year/size class to estimate survival rates over the sampling interval, then convert to annual survival rates and move these to the summary data set
+
+
+```{r}
+
+#apal_surv_ind %>% filter(time_interval_yr < 11/12) %>% view()
+#apal_surv_ind %>% filter(time_interval_yr > 13/12) %>% view()
+
+apal_surv_ind1 <- apal_surv_ind %>% mutate(time_interval_yr = if_else(time_interval_yr < 11/12 & survived==0, 1, if_else(time_interval_yr > 13/12 & survived==1, 1, time_interval_yr))) 
+
+# add a column with colony size class to the dataset
+apal_surv_ind1$size_class <- rep(NA, nrow(apal_surv_ind1))
+
+for(i in 1:nrow(apal_surv_ind1)){
+  
+  if(is.na(apal_surv_ind1$size_live_cm2[i])==F){
+    apal_surv_ind1$size_class[i] <- SC_fun(apal_surv_ind1$size_live_cm2[i])
+  }
+  
+  if(is.na(apal_surv_ind1$size_live_cm2[i])==T & is.na(apal_surv_ind1$size_cm2[i])==F){
+    apal_surv_ind1$size_class[i] <- SC_fun(apal_surv_ind1$size_cm2[i])
+  }
+  
+}
+
+
+#View(apal_surv_ind1)
+
+apal_surv_ind1_summ <- apal_surv_ind1 %>% group_by(study, region, survey_yr, size_class, data_type) %>% summarise(n_total = n(), n_survived = sum(survived == 1)) %>% mutate(prop_survived = n_survived/n_total)
+
+#View(apal_surv_ind1_summ)
+
+# observations where time interval is less than ~1 yr and coral was alive at time of sampling
+under_yr <- apal_surv_ind1 %>% filter(time_interval_yr < 11/12) %>% group_by(study, region, survey_yr, data_type) %>% mutate(time_interval_yr_mean = mean(time_interval_yr), time_interval_yr_sd = sd(time_interval_yr)) %>% ungroup() %>% group_by(study, region, survey_yr, size_class, data_type, time_interval_yr_mean, time_interval_yr_sd) %>% summarize(n_unknown = n())
+
+#View(under_yr)
+
+# observations where time interval is greater than ~1 yr and coral was dead at time of sampling
+over_yr <- apal_surv_ind1 %>% filter(time_interval_yr > 13/12) %>% group_by(study, region, survey_yr, data_type) %>% mutate(time_interval_yr_mean = mean(time_interval_yr), time_interval_yr_sd = sd(time_interval_yr)) %>% ungroup() %>% group_by(study, region, survey_yr, size_class, data_type, time_interval_yr_mean, time_interval_yr_sd) %>% summarize(n_unknown = n())
+
+#View(over_yr)
+
+under_yr_summ <- under_yr %>% left_join(apal_surv_ind1_summ, by = c("study", "region", "survey_yr", "size_class", "data_type")) %>% rename(n_initial = n_unknown, n_reference = n_total) %>% select(-n_survived) %>% mutate(prop_survived = prop_survived^(1/time_interval_yr_mean))
+
+over_yr_summ <- over_yr %>% left_join(apal_surv_ind1_summ, by = c("study", "region", "survey_yr", "size_class", "data_type")) %>% rename(n_initial = n_unknown, n_reference = n_total) %>% select(-n_survived) %>% mutate(prop_survived = prop_survived^(1/time_interval_yr_mean))
+
+
+#View(under_yr_summ)
+#View(over_yr_summ)
+
+# join these together
+apal_surv_ind_summ <- rbind(under_yr_summ, over_yr_summ)
+
+#View(apal_surv_ind_summ)
+
+# now add the individual sizes/metadata for all of the colonies with unknown fates
+apal_ind_summ_sizes <- apal_surv_ind1 %>% filter(time_interval_yr < 11/12 | time_interval_yr > 13/12) %>% select(-survived)#select(study, region, survey_yr, size_class, size_live_cm2)
+
+#View(apal_ind_summ_sizes)
+
+apal_surv_ind_summ <- apal_surv_ind_summ %>% left_join(apal_ind_summ_sizes, by = c("study", "region", "survey_yr", "size_class", "data_type"), relationship = "many-to-many")
+
+#View(apal_surv_ind_summ)
+
+
+# now remove the colonies with unknown fates from the individual survival data
+apal_surv_ind1 <- apal_surv_ind1 %>% filter(time_interval_yr >= 11/12 & time_interval_yr <= 13/12)
+
+```
+
+
+address limited/missing information in the summarized survival data:
+
+```{r}
+
+#View(apal_surv_summ)
+
+# exclude data sets where only a range of sizes is given (no information about the mean) and that range spans multiple defined size classes
+
+
+apal_surv_summ1 <- apal_surv_summ
+
+apal_surv_summ1$size_class_min <- rep(NA, nrow(apal_surv_summ1))
+apal_surv_summ1$size_class_max <- rep(NA, nrow(apal_surv_summ1))
+apal_surv_summ1$size_class_mean <- rep(NA, nrow(apal_surv_summ1))
+
+for(i in 1:nrow(apal_surv_summ1)){
+    
+    # size class of min size
+  apal_surv_summ1$size_class_min[i] <- SC_fun(apal_surv_summ1$size_cm2_min[i])
+  
+    # size class of max size
+  apal_surv_summ1$size_class_max[i] <- SC_fun(apal_surv_summ1$size_cm2_max[i])
+    
+    # size class of mean size
+  apal_surv_summ1$size_class_mean[i] <- SC_fun(apal_surv_summ1$size_cm2_mean[i])
+  
+}
+
+#View(apal_surv_summ1)
+
+# now filter out cases where there is no mean and the min and max sizes are in different size classes
+apal_surv_summ1 <- apal_surv_summ1 %>% mutate(size_flag = if_else(is.na(size_cm2_mean)==T & size_class_min!=size_class_max, 1, 0)) %>% filter(size_flag == 0) %>% select(-size_flag)
+
+
+#View(apal_surv_summ1)
+
+```
+
+
+
+address limited/missing information in the growth data
+
+```{r}
+
+# for the summarized data, remove cases where there is no mean and the min and max sizes are in different size classes
+apal_growth_summ1 <- apal_growth_summ %>% mutate(size_class_min = SC_funV(size_cm2_min), size_class_max = SC_funV(size_cm2_max), size_class_mean = SC_funV(size_cm2_mean)) %>% mutate(size_flag = if_else(is.na(size_cm2_mean)==T & size_class_min!=size_class_max, 1, 0)) %>% filter(size_flag == 0) %>% select(-size_flag) 
+
+#View(apal_growth_summ1)
+
+# update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
+apal_growth_ind2 <- apal_growth_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2)) %>% mutate(growth_cm2_yr_1 = if_else(is.na(growth_live_cm2_yr)==F, growth_live_cm2_yr, growth_cm2_yr))
+
+```
+
+
+## data summary
+
+number of studies, regions, etc.
+
+```{r}
+
+# survival
+length(unique(c(apal_surv_ind$study, apal_surv_summ$study)))
+length(unique(c(apal_surv_ind$region, apal_surv_summ$region)))
+unique(c(apal_surv_ind$region, apal_surv_summ$region))
+
+# growth
+length(unique(c(apal_growth_ind$study, apal_growth_summ$study)))
+length(unique(c(apal_growth_ind$region, apal_growth_summ$region)))
+unique(c(apal_growth_ind$region, apal_growth_summ$region))
+
+```
+
+
+
+## map
+
+
+```{r}
+
+world <- map_data('world')
+
+latlon_survI <- apal_surv_ind %>% group_by(study, latitude, longitude) %>% summarize()
+latlon_growthI <- apal_growth_ind %>% group_by(study, latitude, longitude) %>% summarize()
+latlon_survS <- apal_surv_summ %>% filter(is.na(latitude)==F) %>% group_by(study, latitude, longitude) %>% summarize()
+latlon_growthS <- apal_growth_summ %>% filter(is.na(latitude)==F) %>% group_by(study, latitude, longitude) %>% summarize()
+
+#View(latlon_growthI)
+
+study_latlon <- rbind(latlon_survI, latlon_growthI, latlon_survS, latlon_growthS) %>% distinct() %>% filter(study != "williams_miller_2010") # remove duplicate rows and Williams & Miller 2010 (which doesn't get used later because the size intervals are too big)
+
+# get study, lat, and lon for each df, then rbind and remove duplicates
+
+study_latlon_sf <- study_latlon %>% st_as_sf(coords = c("longitude","latitude")) %>% st_set_crs(4326)
+
+#View(study_latlon_sf)
+
+```
+
+
+```{r}
+
+#max(surv.latlon$long)
+#max(surv.latlon$lat)
+
+# https://sronpersonalpages.nl/~pault/
+
+s_cols <- c("#D9CCE3", "#CAACCB", "#BA8DB4", "#AA6F9E", "#994F88", "#882E72", "#1965B0", "#437DBF", "#6195CF", "#7BAFDE", "#4EB265", "#90C987", "#CAE0AB", "#F7F057", "#F7CB45", "#F4A736", "#EE8026", "#E65518", "#DC050C", "#A5170E", "#72190E")
+
+study_list <- unique(c(apal_surv_ind1$study, apal_surv_summ1$study, apal_growth_ind$study, apal_growth_summ$study)) # all the studies in apal_surv_ind_summ are in apal_surv_ind2
+
+col_df <- data.frame(
+  study = sort(study_list), # sort alphabetically?
+  cols = s_cols[1:length(study_list)]
+  
+)
+
+
+#View(col_df)
+
+map.colors <- c(bruckner_bruckner_2001 = s_cols[1], chamberland_et_al_2015= s_cols[2], forrester_et_al_2013= s_cols[3], fundemar_fragments= s_cols[4], fundemar_recruits= s_cols[5], garrison_ward_2008= s_cols[6], kuffner_et_al_2020= s_cols[7], maurer_et_al_2022= s_cols[8], mendoza_quiroz_et_al_2023= s_cols[9], NOAA_survey= s_cols[10], ortiz_prosper_2005= s_cols[11], papke_et_al_2021= s_cols[12], pausch_et_al_2018= s_cols[13], rosales_et_al_2024= s_cols[14], roth_et_al_2013= s_cols[15],schutter_et_al_2023 = s_cols[16], USGS_USVI_exp= s_cols[17], vardi_2011= s_cols[18]) #, williams_miller_2010 = NA
+
+#png("figures/study_map.png")
+study_map <- ggplot() + 
+  geom_polygon(data = world, aes(x=long, y = lat, group = group),colour='black',fill='gray70', linewidth = 0.2) + 
+  geom_sf(data = study_latlon_sf, aes(fill = study), color = "black", size = 3, shape=21)+
+  coord_sf(xlim = c(-90, -62), ylim = c(10, 27)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = 'gray95', color = 'gray95'), axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12), axis.title = element_blank(), panel.border = element_rect(colour = "black", fill=NA, linewidth=0.8), plot.title = element_text(hjust=0, size = 14))+
+  scale_fill_manual(values=map.colors)+
+  #guides(fill=guide_legend(ncol=2)) +
+  annotation_scale(location = "tr", style = "ticks",  pad_x = unit(0.25, "cm"), pad_y = unit(0.5, "cm"), text_cex=1)+#text_cex=0.9, pad_x = unit(0.25, "cm"), pad_y = unit(0.45, "cm")
+  annotation_north_arrow(location = "tl", style = north_arrow_orienteering(text_size = 11), height = unit(0.6, "cm"), width = unit(0.6, "cm"), pad_y = unit(0.05, "cm"))
+#dev.off()
+
+ggsave("figures/study_map.png", width = 7, height = 5)
+
+
+```
+
+note the point between Haiti and Jamaica is Navassa Island
+
+
+update: color by region
+
+```{r}
+
+
+latlon_survI <- apal_surv_ind %>% group_by(study, latitude, longitude, region) %>% summarize()
+latlon_growthI <- apal_growth_ind %>% group_by(study, latitude, longitude, region) %>% summarize()
+latlon_survS <- apal_surv_summ %>% filter(is.na(latitude)==F) %>% group_by(study, latitude, longitude, region) %>% summarize()
+latlon_growthS <- apal_growth_summ %>% filter(is.na(latitude)==F) %>% group_by(study, latitude, longitude, region) %>% summarize()
+
+#View(latlon_growthI)
+
+study_latlon2 <- rbind(latlon_survI, latlon_growthI, latlon_survS, latlon_growthS) %>% distinct() %>% filter(study != "williams_miller_2010") # remove duplicate rows and Williams & Miller 2010 (which doesn't get used later because the size intervals are too big)
+
+#View(study_latlon2)
+
+# get study, lat, and lon for each df, then rbind and remove duplicates
+
+study_latlon_sf2 <- study_latlon2 %>% st_as_sf(coords = c("longitude","latitude")) %>% st_set_crs(4326)
+
+#View(study_latlon_sf2)
+
+m_cols <- c("#D9CCE3",  "#BA8DB4", "#882E72", "#1965B0", "#7BAFDE", "#4EB265", "#CAE0AB", "#F7F057", "#F4A736",  "#E65518", "#DC050C", "#A5170E")
+
+region_list <- unique(c(apal_surv_ind1$region, apal_surv_summ1$region, apal_growth_ind$region, apal_growth_summ$region)) # all the studies in apal_surv_ind_summ are in apal_surv_ind2
+
+Rcol_df <- data.frame(
+  region = sort(region_list), # sort alphabetically?
+  cols = m_cols[1:length(region_list)]
+  
+)
+
+
+#View(col_df)
+
+map.colors <- c("Bahamas" = m_cols[1], "British Virgin Islands"= m_cols[2], "Curacao"= m_cols[3], "Dominican Republic"= m_cols[4], "Dry Tortugas"= m_cols[5], "Florida Keys"= m_cols[6], "Jamaica"= m_cols[7], "Mexican Caribbean"= m_cols[8], "Navassa"= m_cols[9], "Puerto Rico"= m_cols[10], "USVI"= m_cols[11], "Virgin Gorda"= m_cols[12]) 
+
+#png("figures/study_map.png")
+study_map <- ggplot() + 
+  geom_polygon(data = world, aes(x=long, y = lat, group = group),colour='black',fill='gray70', linewidth = 0.2) + 
+  geom_sf(data = study_latlon_sf2, aes(fill = region), color = "black", size = 3, shape=21)+
+  coord_sf(xlim = c(-90, -62), ylim = c(10, 27)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_rect(fill = 'gray95', color = 'gray95'), axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12), axis.title = element_blank(), panel.border = element_rect(colour = "black", fill=NA, linewidth=0.8), plot.title = element_text(hjust=0, size = 14))+
+  scale_fill_manual(values=map.colors)+
+  #guides(fill=guide_legend(ncol=2)) +
+  annotation_scale(location = "tr", style = "ticks",  pad_x = unit(0.25, "cm"), pad_y = unit(0.5, "cm"), text_cex=1)+#text_cex=0.9, pad_x = unit(0.25, "cm"), pad_y = unit(0.45, "cm")
+  annotation_north_arrow(location = "tl", style = north_arrow_orienteering(text_size = 11), height = unit(0.6, "cm"), width = unit(0.6, "cm"), pad_y = unit(0.05, "cm"))
+#dev.off()
+
+ggsave("figures/region_map.png", width = 7, height = 5)
+
+
+# number of studies in each region
+study_latlon3 <- study_latlon2 %>% ungroup() %>% select(study, region) %>% distinct() %>% group_by(region) %>% summarize(n = n())
+
+study_latlon3
+
+```
+
+
+# data analysis
+
+
+## survival
+
+make a function to turn summarized/proportional survival data into a data frame with randomly drawn individual sizes and survival
+
+
+```{r}
+
+# test using a while loop to draw values within a specified range from a normal distribution
+
+# x <- which(10 == 0)
+# 
+# while(length(x) < 10){
+#   
+#   x <- rnorm(10, 10, 5)
+#   
+#   x <- x[which(x>0 & x < 15)]
+#   
+# }
+# 
+# x
+
+```
+
+
+```{r}
+
+# prop_surv_df = data frame with survival expressed as proportion of individuals alive at the end of the time point
+# n_reps = number of realizations (data sets) to make
+# seed_n = seed for random number generation
+
+survi_fun <- function(prop_surv_df, n_reps, seed_n){
+  
+  set.seed(seed_n) # set the seed
+  
+  data_list <- list() # holding list for the data sets
+  
+  for(i in 1:n_reps){ # for each realization
+    
+   for(j in 1:nrow(prop_surv_df)){
+     
+     # number of individuals that went into the jth observation of proportion surviving
+     n_ind <- prop_surv_df$n_initial[j]
+     
+     # make the holding data set to fill in with individual values (and keep all the metadata)
+     data.ij <- prop_surv_df %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_live, fragment, time_interval_yr, disturbance)
+     data.ij <- data.ij[j,] # want just the jth row
+     
+     # replicate all the metadata n_ind times
+     data.ij <- data.ij[rep(seq_len(nrow(data.ij)), n_ind), ]
+     
+     # now fill in size and individual survival columns
+     data.ij$survived <- rbinom(n_ind, 1, prop_surv_df$prop_survived[j])
+     
+     # holding column for size:
+     data.ij$size_cm2 <- rep(NA, nrow(data.ij))
+     
+     # fill in sizes by drawing a random size for each individual
+      # if there is no information on variability (size_sd = NA)
+     if(is.na(prop_surv_df$size_cm2_sd[j])==T){
+       
+       # if only mean size is known, just draw individual survival rates and assume they all have the same size
+       if(is.na(prop_surv_df$size_cm2_min[j])==T){
+         data.ij$size_cm2 <- rep(prop_surv_df$size_cm2_mean[j], n_ind)
+         
+       } else{ # if only range is known or if only mean/midpoint and range is known, draw from uniform distribution
+         data.ij$size_cm2 <- runif(n_ind, min = prop_surv_df$size_cm2_min[j], max = prop_surv_df$size_cm2_max[j])
+       }
+      
+       
+     } else{ # if there is information on size variability
+       
+       if(is.na(prop_surv_df$size_cm2_min[j])==F){ # if mean size, sd, and range are known, draw sizes from a normal distribution and adjust to make sure they are within the given range
+         
+         x1 <- which(10 == 1) # start with length 0
+         
+         while(length(x1) < n_ind){
+           # draw sizes from a normal distribution
+           x1 <- c(x1, rnorm(n_ind-length(x1), prop_surv_df$size_cm2_mean[j], prop_surv_df$size_cm2_sd[j]))
+           # make sure these values all fall within the observed size range:
+           x1 <- x1[which(x1>= prop_surv_df$size_cm2_min[j] & x1 <= prop_surv_df$size_cm2_max[j])]
+         }
+         
+         data.ij$size_cm2 <- x1
+         
+       } else{ # if mean size and sd are known but there is no information on range, draw sizes from a normal distribution and adjust to make sure they are non-zero
+         
+         x1 <- which(10 == 1) # start with length 0
+         
+         while(length(x1) < n_ind){
+           # draw sizes from a normal distribution
+           x1 <- c(x1, rnorm(n_ind-length(x1), prop_surv_df$size_cm2_mean[j], prop_surv_df$size_cm2_sd[j]))
+           # make sure these values all fall within the observed size range:
+           x1 <- x1[which(x1>= 0)]
+         }
+         
+         data.ij$size_cm2 <- x1
+         
+       }
+     
+       
+     }
+     
+     # now add a column with size class to the dataset
+     data.ij$size_class <- SC_funV(data.ij$size_cm2)
+     
+     if(j == 1){
+       data.j <- data.ij
+     } else{
+       
+       data.j <- rbind(data.j, data.ij)
+       
+     }
+    
+     
+   } # end of iteration over rows in the data frame
+    
+    # store this data frame in the list
+    data_list[[i]] <- data.j
+    
+  } # end of iteration over random replicates
+  
+  
+  # return the list of data frames
+  
+  return(data_list)
+}
+
+
+# for the summary survival data for the colonies with unknown annual fates from the individual survival data, know each individual colony's size so it's just a coin flip of whether that individual survived
+
+surv_indi_fun <- function(surv_ind_summ_df, n_reps, seed_n){
+
+  set.seed(seed_n) # set the seed
+  
+  data_list <- list() # holding list for the data sets
+  
+  
+  for(i in 1:n_reps){
+    
+    data.i <- surv_ind_summ_df
+    data.i$survived <- rep(NA, nrow(data.i))
+    
+    for(j in 1:nrow(data.i)){
+      data.i$survived[j] <- rbinom(1, 1, data.i$prop_survived[j])
+    }
+    
+    data_list[[i]] <- data.i
+     
+  }
+
+  return(data_list)
+
+}
+
+
+
+```
+
+
+test the functions
+
+```{r}
+
+test1 <- survi_fun(apal_surv_summ1, n_reps = 1, seed_n = 100)
+
+# nrow(test1[[1]])
+# 
+#View(test1[[1]])
+
+test2 <- surv_indi_fun(apal_surv_ind_summ, n_reps = 1, seed_n = 200)
+#View(test2[[1]])
+
+```
+
+
+
+
+plot the data as 0s/1s
+
+```{r}
+
+# need to filter out only the data points with ~annual time intervals, and need to make a column with size to use (size_live_cm2 if available, otherwise size_cm2)
+
+
+# open points: survival and/or size were randomly drawn based on available information on proportions surviving and size ranges
+f.pch <- 16 # field data
+n.pch <- 23 # nursery data
+l.pch <- 17 # lab data
+
+f.pchR <- 1 # field data, random
+n.pchR <- 5 # nursery data, random
+l.pchR <- 2 # lab data, random
+
+alpha1 <- 0.25
+
+jt_sd <- 0.01 # how much to jitter the points
+
+pch_fun <- function(data_type, study_type){
+  
+  if(study_type == "I"){
+    pch_out <- ifelse(data_type == "field", f.pch, ifelse(data_type == "nursery", n.pch, l.pch))
+  }
+  
+  if(study_type == "S"){
+    pch_out <- ifelse(data_type == "field", f.pchR, ifelse(data_type == "nursery", n.pchR, l.pchR))
+  }
+  
+  return(pch_out)
+}
+
+plot_dfI <- apal_surv_ind1 %>% rename(size_cm2_p = size_cm2_1) %>% filter(is.na(disturbance)==T) # individual data
+plot_dfS <- test1[[1]] %>% rename(size_cm2_p = size_cm2)%>% filter(is.na(disturbance)==T)  # individual survival and size values drawn from summarized data
+plot_dfIS <- test2[[1]] %>% rename(size_cm2_p = size_live_cm2)%>% filter(is.na(disturbance)==T)  # individual annual survival data drawn from summarized individual data
+
+plot(x = plot_dfI$size_cm2_p, y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA)
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+axis(side = 1, at = c(SC1, SC2, SC3, SC4, SC5), labels = NA, lwd.ticks = 2, col.ticks = "red")
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(16, 1), col = "gray50", bty = "n",inset = c(0,0.15))
+legend(x = "bottomright", legend = c("field", "nursery", "lab"), pch = c(f.pch, 18, l.pch), title = "Data type", col = "gray50", bg = "gray50", bty = "n", ncol = 2, inset = c(0,0.15))
+
+
+# zoomed in 
+
+plot(x = plot_dfI$size_cm2_p, y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xlim  = c(0, 100))
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+axis(side = 1, at = c(SC1, SC2, SC3, SC4, SC5), labels = NA, lwd.ticks = 2, col.ticks = "red")
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = dt_sub$size_cm2_p, y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(16, 1), col = "gray50", bty = "n",inset = c(0,0.15))
+legend(x = "bottomright", legend = c("field", "nursery", "lab"), pch = c(f.pch, 18, l.pch), title = "Data type", col = "gray50", bg = "gray50", bty = "n", ncol = 2, inset = c(0,0.15))
+
+
+
+# log scale
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(16, 1), col = "gray50", bty = "n",inset = c(0,0.15))
+legend(x = "bottomright", legend = c("field", "nursery", "lab"), pch = c(f.pch, 18, l.pch), title = "Data type", col = "gray50", bg = "gray50", bty = "n", ncol = 2, inset = c(0,0.15))
+
+
+```
+
+
+show with the proportion data as proportions instead
+
+
+```{r}
+
+plot_dfI <- apal_surv_ind1 %>% rename(size_cm2_p = size_cm2_1) %>% filter(is.na(disturbance)==T) # individual data
+plot_dfS <- apal_surv_summ1 %>% mutate(size_cm2_p = if_else(is.na(size_cm2_mean)==F, size_cm2_mean, (size_cm2_min + size_cm2_max)/2))%>% filter(is.na(disturbance)==T)  # individual survival and size values drawn from summarized data
+plot_dfIS <- test2[[1]] %>% rename(size_cm2_p = size_live_cm2)%>% filter(is.na(disturbance)==T)  # individual annual survival data drawn from summarized individual data
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with proportions
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$prop_survived, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = 1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = 1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(16, 1), col = "gray50", bty = "n",inset = c(0,0.2))
+legend(x = "bottomright", legend = c("field", "nursery", "lab"), pch = c(f.pch, 18, l.pch), title = "Data type", col = "gray50", bg = "gray50", bty = "n", ncol = 2, inset = c(0,0.1))
+
+
+```
+
+```{r}
+# apal_surv_summ1 %>% filter(study == "forrester_et_al_2013") %>% view()
+# 
+# 
+# plot_dfS %>% filter(study == "forrester_et_al_2013") %>% view()
+
+```
+
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(apal_surv_ind2$study, apal_surv_summ1$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 2)
+
+```
+
+
+fit binomial GLMM?
+
+
+"brute force" resampling method
+
+```{r}
+
+
+# make a function for doing the resampling
+
+# dtI = individual survival data
+# dtS_list = list where each element is a replicate of survival data with random individual size and survival observations drawn from summarized values
+# dtSI_list = list where each element is a replicate of survival data with random individual survival  observations drawn from summarized values (for data where individual sizes are known but survival at ~1 yr was estimated)
+
+#dtS_list <- survi_fun(apal_surv_summ1[which(apal_surv_summ1$data_type=="field" & is.na(apal_surv_summ1$disturbance)==T),], n_reps = n_reps1, seed_n = 100)
+
+#dtSI_list <- surv_indi_fun(apal_surv_ind_summ[which(apal_surv_ind_summ$data_type=="field" & is.na(apal_surv_ind_summ$disturbance)==T),], n_reps = n_reps1, seed_n = 200)
+
+#dtI <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == "field") # individual data
+
+# n_reps = number of replicate datasets in dtS_list and dtIS_list
+# n_sample = default number of observations to use in each subsample
+resamp_surv3 <- function(dtI, dtS_list, dtIS_list, n_reps, n_sample, seed1){
+  
+  # check number of observations in each size class (repeat for each data set replicate for dtS_list; sizes won't change for dtIS_list since individual sizes are known and it's just the proportion surviving that varies)
+  
+  # dtI <- dtI %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  # 
+  # # number of observations in each size class
+  # dtI_n <- dtI %>% group_by(size_class) %>% summarize(n_SC = n())
+  # # View(dtI_n)
+  # 
+  # dtIS_n <- dtIS_list[[1]] %>% group_by(size_class) %>% summarize(n_SC = n())
+  # 
+  #View(dtIS_n)
+  
+# get number of observations in each size class for each data replicate in the dtS_list
+  
+#   for(i in 1:n_reps){
+#   
+#   dtS_in <- dtS_list[[i]] %>% group_by(size_class) %>% summarize(n_SC = n()) %>% mutate(rep = i) 
+#   
+#   if(i == 1){
+#     dtS_n <- dtS_in
+#   } else{
+#     
+#     dtS_n <- rbind(dtS_n, dtS_in)
+#   }
+#   
+# }
+  
+#View(dtS_n)
+
+#View(dtS_list[[50]])
+  
+  # update: get the number of observations in each size class for the full data set (individual data + data from ith replicate of the summarized data)
+  dtI <- dtI %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  #View(dtIS_i)
+  
+for(i in 1:n_reps){
+  
+  dtS_i <- dtS_list[[i]] %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  dtIS_i <- dtIS_list[[i]] %>% ungroup() %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  dt_in <- rbind(dtI, dtS_i, dtIS_i) %>% group_by(size_class) %>% summarize(n_SC = n()) %>% mutate(replicate = i)
+  
+  if(i == 1){
+    dt_n <- dt_in
+  } else{
+    
+    dt_n <- rbind(dt_n, dt_in)
+  }
+  
+}
+  
+  #View(dt_n)
+  
+  # now calculate the number of observations to subsample from each size class for each iteration
+  #n_sample <- min(n_sample, min(dtI_n$n_SC, dtIS_n$n_SC, dtS_n$n_SC))
+  n_sample <- min(n_sample, min(dt_n$n_SC))
+  
+# for each data replicate iteration, get combined vector of survived or not from across the different data sets (vector of 0's and 1's) for each size class
+# for each size class survival vector, get a vector of indexes, then randomly sample from these indexes. and keep track of which ones were sampled each iteration and remove them
+
+# start with the individual data (only resampling, no iteration over dataset replicates)
+
+  # SC_I <- list()
+  # 
+  # set.seed(seed1)
+  # 
+  # for(k in 1:5){ # for each size class
+  #   
+  #   # get the vectors of survival values
+  #   S_SCk <- c(dtI$survived[which(dtI$size_class == k)]) 
+  # 
+  #   if(length(S_SCk) > 0){ # if this size class exists in the data
+  #     
+  #     # calculate the number of resampling iterations
+  #     n_iter <- floor(dtI_n$n_SC[which(dtI_n$size_class==k)]/n_sample)  
+  #     
+  #     # get the index vector
+  #     ind_x <- c(1:length(S_SCk))
+  # 
+  #     # holding vector for proportion surviving
+  #      SC_v <- rep(NA, n_iter) # column = size class
+  # 
+  #     for(j in 1:n_iter){ # for each iteration
+  #       
+  #       # get random sample of observations
+  #      sx <- sample(ind_x, size = n_sample, replace = F)
+  # 
+  # # calculate and store proportions surviving 
+  # SC_v[j] <- length(which(S_SCk[sx] == 1))/n_sample
+  # 
+  # # update the vectors to avoid repeat sampling
+  # ind_x <- ind_x[!(ind_x %in% sx)]
+  # 
+  #     }
+  #     
+  #   }
+  #   
+  #   SC_I[[k]] <- SC_v
+  #   
+  # }
+  # 
+  # 
+  # repeat for the summarized data
+  
+
+  # update: include the individual data with the summarized data, otherwise the summarized data will be appearing n_rep times (with slightly different values each time) and the individual data will only appear once...alternative would be to keep the individual data separate and re-summarize the summarized data across the n_rep replicates and then combine?
+
+set.seed(seed1)
+
+# holding list
+SC_surv <- list()
+
+for(i in 1:n_reps){ # for each data replicate
+  
+  # holding list
+SC_surv_i <- list()
+SC_surv_i[[1]] <- NA
+SC_surv_i[[2]] <- NA
+SC_surv_i[[3]] <- NA
+SC_surv_i[[4]] <- NA
+SC_surv_i[[5]] <- NA
+  
+  # get the data set
+  dtS_i <- dtS_list[[i]] %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  dtIS_i <- dtIS_list[[i]] %>% ungroup() %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  dt_i <- rbind(dtI, dtS_i, dtIS_i) 
+  
+  for(k in 1:5){ # for each size class
+    
+    # get the vector of survival values
+  S_SCk <- c(dt_i$survived[which(dt_i$size_class == k)])  
+    
+    if(length(S_SCk) > 0){ # if this size class exists in the data
+      
+      n_iter <- floor(dt_n$n_SC[which(dt_n$size_class==k & dt_n$replicate==i)]/n_sample) # number of random replicates
+      
+      # get the index vector
+     ind_x <- c(1:length(S_SCk))
+     
+      # holding vector for proportion surviving
+       SC_v <- rep(NA, n_iter) # column = size class
+
+      for(j in 1:n_iter){ # for each iteration
+
+        # get random sample of observations
+       sx <- sample(ind_x, size = n_sample, replace = F)
+
+  # calculate and store proportions surviving
+  SC_v[j] <- length(which(S_SCk[sx] == 1))/n_sample
+
+  # update the vectors to avoid repeat sampling
+  ind_x <- ind_x[!(ind_x %in% sx)]
+
+      }
+
+    SC_surv_i[[k]] <- SC_v
+      
+    }
+    
+  }
+  
+ 
+# store the list
+SC_surv[[i]] <- SC_surv_i
+
+  
+} # end of iteration over data replicates
+
+
+# want to make a data frame where columns are size class and proportion surviving
+for(i in 1:n_reps){
+  
+  SC1_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[1]],
+    size_class = 1,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[1]])),
+    n = n_sample
+  )
+  
+  SC2_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[2]],
+    size_class = 2,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[2]])),
+    n = n_sample
+  )
+  
+  SC3_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[3]],
+    size_class = 3,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[3]])),
+    n = n_sample
+  )
+  
+  SC4_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[4]],
+    size_class = 4,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[4]])),
+    n = n_sample
+  )
+  
+  SC5_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[5]],
+    size_class = 5,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[5]])),
+    n = n_sample
+  )
+  
+  SC_surv_dfi <- rbind(SC1_surv_df, SC2_surv_df, SC3_surv_df, SC4_surv_df, SC5_surv_df)
+
+  if(i == 1){
+    SC_surv_df <- SC_surv_dfi
+  } else{
+    SC_surv_df <- rbind(SC_surv_df, SC_surv_dfi)
+  }
+  
+}
+
+
+#View(SC_surv_df)
+
+# convert to wide format
+
+# also return summarized df with means and 95% confidence intervals for each size class with data
+# columns = size class, mean, 5% and 95% quantiles
+
+SC_surv_summ_df <- data.frame(
+  size_class = c(1, 2, 3, 4, 5),
+  mean = rep(NA, 5),
+  Q05 = rep(NA, 5),
+  Q95 = rep(NA, 5),
+  tot_samples = rep(NA, 5), # total number of sampling events
+  n_sample = n_sample # number of observations in each individual sampling event
+)
+
+for(k in 1:5){
+  
+  SC_surv_summ_df$mean[k] <- mean(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], na.rm = T)
+  SC_surv_summ_df$Q05[k] <- quantile(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], 0.05, na.rm = T)
+  SC_surv_summ_df$Q95[k] <- quantile(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], 0.95, na.rm = T)
+  SC_surv_summ_df$tot_samples[k] <- length(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)])
+  
+  
+}
+
+#View(SC_surv_summ_df)
+
+return(list(SC_surv_df = SC_surv_df, SC_surv_summ_df = SC_surv_summ_df, n_sample = n_sample))
+  
+}
+
+
+
+
+# repeat but for cases where there are only two data types (no dtIS)
+
+resamp_surv2 <- function(dtI, dtS_list, n_reps, n_sample, seed1){
+  
+  # update: get the number of observations in each size class for the full data set (individual data + data from ith replicate of the summarized data)
+  dtI <- dtI %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  #View(dtIS_i)
+  
+for(i in 1:n_reps){
+  
+  dtS_i <- dtS_list[[i]] %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  
+  dt_in <- rbind(dtI, dtS_i) %>% group_by(size_class) %>% summarize(n_SC = n()) %>% mutate(replicate = i)
+  
+  if(i == 1){
+    dt_n <- dt_in
+  } else{
+    
+    dt_n <- rbind(dt_n, dt_in)
+  }
+  
+}
+  
+  #View(dt_n)
+  
+  # now calculate the number of observations to subsample from each size class for each iteration
+  n_sample <- min(n_sample, min(dt_n$n_SC))
+  
+# for each data replicate iteration, get combined vector of survived or not from across the different data sets (vector of 0's and 1's) for each size class
+# for each size class survival vector, get a vector of indexes, then randomly sample from these indexes. and keep track of which ones were sampled each iteration and remove them
+
+
+
+set.seed(seed1)
+
+# holding list
+SC_surv <- list()
+
+for(i in 1:n_reps){ # for each data replicate
+  
+  # holding list
+SC_surv_i <- list()
+SC_surv_i[[1]] <- NA
+SC_surv_i[[2]] <- NA
+SC_surv_i[[3]] <- NA
+SC_surv_i[[4]] <- NA
+SC_surv_i[[5]] <- NA
+  
+  # get the data set
+  dtS_i <- dtS_list[[i]] %>% select(survived, size_class) %>% filter(is.na(size_class)==F)
+  
+  dt_i <- rbind(dtI, dtS_i) 
+  
+  for(k in 1:5){ # for each size class
+    
+    # get the vector of survival values
+  S_SCk <- c(dt_i$survived[which(dt_i$size_class == k)])  
+    
+    if(length(S_SCk) > 0){ # if this size class exists in the data
+      
+      n_iter <- floor(dt_n$n_SC[which(dt_n$size_class==k & dt_n$replicate==i)]/n_sample) # number of random replicates
+      
+      # get the index vector
+     ind_x <- c(1:length(S_SCk))
+     
+      # holding vector for proportion surviving
+       SC_v <- rep(NA, n_iter) # column = size class
+
+      for(j in 1:n_iter){ # for each iteration
+
+        # get random sample of observations
+       sx <- sample(ind_x, size = n_sample, replace = F)
+
+  # calculate and store proportions surviving
+  SC_v[j] <- length(which(S_SCk[sx] == 1))/n_sample
+
+  # update the vectors to avoid repeat sampling
+  ind_x <- ind_x[!(ind_x %in% sx)]
+
+      }
+
+    SC_surv_i[[k]] <- SC_v
+      
+    }
+    
+  }
+  
+ 
+# store the list
+SC_surv[[i]] <- SC_surv_i
+
+  
+} # end of iteration over data replicates
+
+
+# want to make a data frame where columns are size class and proportion surviving
+for(i in 1:n_reps){
+  
+  SC1_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[1]],
+    size_class = 1,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[1]])),
+    n = n_sample
+  )
+  
+  SC2_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[2]],
+    size_class = 2,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[2]])),
+    n = n_sample
+  )
+  
+  SC3_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[3]],
+    size_class = 3,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[3]])),
+    n = n_sample
+  )
+  
+  SC4_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[4]],
+    size_class = 4,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[4]])),
+    n = n_sample
+  )
+  
+  SC5_surv_df <- data.frame(
+    prop_survived = SC_surv[[i]][[5]],
+    size_class = 5,
+    replicate = i,
+    sample = c(1:length(SC_surv[[i]][[5]])),
+    n = n_sample
+  )
+  
+  SC_surv_dfi <- rbind(SC1_surv_df, SC2_surv_df, SC3_surv_df, SC4_surv_df, SC5_surv_df)
+
+  if(i == 1){
+    SC_surv_df <- SC_surv_dfi
+  } else{
+    SC_surv_df <- rbind(SC_surv_df, SC_surv_dfi)
+  }
+  
+}
+
+
+#View(SC_surv_df)
+
+# also return summarized df with means and 95% confidence intervals for each size class with data
+# columns = size class, mean, 5% and 95% quantiles
+
+SC_surv_summ_df <- data.frame(
+  size_class = c(1, 2, 3, 4, 5),
+  mean = rep(NA, 5),
+  Q05 = rep(NA, 5),
+  Q95 = rep(NA, 5),
+  tot_samples = rep(NA, 5), # total number of sampling events
+  n_sample = n_sample # number of observations in each individual sampling event
+)
+
+for(k in 1:5){
+  
+  SC_surv_summ_df$mean[k] <- mean(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], na.rm = T)
+  SC_surv_summ_df$Q05[k] <- quantile(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], 0.05, na.rm = T)
+  SC_surv_summ_df$Q95[k] <- quantile(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)], 0.95, na.rm = T)
+  SC_surv_summ_df$tot_samples[k] <- length(SC_surv_df$prop_survived[which(SC_surv_df$size_class == k)])
+  
+  
+}
+
+#View(SC_surv_summ_df)
+  
+return(list(SC_surv_df = SC_surv_df, SC_surv_summ_df = SC_surv_summ_df, n_sample = n_sample))
+  
+}
+
+
+
+
+
+
+#x1 <- c(1, 2, 3, 4)
+
+#x1[-1*c(1, 2)]
+
+
+
+
+```
+
+
+
+### field
+
+
+```{r}
+# get the random replicates
+n_reps1 <- 50
+
+surv_summ50_field <- survi_fun(apal_surv_summ1[which(apal_surv_summ1$data_type=="field" & is.na(apal_surv_summ1$disturbance)==T),], n_reps = n_reps1, seed_n = 100)
+
+surv_ind_summ50_field <- surv_indi_fun(apal_surv_ind_summ[which(apal_surv_ind_summ$data_type=="field" & is.na(apal_surv_ind_summ$disturbance)==T),], n_reps = n_reps1, seed_n = 200)
+
+surv_ind_field <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == "field") # individual data
+
+
+#View(surv_ind_summ50_field[[1]])
+
+```
+
+
+
+```{r}
+
+n_sample1 <- 20
+
+field_surv1 <- resamp_surv3(dtI = surv_ind_field, dtS_list = surv_summ50_field, dtIS_list = surv_ind_summ50_field, n_reps = n_reps1, n_sample = n_sample1, seed1 = 1000)
+
+
+#View(field_surv1$SC_surv_df)
+
+#field_surv_wide <-field_surv1$SC_surv_df %>% pivot_wider(names_from = size_class, values_from = prop_survived)
+
+#View(field_surv_wide)
+
+#field_surv1$SC_surv_summ_df
+
+```
+
+
+
+
+
+```{r}
+
+# test1 <- c(40, 30, 20, 80, 90, 60)
+# 
+# s_test <- sample(test1, size = 3, replace = F)
+# 
+# s_test
+# 
+# test1[!(test1 %in% s_test)]
+
+```
+
+
+
+```{r}
+# plot(x = c(1:10), y = c(1:10))
+# polygon(x = c(1, 2, 2, 1), y = c(5, 5, 7, 7))
+
+```
+
+
+```{r}
+# plot results: plot just the field data, one data replicate as an example, put horizontal segments and confidence intervals showing the survival values
+
+surv_df <- field_surv1$SC_surv_summ_df
+
+plot_dfI <- surv_ind_field %>% rename(size_cm2_p = size_cm2_1) # individual data
+plot_dfS <- surv_summ50_field[[1]] %>% rename(size_cm2_p = size_cm2)  # individual survival and size values drawn from summarized data
+plot_dfIS <- surv_ind_summ50_field[[1]] %>% rename(size_cm2_p = size_live_cm2)  # individual annual survival data drawn from summarized individual data
+
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# segments with survival estimates and polygons with confidence intervals
+for(jj in 1:5){
+  polygon(x = c(log(SC_lower[jj] + 1), log(SC_upper[jj] + 1), log(SC_upper[jj] + 1), log(SC_lower[jj] + 1)), y = c(rep(surv_df$Q05[which(surv_df$size_class==jj)], 2), rep(surv_df$Q95[which(surv_df$size_class==jj)], 2)), border = NA, col = adjustcolor("gray50", alpha.f = 0.25))
+  segments(x0 = log(SC_lower[jj] + 1), y0 = surv_df$mean[which(surv_df$size_class==jj)], x1 = log(SC_upper[jj] + 1), lwd =1.5)
+}
+
+
+```
+
+
+make legends
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 2)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(16, 1), col = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+simplified version
+
+```{r}
+
+surv_df <- field_surv1$SC_surv_summ_df
+
+plot_dfI <- apal_surv_ind1 %>% rename(size_cm2_p = size_cm2_1) %>% filter(is.na(disturbance)==T) # individual data
+plot_dfS <- test1[[1]] %>% rename(size_cm2_p = size_cm2)%>% filter(is.na(disturbance)==T)  # individual survival and size values drawn from summarized data
+plot_dfIS <- test2[[1]] %>% rename(size_cm2_p = size_live_cm2)%>% filter(is.na(disturbance)==T)  # individual annual survival data drawn from summarized individual data
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+#axis(side = 2, at = c(0, 1), labels = c("Dead", "Alive"), las = 1)
+axis(side = 2, at = c(0, 1), labels = c(0, 1), las = 1)
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 3, col.ticks = "dodgerblue")
+mtext(side = 1, expression("Size ("*cm^2*")"), line = 2.5)
+mtext(side = 2, "Survival", line = 1)
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = 16, col = adjustcolor("black", alpha.f = 0.1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = 16, col = adjustcolor("black", alpha.f = 0.1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfIS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfIS$study[which(plot_dfIS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfIS$data_type[which(plot_dfIS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfIS[which(plot_dfIS$study==study.i & plot_dfIS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = 16, col = adjustcolor("black", alpha.f = 0.1)) # need bg for pch = 23
+  }
+}
+
+# segments with survival estimates and polygons with confidence intervals
+for(jj in 1:5){
+  polygon(x = c(log(SC_lower[jj] + 1), log(SC_upper[jj] + 1), log(SC_upper[jj] + 1), log(SC_lower[jj] + 1)), y = c(rep(surv_df$Q05[which(surv_df$size_class==jj)], 2), rep(surv_df$Q95[which(surv_df$size_class==jj)], 2)), border = NA, col = adjustcolor("gray50", alpha.f = 0.25))
+  segments(x0 = log(SC_lower[jj] + 1), y0 = surv_df$mean[which(surv_df$size_class==jj)], x1 = log(SC_upper[jj] + 1), lwd =1.5)
+}
+
+```
+
+
+
+### nursery
+repeat with nursery data
+
+```{r}
+# get the random replicates
+
+surv_summ50_nurs <- survi_fun(apal_surv_summ1[which(apal_surv_summ1$data_type=="nursery" & is.na(apal_surv_summ1$disturbance)==T),], n_reps = n_reps1, seed_n = 100)
+
+surv_ind_nurs <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == "nursery") # individual data
+
+nurs_surv1 <- resamp_surv2(dtI = surv_ind_nurs, dtS_list = surv_summ50_nurs, n_reps = n_reps1, n_sample = n_sample1, seed1 = 2000)
+
+#View(nurs_surv1$SC_surv_summ_df) 
+#nurs_surv1$n_sample
+# size class 1 only has one 0 and since the sample number is 4 only 1 or 0.75 is possible. For size class 2, there are very few zeros and so since the sample number is 4, 0.75 should be the most common result after 1
+
+```
+
+
+
+
+```{r}
+
+# plot results
+surv_df <- nurs_surv1$SC_surv_summ_df
+
+plot_dfI <- surv_ind_nurs %>% rename(size_cm2_p = size_cm2_1) # individual data
+plot_dfS <- surv_summ50_nurs[[1]] %>% rename(size_cm2_p = size_cm2)  # individual survival and size values drawn from summarized data
+
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+
+# segments with survival estimates and polygons with confidence intervals
+for(jj in 1:5){
+  polygon(x = c(log(SC_lower[jj] + 1), log(SC_upper[jj] + 1), log(SC_upper[jj] + 1), log(SC_lower[jj] + 1)), y = c(rep(surv_df$Q05[which(surv_df$size_class==jj)], 2), rep(surv_df$Q95[which(surv_df$size_class==jj)], 2)), border = NA, col = adjustcolor("gray50", alpha.f = 0.25))
+  segments(x0 = log(SC_lower[jj] + 1), y0 = surv_df$mean[which(surv_df$size_class==jj)], x1 = log(SC_upper[jj] + 1), lwd =1.5)
+}
+
+```
+
+
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 1)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(n.pch, n.pchR), col = "gray50", pt.bg = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+simplified version
+
+```{r}
+
+# plot results
+surv_df <- nurs_surv1$SC_surv_summ_df
+
+plot_dfI <- surv_ind_nurs %>% rename(size_cm2_p = size_cm2_1) # individual data
+plot_dfS <- surv_summ50_nurs[[1]] %>% rename(size_cm2_p = size_cm2)  # individual survival and size values drawn from summarized data
+
+
+plot(x = log(plot_dfI$size_cm2_p + 1), y = plot_dfI$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", xlim = c(0, log(100)), yaxt = "n")
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 3, col.ticks = "dodgerblue")
+mtext(side = 1, expression("Size ("*cm^2*")"), line = 2.5)
+axis(side = 2, at = c(0, 1), labels = c(0, 1), las = 1)
+mtext(side = 2, "Survival", line = 1)
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = 16, col = adjustcolor("black", alpha.f = 0.1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p",  pch = 16, col = adjustcolor("black", alpha.f = 0.1)) # need bg for pch = 23
+  }
+}
+
+
+# segments with survival estimates and polygons with confidence intervals
+for(jj in 1:5){
+  polygon(x = c(log(SC_lower[jj] + 1), log(SC_upper[jj] + 1), log(SC_upper[jj] + 1), log(SC_lower[jj] + 1)), y = c(rep(surv_df$Q05[which(surv_df$size_class==jj)], 2), rep(surv_df$Q95[which(surv_df$size_class==jj)], 2)), border = NA, col = adjustcolor("gray50", alpha.f = 0.25))
+  segments(x0 = log(SC_lower[jj] + 1), y0 = surv_df$mean[which(surv_df$size_class==jj)], x1 = log(SC_upper[jj] + 1), lwd =1.5)
+}
+
+```
+
+```{r}
+# turn the field and nursery data back into proportions and make bar plot comparing proportions surviving (with n = number of studies)
+
+bp_FdfI <- surv_ind_field %>% select(size_class, survived) %>% filter(size_class < 3) # individual data # group_by(study, region, survey_yr, size_class)
+bp_FdfS <- surv_summ50_field[[1]] %>% select(size_class, survived) %>% filter(size_class < 3) # individual survival and size values drawn from summarized data
+bp_FdfIS <- surv_ind_summ50_field[[1]] %>% ungroup() %>% select(size_class, survived) %>% filter(size_class < 3) # individual annual survival data drawn from summarized individual data
+
+#View(bp_FdfIS)
+
+bp_Fdf <- rbind(bp_FdfI, bp_FdfS, bp_FdfIS) %>% group_by(size_class) %>% summarize(N_tot = n(), N_survived = sum(survived[survived == 1])) %>% mutate(prop_survived = N_survived/N_tot)
+bp_Fdf$location <- "field"
+
+
+#View(bp_FdfI)
+#View(bp_Fdf)
+
+bp_NdfI <- surv_ind_nurs %>% select(size_class, survived) # individual data
+bp_NdfS <- surv_summ50_nurs[[1]] %>% select(size_class, survived) # individual data # individual survival and size values drawn from summarized data
+
+#View(bp_NdfI)
+
+bp_Ndf <- rbind(bp_NdfI, bp_NdfS) %>% group_by(size_class) %>% summarize(N_tot = n(), N_survived = sum(survived[survived == 1])) %>% mutate(prop_survived = N_survived/N_tot)
+bp_Ndf$location <- "nursery"
+
+bp_df <- rbind(bp_Fdf, bp_Ndf) %>% filter(is.na(size_class)==F)
+bp_df$size_class <- ifelse(bp_df$size_class == 1, "0-10cm2", "10-100cm2")
+
+```
+
+```{r}
+# bar plot
+
+#View(bp_df)
+
+bar.colors <- c("field" = "gray20", "nursery" = "gray80") 
+
+
+ggplot(bp_df, aes(x=as.character(size_class), y=prop_survived, fill=location)) + 
+   geom_bar(position = "dodge", stat = "identity") +
+  xlab("Size class") +
+  ylab("Proportion surviving") +
+  scale_fill_manual(values=bar.colors)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12), axis.title = element_text(size = 14), panel.border = element_rect(colour = "black", fill=NA, linewidth=0.8), plot.title = element_text(hjust=0, size = 14))
+  #geom_boxplot()
+  #geom_jitter() 
+
+```
+
+
+### lab
+repeat with lab data
+
+```{r}
+# get the random replicates
+surv_summ50_lab <- survi_fun(apal_surv_summ1[which(apal_surv_summ1$data_type=="lab" & is.na(apal_surv_summ1$disturbance)==T),], n_reps = n_reps1, seed_n = 100)
+
+surv_ind_lab <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == "lab") # individual data
+
+lab_surv1 <- resamp_surv2(dtI = surv_ind_lab, dtS_list = surv_summ50_lab, n_reps = n_reps1, n_sample = n_sample1, seed1 = 4000)
+
+lab_surv1$SC_surv_summ_df
+
+```
+
+
+plot results
+
+```{r}
+
+# plot results
+surv_df <- lab_surv1$SC_surv_summ_df
+
+plot_dfI <- surv_ind_lab %>% rename(size_cm2_p = size_cm2_1) # individual data
+plot_dfS <- surv_summ50_lab[[1]] %>% rename(size_cm2_p = size_cm2)  # individual survival and size values drawn from summarized data
+
+
+plot(x = log(plot_dfS$size_cm2_p + 1), y = plot_dfS$survived, type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", xlim = c(0, log(1 + 1)))
+axis(side = 1, at = c(0, log(c(0.1, 1) + 1)), labels = c(0, exp(log(c(0.1, 1) + 1))-1))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+mtext(side = 1, "Size (cm^2)", line = 2.5)
+mtext(side = 2, "Prop. surviving", line = 2.5)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = dt_sub$survived + jt, type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+
+# segments with survival estimates and polygons with confidence intervals
+for(jj in 1:5){
+  polygon(x = c(log(SC_lower[jj] + 1), log(SC_upper[jj] + 1), log(SC_upper[jj] + 1), log(SC_lower[jj] + 1)), y = c(rep(surv_df$Q05[which(surv_df$size_class==jj)], 2), rep(surv_df$Q95[which(surv_df$size_class==jj)], 2)), border = NA, col = adjustcolor("gray50", alpha.f = 0.25))
+  segments(x0 = log(SC_lower[jj] + 1), y0 = surv_df$mean[which(surv_df$size_class==jj)], x1 = log(SC_upper[jj] + 1), lwd =1.5)
+}
+
+```
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 1)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \nsurvival not provided"), pch = c(l.pch, l.pchR), col = "gray50", pt.bg = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+### export
+
+```{r}
+
+saveRDS(field_surv1, "parameter_lists/field_surv_pars.rds")
+saveRDS(nurs_surv1, "parameter_lists/nurs_surv_pars.rds")
+saveRDS(lab_surv1, "parameter_lists/lab_surv_pars.rds")
+
+```
+
+
+
+## growth
+
+growth: as a function of initial size, calculate how high your growth rate would need to be to grow into the next size class, two size classes up, etc. and how low it would need to be to shrink to each smaller size class, then calculate proportions of observations that are above this line (transition), below the shrinkage line (shrink) or inbetween (stay in same size class)
+
+```{r}
+
+# function for calculating threshold growth/shrinkage rates need to reach a neighboring size class
+# s0 = initial coral size
+# SC = lower threshold of a larger size class (for growth) or upper threshold of a smaller size class (for shrinkage)
+GS_thresh <- function(s0, SC){
+  
+  if(s0 > SC){ # if looking at shrinkage
+    
+    rate_min <- s0-SC # min shrinkage rate needed to shrink into this size class in one year
+  }
+  
+  if(s0 < SC){ # if looking at growth
+    rate_min <- SC-s0
+  }
+  
+  if(s0 == SC){
+    rate_min <- 0
+  }
+  
+  return(rate_min)
+}
+
+GS_thresh <- Vectorize(GS_thresh, "s0")
+
+```
+
+
+
+```{r}
+
+s0_1 <- seq(from = SC_lower[1], to = SC_upper[1], length.out = 100) # starting in first size class
+s0_2 <- seq(from = SC_lower[2], to = SC_upper[2], length.out = 100) # second class
+s0_3 <- seq(from = SC_lower[3], to = SC_upper[3], length.out = 100) # third class
+s0_4 <- seq(from = SC_lower[4], to = SC_upper[4], length.out = 100) # fourth class
+s0_5 <- seq(from = SC_lower[5], to = SC_upper[5], length.out = 100) # fifth class
+
+plot(x = s0_1, y = GS_thresh(s0_1, SC_lower[2]), type = "l", las = 1)
+
+
+```
+
+
+```{r}
+# make a function whose inputs are initial size and growth rate and whose outputs are the size class the individual will be in 1 yr later
+
+# or really all you need to do is add the annual growth rate to the current size to get the size one year later, and then make a column with the size class in the next year (and remember to check for negative sizes and assign them as zero)
+
+```
+
+
+```{r}
+# function for estimating individual growth from the summarized data without information on individual sizes
+
+
+growthi_fun <- function(summ_growth_df, n_reps, seed_n){
+  
+  set.seed(seed_n) # set the seed
+  
+  data_list <- list() # holding list for the data sets
+  
+  for(i in 1:n_reps){ # for each realization
+    
+   for(j in 1:nrow(summ_growth_df)){
+     
+     # number of individuals that went into the jth observation of proportion surviving
+     n_ind <- summ_growth_df$n_final[j]
+     
+     # make the holding data set to fill in with individual values (and keep all the metadata)
+     data.ij <- summ_growth_df %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_live, fragment, time_interval_yr, disturbance)
+     data.ij <- data.ij[j,] # want just the jth row
+     
+     # replicate all the metadata n_ind times
+     data.ij <- data.ij[rep(seq_len(nrow(data.ij)), n_ind), ]
+     
+     # now fill in size and individual growth columns
+     
+     # holding column for size:
+     data.ij$size_cm2 <- rep(NA, nrow(data.ij))
+     
+     # holding column for growth
+     data.ij$growth_cm2_yr <- rep(NA, nrow(data.ij))
+     
+     # fill in sizes by drawing a random size for each individual
+      # if there is no information on variability (size_sd = NA)
+     if(is.na(summ_growth_df$size_cm2_sd[j])==T){
+       
+       # if only mean size is known, just draw individual survival rates and assume they all have the same size
+       if(is.na(summ_growth_df$size_cm2_min[j])==T){
+         data.ij$size_cm2 <- rep(summ_growth_df$size_cm2_mean[j], n_ind)
+         
+       } else{ # if only range is known or if only mean/midpoint and range is known, draw from uniform distribution
+         data.ij$size_cm2 <- runif(n_ind, min = summ_growth_df$size_cm2_min[j], max = summ_growth_df$size_cm2_max[j])
+       }
+      
+       
+     } else{ # if there is information on size variability
+       
+       if(is.na(summ_growth_df$size_cm2_min[j])==F){ # if mean size, sd, and range are known, draw sizes from a normal distribution and adjust to make sure they are within the given range
+         
+         x1 <- which(10 == 1) # start with length 0
+         
+         while(length(x1) < n_ind){
+           # draw sizes from a normal distribution
+           x1 <- c(x1, rnorm(n_ind-length(x1), summ_growth_df$size_cm2_mean[j], summ_growth_df$size_cm2_sd[j]))
+           # make sure these values all fall within the observed size range:
+           x1 <- x1[which(x1>= summ_growth_df$size_cm2_min[j] & x1 <= summ_growth_df$size_cm2_max[j])]
+         }
+         
+         data.ij$size_cm2 <- x1
+         
+       } else{ # if mean size and sd are known but there is no information on range, draw sizes from a normal distribution and adjust to make sure they are non-zero
+         
+         x1 <- which(10 == 1) # start with length 0
+         
+         while(length(x1) < n_ind){
+           # draw sizes from a normal distribution
+           x1 <- c(x1, rnorm(n_ind-length(x1), summ_growth_df$size_cm2_mean[j], summ_growth_df$size_cm2_sd[j]))
+           # make sure these values all fall within the observed size range:
+           x1 <- x1[which(x1>= 0)]
+         }
+         
+         data.ij$size_cm2 <- x1
+         
+       }
+     
+       
+     }
+       
+     
+     # now calculate growth rates
+     
+     # if there is no information on variability (growth_sd = NA)
+     if(is.na(summ_growth_df$growth_cm2_yr_sd[j])==T){
+       
+       # if only mean growth is known, just assume all the individuals have the same growth rate
+       if(is.na(summ_growth_df$growth_cm2_yr_min[j])==T){
+         data.ij$growth_cm2_yr <- rep(summ_growth_df$growth_cm2_yr_mean[j], n_ind)
+         
+       } else{ # if only range is known or if only mean/midpoint and range is known, draw from uniform distribution
+         data.ij$growth_cm2_yr <- runif(n_ind, min = summ_growth_df$growth_cm2_yr[j], max = summ_growth_df$growth_cm2_yr[j])
+       }
+      
+       
+     } else{ # if there is information on size variability
+       
+       if(is.na(summ_growth_df$growth_cm2_yr_min[j])==F){ # if mean size, sd, and range are known, draw sizes from a normal distribution and adjust to make sure they are within the given range
+         
+         x1 <- which(10 == 1) # start with length 0
+         
+         while(length(x1) < n_ind){
+           # draw sizes from a normal distribution
+           x1 <- c(x1, rnorm(n_ind-length(x1), summ_growth_df$growth_cm2_yr_mean[j], summ_growth_df$growth_cm2_yr_sd[j]))
+           # make sure these values all fall within the observed size range:
+           x1 <- x1[which(x1>= summ_growth_df$growth_cm2_yr_min[j] & x1 <= summ_growth_df$growth_cm2_yr_max[j])]
+         }
+         
+         data.ij$growth_cm2_yr <- x1
+         
+       } else{ # if mean size and sd are known but there is no information on range, draw sizes from a normal distribution (and it's ok if they are less than 0 since that would just mean shrinkage)
+         
+         data.ij$growth_cm2_yr <- rnorm(n_ind, summ_growth_df$growth_cm2_yr_mean[j], summ_growth_df$growth_cm2_yr_sd[j])
+         
+         
+       }
+     
+       
+     }
+     
+     if(j == 1){
+       data.j <- data.ij
+     } else{
+       
+       data.j <- rbind(data.j, data.ij)
+       
+     }
+    
+     
+   } # end of iteration over rows in the data frame
+    
+    # store this data frame in the list
+    data_list[[i]] <- data.j
+    
+  } # end of iteration over random replicates
+  
+  
+  # return the list of data frames
+  
+  return(data_list)
+}
+
+#View(apal_growth_summ)
+
+```
+
+
+```{r}
+
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "field" & is.na(disturbance)==T)
+dtS_list <- growthi_fun(dtS_in, n_reps = 50, seed_n = 500)
+
+#View(dtS_list[[1]])
+dtI <- apal_growth_ind2 %>% filter(data_type == "field" & is.na(disturbance)==T)
+
+#View(dtI)
+
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "nursery" & is.na(disturbance)==T)
+dtS_list <- growthi_fun(dtS_in, n_reps = 50, seed_n = 500)
+
+#View(dtS_list[[1]])
+dtI <- apal_growth_ind2 %>% filter(data_type == "nursery" & is.na(disturbance)==T)
+
+
+```
+
+
+
+```{r}
+
+# function for resampling to get transition matrix parameter estimates
+
+resamp_growth2 <- function(dtI, dtS_list, n_reps, n_sample, seed1){
+  
+  
+  # prep individual data
+dtI <- dtI %>% mutate(size_class = SC_funV(size_cm2_1)) %>% mutate(size_cm2_t1 = size_cm2_1 + growth_cm2_yr_1) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>%  mutate(SC_t1 = SC_funV(size_cm2_t1)) %>% select(size_class, SC_t1) # individual data
+  
+  # get number of observations in each size class (repeat for each data set replicate)
+  
+# individual data
+dtI_n <- dtI %>% select(size_class) %>% filter(is.na(size_class)==F)
+  
+  for(i in 1:n_reps){
+  
+    # ith realization from summarized data
+  dtS_i <- dtS_list[[i]] %>% mutate(size_class = SC_funV(size_cm2)) %>% select(size_class) %>% filter(is.na(size_class)==F)
+  
+  
+  dt_in <- rbind(dtI_n, dtS_i) %>% group_by(size_class) %>% summarize(n_SC = n()) %>% mutate(replicate = i)
+  
+  if(i == 1){
+    dt_n <- dt_in
+  } else{
+    
+    dt_n <- rbind(dt_n, dt_in)
+  }
+  
+}
+  
+  #View(dt_n)
+  
+  # now calculate the number of observations to subsample from each size class for each iteration
+  n_sample <- min(n_sample, min(dt_n$n_SC))
+
+# for each data replicate iteration, get combined vector of survived or not from across the different data sets (vector of 0's and 1's) for each size class
+# for each size class survival vector, get a vector of indexes, then randomly sample from these indexes. and keep track of which ones were sampled each iteration and remove them
+
+# note the individual data are going to be re-used each data replicate... but there's still variation since the exact observations being sampled will vary
+
+# outer holding list for the transition matrices
+T_mat_all <- list()
+
+# outer holding list for the number of resampling iterations
+n_iter_all <- list()
+
+set.seed(seed1) # set the seed
+
+for(i in 1:n_reps){ # for each data replicate
+  
+#n_iter <- floor(min_mat[i,1]/n_sample) # number of random replicates 
+
+
+# prep summarized growth data for this data replicate
+ dtS_list_i <- dtS_list[[i]] %>% mutate(size_class = SC_funV(size_cm2)) %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>%  mutate(SC_t1 = SC_funV(size_cm2_t1)) %>% select(size_class, SC_t1)
+  
+ # combine with the individual data to make a single data set
+ dt_i <- rbind(dtI, dtS_list_i)
+ 
+ n_iter <- rep(NA, 5) # holding vector for number of resampling iterations
+ S_SCX <- rep(NA, 5) # holding vector for number of observations in each size class
+ 
+ 
+ for(k in 1:5){ # for each size class
+   
+    # get the number of individuals starting in this size class
+  S_SCX[k] <- length(which(dt_i$size_class==k))
+    
+  # get the number of random replicate iterations
+  if(S_SCX[k] > 0){
+    n_iter[k] <- floor(dt_n$n_SC[which(dt_n$size_class==k & dt_n$replicate==i)]/n_sample)
+  } else{
+    n_iter[k] <- 0
+  }
+  
+ }
+ 
+ #View(dt_i)
+ 
+
+# determine which size classes have lengths > 0
+SC_present <- which(S_SCX !=0)
+
+# hodling list for index vectors
+ind_list <- list()
+
+for(k in 1:5){
+  
+  ind_list[[k]] <- ifelse(rep(S_SCX[k], S_SCX[k])!=0, c(1:S_SCX[k]), NA) # indexes for kth size class are 1:number of individuals in that size class
+
+}
+
+ T_mat_list <- list() # holding list for the transition matrices from each subsample
+
+for(j in 1:max(n_iter)){ # for each sampling iteration
+  
+  # holding matrix for the transition matrix
+  T_mat <- matrix(NA, nrow = 5, ncol = 5) # column = initial size class, row = final size class
+  
+  for(k in SC_present){ # for each size class present
+    
+    
+    if(j <= n_iter[k]){
+      
+    # get random sample for each size class 
+  sx <- sample(ind_list[[k]], size = n_sample, replace = F)
+  
+  dt_k <- dt_i %>% filter(size_class == k)
+  
+  dt_k <- dt_k[sx,]
+  
+  flag_NA <- 0
+  
+    } else{
+      
+      flag_NA <- 1
+    }
+
+  # total that went to size class 1
+    SC_tot1 <- ifelse(flag_NA == 0, length(dt_k$SC_t1[which(dt_k$SC_t1==1)]), NA)
+    
+    # total that went to size class 2
+    SC_tot2 <- ifelse(flag_NA == 0, length(dt_k$SC_t1[which(dt_k$SC_t1==2)]), NA)
+    
+    # total that went to size class 3
+    SC_tot3 <- ifelse(flag_NA == 0, length(dt_k$SC_t1[which(dt_k$SC_t1==3)]), NA)
+    
+    # total that went to size class 4
+    SC_tot4 <- ifelse(flag_NA == 0, length(dt_k$SC_t1[which(dt_k$SC_t1==4)]), NA)
+    
+    # total that went to size class 5
+    SC_tot5 <- ifelse(flag_NA == 0, length(dt_k$SC_t1[which(dt_k$SC_t1==5)]), NA)
+    
+    SC_props <- c(SC_tot1, SC_tot2, SC_tot3, SC_tot4, SC_tot5)/n_sample
+  
+    T_mat[ ,k] <- SC_props # store transition probabilities for kth size class
+    
+  # update the vectors to avoid repeat sampling
+  ind_list[[k]] <- ind_list[[k]][!(ind_list[[k]] %in% sx)]
+  
+  
+  } # end of iteration over each size class for jth data subset
+
+  T_mat_list[[j]] <- T_mat
+  
+} # end of iteration over each data subset
+
+
+T_mat_all[[i]] <- T_mat_list
+n_iter_all[[i]] <- n_iter
+
+} # end of iteration over each dataset replicate
+
+# want to make make a summarized data frame with mean and quantiles for each value
+# first get each them in matrices
+#n_iter_max <- floor(max(min_mat[,1])/n_sample) # max number of random replicates
+
+mat1 <- matrix(NA, nrow = 1, ncol = 5) # rows = replicates, cols = from 1 to 1, 1 to 2, 1 to 3, etc.
+mat2 <- matrix(NA, nrow = 1, ncol = 5) # from 2 to 1, 2 to 2, 2 to 3, etc.
+mat3 <- matrix(NA, nrow = 1, ncol = 5) # from 3 to 1, 2, 3, 4, 5
+mat4 <- matrix(NA, nrow = 1, ncol = 5) # from 4 to 1, 2, 3, 4, 5
+mat5 <- matrix(NA, nrow = 1, ncol = 5) # from 5 to 1, 2, 3, 4, 5
+
+mat_list <- list(mat1, mat2, mat3, mat4, mat5)
+
+matn <- matrix(NA, nrow = 50, ncol = 5) # number of resampling iterations for size class 1, 2, 3, 4, 5
+
+for(i in 1:n_reps){
+  n_iter <- n_iter_all[[i]] # number of resampling iterations for each size class
+
+  matn[i,] <- n_iter
+  
+  for(k in SC_present){
+    
+    for(j in 1:n_iter[k]){
+    
+    if(i == 1 & j == 1){
+      
+      mat_list[[k]] <- T_mat_all[[i]][[j]][,k]
+      
+    } else{
+      
+      # rbind
+      mat_list[[k]] <- rbind(mat_list[[k]], T_mat_all[[i]][[j]][,k])
+      
+    } # end of if else
+    
+  } # end of j loop
+   
+  } # end of k loop
+  
+} # end of i loop
+
+#mat1
+
+# then calculate the mean and quantiles of each column in each matrix
+
+
+summ_list <- list()
+
+for(k in SC_present){
+  
+summ_k <- data.frame(
+  mean = rep(NA, 5),
+  Q05 = rep(NA, 5),
+  Q95 = rep(NA, 5)
+)
+
+summ_k$mean <- apply(mat_list[[k]], MARGIN = 2, FUN = mean) # mean probabilities of transitioning to size class 1, 2, 3, 4, 5. NOTE they don't necessarily sum to 1 so can't just plug them into the model
+summ_k$Q05 <- apply(mat_list[[k]], MARGIN = 2, FUN = quantile, probs = 0.05)
+summ_k$Q95 <- apply(mat_list[[k]], MARGIN = 2, FUN = quantile, probs = 0.95)
+  
+summ_list[[k]] <- summ_k
+
+}
+
+
+
+return(list(T_mat_all = T_mat_all, mat_list = mat_list, matn = matn, summ_list = summ_list, n_sample = n_sample)) #T_mat_summ = T_mat_summ, 
+  
+}
+
+
+
+
+```
+
+
+```{r}
+T_mat_all[[1]][[1]][,1]
+
+#as.vector(T_mat_all[[1]][[1]])
+
+```
+
+
+apal_growth_summ1
+
+apal_growth_ind2
+
+
+
+```{r}
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "field" & is.na(disturbance)==T)
+
+
+dtS_list <- growthi_fun(dtS_in, n_reps = 50, seed_n = 500)
+
+#View(dtS_list[[1]])
+
+dtI <- apal_growth_ind2 %>% filter(data_type == "field" & is.na(disturbance)==T)
+
+
+test1 <- resamp_growth2(dtI, dtS_list, n_reps = n_reps1, n_sample = n_sample1, seed1)
+
+
+#test1$matn
+
+#test1$mat_list[[1]]
+
+test1$summ_list[[4]]
+
+```
+
+
+
+### field
+
+field data only:
+
+
+```{r}
+# get the random replicates and the growth estimates
+n_reps1 <- 50
+
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "field" & is.na(disturbance)==T)
+
+growth_summ50_field <- growthi_fun(dtS_in, n_reps = n_reps1, seed_n = 500)
+
+growth_ind_field <- apal_growth_ind2 %>% filter(data_type == "field" & is.na(disturbance)==T)# individual data
+
+
+n_sample1 <- 20
+
+field_growth1 <- resamp_growth2(dtI = growth_ind_field, dtS_list = growth_summ50_field, n_reps = n_reps1, n_sample = n_sample1, seed1 = 200)
+
+
+
+```
+
+
+
+
+
+```{r}
+# plot the field growth data
+
+plot_dfI <- growth_ind_field %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>% rename(size_cm2_p = size_cm2_1)# individual data
+
+plot_dfS <- growth_summ50_field[[1]] %>%  mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>% rename(size_cm2_p = size_cm2) # individual survival and size values drawn from summarized data
+
+par(pty = "s")
+plot(x = log(plot_dfI$size_cm2_p + 1), y = log(plot_dfI$size_cm2_t1 + 1), type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", asp = 1) #, xaxs = "i", yaxs = "i"
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+axis(side = 2, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000), las = 1)
+axis(side = 2, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+abline(a = 0, b = 1)
+abline(v = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+abline(h = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+
+mtext(side = 1, "Size at time t (cm^2)", line = 2.5)
+mtext(side = 2, "Size one year later", line = 3.25)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+
+```
+
+
+check the zeros
+
+```{r}
+#plot_dfI$coral_id[which(plot_dfI$size_cm2_t1 == 0)] # check on these -- might be an issue with extrapolating growth rate to a year?
+
+#noaa_dt4 %>% filter(TagID=="CF3-t973") %>% view()
+
+#noaa_dt4 %>% filter(TagID=="GR3-t398") %>% view()
+
+# I think the zeros are cases where something extreme happened (e.g., branches broke off, large amount of tissue mortality) and the time interval was less than one year so when that shrinkage rate got extrapolated to a year it caused the predicted size to go below zero
+
+```
+
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 1)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \ngrowth not provided"), pch = c(f.pch, f.pchR), col = "gray50", pt.bg = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+### nursery
+nursery data only:
+
+```{r}
+# get the random replicates and the growth estimates
+n_reps1 <- 50
+
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "nursery" & is.na(disturbance)==T)
+
+growth_summ50_nurs <- growthi_fun(dtS_in, n_reps = n_reps1, seed_n = 500)
+
+growth_ind_nurs <- apal_growth_ind2 %>% filter(data_type == "nursery" & is.na(disturbance)==T)# individual data
+
+
+n_sample1 <- 20
+
+nurs_growth1 <- resamp_growth2(dtI = growth_ind_nurs, dtS_list = growth_summ50_nurs, n_reps = n_reps1, n_sample = n_sample1, seed1 = 200)
+
+
+
+```
+
+
+
+
+```{r}
+# plot the nursery growth data
+
+plot_dfI <- growth_ind_nurs %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>% rename(size_cm2_p = size_cm2_1)# individual data
+
+#plot_dfI %>% filter(size_cm2_t1 == 0) %>% view() # check on these -- might be an issue with extrapolating growth rate to a year?
+
+plot_dfS <- growth_summ50_nurs[[1]] %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1))%>% rename(size_cm2_p = size_cm2) # individual survival and size values drawn from summarized data
+
+par(pty = "s")
+plot(x = log(plot_dfI$size_cm2_p + 1), y = log(plot_dfI$size_cm2_t1 + 1), type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", asp = 1, ylim = c(0, max(c(log(plot_dfI$size_cm2_t1 + 1), log(plot_dfS$size_cm2_t1 + 1)))), xlim = c(0, max(c(log(plot_dfI$size_cm2_t1 + 1), log(plot_dfS$size_cm2_t1 + 1))))) #, xaxs = "i", yaxs = "i"
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+axis(side = 2, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000), las = 1)
+axis(side = 2, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+abline(a = 0, b = 1)
+abline(v = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+abline(h = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+
+mtext(side = 1, "Size at time t (cm^2)", line = 2.5)
+mtext(side = 2, "Size one year later", line = 3.25)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+
+```
+
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 1)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \ngrowth not provided"), pch = c(n.pch, n.pchR), col = "gray50", pt.bg = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+### lab
+
+lab data only
+
+```{r}
+# get the random replicates and the growth estimates
+n_reps1 <- 50
+
+dtS_in <- apal_growth_summ1 %>% filter(data_type == "lab" & is.na(disturbance)==T)
+
+growth_summ50_lab <- growthi_fun(dtS_in, n_reps = n_reps1, seed_n = 500)
+
+growth_ind_lab <- apal_growth_ind2 %>% filter(data_type == "lab" & is.na(disturbance)==T)# individual data
+
+
+n_sample1 <- 20
+
+lab_growth1 <- resamp_growth2(dtI = growth_ind_lab, dtS_list = growth_summ50_lab, n_reps = n_reps1, n_sample = n_sample1, seed1 = 200)
+
+
+
+```
+
+
+
+```{r}
+# plot the lab growth data
+
+plot_dfI <- growth_ind_lab %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1)) %>% rename(size_cm2_p = size_cm2_1)# individual data
+
+#plot_dfI %>% filter(size_cm2_t1 == 0) %>% view() # check on these -- might be an issue with extrapolating growth rate to a year?
+
+plot_dfS <- growth_summ50_lab[[1]] %>% mutate(size_cm2_t1 = size_cm2 + growth_cm2_yr) %>% mutate(size_cm2_t1 = if_else(size_cm2_t1 < 0, 0, size_cm2_t1))%>% rename(size_cm2_p = size_cm2) # individual survival and size values drawn from summarized data
+
+par(pty = "s")
+plot(x = log(plot_dfI$size_cm2_p + 1), y = log(plot_dfI$size_cm2_t1 + 1), type = "p", pch = 16, col = NA, las = 1, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", asp = 1, ylim = c(0, max(c(log(plot_dfI$size_cm2_t1 + 1), log(plot_dfS$size_cm2_t1 + 1)))), xlim = c(0, max(c(log(plot_dfI$size_cm2_t1 + 1), log(plot_dfS$size_cm2_t1 + 1))))) #, xaxs = "i", yaxs = "i"
+axis(side = 1, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000))
+axis(side = 1, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+axis(side = 2, at = c(0, log(c(10, 100, 10000))), labels = c(0, 10, 100, 10000), las = 1)
+axis(side = 2, at = log(c(SC1, SC2, SC3, SC4, SC5) + 1), labels = NA, lwd.ticks = 2, col.ticks = "red")
+abline(a = 0, b = 1)
+abline(v = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+abline(h = log(SC_lower[2:5] + 1), col = "red", lty = 2)
+
+mtext(side = 1, "Size at time t (cm^2)", line = 2.5)
+mtext(side = 2, "Size one year later", line = 3.25)
+
+# studies with individual data points
+study_list1 <- study_list[which(study_list %in% unique(plot_dfI$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfI$study[which(plot_dfI$study==study_list1[i])][1]
+  types.i <- unique(plot_dfI$data_type[which(plot_dfI$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfI[which(plot_dfI$study==study.i & plot_dfI$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "I"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+# studies with randomly drawn sizes and survival
+study_list1 <- study_list[which(study_list %in% unique(plot_dfS$study))]
+for(i in 1:length(study_list1)){ # for each study
+  study.i <- plot_dfS$study[which(plot_dfS$study==study_list1[i])][1]
+  types.i <- unique(plot_dfS$data_type[which(plot_dfS$study==study.i)])
+  for(j in 1:length(types.i)){ # for each data type
+    types.ij <- types.i[j]
+    dt_sub <- plot_dfS[which(plot_dfS$study==study.i & plot_dfS$data_type==types.i[j]),]
+    jt <- rnorm(nrow(dt_sub), 0, jt_sd) # jitter the points
+    lines(x = log(dt_sub$size_cm2_p + 1), y = log(dt_sub$size_cm2_t1 + 1), type = "p", pch = pch_fun(types.ij, "S"), col = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1), bg = adjustcolor(col_df$cols[which(col_df$study==dt_sub$study[1])], alpha.f = alpha1)) # need bg for pch = 23
+  }
+}
+
+
+```
+
+```{r}
+# make a legend
+col_df2 <- col_df %>% filter(study %in% unique(c(plot_dfI$study, plot_dfS$study))) # just the survival studies here
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 1)
+
+plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
+legend(x = "topright", legend = c("individual data provided", "individual size and/or \ngrowth not provided"), pch = c(l.pch, l.pchR), col = "gray50", pt.bg = "gray50", bty = "n",inset = c(0,0.2))
+
+
+```
+
+
+
+
+
+### export
+
+```{r}
+
+saveRDS(field_growth1, "parameter_lists/field_growth_pars.rds")
+saveRDS(nurs_growth1, "parameter_lists/nurs_growth_pars.rds")
+saveRDS(lab_growth1, "parameter_lists/lab_growth_pars.rds")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

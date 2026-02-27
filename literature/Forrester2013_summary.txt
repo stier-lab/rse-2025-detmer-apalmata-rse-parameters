@@ -1,0 +1,18 @@
+CITATION
+Forrester, G.E., Ferguson, M.A., O'Connell-Rodwell, C.E. & Jarecki, L.L. (2014). Long-term survival and colony growth of Acropora palmata fragments transplanted by volunteers for restoration. Aquatic Conservation: Marine and Freshwater Ecosystems, 24, 81-91.
+DOI: 10.1002/aqc.2374
+
+ABSTRACT
+Many branching corals are fragmented by storms, which can serve as a mechanism of asexual reproduction for species that are able to reattach themselves to the substratum and form new colonies. Fragments can also be manually reattached as a means of reef restoration. The growth and survival of 832 fragments of Elkhorn coral, Acropora palmata, that were transplanted for a restoration project in the British Virgin Islands was modelled. Mortality was higher in the first year after transplanting than in subsequent years, perhaps reflecting stress from handling or failure of the attachment method. Survival also varied with the year of transplantation (from 2005–2011), and was lowest in years with major storms (2007 and 2010). Fragment survival increased with increasing initial size, with the largest fragments (surface area roughly 1000 cm²) faring substantially better than the smallest (roughly 10 cm²) and average sized fragments (roughly 100 cm²). Colony size (surface area of live tissue) tended to decrease slightly in the first 3 months after being reattached, presumably due to stress from transplanting. Subsequently, the surface area of surviving colonies tended to progressively increase over time, with fragments typically reaching 3000 cm² after 7 years. Colony growth was, however, extremely variable and largely independent of initial colony size. Despite initial reductions in growth and survival due to transplanting, long-term survival of transplanted fragments was roughly comparable with that of natural colonies. Transplanting fragments is thus a promising tool for grass-roots restoration projects.
+
+KEY FINDINGS FOR ACROPORA PULCHRA RESTORATION CONTEXT
+
+1. STRONG SIZE-DEPENDENT SURVIVAL: After 7 years, survival predictions diverge dramatically by initial size—10% for smallest fragments (10 cm²), 19% for average (100 cm²), but 67% for largest (1000 cm²). This has direct implications for A. pulchra restoration: prioritizing larger fragments will yield substantially higher long-term survival.
+
+2. FIRST-YEAR MORTALITY IS ELEVATED BUT THEN STABILIZES: ~56% first-year survival vs. ~68% annual survival thereafter. This "transplanting penalty" reflects handling stress and attachment failure. By 12 months, virtually all surviving fragments had tissue contacting reef substrate. Critical parameter for restoration planning.
+
+3. INITIAL SHRINKAGE FOLLOWED BY SUSTAINED GROWTH: Fragments decrease in size during first 3 months post-transplant (stress response), then progressively increase, reaching ~3000 cm² mean size by 7 years. Growth is highly variable and largely size-independent—colonies can both grow and shrink in any interval.
+
+4. INTERANNUAL VARIATION DRIVEN BY STORMS: Years with major storms (2007, 2010) showed dramatically lower survival (21%, 30%) vs. other years (50-85%). Storm impacts can overwhelm transplanting effects. Timing of restoration relative to storm season may be important.
+
+5. VOLUNTEER-BASED METHODS ARE VIABLE: 832 fragments transplanted over 7 years by students and volunteers with 1-2 days training. Long-term survival comparable to natural colonies. Fragments found in days of searching at source sites. Demonstrates feasibility for scaling A. pulchra restoration using trained volunteers and simple attachment methods.
