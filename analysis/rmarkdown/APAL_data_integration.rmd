@@ -1063,7 +1063,7 @@ apal_growthI <- apal_growthI %>% left_join(apal_growth_studyN, by = c("study")) 
 
 # export these
 write.csv(apal_survI, file = "../../standardized_data/apal_surv_ind.csv")
-write.csv(apal_growthI, file = "standardized_data/apal_growth_ind.csv")
+write.csv(apal_growthI, file = "../../standardized_data/apal_growth_ind.csv")
 
 #plot(x = apal_survI$size_cm2, y = apal_survI$survived, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.25))
 
@@ -1465,9 +1465,21 @@ data standardization
 # for location, combine reef and transects (e.g., Sombrero_1 for transect 1 on Sombrero reef)
 # for plots, combine plot and substrate tags to maintain unique identifiers
 
-fundR_surv <- fundR_dt3 %>% rename(treatment_11 = treatment_1, treatment_21 = treatment_2) %>% mutate(tile_type = if_else(treatment_21=="NA", treatment_11, paste(treatment_11, treatment_21, sep = " "))) %>% mutate(study = "fundemar_recruits", region = "Dominican Republic", location = paste("Sombrero Reef", transect, sep = "_"), plot = paste(plot_tag_number, substrate_number_temporary_flag, sep = "."), treatment_1 = settlement_technique, treatment_2 = tile_type, latitude = 18.37048, longitude = -68.84673, depth_m = NA, time_interval_yr = (survey_date-outplant_date)/365, fragment = "N", data_type = "field", prop_survived = number_settlers/N0, disturbance = NA, study_notes = "sizes estimated from small sample of recruits; treatment 1 = settlement technique, treatment 2 = substrate type", size_live = "unknown") %>% rename(survey_yr = survey_date_year, n_initial = N0) %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_cm2_mean, size_cm2_sd, size_live, size_cm2_min, size_cm2_max, prop_survived, n_initial, fragment, time_interval_yr, disturbance, study_notes)
+#fundR_surv <- fundR_dt3 %>% rename(treatment_11 = treatment_1, treatment_21 = treatment_2) %>% mutate(tile_type = if_else(treatment_21=="NA", treatment_11, paste(treatment_11, treatment_21, sep = " "))) %>% mutate(study = "fundemar_recruits", region = "Dominican Republic", location = paste("Sombrero Reef", transect, sep = "_"), plot = paste(plot_tag_number, substrate_number_temporary_flag, sep = "."), treatment_1 = settlement_technique, treatment_2 = tile_type, latitude = 18.37048, longitude = -68.84673, depth_m = NA, time_interval_yr = as.numeric((survey_date-outplant_date))/365, fragment = "N", data_type = "field", prop_survived = number_settlers/N0, disturbance = NA, study_notes = "sizes estimated from small sample of recruits; treatment 1 = settlement technique, treatment 2 = substrate type", size_live = "unknown") %>% rename(survey_yr = survey_date_year, n_initial = N0) %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_cm2_mean, size_cm2_sd, size_live, size_cm2_min, size_cm2_max, prop_survived, n_initial, fragment, time_interval_yr, disturbance, study_notes)
+
+fundR_surv <- fundR_dt3 %>% rename(treatment_11 = treatment_1, treatment_21 = treatment_2) %>% mutate(tile_type = if_else(treatment_21=="NA", treatment_11, paste(treatment_11, treatment_21, sep = " "))) %>% mutate(study = "fundemar_recruits", region = "Dominican Republic", location = paste("Sombrero Reef", transect, sep = "_"), plot = as.character(plot_tag_number), treatment_1 = settlement_technique, treatment_2 = tile_type, latitude = 18.37048, longitude = -68.84673, depth_m = NA, time_interval_yr = as.numeric((survey_date-outplant_date))/365, fragment = "N", data_type = "field", prop_survived = number_settlers/N0, disturbance = NA, study_notes = "sizes estimated from small sample of recruits; treatment 1 = settlement technique, treatment 2 = substrate type", size_live = "unknown") %>% rename(survey_yr = survey_date_year, n_initial = N0) %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_cm2_mean, size_cm2_sd, size_live, size_cm2_min, size_cm2_max, prop_survived, n_initial, fragment, time_interval_yr, disturbance, study_notes)
 
 #View(fundR_surv)
+
+#unique(fundR_surv$survey_yr)
+
+#nrow(distinct(fundR_surv[,c(1,2)]))
+
+#nrow(distinct(fundR_surv[,c(4,5, 6)]))
+
+#nrow(distinct(fundR_surv[,c(4,5, 6, 10)]))
+
+# View(arrange(fundR_surv[,c(4,5, 6, 10)], as.numeric(fundR_surv$plot))) # doesn't ever seem to be a case where multiple substrates of the same treatment were in the same plot in the same year
 
 fundR_surv <- fundR_surv[, c("study", "region", "location", "plot", "treatment_1", "treatment_2", "latitude", "longitude", "depth_m", "survey_yr", "data_type", "size_cm2_mean", "size_cm2_sd", "size_cm2_min", "size_cm2_max","size_live", "prop_survived", "n_initial", "fragment", "time_interval_yr", "disturbance", "study_notes")]
 
@@ -2000,8 +2012,8 @@ apal_growthS <- apal_growthS %>% left_join(apal_growthS_studyN, by = c("study"))
 #View(apal_growthS)
 
 # export these
-write.csv(apal_survS, file = "standardized_data/apal_surv_summ.csv")
-write.csv(apal_growthS, file = "standardized_data/apal_growth_summ.csv")
+write.csv(apal_survS, file = "../../standardized_data/apal_surv_summ.csv")
+write.csv(apal_growthS, file = "../../standardized_data/apal_growth_summ.csv")
 
 
 ```
@@ -2165,8 +2177,8 @@ vardi2011_frag_summ <- vardi2011_fragL %>% group_by(frag_type) %>% summarise(mea
 #View(vardi2011_frag_summ)
 
 # export
-write.csv(vardi2011_frag2, file = "standardized_data/apal_fragmentation.csv")
-write.csv(vardi2011_frag_summ, file = "standardized_data/apal_fragmentation_summ.csv")
+write.csv(vardi2011_frag2, file = "../../standardized_data/apal_fragmentation.csv")
+write.csv(vardi2011_frag_summ, file = "../../standardized_data/apal_fragmentation_summ.csv")
 
 ```
 
@@ -2232,7 +2244,7 @@ combine and export
 # short term settler survival in lab
 apal_surv_lab_short <- rbind(chamberland2015_Lsurv, RandallSzmant2009_Lsurv)
 
-write.csv(apal_surv_lab_short, file = "standardized_data/apal_surv_lab_short.csv")
+write.csv(apal_surv_lab_short, file = "../../standardized_data/apal_surv_lab_short.csv")
 
 ```
 
