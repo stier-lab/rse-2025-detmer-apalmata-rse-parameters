@@ -31,9 +31,9 @@ library(janitor)
 ```{r}
 # import the data
 
-noaa_dt0 <- read.csv("original_data/NOAA_Tagged_Colony_Data.csv") # tagged colony data
-noaa_dates0 <- read.csv("original_data/NOAA_Dem_Survey_Dates.csv") # survey dates
-noaa_coords0 <- read.csv("original_data/NOAA_Plot_Locations_Survey_Coverage.csv") # plot coordinates
+noaa_dt0 <- read.csv("../../original_data/NOAA_Tagged_Colony_Data.csv") # tagged colony data
+noaa_dates0 <- read.csv("../../original_data/NOAA_Dem_Survey_Dates.csv") # survey dates
+noaa_coords0 <- read.csv("../../original_data/NOAA_Plot_Locations_Survey_Coverage.csv") # plot coordinates
 
 ```
 
@@ -223,9 +223,9 @@ noaa_growth <- noaa_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases wh
 ```{r}
 # import the data
 # size experiment
-pausch2018S_dt0 <- read.csv("original_data/Pausch_2018_Data_Table_Size.csv")
+pausch2018S_dt0 <- read.csv("../../original_data/Pausch_2018_Data_Table_Size.csv")
 # genet/habitat experiment
-pausch2018G_dt0 <- read.csv("original_data/Pausch_2018_Data_Table_Genet.csv")
+pausch2018G_dt0 <- read.csv("../../original_data/Pausch_2018_Data_Table_Genet.csv")
 
 #View(pausch2018S_dt0)
 #View(pausch2018G_dt0)
@@ -431,7 +431,7 @@ pausch2018_growth <- pausch2018_growth %>% filter(is.na(growth_cm2_yr)==F) # rem
 ## USGS USVI experiment
 
 ```{r}
-usgs_dt0 <- read.csv("original_data/USGS_Palmata_growth_VI_USA.csv")
+usgs_dt0 <- read.csv("../../original_data/USGS_Palmata_growth_VI_USA.csv")
 
 #View(usgs_dt0)
 ```
@@ -620,11 +620,11 @@ usgs_growth <- usgs_growth %>% filter(is.na(growth_cm2_yr)==F) # remove cases wh
 ```{r}
 # import the data
 # growth and survival data
-kuffner_dt0 <- read.csv("original_data/Kuffner_et_al_2020_Palmata_growth_FL_USA.csv")
+kuffner_dt0 <- read.csv("../../original_data/Kuffner_et_al_2020_Palmata_growth_FL_USA.csv")
 kuffner_dt0 <- kuffner_dt0[,c(1:8)] # remove extra empty columns
 
 # initial sizes (estimated from photos)
-kuffner_sz0 <- read.csv("original_data/Kuffner_et_al_2020_sizes.csv")
+kuffner_sz0 <- read.csv("../../original_data/Kuffner_et_al_2020_sizes.csv")
 kuffner_sz0 <- kuffner_sz0[, c(1:5)] # remove extra empty columns
 
 ```
@@ -713,12 +713,12 @@ kuffner_growth <- kuffner_growth %>% filter(is.na(growth_cm2_yr)==F) # remove ca
 ```{r}
 # import the data
 
-MQ_in0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 4) # Growth in-situ (in marine nursery)
+MQ_in0 <- read_excel("../../original_data/MendozaQuiroz2023Data.xlsx", sheet = 4) # Growth in-situ (in marine nursery)
 #View(MQ_in0)
 colnames(MQ_in0) <- MQ_in0[8,] # fix column names
 MQ_in0 <- MQ_in0[9:length(MQ_in0$Cohort), ] # remove header rows from .xlsx file
 
-MQ_cuev0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 5) # Growth on Cuevones reef
+MQ_cuev0 <- read_excel("../../original_data/MendozaQuiroz2023Data.xlsx", sheet = 5) # Growth on Cuevones reef
 colnames(MQ_cuev0) <- MQ_cuev0[9,]
 MQ_cuev0 <- MQ_cuev0[10:length(MQ_cuev0$Cohort), ]
 
@@ -727,7 +727,7 @@ MQ_cuev0 <- MQ_cuev0[10:length(MQ_cuev0$Cohort), ]
 #as.numeric(as.Date("04/07/2016", format = '%m/%d/%Y')) - as.numeric(as.Date("04/08/2015", format = '%m/%d/%Y')) 
 #42467 - 42102
 
-MQ_pic0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 7) # Survival & growth on Picudas reef
+MQ_pic0 <- read_excel("../../original_data/MendozaQuiroz2023Data.xlsx", sheet = 7) # Survival & growth on Picudas reef
 colnames(MQ_pic0) <- MQ_pic0[9,]
 MQ_pic0 <- MQ_pic0[10:length(MQ_pic0$Cohort), ]
 
@@ -955,7 +955,7 @@ MQ_growth <- rbind(MQ_in_growth, MQ_cuev_growth, MQ_pic_growth)
 ## Fundemar fragments
 
 ```{r}
-fundF_dt0 <- read_excel("original_data/Fundemar_Crecimiento_Fragmentos_APAL.xlsx", sheet = 1) # crecimiento = growth
+fundF_dt0 <- read_excel("../../original_data/Fundemar_Crecimiento_Fragmentos_APAL.xlsx", sheet = 1) # crecimiento = growth
 
 #View(fundF_dt0)
 
@@ -1062,7 +1062,7 @@ apal_growthI <- apal_growthI %>% left_join(apal_growth_studyN, by = c("study")) 
 
 
 # export these
-write.csv(apal_survI, file = "standardized_data/apal_surv_ind.csv")
+write.csv(apal_survI, file = "../../standardized_data/apal_surv_ind.csv")
 write.csv(apal_growthI, file = "standardized_data/apal_growth_ind.csv")
 
 #plot(x = apal_survI$size_cm2, y = apal_survI$survived, las = 1, pch = 16, col = adjustcolor("black", alpha.f = 0.25))
@@ -1163,7 +1163,7 @@ Cwl_mean <- mean(colony_ratios$ratio) # mean width to length ratio
 this study provides raw data for some fragments but couldn't find any metadata on how sizes were calculated, so just use the raw data to get a range of initial sizes and then look at survival over an annual time interval (instead of the 1.5 years reported in the study)
 
 ```{r}
-rosales_dt0 <- read.csv("original_data/Rosales_et_al_2024.csv")
+rosales_dt0 <- read.csv("../../original_data/Rosales_et_al_2024.csv")
 #View(rosales_dt0)
 
 # rosales_N0 <- rosales_dt0 %>% filter(Survey. == 1) %>% group_by(reef, Genotype) %>% summarize(N0 = n()) 
@@ -1212,7 +1212,7 @@ rosales2024_surv <- rosales2024_surv[, c("study", "region", "location", "plot", 
 ```{r}
 # import the data
 
-maurer_dt0 <- read.csv("original_data/Maurer2022_SurvivalData.csv")
+maurer_dt0 <- read.csv("../../original_data/Maurer2022_SurvivalData.csv")
 
 #View(maurer_dt0)
 
@@ -1262,7 +1262,7 @@ maurer2022_surv <- maurer2022_surv[, c("study", "region", "location", "plot", "t
 ```{r}
 # import data
 # estimates of recruit sizes for cohort 12
-MQ_ex0 <- read_excel("original_data/MendozaQuiroz2023Data.xlsx", sheet = 3) # sizes at different time intervals from the ex situ nursery
+MQ_ex0 <- read_excel("../../original_data/MendozaQuiroz2023Data.xlsx", sheet = 3) # sizes at different time intervals from the ex situ nursery
 
 #View(MQ_ex0)
 colnames(MQ_ex0) <- MQ_ex0[8,]
@@ -1356,13 +1356,13 @@ MQ_lab_growth <- MQ_lab_growth[, c("study", "region", "location", "plot", "treat
 ```{r}
 
 # settler survival
-fundR_dt0 <- read_excel("original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
+fundR_dt0 <- read_excel("../../original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
 #View(fundR_dt0)
 
 fundR_dt0 <- fundR_dt0 %>% clean_names()
 
 # settler sizes
-fund_sz_dt0 <- read_excel("original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
+fund_sz_dt0 <- read_excel("../../original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
 
 fund_sz_dt0 <- fund_sz_dt0 %>% clean_names()
 
@@ -2262,13 +2262,13 @@ estimating density dependent mortality rates from Fundemar's outplanting data
 
 ```{r}
 # settler survival
-fundR_dt0 <- read_excel("original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
+fundR_dt0 <- read_excel("../../original_data/Fundemar_Matriz_Supervivencia_Reclutas_Unificada.xlsx", sheet = 1)
 #View(fundR_dt0)
 
 fundR_dt0 <- fundR_dt0 %>% clean_names()
 
 # settler sizes
-fund_sz_dt0 <- read_excel("original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
+fund_sz_dt0 <- read_excel("../../original_data/Fundemar_Matriz_area_Reclutas.xlsx", sheet = 1)
 
 fund_sz_dt0 <- fund_sz_dt0 %>% clean_names()
 
