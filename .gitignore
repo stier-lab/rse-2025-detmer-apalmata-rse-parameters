@@ -1,10 +1,12 @@
 # R artifacts
 .Rhistory
+.Rapp.history # add Rapp history
 .Rdata
 .RData
 .Ruserdata
 Rplots.pdf
 *.Rproj.user/
+*.Rproj # add R project
 
 # R package cache
 packrat/
@@ -36,6 +38,7 @@ Thumbs.db
 # Environment files
 .env
 *.env
+.Renviron # add R environment
 
 # Logs
 logs/
