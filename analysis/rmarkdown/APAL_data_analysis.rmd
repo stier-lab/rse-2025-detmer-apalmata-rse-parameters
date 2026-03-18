@@ -32,6 +32,23 @@ to get variability from proportions, just take random subsets of the data, calcu
 
 histograms or ridgeline plots (separate for each size class?) where x = proportion surviving and proportions are calculated by grouping values by study, region, fragment or not, etc?
 
+# import data
+
+```{r}
+
+apal_surv_ind <- read.csv("../../standardized_data/apal_surv_ind.csv") # individual survival
+apal_growth_ind <- read.csv("../../standardized_data/apal_growth_ind.csv") # individual growth rates
+
+apal_surv_summ <- read.csv("../../standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual data
+apal_growth_summ <- read.csv("../../standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report individual data
+
+
+# update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
+apal_surv_ind <- apal_surv_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
+apal_growth_ind <- apal_growth_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
+
+```
+
 
 # define size classes
 
@@ -84,22 +101,7 @@ SC_funV <- Vectorize(SC_fun, "size")
 
 ```
 
-# import data & prep data
-
-```{r}
-
-apal_surv_ind <- read.csv("standardized_data/apal_surv_ind.csv") # individual survival
-apal_growth_ind <- read.csv("standardized_data/apal_growth_ind.csv") # individual growth rates
-
-apal_surv_summ <- read.csv("standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual data
-apal_growth_summ <- read.csv("standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report individual data
-
-
-# update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
-apal_surv_ind <- apal_surv_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
-apal_growth_ind <- apal_growth_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
-
-```
+# prep data
 
 
 
