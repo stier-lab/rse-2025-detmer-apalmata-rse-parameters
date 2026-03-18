@@ -817,7 +817,7 @@ legend(x = "bottomright", legend = c("field", "nursery", "lab"), pch = c(f.pch, 
 
 ```{r}
 # make a legend
-col_df2 <- col_df %>% filter(study %in% unique(c(apal_surv_ind2$study, apal_surv_summ1$study))) # just the survival studies here
+col_df2 <- col_df %>% filter(study %in% unique(c(apal_surv_ind1$study, apal_surv_summ1$study))) # just the survival studies here
 
 plot(x = rep(1, nrow(col_df2)), y = c(1:nrow(col_df2)), pch = 16, col = NA, xaxt = "n", yaxt = "n", ylab = NA, xlab = NA, bty = "n")
 legend("right", legend = col_df2$study, col = col_df2$cols, pch = 15, bty = "n", ncol = 2)
@@ -1324,6 +1324,19 @@ surv_ind_field <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == 
 
 #View(surv_ind_summ50_field[[1]])
 
+
+```
+
+
+```{r}
+# check where high size class 1 survival values are coming from
+# View(apal_surv_summ1[which(apal_surv_summ1$size_class_mean == 1 & apal_surv_summ1$data_type=="field"),])
+# 
+# View(apal_surv_ind_summ[which(apal_surv_ind_summ$size_class == 1 & apal_surv_ind_summ$data_type=="field"),])
+# 
+# View(apal_surv_ind1[which(apal_surv_ind1$size_class == 1 & apal_surv_ind1$data_type=="field"),])
+
+
 ```
 
 
@@ -1336,6 +1349,8 @@ field_surv1 <- resamp_surv3(dtI = surv_ind_field, dtS_list = surv_summ50_field, 
 
 
 #View(field_surv1$SC_surv_df)
+
+#View(field_surv1$SC_surv_summ_df)
 
 #field_surv_wide <-field_surv1$SC_surv_df %>% pivot_wider(names_from = size_class, values_from = prop_survived)
 
