@@ -1,0 +1,6 @@
+metric,value
+lambda_deterministic,1.0007041799218819
+lambda_stochastic_approx,1.000614129802915
+var_log_lambda_loso,1.7998160230698124e-4
+tuljapurkar_correction,8.999080115349062e-5
+n_loso_lambdas,6

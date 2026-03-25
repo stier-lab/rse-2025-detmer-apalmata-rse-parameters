@@ -1,0 +1,18 @@
+CITATION
+Forrester, G.E., O'Connell-Rodwell, C., Baily, P., Forrester, L.M., Giovannini, S., Harmon, L., Karis, R., Krumholz, J., Rodwell, T. & Jarecki, L. (2011). Evaluating methods for transplanting endangered elkhorn corals in the Virgin Islands. Restoration Ecology, 19(3), 299-306.
+DOI: 10.1111/j.1526-100X.2010.00664.x
+
+ABSTRACT
+Restoration of rare corals is desirable and restoration projects are fairly common, but scientific evaluation of this approach is limited. We tested several techniques for transplant and restabilization of Acropora palmata (the elkhorn coral), an ecologically important Caribbean coral whose populations have suffered severe declines. In rough weather, fragments break-off colonies of branching corals like A. palmata as a normal form of asexual reproduction. We transplanted naturally produced coral fragments from remnant populations to nearby restoration sites. Untouched control fragments at the donor site died faster and grew slower than fragments attached to the reef, so attaching fragments to the reef is beneficial. Transplanted fragments grew and died at a rate similar to fragments left at the donor site (both groups were attached to the reef), so there were no effects of moving fragments or differences in habitat quality between donor and restoration sites. Growth and survival were similar using four methods of attaching fragments to the reef: cable ties, two types of epoxy resin, and hydrostatic cement. Corals sometimes compete with the macroalgae that dominate degraded reefs, and clearing surrounding algae improved the growth of fragments. After 4 years, transplanted fragments grew to 1,450 cm² in area and so were potentially sexually active. Because the methods tested are simple and cheap, they could be used by volunteer recreational divers to restore locally extirpated A. palmata populations or to enhance reefs where natural recovery is slow.
+
+KEY FINDINGS FOR ACROPORA PULCHRA RESTORATION CONTEXT
+
+1. ATTACHMENT IS CRITICAL FOR SURVIVAL: Unattached fragments had only 3-12% survival after 1 year vs. 50-62% for attached fragments. Water motion moves loose fragments causing damage and burial. This fundamental finding applies directly to A. pulchra restoration—fragments must be secured to substrate to survive.
+
+2. ATTACHMENT METHOD DOESN'T MATTER IF SECURE: Cable ties, Z-spar epoxy, PC Marine epoxy, and hydrostatic cement all performed equivalently. Key is firm attachment until coral can overgrow the attachment point (occurs within ~2.5 months). Cable ties are cheapest/fastest where reef projections exist; cement is most cost-effective otherwise.
+
+3. TRANSPORT/HANDLING STRESS IS MINIMAL: No detectable effect of moving fragments between sites on growth or survival (even with minimal precautions—fragments in plastic bags, changed seawater). This is encouraging for A. pulchra restoration logistics where fragments may need transport.
+
+4. ALGAL COMPETITION REDUCES GROWTH BY >50%: Clearing macroalgae from around transplants doubled growth rates over 1 year (160% vs 70% LAI increase), though it didn't affect survival. For A. pulchra restoration on algae-dominated reefs, post-transplant maintenance to control algae could substantially improve outcomes.
+
+5. LONG-TERM SUCCESS AND SEXUAL MATURITY ACHIEVABLE: 40% of transplanted fragments survived 4 years (through bleaching events and storms) and grew to mean 1,450 cm²—large enough for sexual reproduction. This demonstrates that transplanted Acropora can become source populations for larval production, a key goal for self-sustaining restoration.

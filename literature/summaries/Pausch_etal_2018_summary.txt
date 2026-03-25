@@ -1,0 +1,62 @@
+Citation
+Pausch, R.E., Williams, D.E., & Miller, M.W. (2018). Impacts of fragment genotype, habitat, and size on outplanted elkhorn coral success under thermal stress. Marine Ecology Progress Series 592: 109–117.
+DOI: 10.3354/meps12488
+
+So what (one sentence)
+Under repeated thermal stress, Acropora palmata outplant success is driven far more by genotype and site than fragment size, with some genotypes acting as high-performing generalists across habitats and others failing catastrophically, challenging assumptions about local adaptation in restoration.
+
+Study context
+Species: Acropora palmata (elkhorn coral)
+Region: Upper Florida Keys, USA
+Restoration context: Nursery-grown outplants used for population enhancement under ESA recovery planning
+Environmental backdrop: Severe thermal stress events in summers 2014 and 2015, coincident with experiments
+Habitats compared: Fore reef vs mid-channel patch reef
+Key stressors: Thermal bleaching, disease, corallivorous snails (Coralliophila abbreviata), site-specific effects
+
+Methods (inference-relevant only)
+Two field experiments:
+1) Size experiment (2014–2016)
+- Two fragment size classes (small vs large) from a single genotype (SLg)
+- n = 126 paired outplants across 3 fore reef sites
+- Size quantified using live area index (LAI)
+- Response variables: survivorship, bleaching severity, net change in LAI, snail presence
+
+2) Genotype × habitat experiment (2015–2016)
+- Four genotypes (CN1g, CN2g, HSg, SLg)
+- Two habitat types (fore reef, patch reef), 3 sites each
+- n = 720 total outplants (~40 cm² LAI each)
+- Same response variables as above
+
+Key results (numbers first)
+Fragment size effects:
+- Survivorship did not differ between size classes (~25–26% across sites after ~2.5 years)
+- Small fragments bleached significantly less than large fragments during peak 2014 bleaching
+- Small fragments showed greater net growth (+214 ± 34 cm² LAI) than large fragments (+103 ± 37 cm² LAI)
+
+Genotype effects:
+- CN2g showed highest survivorship (64–86%), lowest bleaching, and highest growth
+- SLg showed poorest performance (48% survivorship fore reef; 6% patch reef)
+
+Habitat and site effects:
+- Patch reefs experienced higher thermal stress (up to 22 days >31.2°C)
+- Bleaching severity and genotype differences were amplified in patch reefs
+
+Mechanisms / drivers
+Thermal stress exposure, genotype-specific tolerance, site-specific disease and predation, and depth-related buffering effects.
+
+Restoration-relevant takeaways
+- Fragment size within tested range is not a primary driver of survivorship
+- Smaller fragments can improve nursery efficiency without sacrificing survival
+- Genotype selection is critical; generalist genotypes may outperform local sources under climate change
+- Fine-scale site selection is essential
+
+Limitations / external validity
+Limited genotype pool; results reflect performance under severe thermal stress conditions.
+
+Anchor numbers
+- Survivorship small vs large: ~25–26%
+- CN2g survivorship up to 86%
+- SLg mortality at patch reefs: ~94%
+
+Tags
+#Acropora_palmata #coral_restoration #genotype_effects #thermal_stress #bleaching #fragment_size #Florida_Keys

@@ -1,0 +1,6 @@
+metric,value
+n_survival_studies,2
+n_growth_studies,2
+n_boot_total,2000
+n_boot_valid,1519
+boot_failure_rate,0.2405

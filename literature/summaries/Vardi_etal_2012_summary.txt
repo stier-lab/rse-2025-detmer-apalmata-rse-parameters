@@ -1,0 +1,47 @@
+Citation
+Vardi, T., Williams, D.E., & Sandin, S.A. (2012).
+Population dynamics of threatened elkhorn coral in the northern Florida Keys, USA.
+Endangered Species Research 19:157–169.
+DOI: 10.3354/esr00475
+
+So what (one sentence)
+Stochastic population models show that frequent hurricanes drive long-term decline of Acropora palmata, and that recovery depends disproportionately on the survival and growth of large colonies.
+
+Study context
+Species: Acropora palmata
+Region: Northern Florida Keys, USA
+Disturbance regime: Hurricanes (notably 2005), bleaching, predation
+Management context: ESA recovery planning
+
+Methods (inference-relevant only)
+- Annual demographic surveys across 15 permanent plots (2004–2010)
+- Size-based matrix population models with disturbance
+- Elasticity analysis to identify key life stages
+- Simulated outplanting and hurricane-return scenarios
+
+Key results (numbers first)
+- Percent cover, colony abundance, and large-colony dominance declined over time
+- Hurricane return times ≤20 years predicted continued population depletion
+- Largest size class contributed most to population growth (highest elasticity)
+- Outplanting larger colonies improved short-term population trajectories
+
+Mechanisms / drivers
+- Disturbance alters transition probabilities (growth, shrinkage, fragmentation)
+- Fragmentation increases ramet numbers but reduces resilience
+- Background growth-to-shrinkage ratios insufficient for recovery
+
+Restoration-relevant takeaways
+- Size matters more than colony number for recovery
+- Restoration should prioritize growing colonies to large size before outplanting
+- Storm regimes must be explicitly incorporated into restoration planning
+
+Limitations / external validity
+- Focused on moderate-density stands in the Florida Keys
+- Does not separate genets and ramets
+
+Anchor numbers & quotable facts
+- Most populations at 2–20% of 1970s baselines
+- Large colonies dominate elasticity of λ
+
+Tags
+#Acropora_palmata #stochastic_models #hurricanes #restoration_planning

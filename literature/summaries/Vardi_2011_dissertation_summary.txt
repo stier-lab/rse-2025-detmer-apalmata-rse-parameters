@@ -1,0 +1,48 @@
+Citation
+Vardi, T. (2011). The threatened Atlantic elkhorn coral, Acropora palmata: population dynamics and their policy implications.
+PhD Dissertation, University of California San Diego.
+UMI: 3488174
+
+So what (one sentence)
+Size-structured population models show that Acropora palmata populations in most of the Caribbean are on trajectories of long-term stagnation or decline, with recovery hinging on the persistence of large colonies, disturbance regimes, and herbivory.
+
+Study context
+Species: Acropora palmata
+Region: Florida Keys, Curaçao, Jamaica (with supplementary Caribbean sites)
+Conservation context: ESA-listed threatened species; recovery planning and policy
+Temporal scale: Annual demographic surveys (2004–2010 Florida; ≥4 years elsewhere)
+
+Methods (inference-relevant only)
+- Size-based, stochastic matrix population models incorporating disturbance (hurricanes)
+- Colonies classified into four size classes using planar projected live surface area
+- Elasticity and projection analyses to 2030 and 2100
+- Empirical calibration during both hurricane and non-hurricane years
+- Comparative regional demographic analyses
+
+Key results (numbers first)
+- Florida Keys projected to remain at ~4% benthic cover through 2030 and 2100
+- Large colonies (size class >4000 cm²) had the highest elasticity for population growth
+- Severe hurricanes with return times ≤20 years led to continued population decline
+- Jamaica populations projected to increase, unlike Florida and Curaçao
+
+Mechanisms / drivers
+- Disproportionate contribution of large colonies to both sexual and asexual reproduction
+- Storm-driven fragmentation increases colony counts but erodes size structure
+- High Diadema antillarum densities in Jamaica linked to positive population trajectories
+
+Restoration-relevant takeaways
+- Protecting and rebuilding large colonies is critical
+- Outplanting larger fragments improves short-term population growth
+- Herbivore recovery (urchins) can facilitate coral population recovery
+- Demographic models provide explicit targets for restoration scale and density
+
+Limitations / external validity
+- Genet vs ramet distinction not possible in field surveys
+- Projections assume stationary life-history parameters
+
+Anchor numbers & quotable facts
+- Florida A. palmata projected near functional extinction without intervention
+- Jamaica shows recovery ~30 years after urchin die-off
+
+Tags
+#Acropora_palmata #population_models #restoration_targets #herbivory #ESA
