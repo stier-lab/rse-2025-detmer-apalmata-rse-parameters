@@ -126,11 +126,11 @@ size_colors <- c(
 
 # Clean size class labels for display
 size_class_labels <- c(
-  "SC1" = "Recruit\n(<25 cm²)",
-  "SC2" = "Small Juv.\n(25-100 cm²)",
-  "SC3" = "Large Juv.\n(100-500 cm²)",
-  "SC4" = "Small Adult\n(500-2000 cm²)",
-  "SC5" = "Large Adult\n(>2000 cm²)"
+  "SC1" = "Recruit\n(<10 cm²)",
+  "SC2" = "Small Juv.\n(10-100 cm²)",
+  "SC3" = "Large Juv.\n(100-900 cm²)",
+  "SC4" = "Subadult\n(900-4000 cm²)",
+  "SC5" = "Adult\n(>4000 cm²)"
 )
 
 # Short labels for tight spaces

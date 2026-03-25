@@ -5,4 +5,4 @@ load_raw,growth,4344,0,4344,Raw data loaded
 deduplication,growth,4344,19,4325,"Exact duplicate removal (study, coral_id, survey_yr, location)"
 cleaning,survival,5147,16,5131,Remove missing/zero size and missing survival
 cleaning,growth,4325,0,4325,Remove missing/zero size and missing growth
-impossible_flagging,growth,4325,501,3824,"Flagged impossible growth (not removed, flag only)"
+impossible_flagging,growth,4325,212,4113,"Flagged impossible growth (not removed, flag only)"

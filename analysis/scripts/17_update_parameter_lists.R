@@ -73,8 +73,8 @@ dir.create(param_dir, showWarnings = FALSE, recursive = TRUE)
 # Use canonical constants from shared_utilities.R
 size_class_breaks <- SIZE_BREAKS
 size_class_labels <- SIZE_LABELS
-SC_lower <- c(0, 25, 100, 500, 2000)
-SC_upper <- c(25, 100, 500, 2000, 50000)  # Upper bound for SC5
+SC_lower <- c(0, 10, 100, 900, 4000)
+SC_upper <- c(10, 100, 900, 4000, 50000)  # Upper bound for SC5
 
 cat("Size class definitions:\n")
 for (i in 1:5) {

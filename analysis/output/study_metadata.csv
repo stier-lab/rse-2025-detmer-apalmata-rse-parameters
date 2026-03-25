@@ -1,5 +1,5 @@
 study,region,year_min,year_max,population_type,n_survival,n_growth,mean_size,median_size
-NOAA_survey,Curacao,2004,2024,Natural colony; Restoration fragment,3968,3466,4520.231665826602,1257.3
+NOAA_survey,Curacao; Florida; Navassa,2004,2024,Natural colony; Restoration fragment,3968,3466,4520.231665826602,1257.3
 USGS_USVI_exp,USVI,2020,2021,Restoration fragment,46,30,59.47391304347828,25.3125
 fundemar_fragments,Dominican Republic,2021,2021,Restoration fragment,44,177,20.10218181818182,18.7635
 kuffner_et_al_2020,Florida,2019,2019,Restoration fragment,53,43,17.58254716981132,16.5

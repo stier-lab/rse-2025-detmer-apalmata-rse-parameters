@@ -71,11 +71,11 @@ Lefkovitch population projection matrix (5×5).
 
 | Row/Column | Description |
 |------------|-------------|
-| SC1_recruit | 0-25 cm² |
-| SC2_small_juv | 25-100 cm² |
-| SC3_large_juv | 100-500 cm² |
-| SC4_small_adult | 500-2000 cm² |
-| SC5_large_adult | >2000 cm² |
+| SC1_recruit | 0-10 cm² |
+| SC2_small_juv | 10-100 cm² |
+| SC3_large_juv | 100-900 cm² |
+| SC4_subadult | 900-4000 cm² |
+| SC5_adult | >4000 cm² |
 
 Matrix element (i,j) = probability of transitioning from size class j to size class i.
 

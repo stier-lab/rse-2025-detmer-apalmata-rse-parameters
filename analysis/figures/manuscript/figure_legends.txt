@@ -24,8 +24,8 @@ measured as two-dimensional planar live tissue area (cm2), calculated as
 length x width x proportion live tissue following Vardi et al. (2012). Study
 locations were geocoded to region centroids. Data availability was assessed by
 cross-tabulating survival records across the 5 canonical size classes
-(SC1: 0-25 cm2; SC2: 25-100 cm2; SC3: 100-500 cm2; SC4: 500-2,000 cm2;
-SC5: >2,000 cm2) and Caribbean regions.
+(SC1: 0-10 cm2; SC2: 10-100 cm2; SC3: 100-900 cm2; SC4: 900-4,000 cm2;
+SC5: >4,000 cm2) and Caribbean regions.
 
 RESULTS:
 The synthesis encompasses 9,456 observations from 6 studies conducted across 6
@@ -35,7 +35,7 @@ NOAA National Coral Reef Monitoring Program), followed by Curacao (n = 856),
 Navassa (n = 102), Mexico (n = 52), USVI (n = 46), and the Dominican Republic
 (n = 44). Florida had the most complete size-class coverage, with observations
 in all five classes. Several regions (Mexico, USVI, Dominican Republic) had
-data in only 2-3 size classes, and SC5 (>2,000 cm2) — the size class with the
+data in only 2-3 size classes, and SC5 (>4,000 cm2) — the size class with the
 highest elasticity (54.8%) — had no data outside Florida, Curacao, and Navassa.
 
 
@@ -116,7 +116,7 @@ around this colony size. Pooled annual survival increases with size class:
 SC1 = 89.4%, SC2 = 78.0%, SC3 = 76.3%, SC4 = 90.2%, SC5 = 97.1% (k = 4-10
 studies per class). The SC2-SC3 dip reflects higher representation of
 restoration fragment studies in these size classes, which show lower survival.
-SC5 (>2,000 cm2) survival is consistently high across all 4 contributing
+SC5 (>4,000 cm2) survival is consistently high across all 4 contributing
 studies, confirming that large adult persistence is the dominant demographic
 process.
 
@@ -202,8 +202,8 @@ observations.
 
 METHODS:
 We constructed a 5 x 5 Lefkovitch (size-structured) transition matrix following
-Vardi et al. (2012), with size classes SC1-SC5 (SC1: 0-25 cm2; SC2: 25-100 cm2;
-SC3: 100-500 cm2; SC4: 500-2,000 cm2; SC5: >2,000 cm2). Transition
+Vardi et al. (2012), with size classes SC1-SC5 (SC1: 0-10 cm2; SC2: 10-100 cm2;
+SC3: 100-900 cm2; SC4: 900-4,000 cm2; SC5: >4,000 cm2). Transition
 probabilities were estimated as the observed frequency of transitions between
 size classes across annual monitoring intervals, restricted to natural colonies.
 The complete transition matrix is displayed as a heatmap (panel a) to visualize
@@ -251,16 +251,16 @@ SUPPLEMENTARY FIGURE S1
 LEGEND:
 Fig. S1 Frequency distribution of colony live tissue area (cm2, log10 scale)
 across all survival and growth records (N = 9,456 from 6 studies across 6
-regions). Dotted vertical lines indicate size class boundaries (SC1: 0-25 cm2;
-SC2: 25-100 cm2; SC3: 100-500 cm2; SC4: 500-2,000 cm2; SC5: >2,000 cm2).
+regions). Dotted vertical lines indicate size class boundaries (SC1: 0-10 cm2;
+SC2: 10-100 cm2; SC3: 100-900 cm2; SC4: 900-4,000 cm2; SC5: >4,000 cm2).
 Orange vertical line marks the median colony size (585 cm2). Rug marks along
 the bottom axis show individual observations.
 
 RESULTS:
 Colony sizes spanned more than four orders of magnitude, from <1 cm2 to
 >10,000 cm2, with a median of 585 cm2. The distribution was bimodal on the
-log scale, with peaks in SC2 (25-100 cm2) and SC5 (>2,000 cm2), and relatively
-fewer observations in SC1 (<25 cm2) and SC3 (100-500 cm2).
+log scale, with peaks in SC2 (10-100 cm2) and SC5 (>4,000 cm2), and relatively
+fewer observations in SC1 (<10 cm2) and SC3 (100-900 cm2).
 
 
 ================================================================================
@@ -273,8 +273,8 @@ classes and Caribbean regions. Cell values indicate sample sizes. Fill color
 indicates data certainty level: High (n >= 300, teal), Moderate (100-299,
 yellow), Low (30-99, orange), Very low (1-29, red-orange), and No data (grey).
 Regions are ordered by total sample size (left to right). Size classes follow
-the five-class system used throughout: SC1 (0-25 cm2), SC2 (25-100 cm2),
-SC3 (100-500 cm2), SC4 (500-2,000 cm2), SC5 (>2,000 cm2).
+the five-class system used throughout: SC1 (0-10 cm2), SC2 (10-100 cm2),
+SC3 (100-900 cm2), SC4 (900-4,000 cm2), SC5 (>4,000 cm2).
 
 METHODS:
 We assessed data certainty by cross-tabulating survival records across size
@@ -291,7 +291,7 @@ High certainty (all in Florida), 3 (10%) were Moderate, 3 (10%) were Low, 13
 complete coverage, with High certainty across all five size classes except SC1
 (Moderate). Curacao had Moderate-to-High certainty for SC3-SC5 but Very low
 for SC1. All other regions (Navassa, Mexico, USVI, Dominican Republic) had
-Very low certainty or no data across most size classes. Notably, SC5 (>2,000
+Very low certainty or no data across most size classes. Notably, SC5 (>4,000
 cm2) — the size class with the highest elasticity contribution (54.8%) — had
 no data outside Florida, Curacao, and Navassa, highlighting a critical
 mismatch between conservation importance and data availability. SC4 and SC5
@@ -425,7 +425,7 @@ The transition matrix was restricted to natural colonies, making it heavily
 dependent on NOAA NCRMP data (which provides 99% of natural colony
 observations). SC5 stasis — the parameter with the highest elasticity (54.8%)
 — derives entirely from NOAA data across Florida, Curacao, and Navassa. No
-non-NOAA study monitored colonies in the SC5 size range (>2,000 cm2). The
+non-NOAA study monitored colonies in the SC5 size range (>4,000 cm2). The
 bootstrap confidence interval for lambda [0.819, 1.020] includes replacement
 (lambda = 1), so population decline cannot be confirmed at the 95% level,
 though 87.3% of replicates indicate decline. The bootstrap failure rate reflects the small number of studies (k = 6) in

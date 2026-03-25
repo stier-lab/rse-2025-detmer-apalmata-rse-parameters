@@ -130,13 +130,13 @@ theme_manuscript <- function(base_size = 11) {
     )
 }
 
-geom_sc_boundaries <- function(bounds = c(25, 100, 500, 2000)) {
+geom_sc_boundaries <- function(bounds = c(10, 100, 900, 4000)) {
   pal <- MANUSCRIPT_PALETTE
   list(
     ggplot2::geom_vline(xintercept = bounds, linetype = "dotted",
                         color = pal$slate_light, linewidth = 0.4, alpha = 0.7),
     ggplot2::annotate("text",
-                      x = c(5, 50, 225, 1000, 5500), y = Inf,
+                      x = c(3, 35, 300, 1900, 8000), y = Inf,
                       label = SIZE_LABELS,
                       vjust = 1.3, size = 3.0, color = pal$slate_mid, fontface = "bold")
   )

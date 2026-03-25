@@ -2095,9 +2095,9 @@ size_range_plot <- ggplot(size_range_viz, aes(y = study)) +
   geom_segment(aes(x = min_log, xend = max_log, yend = study, color = study),
                linewidth = 4, alpha = 0.7) +
   geom_point(aes(x = median_log), color = "black", size = 3) +
-  geom_vline(xintercept = log(c(25, 100, 500, 2000)),
+  geom_vline(xintercept = log(c(10, 100, 900, 4000)),
              linetype = "dashed", color = "gray50", alpha = 0.5) +
-  annotate("text", x = log(c(25, 100, 500, 2000)), y = 0.3,
+  annotate("text", x = log(c(10, 100, 900, 4000)), y = 0.3,
            label = c("SC2", "SC3", "SC4", "SC5"),
            size = 3, color = "gray40", hjust = 0.5) +
   scale_color_viridis_d(option = "plasma", guide = "none") +
@@ -2263,7 +2263,7 @@ cat(sprintf("1. RGR apparent R² = %.1f%%, biological signal R² = %.1f%% (null 
 cat(sprintf("2. RGR threshold: ~%.0f cm² (where relative growth rate changes most)\n",
             rgr_threshold$threshold_cm2))
 cat(sprintf("3. Overall positive growth: %.1f%%\n", overall_stats$pct_positive))
-cat(sprintf("4. Large adults (>2000 cm²): %.1f%% positive, mean AGR = %.0f cm²/yr\n",
+cat(sprintf("4. Reproductive adults (>4000 cm²): %.1f%% positive, mean AGR = %.0f cm²/yr\n",
             size_class_stats$pct_positive[size_class_stats$size_class == "SC5"],
             size_class_stats$agr_mean[size_class_stats$size_class == "SC5"]))
 cat("\n")

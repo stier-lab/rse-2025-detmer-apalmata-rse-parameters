@@ -182,26 +182,26 @@ cat("\n")
 
 cat("Defining size classes...\n\n")
 
-# Size class definitions (in cm²) based on biological relevance
-# SC1: Recruits/fragments (<25 cm²) - Very small, high mortality
-# SC2: Small juveniles (25-100 cm²) - Establishing
-# SC3: Large juveniles (100-500 cm²) - Growing phase
-# SC4: Small adults (500-2000 cm²) - Reproductive threshold
-# SC5: Large adults (>2000 cm²) - Full reproductive capacity
+# Size class definitions (in cm²) following Vardi (2011) boundaries
+# SC1: Recruits/settlers (<10 cm²) - Very small, high mortality
+# SC2: Small juveniles (10-100 cm²) - Establishing
+# SC3: Large juveniles (100-900 cm²) - Growing phase
+# SC4: Subadults (900-4000 cm²) - Approaching reproductive threshold
+# SC5: Reproductive adults (>4000 cm²) - Full reproductive capacity
 
 # Canonical size class labels - must match across all pipeline scripts
-size_breaks <- c(0, 25, 100, 500, 2000, Inf)
+size_breaks <- c(0, 10, 100, 900, 4000, Inf)
 size_labels <- c("SC1", "SC2", "SC3", "SC4", "SC5")
 
 # Alternative: log-scale size for continuous analysis
 # log_size will be used for threshold detection
 
 cat("Size class definitions:\n")
-cat("  SC1 (Recruit):      <25 cm²\n")
-cat("  SC2 (Small Juv):    25-100 cm²\n")
-cat("  SC3 (Large Juv):    100-500 cm²\n")
-cat("  SC4 (Small Adult):  500-2000 cm²\n")
-cat("  SC5 (Large Adult):  >2000 cm²\n\n")
+cat("  SC1 (Recruit):      <10 cm²\n")
+cat("  SC2 (Small Juv):    10-100 cm²\n")
+cat("  SC3 (Large Juv):    100-900 cm²\n")
+cat("  SC4 (Subadult):     900-4000 cm²\n")
+cat("  SC5 (Adult):        >4000 cm²\n\n")
 
 # =============================================================================
 # 3. PREPARE SURVIVAL DATA

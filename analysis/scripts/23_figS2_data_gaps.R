@@ -105,11 +105,11 @@ cat("Building figure...\n")
 
 # Define size class labels with ranges for readability
 sc_labels <- c(
-  "SC1" = expression("SC1 (0-25 cm"^2*")"),
-  "SC2" = expression("SC2 (25-100 cm"^2*")"),
-  "SC3" = expression("SC3 (100-500 cm"^2*")"),
-  "SC4" = expression("SC4 (500-2k cm"^2*")"),
-  "SC5" = expression("SC5 (>2,000 cm"^2*")")
+  "SC1" = expression("SC1 (0-10 cm"^2*")"),
+  "SC2" = expression("SC2 (10-100 cm"^2*")"),
+  "SC3" = expression("SC3 (100-900 cm"^2*")"),
+  "SC4" = expression("SC4 (900-4k cm"^2*")"),
+  "SC5" = expression("SC5 (>4,000 cm"^2*")")
 )
 
 # Colors: warm to cool gradient matching certainty

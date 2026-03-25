@@ -44,11 +44,11 @@ All parameter files use consistent size class definitions:
 
 | Class | Range (cm²) | Boundaries |
 |-------|-------------|------------|
-| SC1 | 0-25 | [0, 25) |
-| SC2 | 25-100 | [25, 100) |
-| SC3 | 100-500 | [100, 500) |
-| SC4 | 500-2000 | [500, 2000) |
-| SC5 | ≥2000 | [2000, ∞) |
+| SC1 | 0-10 | [0, 10) |
+| SC2 | 10-100 | [10, 100) |
+| SC3 | 100-900 | [100, 900) |
+| SC4 | 900-4000 | [900, 4000) |
+| SC5 | ≥4000 | [4000, ∞) |
 
 ---
 
@@ -82,11 +82,11 @@ All parameter files use consistent size class definitions:
 
 | Size Class | n | Mean Survival | SD |
 |------------|---|---------------|-----|
-| SC1 (0-25 cm²) | 285 | 0.747 | 0.435 |
-| SC2 (25-100 cm²) | 1,206 | 0.635 | 0.482 |
-| SC3 (100-500 cm²) | 729 | 0.748 | 0.435 |
-| SC4 (500-2000 cm²) | 747 | 0.837 | 0.370 |
-| SC5 (>2000 cm²) | 2,230 | 0.916 | 0.278 |
+| SC1 (0-10 cm²) | TBD | TBD | TBD |
+| SC2 (10-100 cm²) | TBD | TBD | TBD |
+| SC3 (100-900 cm²) | TBD | TBD | TBD |
+| SC4 (900-4000 cm²) | TBD | TBD | TBD |
+| SC5 (>4000 cm²) | TBD | TBD | TBD |
 
 ---
 

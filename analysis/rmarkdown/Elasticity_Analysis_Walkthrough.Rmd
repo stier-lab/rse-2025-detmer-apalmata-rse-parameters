@@ -116,7 +116,7 @@ get_text_color <- function(hex_color) {
 
 ### Bottom Line for Practitioners
 
-**Protecting existing large adult colonies (>2,000 cm²) is the single most effective conservation strategy.**
+**Protecting existing large adult colonies (>4,000 cm²) is the single most effective conservation strategy.**
 
 Large adult survival accounts for **~55% of elasticity** — improving this rate by 1% yields a 0.55% improvement in population growth rate. This is more than all other vital rates combined.
 

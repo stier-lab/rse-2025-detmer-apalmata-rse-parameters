@@ -114,7 +114,7 @@ We compiled the **largest-ever database of Elkhorn Coral (*Acropora palmata*) de
 
 1. **The population is declining** — Our best estimate is a 1.4% annual decline (λ = 0.986). There's an 80% probability the population is shrinking.
 
-2. **Big corals matter most** — Protecting large adult colonies (>2,000 cm²) is **~5× more impactful** than any other conservation action. These corals have 94% annual survival and contribute most to reproduction.
+2. **Big corals matter most** — Protecting large adult colonies (>4,000 cm²) is **~5× more impactful** than any other conservation action. These corals have 94% annual survival and contribute most to reproduction.
 
 3. **Size matters for survival, but not as much as you'd think** — Larger corals do survive better, but size only explains ~9% of survival variation. Other factors (location, year, disturbance history) matter more.
 
@@ -324,7 +324,7 @@ ggplot(study_composition, aes(x = reorder(study, n), y = n)) +
 NOAA Tagged Colony Surveys provide **`r fmt_pct(dominant_study$pct)`** of survival data. This means:
 
 1. Results are biased toward **large, naturally-occurring field colonies** in Florida Keys and Curaçao
-2. Size class 5 (>2000 cm²) estimates come almost exclusively from NOAA
+2. Size class 5 (>4000 cm²) estimates come almost exclusively from NOAA
 3. **Generalizing to restoration fragments or other regions requires extreme caution**
 </div>
 
@@ -539,13 +539,13 @@ survival_data %>%
   ) %>%
   ggplot(aes(x = size_live_cm2, fill = origin)) +
   geom_histogram(alpha = 0.7, position = "identity", bins = 50) +
-  geom_vline(xintercept = c(25, 100, 500, 2000), linetype = "dashed",
+  geom_vline(xintercept = c(10, 100, 900, 4000), linetype = "dashed",
              color = colors_coral["neutral"], alpha = 0.5) +
   scale_x_log10(labels = scales::comma,
-                breaks = c(10, 25, 100, 500, 2000, 10000, 50000)) +
+                breaks = c(1, 10, 100, 900, 4000, 10000, 50000)) +
   scale_fill_manual(values = c("Fragment" = colors_coral["fragment"],
                                "Natural colony" = colors_coral["field"])) +
-  annotate("text", x = c(12, 50, 220, 1000, 6000), y = Inf,
+  annotate("text", x = c(3, 35, 300, 1900, 8000), y = Inf,
            label = c("SC1", "SC2", "SC3", "SC4", "SC5"),
            vjust = 2, size = 3.5, fontface = "bold") +
   labs(
@@ -628,7 +628,7 @@ size_class_info %>%
 
 ```{r assign-size-classes}
 # Assign size classes
-size_breaks <- c(0, 25, 100, 500, 2000, Inf)
+size_breaks <- c(0, 10, 100, 900, 4000, Inf)
 size_labels <- c("SC1", "SC2", "SC3", "SC4", "SC5")
 
 survival_data <- survival_data %>%
@@ -1294,7 +1294,7 @@ For readers unfamiliar with demographic modeling terminology:
 | **AGR** | Absolute Growth Rate — cm² gained per year. A 1,000 cm² coral gaining 100 cm² has AGR = 100. |
 | **RGR** | Relative Growth Rate — proportional change per year. Same coral has RGR = 0.10 (10%/year). |
 | **Allometry** | How one trait scales with body size. "Negative allometry" means small individuals grow proportionally faster. |
-| **Size class (SC1-SC5)** | Categories based on live tissue area: SC1 = recruits (0-25 cm²), SC5 = large adults (>2000 cm²). |
+| **Size class (SC1-SC5)** | Categories based on live tissue area: SC1 = recruits (0-10 cm²), SC5 = reproductive adults (>4000 cm²). |
 | **Transition matrix** | A table showing probabilities of moving between size classes (or dying) in one time step. |
 | **Fragment** | A piece of coral broken off and used for restoration, as opposed to a naturally-settled colony. |
 | **Partial mortality** | When part of a coral dies but the colony survives. Common in large colonies. |

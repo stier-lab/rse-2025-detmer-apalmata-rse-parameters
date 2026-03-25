@@ -16,11 +16,11 @@
 #   5. Bootstrap uncertainty quantification
 #
 # SIZE CLASSES (following Vardi 2011):
-#   SC1: 0-25 cm² (recruits/small fragments)
-#   SC2: 25-100 cm² (juveniles)
-#   SC3: 100-500 cm² (large juveniles)
-#   SC4: 500-2000 cm² (small adults)
-#   SC5: >2000 cm² (large adults)
+#   SC1: 0-10 cm² (recruits/settlers)
+#   SC2: 10-100 cm² (small juveniles)
+#   SC3: 100-900 cm² (large juveniles)
+#   SC4: 900-4000 cm² (subadults)
+#   SC5: >4000 cm² (reproductive adults)
 #
 # INPUTS:
 #   - analysis/output/prepared_survival_data.rds

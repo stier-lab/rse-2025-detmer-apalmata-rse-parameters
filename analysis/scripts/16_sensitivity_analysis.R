@@ -341,9 +341,9 @@ cat("\n2. Size Class Boundary Sensitivity...\n")
 
 # Test different boundary definitions
 boundary_sets <- list(
-  "Standard" = c(25, 100, 500, 2000),
-  "Conservative" = c(30, 120, 600, 2500),
-  "Liberal" = c(20, 80, 400, 1500),
+  "Standard" = c(10, 100, 900, 4000),
+  "Conservative" = c(15, 120, 1100, 5000),
+  "Liberal" = c(8, 80, 700, 3000),
   "Equal_log" = exp(seq(log(10), log(5000), length.out = 5))[1:4],
   "Quantile_based" = quantile(survival_data$size_cm2, probs = c(0.2, 0.4, 0.6, 0.8), na.rm = TRUE)
 )
@@ -1021,7 +1021,7 @@ cat("═════════════════════════
 
 # Test how the SC1/SC2 fragmentation split affects lambda.
 # Vardi (2011) reports fragmentation for SC1_V (0-100 cm²).
-# Current split: 25%/75% by range width into SC1 (0-25)/SC2 (25-100).
+# Current split: 10%/90% by range width into SC1 (0-10)/SC2 (10-100).
 # Test: 10/90, 25/75 (current), 50/50, 75/25
 
 if (exists("transition_results") && !is.null(transition_results$fragmentation)) {

@@ -316,11 +316,11 @@ print_subheader("Building figure")
 # X-axis labels with size ranges using expression() for superscript cm^2
 # We use bquote-style labels via scale_x_continuous with a label function
 sc_labels_expr <- c(
-  expression(atop("SC1", "0\u201325 cm"^2)),
-  expression(atop("SC2", "25\u2013100 cm"^2)),
-  expression(atop("SC3", "100\u2013500 cm"^2)),
-  expression(atop("SC4", "500\u20132000 cm"^2)),
-  expression(atop("SC5", ">2000 cm"^2))
+  expression(atop("SC1", "0\u201310 cm"^2)),
+  expression(atop("SC2", "10\u2013100 cm"^2)),
+  expression(atop("SC3", "100\u2013900 cm"^2)),
+  expression(atop("SC4", "900\u20134000 cm"^2)),
+  expression(atop("SC5", ">4000 cm"^2))
 )
 
 # Prepare numeric x positions for pooled line (1-5)

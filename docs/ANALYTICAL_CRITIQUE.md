@@ -71,7 +71,7 @@ NOAA (no tissue/skeleton gone), Kuffner (≥50% tissue loss), and others (no liv
 ### 9. SC5 is entirely single-study
 **Domain:** Data + Matrix | **Scripts:** 01, 13
 
-All SC5 (>2000 cm²) observations come from NOAA. The SC5 stasis elasticity of 54.8% — the most critical parameter — is a single-study estimate. Any "size-dependent survival" finding in the upper range is confounded with NOAA methodology.
+All SC5 (>4000 cm²) observations come from NOAA. The SC5 stasis elasticity of 54.8% — the most critical parameter — is a single-study estimate. Any "size-dependent survival" finding in the upper range is confounded with NOAA methodology.
 
 **Recommended fix:** Disclose prominently. Present SC5 results with explicit NOAA-only caveat.
 

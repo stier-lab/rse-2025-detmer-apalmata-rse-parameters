@@ -1,7 +1,7 @@
 study,n_impossible,n_total,pct_impossible
-fundemar_fragments,95,177,53.67
+fundemar_fragments,93,177,52.54
 kuffner_et_al_2020,12,43,27.91
 mendoza_quiroz_et_al_2023,10,52,19.23
 USGS_USVI_exp,4,30,13.33
-NOAA_survey,355,3466,10.24
-pausch_et_al_2018,25,557,4.49
+pausch_et_al_2018,23,557,4.13
+NOAA_survey,70,3466,2.02

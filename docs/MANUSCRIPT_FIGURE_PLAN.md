@@ -323,7 +323,7 @@ The supplement provides methodological validation, alternative analyses, and dee
 
 ### Methods (~1500 words)
 1. Data compilation and standardization (6 individual + 10 summary studies, 10 Caribbean regions)
-2. Size class definitions (SC1-SC5: 0-25, 25-100, 100-500, 500-2000, 2000+ cm^2)
+2. Size class definitions (SC1-SC5: 0-10, 10-100, 100-900, 900-4000, 4000+ cm^2)
 3. Size-dependent vital rate estimation (GAMs, GLMMs, Detmer et al. 2025 threshold detection)
 4. Meta-analysis (two-tier: individual-level k=5, expanded k=16, Knapp-Hartung adjustment)
 5. Population projection matrix (5x5 Lefkovitch, transition estimation, fragmentation from Vardi 2011)

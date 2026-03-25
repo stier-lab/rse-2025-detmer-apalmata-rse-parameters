@@ -609,13 +609,13 @@ Use fragmentation rates reported in Vardi 2011 because:
 ### 6.3 Size Class Splitting
 
 Split smallest Vardi size class (SC1_V: 0-100 cm²) into two classes:
-- SC1_new: 0-25 cm²
-- SC2_new: 25-100 cm²
+- SC1_new: 0-10 cm²
+- SC2_new: 10-100 cm²
 
 Since no information on whether SC1_V fragments would be in SC1_new or SC2_new, assumed fraction proportional to range covered:
 - SC1_V spans 0-100 cm²
-- SC1_new spans 0-25 cm² = 25% of range → 25% of SC1_V fragments go to SC1_new
-- SC2_new spans 25-100 cm² = 75% of range → 75% of SC1_V fragments go to SC2_new
+- SC1_new spans 0-10 cm² = 10% of range → 10% of SC1_V fragments go to SC1_new
+- SC2_new spans 10-100 cm² = 90% of range → 90% of SC1_V fragments go to SC2_new
 
 ---
 

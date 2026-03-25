@@ -9,11 +9,11 @@ Population Model,P(decline),80.4,%,,,80.4% of bootstrap replicates show decline
 Population Model,Elasticity - SC5 adult survival,56.9,%,,,Most critical parameter for recovery
 Population Model,Elasticity - SC4 survival,11.4,%,,,
 Population Model,Elasticity - Growth transitions,14.5,%,,,
-Survival by Size,SC1 (0-25 cm2) survival,72.4,%,,,n=366
-Survival by Size,SC2 (25-100 cm2) survival,64.4,%,,,n=1342
-Survival by Size,SC3 (100-500 cm2) survival,76.8,%,,,n=920
-Survival by Size,SC4 (500-2000 cm2) survival,87.6,%,,,n=837
-Survival by Size,SC5 (>2000 cm2) survival,93.7,%,,,n=1731
+Survival by Size,SC1 (0-10 cm2) survival,72.4,%,,,n=366
+Survival by Size,SC2 (10-100 cm2) survival,64.4,%,,,n=1342
+Survival by Size,SC3 (100-900 cm2) survival,76.8,%,,,n=920
+Survival by Size,SC4 (900-4000 cm2) survival,87.6,%,,,n=837
+Survival by Size,SC5 (>4000 cm2) survival,93.7,%,,,n=1731
 Survival by Region,Florida Keys,79.3,%,,,n=4072
 Survival by Region,Curacao,84.6,%,,,n=856
 Survival by Region,Navassa,92.2,%,,,n=102

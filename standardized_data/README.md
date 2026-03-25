@@ -49,11 +49,11 @@ size_cm2 = Length × Width
 
 | Class | Range (cm²) | Description |
 |-------|-------------|-------------|
-| SC1 | 0-25 | Recruits, small fragments |
-| SC2 | 25-100 | Small juveniles |
-| SC3 | 100-500 | Large juveniles |
-| SC4 | 500-2000 | Small adults |
-| SC5 | >2000 | Large adults |
+| SC1 | 0-10 | Recruits, settlers |
+| SC2 | 10-100 | Small juveniles |
+| SC3 | 100-900 | Large juveniles |
+| SC4 | 900-4000 | Subadults |
+| SC5 | >4000 | Reproductive adults |
 
 ### Summary Data Size Variable
 
