@@ -39,8 +39,8 @@ histograms or ridgeline plots (separate for each size class?) where x = proporti
 apal_surv_ind <- read.csv("../../standardized_data/apal_surv_ind.csv") # individual survival
 apal_growth_ind <- read.csv("../../standardized_data/apal_growth_ind.csv") # individual growth rates
 
-apal_surv_summ <- read.csv("../../standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual data
-apal_growth_summ <- read.csv("../../standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report individual data
+apal_surv_summ <- read.csv("../../standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual size data
+apal_growth_summ <- read.csv("../../standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report size individual data
 
 
 # update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
@@ -110,7 +110,7 @@ Dealing with non-annual time intervals in the individual survival data
 
 -- if sampling interval was less than a year and the coral died, know that survival at exactly one year would also have been 0
 -- if sampling interval was greater than a year and the coral survived, know that survival at exactly 1 year would have also been 1 
--- for the other cases (survived less than a year or died after more than a year) use proportions surviving from that region/year/size class to estimate survival rates over the sampling interval, then convert to annual survival rates and move these to the summary data set
+-- for the other cases (survived less than a year or died after more than a year) use proportions surviving from that region/year/size class to estimate survival rates over the sampling interval, then convert to annual survival rates and move these from the individual data set (with individual 0/1 survival information) to the summary data set (with number of individuals and proportion that survived)
 
 
 ```{r}
@@ -138,11 +138,12 @@ for(i in 1:nrow(apal_surv_ind1)){
 
 #View(apal_surv_ind1)
 
+# summarize the individual growth data into proportions surviving in study/region/survey year/size classes (will use this to estimate survival in cases where survival was not recorded annually)
 apal_surv_ind1_summ <- apal_surv_ind1 %>% group_by(study, region, survey_yr, size_class, data_type) %>% summarise(n_total = n(), n_survived = sum(survived == 1)) %>% mutate(prop_survived = n_survived/n_total)
 
 #View(apal_surv_ind1_summ)
 
-# observations where time interval is less than ~1 yr and coral was alive at time of sampling
+# observations where time interval is less than ~1 yr (use 11 months as cut-off) and coral was alive at time of sampling
 under_yr <- apal_surv_ind1 %>% filter(time_interval_yr < 11/12) %>% group_by(study, region, survey_yr, data_type) %>% mutate(time_interval_yr_mean = mean(time_interval_yr), time_interval_yr_sd = sd(time_interval_yr)) %>% ungroup() %>% group_by(study, region, survey_yr, size_class, data_type, time_interval_yr_mean, time_interval_yr_sd) %>% summarize(n_unknown = n())
 
 #View(under_yr)
@@ -152,15 +153,17 @@ over_yr <- apal_surv_ind1 %>% filter(time_interval_yr > 13/12) %>% group_by(stud
 
 #View(over_yr)
 
+# estimate proportion that survived to full year:
 under_yr_summ <- under_yr %>% left_join(apal_surv_ind1_summ, by = c("study", "region", "survey_yr", "size_class", "data_type")) %>% rename(n_initial = n_unknown, n_reference = n_total) %>% select(-n_survived) %>% mutate(prop_survived = prop_survived^(1/time_interval_yr_mean))
 
+# estimate proportion that were still alive after a full year:
 over_yr_summ <- over_yr %>% left_join(apal_surv_ind1_summ, by = c("study", "region", "survey_yr", "size_class", "data_type")) %>% rename(n_initial = n_unknown, n_reference = n_total) %>% select(-n_survived) %>% mutate(prop_survived = prop_survived^(1/time_interval_yr_mean))
 
 
 #View(under_yr_summ)
 #View(over_yr_summ)
 
-# join these together
+# join these together; call this data frame ind_summ because the observations were originally in the _ind data (had individual 0/1 survival) but had to be moved to _summ data because the 0/1 data were over a non-annual time interval so survival needed to be converted to a probability of surviving to a year (actual fate is unknown)
 apal_surv_ind_summ <- rbind(under_yr_summ, over_yr_summ)
 
 #View(apal_surv_ind_summ)
@@ -181,7 +184,7 @@ apal_surv_ind1 <- apal_surv_ind1 %>% filter(time_interval_yr >= 11/12 & time_int
 ```
 
 
-address limited/missing information in the summarized survival data:
+address limited/missing information in the summarized survival data (where proportions surviving in groups of individuals with were recorded but not the fates of individuals themselves, so there is no size data for individuals, just a range of sizes that the individuals fell in):
 
 ```{r}
 
@@ -211,7 +214,7 @@ for(i in 1:nrow(apal_surv_summ1)){
 
 #View(apal_surv_summ1)
 
-# now filter out cases where there is no mean and the min and max sizes are in different size classes
+# now filter out cases where there is no mean and the min and max sizes are in different size classes (since in these cases the survival data spans two size classes so it's not useful for model parameterization)
 apal_surv_summ1 <- apal_surv_summ1 %>% mutate(size_flag = if_else(is.na(size_cm2_mean)==T & size_class_min!=size_class_max, 1, 0)) %>% filter(size_flag == 0) %>% select(-size_flag)
 
 
@@ -225,7 +228,7 @@ address limited/missing information in the growth data
 
 ```{r}
 
-# for the summarized data, remove cases where there is no mean and the min and max sizes are in different size classes
+# for the summarized data (i.e., where individuals weren't tracked), remove cases where there is no mean and the min and max sizes are in different size classes (since in these cases the growth data spans two size classes so it's not useful for model parameterization)
 apal_growth_summ1 <- apal_growth_summ %>% mutate(size_class_min = SC_funV(size_cm2_min), size_class_max = SC_funV(size_cm2_max), size_class_mean = SC_funV(size_cm2_mean)) %>% mutate(size_flag = if_else(is.na(size_cm2_mean)==T & size_class_min!=size_class_max, 1, 0)) %>% filter(size_flag == 0) %>% select(-size_flag) 
 
 #View(apal_growth_summ1)

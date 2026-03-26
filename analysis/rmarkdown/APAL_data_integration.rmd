@@ -1885,7 +1885,7 @@ roth2013_surv <- rbind(roth2013_surv, roth2013_survT)
 
 ## Vardi 2011
 
-Vardi 2011 (anything that doesn't overlap with the noaa survey data)
+Vardi 2011 (only the parts that don't overlap with the noaa survey data)
 
 ```{r}
 # compare noaa coordinates to GPS waypoints given in Table 4-A4
