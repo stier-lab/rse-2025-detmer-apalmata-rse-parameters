@@ -289,7 +289,7 @@ study_latlon_sf <- study_latlon %>% st_as_sf(coords = c("longitude","latitude"))
 #max(surv.latlon$long)
 #max(surv.latlon$lat)
 
-# https://sronpersonalpages.nl/~pault/
+# https://sronpersonalpages.nl/~pault/ # colorblind-friendly palatte
 
 s_cols <- c("#D9CCE3", "#CAACCB", "#BA8DB4", "#AA6F9E", "#994F88", "#882E72", "#1965B0", "#437DBF", "#6195CF", "#7BAFDE", "#4EB265", "#90C987", "#CAE0AB", "#F7F057", "#F7CB45", "#F4A736", "#EE8026", "#E65518", "#DC050C", "#A5170E", "#72190E")
 
@@ -391,7 +391,7 @@ study_latlon3
 
 ## survival
 
-make a function to turn summarized/proportional survival data into a data frame with randomly drawn individual sizes and survival
+make a function to turn summarized/proportional survival data into a data frame with randomly drawn individual sizes and survival (goal is to have all the data as individual 0's and 1's)
 
 
 ```{r}
@@ -436,7 +436,7 @@ survi_fun <- function(prop_surv_df, n_reps, seed_n){
      data.ij <- prop_surv_df %>% select(study, region, location, plot, treatment_1, treatment_2, latitude, longitude, depth_m, survey_yr, data_type, size_live, fragment, time_interval_yr, disturbance)
      data.ij <- data.ij[j,] # want just the jth row
      
-     # replicate all the metadata n_ind times
+     # replicate all the metadata n_ind times (will be the same for each individual)
      data.ij <- data.ij[rep(seq_len(nrow(data.ij)), n_ind), ]
      
      # now fill in size and individual survival columns
@@ -453,7 +453,7 @@ survi_fun <- function(prop_surv_df, n_reps, seed_n){
        if(is.na(prop_surv_df$size_cm2_min[j])==T){
          data.ij$size_cm2 <- rep(prop_surv_df$size_cm2_mean[j], n_ind)
          
-       } else{ # if only range is known or if only mean/midpoint and range is known, draw from uniform distribution
+       } else{ # if only size range is known or if only mean/midpoint and range is known, draw from uniform distribution
          data.ij$size_cm2 <- runif(n_ind, min = prop_surv_df$size_cm2_min[j], max = prop_surv_df$size_cm2_max[j])
        }
       
@@ -835,19 +835,17 @@ fit binomial GLMM?
 
 ```{r}
 
-
-# make a function for doing the resampling
-
-# dtI = individual survival data
-# dtS_list = list where each element is a replicate of survival data with random individual size and survival observations drawn from summarized values
-# dtSI_list = list where each element is a replicate of survival data with random individual survival  observations drawn from summarized values (for data where individual sizes are known but survival at ~1 yr was estimated)
-
 #dtS_list <- survi_fun(apal_surv_summ1[which(apal_surv_summ1$data_type=="field" & is.na(apal_surv_summ1$disturbance)==T),], n_reps = n_reps1, seed_n = 100)
 
 #dtSI_list <- surv_indi_fun(apal_surv_ind_summ[which(apal_surv_ind_summ$data_type=="field" & is.na(apal_surv_ind_summ$disturbance)==T),], n_reps = n_reps1, seed_n = 200)
 
 #dtI <- apal_surv_ind1 %>% filter(is.na(disturbance)==T, data_type == "field") # individual data
 
+# make a function for doing the resampling to get parameter estimates
+
+# dtI = individual survival data
+# dtS_list = list where each element is a replicate of survival data with random individual size and survival observations drawn from summarized values
+# dtSI_list = list where each element is a replicate of survival data with random individual survival observations drawn from summarized values but known individual size (for data where individual sizes are known but survival at ~1 yr was estimated)
 # n_reps = number of replicate datasets in dtS_list and dtIS_list
 # n_sample = default number of observations to use in each subsample
 resamp_surv3 <- function(dtI, dtS_list, dtIS_list, n_reps, n_sample, seed1){
