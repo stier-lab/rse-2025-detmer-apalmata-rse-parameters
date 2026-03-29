@@ -19,15 +19,15 @@ Numbers derived from `03_screening/full_text_screening.csv` (97 rows) and `01_pr
 | Citation chaining from 3 seed papers (Vardi 2011, Williams & Miller 2012, Lirman 2003) | Records not independently counted | Forward/backward citation chaining |
 | Direct data sharing (FUNDEMAR, Dominican Republic) | 1 dataset | Practitioner contact |
 | **IDENTIFICATION -- Database searches (right column)** | | |
-| PubMed (2026-03-29, 5 Boolean queries) | 63 unique PMIDs | `02_search/search_strings.md` |
-| Web of Science (2026-03-29) | ~300 unique records (approx.) | Estimated from 207--216 hits/query with overlap |
-| Google Scholar (Jun--Dec 2025, 5 search strings) | ~100--150 records (approx.; exact count not recorded) | Saturation-based stopping rule |
+| PubMed base query (2026-03-29) | 124 records | `02_search/search_results/pubmed_all_124.csv` |
+| Web of Science base query (2026-03-29) | 628 records | `02_search/search_results/wos/wos_base_query_all.csv` (183 extracted) |
+| Google Scholar (Jun--Dec 2025 original + 2026-03-29 formal) | ~100--150 records original (approx.) + 100 exported formal | `02_search/search_results/scholar/` |
 | Elicit / Semantic Scholar (2026-03-26) | 298 records | Elicit AI screening across 125M+ corpus |
-| Records removed before screening: duplicates | ~200--300 (approx.; not formally counted) | Manual deduplication by title/author/year; no formal deduplication software used |
-| Records removed before screening: wrong species from title | Not counted separately | Embedded in title/abstract screening |
+| **Total records identified** | **~1,050** | PubMed 124 + WoS 628 + Elicit 298 |
+| Records removed before screening: duplicates | ~350--400 (estimated 35--40% overlap across databases) | Cross-database deduplication: 271 verified unique from PubMed+WoS; `02_search/search_results/combined_deduplicated.csv` |
 | **SCREENING** | | |
-| Title/abstract screening | ~300--450 unique records assessed (approx.; exact count not recorded) | Single screener (RD) for original search; AI-assisted for expansion |
-| Excluded at title/abstract | ~250--360 (approx.) | Estimated from total minus full-text assessed |
+| Title/abstract screening | **~650--700 unique records** (estimated after deduplication) | Single screener (RD) for original search; AI-assisted for expansion |
+| Excluded at title/abstract | ~550--600 (estimated) | Not reporting *A. palmata* demography; wrong topic; review/commentary |
 | Full-text assessed | 91 unique papers + 3 data repositories = 94 | `full_text_screening.csv`: 52 original + 33 expanded + 6 formal database |
 | Full-text excluded with reasons | 75 unique excluded studies (79 CSV rows; see reconciliation) | Categorized below |
 | **INCLUDED** | | |
