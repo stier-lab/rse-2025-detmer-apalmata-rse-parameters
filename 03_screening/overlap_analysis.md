@@ -45,7 +45,7 @@ The core dataset -- `NOAA_Tagged_Colony_Data.csv` (NCEI Accession 0142175) -- co
 
 | Study | Overlapping Component | Independent Component | Decision |
 |-------|----------------------|----------------------|----------|
-| **Sutherland et al. 2016** | FKNMS contemporary component (2008--2014): monitored *A. palmata* at Carysfort Reef and Molasses Reef in the Florida Keys. The contemporary FKNMS-wide survey explicitly overlaps with NOAA at Carysfort and Molasses reefs (acknowledged in paper p. 11). The EDR historical dataset is from a photostation, not tagged colonies. | EDR historical dataset (1994--2004): 92 colonies tracked by Eastern Dry Rocks (EDR) monitoring in the Lower Keys. Different institution, different era, pre-dates NOAA program at these sites. | **EDR component INCLUDED** (independent); **FKNMS component EXCLUDED** (NOAA overlap). |
+| **Sutherland et al. 2016** | FKNMS contemporary component (2008--2014): monitored *A. palmata* at Carysfort Reef and Molasses Reef in the Florida Keys. The contemporary FKNMS-wide survey explicitly overlaps with NOAA at Carysfort and Molasses reefs (acknowledged in paper p. 11). | EDR historical dataset (1994--2004): 92 *A. palmata* tracked via permanent photostations at Eastern Dry Rocks (EDR) in the Lower Keys. Different institution, different era, pre-dates NOAA program at these sites. | **EXCLUDED (both components).** FKNMS excluded for NOAA overlap. EDR initially assessed as independent but subsequently **excluded during IRR audit** because the EDR monitoring used permanent photostations/quadrats rather than individually tagged colonies, violating the longitudinal individual-tracking inclusion criterion. See `inter_rater_reliability.md` Section 6. |
 
 ### 2.5 Corrected: Neely et al. 2022 (No Overlap)
 
@@ -104,33 +104,26 @@ The false overlap impression arose from: (a) NOAA funding, (b) methods trained b
 
 ---
 
-### 3.3 Muller et al. 2008 (Hawksnest Bay, USVI)
+### 3.3 Muller et al. 2008 (Hawksnest Bay, USVI) -- EXCLUDED
 
-**Included as:** `muller_et_al_2008` (Tier 2, AI-extracted)
+**Final decision:** EXCLUDED (IRR audit, March 2026)
 
-**Independence evidence:**
+**Independence assessment:**
 - **Location:** Hawksnest Bay, St. John, USVI.
 - **Colony set:** 60 individually tagged *A. palmata* colonies.
 - **Time period:** 2004--2006 (31 months = 2.583 years). Includes the 2005 mass bleaching event.
-- **Relationship to Rogers & Muller 2012:** Different bay (Hawksnest vs. Haulover, 4 km apart). The paper explicitly describes tagging 60 colonies at Hawksnest Bay. Cross-referencing both publications confirms they describe distinct colony populations.
-- **Relationship to Muller et al. 2014:** Muller et al. 2014 studied colonies at Haulover Bay (matching Rogers & Muller 2012), not Hawksnest Bay. No overlap.
-- **Relationship to NOAA_survey:** Same reasoning as Rogers & Muller 2012 -- USGS/NPS program in USVI, separate from NOAA's Florida/Curacao/Navassa monitoring.
+- **Relationship to Rogers & Muller 2012:** Different bay (Hawksnest vs. Haulover, 4 km apart). Cross-referencing both publications confirms distinct colony populations. No data overlap.
+- **Relationship to NOAA_survey:** USGS/NPS program in USVI, separate from NOAA's Florida/Curacao/Navassa monitoring. No overlap.
 
-**Conclusion:** Independent of Rogers & Muller 2012, Muller et al. 2014, and NOAA_survey. Included.
+**Conclusion:** Geographically independent of all other included studies, but excluded during the IRR audit (see `inter_rater_reliability.md` Section 6) for imprecise survival data (exact death count ambiguous from text: "17% of 60"), absence of colony size data, and bleaching-confounded mortality during the 2005 Caribbean event.
 
-### 3.3 Sutherland et al. 2016 (EDR Historical, Florida Keys)
+### 3.3 Sutherland et al. 2016 (EDR Historical, Florida Keys) -- EXCLUDED
 
-**Included as:** `sutherland_et_al_2016` (Tier 2, AI-extracted; EDR component only)
+**Final decision:** EXCLUDED (IRR audit, March 2026)
 
-**Independence evidence:**
-- **Location:** Eastern Dry Rocks (EDR), Lower Florida Keys.
-- **Colony set:** 92 individually tracked colonies.
-- **Time period:** 1994--2004 (10 years). Covers the white pox (WPX) epidemic period.
-- **Relationship to NOAA_survey:** The NOAA Acropora Demographic Monitoring Program was initiated by Williams & Miller in the mid-2000s. Sutherland's EDR monitoring was conducted by a different research group (University of Georgia / NOAA Hollings Marine Lab) at a different site, during an earlier era. The EDR dataset pre-dates or is contemporaneous with the early phase of the NOAA tagging program but was collected independently.
-- **FKNMS component excluded:** Sutherland et al. 2016 also reports a contemporary (2008--2014) monitoring component at Carysfort Reef and Molasses Reef -- these are well-known NOAA monitoring sites where colony overlap with `NOAA_survey` is highly likely. This component was excluded.
-- **Audit verification:** All extracted values (92 colonies, 1 survivor after 10 years, annual survival 0.641) were independently verified against the source PDF. An annotation-only error in the CSV (0.629 vs. 0.637 stored survival) has no analysis impact because the pipeline recomputes from stored `prop_survived` and `time_interval_yr`.
+**Background:** The EDR historical dataset (1994--2004) at Eastern Dry Rocks, Lower Florida Keys, was initially assessed as geographically independent of NOAA_survey (different institution, site, era). However, during the IRR audit (see `inter_rater_reliability.md` Section 6), the independent adjudicator determined that the EDR monitoring used permanent photostations/quadrats rather than individually tagged colonies, violating the longitudinal individual-tracking inclusion criterion. Additionally, the FKNMS contemporary component (2008--2014) overlapped spatially with NOAA monitoring at Carysfort and Molasses reefs.
 
-**Conclusion:** EDR component is independent of NOAA_survey (different institution, site, era). FKNMS component excluded. Included.
+**Conclusion:** Both components excluded. EDR excluded for photostation design (not individually tagged colonies); FKNMS excluded for NOAA spatial overlap.
 
 ---
 

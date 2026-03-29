@@ -138,7 +138,7 @@ A study was included in the meta-analysis if it met ALL of the following:
 | **Post-settlement recruits** (<1 cm²) | Different life stage; near-zero survival not comparable to juvenile/adult demography | fundemar_recruits, chamberland_2015, mendoza_quiroz_2023 (summary) |
 | **Lab/nursery micro-fragments** (<1 cm²) | Artificial conditions; not representative of field demography | papke_2021 |
 | **Cross-sectional only** | Tissue condition snapshots (% showing partial mortality) ≠ whole-colony survival rates. Partial mortality prevalence conflates sub-lethal tissue loss with colony death. | Gonzalez-Diaz 2019, Garcia-Uruena 2020, Caballero-Aragon 2019, Zubillaga 2008, Croquer 2016, Rogers 2006 |
-| **NOAA/USGS data overlap** | Same colonies, sites, and/or monitoring program as existing NOAA_survey individual-level data | Bright 2013, Williams & Miller 2012, Muller 2014, Miller 2009, Neely 2022 (uncertain but high risk), Sutherland 2016 FKNMS component, Chapron 2023 (= Kuffner 2020 colonies) |
+| **NOAA/USGS data overlap** | Same colonies, sites, and/or monitoring program as existing NOAA_survey individual-level data | Bright 2013, Williams & Miller 2012, Muller 2014, Miller 2009, Sutherland 2016 FKNMS component, Chapron 2023 (= Kuffner 2020 colonies) |
 | **Imprecise/confounded data** | Survival data too imprecise for meta-analysis, or confounded by acute event | Muller et al. 2008 (exact death count ambiguous, no colony sizes, 2005 bleaching-confounded) |
 | **Not individually tracked** | Monitoring units are photostations/quadrats, not individually tagged colonies | Sutherland et al. 2016 EDR component (permanent photostations 1994–2004) |
 | **Wrong species** | Not *A. palmata* | Tunnicliffe 1981 (*A. cervicornis*), Bythell 1993 chronic (*M. annularis*), Rylaarsdam 1983 (*A. cervicornis* zone) |
@@ -159,7 +159,7 @@ Because multiple studies from the same monitoring programs exist, the following 
 
 4. **Sutherland et al. 2016**: Excluded during the IRR audit (Section 1.5). The contemporary survey component (FKNMS, 2008–2014) overlapped spatially with NOAA monitoring. The EDR historical dataset (1994–2004, Lower Keys) tracked permanent photostations/quadrats rather than individually tagged colonies, violating the longitudinal individual-tracking inclusion criterion.
 
-5. **Neely et al. 2022**: 608 colonies at 9 FL Keys sites overlap geographically with NOAA monitoring. Excluded pending verification of colony-level independence (raw data would be needed from authors).
+5. **Neely et al. 2022**: 508 colonies at 9 FL Keys sites. Detailed site comparison reveals **no geographic overlap** with NOAA monitoring (see `03_screening/overlap_analysis.md` Section 2.5 for site-by-site verification). Excluded because the paper reports LAI trajectories and stressor prevalence, NOT whole-colony survival counts (n_initial, n_dead). If raw colony-level data were obtained from the authors, this study would be a high-priority addition (508 colonies across Lower Keys, Middle Keys, Biscayne NP, and Dry Tortugas — regions absent from the current dataset).
 
 ---
 

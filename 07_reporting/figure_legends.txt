@@ -127,24 +127,24 @@ FIGURE 3
 
 LEGEND:
 Fig. 3 Caribbean-wide survival synthesis for Acropora palmata. (a) Forest plot
-of annual survival probability from the expanded meta-analysis (k = 16 studies,
-N = 9,208). Studies are grouped by population type: natural colonies (k = 6,
-blue) and restoration fragments (k = 10, orange). Within each group, studies are
+of annual survival probability from the expanded meta-analysis (k = 18 studies,
+N = 6,480). Studies are grouped by population type: natural colonies (k = 7,
+blue) and restoration fragments (k = 11, orange). Within each group, studies are
 ordered by survival rate. Point estimates with 95% confidence intervals are
 shown for each study. Point size is proportional to random-effects weight. Shape
 indicates data tier: circles for individual-level data, triangles for
 summary-level data. Diamonds show subgroup pooled estimates and the overall
 random-effects pooled estimate (bottom). The dashed vertical line marks the
-overall pooled survival (81.1%). The light blue shaded band indicates the 95%
-prediction interval (43.3-96.0%). Heterogeneity: I^2 = 97.9% [95.9%, 99.2%],
-tau^2 = 0.609. (b) Geographic variation in annual survival across 9 Caribbean
+overall pooled survival (79.2%). The light blue shaded band indicates the 95%
+prediction interval (38.9-95.8%). Heterogeneity: I^2 = 96.4% [93.0%, 98.7%],
+tau^2 = 0.669. (b) Geographic variation in annual survival across 9 Caribbean
 regions. Points show individual study estimates colored by population type.
 Diamonds with CIs show pooled regional estimates (k >= 2). Dashed vertical line
-at overall pooled (81.1%).
+at overall pooled (79.2%).
 
 METHODS:
 We conducted a two-tier random-effects meta-analysis combining individual-level
-data from 5 studies (Tier 1) with study-level survival estimates from 11
+data from 5 studies (Tier 1) with study-level survival estimates from 13
 additional published studies (Tier 2). Effect sizes were computed as
 proportional log-odds (PLO) using the escalc function in metafor (R). The
 random-effects model used restricted maximum likelihood (REML) estimation with
@@ -157,16 +157,16 @@ regions with k >= 2 contributing studies using the same random-effects
 framework.
 
 RESULTS:
-The expanded meta-analysis yielded a pooled annual survival of 81.1%, but the
-95% prediction interval (43.3-96.0%) indicates that a new study could plausibly
+The expanded meta-analysis yielded a pooled annual survival of 79.2%, but the
+95% prediction interval (38.9-95.8%) indicates that a new study could plausibly
 observe survival anywhere in this range — reflecting extreme heterogeneity
-(I^2 = 97.9%). The 95% confidence interval for the pooled estimate was
-73.2-87.1%. Natural colonies (k = 6) showed higher pooled survival (85.1%,
-CI: 70.3-93.2%) than restoration fragments (k = 10; 78.3%, CI: 66.4-86.8%),
-but the 6.8 percentage point difference was not statistically significant
-(Q-moderator p = 0.30). Expanding from k = 5 to k = 16 narrowed the confidence
-interval by 58% (from 32.5 to 13.9 percentage points) and increased natural
-colony representation from k = 1 (NOAA only) to k = 6 studies across 5 regions.
+(I^2 = 96.4%). The 95% confidence interval for the pooled estimate was
+70.6-85.7%. Natural colonies (k = 7) showed higher pooled survival (83.5%,
+CI: 63.6-93.6%) than restoration fragments (k = 11; 76.0%, CI: 65.4-84.2%),
+but the 7.5 percentage point difference was not statistically significant
+(Q-moderator p = 0.405). Expanding from k = 5 to k = 18 narrowed the confidence
+interval and increased natural colony representation from k = 1 (NOAA only)
+to k = 7 studies across multiple regions.
 Regionally, survival estimates ranged widely across the 9 Caribbean regions,
 with pooled estimates available for regions with multiple contributing studies.
 The geographic pattern shows substantial variation that is not fully explained
@@ -195,10 +195,10 @@ colored by whether each bootstrap replicate indicates population decline
 marks replacement (lambda = 1); dashed dark blue line marks the deterministic
 lambda estimate. (d) Leave-one-study-out (LOSO) sensitivity analysis. Each
 point shows the estimated lambda when one study is excluded from the transition
-matrix. Dashed vertical line marks the full-model lambda (0.986); dotted line
-marks replacement (lambda = 1). NOAA Survey exclusion (red) produces the
-largest shift (lambda = 0.951), consistent with NOAA contributing 78% of
-observations.
+matrix. Dashed vertical line marks the full-model lambda (1.001); dotted line
+marks replacement (lambda = 1). Only two studies (NOAA and Mendoza-Quiroz)
+contribute to the natural-colony transition matrix; LOSO range is
+0.991-1.011.
 
 METHODS:
 We constructed a 5 x 5 Lefkovitch (size-structured) transition matrix following
@@ -234,14 +234,15 @@ as the most effective conservation target: a 1% improvement in SC5 survival has
 approximately 4x more impact on population growth than equivalent improvements
 to other vital rates.
 
-The deterministic population growth rate was lambda = 0.986, indicating an
-estimated 1.4% annual population decline. The bootstrap 95% confidence interval
-was wide [0.819, 1.020], spanning both decline and growth scenarios. The
-probability of population decline (P(lambda < 1)) was 87.3%. LOSO sensitivity
-analysis showed that lambda was robust to the exclusion of most studies
-(range: 0.975-0.992 when excluding non-NOAA studies), but sensitive to NOAA
-data: excluding NOAA reduced lambda to 0.951, a shift of 0.035 reflecting
-the dominance of NOAA observations (78% of the dataset).
+The deterministic population growth rate was lambda = 1.001, indicating a
+near-stable population. The bootstrap 95% confidence interval was wide
+[0.863, 1.035], spanning both decline and growth scenarios. The probability of
+population decline (P(lambda < 1)) was 65.1% (1519 valid bootstrap replicates
+of 2000 attempted). LOSO sensitivity analysis showed that lambda was relatively
+stable: excluding NOAA gave lambda = 1.011, and excluding Mendoza-Quiroz gave
+lambda = 0.991 (LOSO range = 0.020). Only two studies (NOAA and Mendoza-Quiroz)
+contribute to the natural-colony transition matrix, limiting LOSO to these two
+studies.
 
 
 ================================================================================
@@ -381,7 +382,7 @@ population type (blue = natural colonies, orange = restoration fragments) and
 sized by sample size. Dark diamonds with confidence intervals show pooled
 regional estimates for regions with k >= 2 studies. Regions are ordered by
 pooled survival rate. The dashed vertical line indicates the overall
-meta-analytic pooled estimate (81.1%). Sample sizes (N) are shown in
+meta-analytic pooled estimate (79.2%). Sample sizes (N) are shown in
 parentheses.
 
 
@@ -426,9 +427,10 @@ dependent on NOAA NCRMP data (which provides 99% of natural colony
 observations). SC5 stasis — the parameter with the highest elasticity (54.8%)
 — derives entirely from NOAA data across Florida, Curacao, and Navassa. No
 non-NOAA study monitored colonies in the SC5 size range (>4,000 cm2). The
-bootstrap confidence interval for lambda [0.819, 1.020] includes replacement
+bootstrap confidence interval for lambda [0.863, 1.035] includes replacement
 (lambda = 1), so population decline cannot be confirmed at the 95% level,
-though 87.3% of replicates indicate decline. The bootstrap failure rate reflects the small number of studies (k = 6) in
+though 65.1% of replicates indicate decline. The bootstrap failure rate (481 of
+2000 replicates invalid) reflects the small number of studies (k = 6) in
 hierarchical resampling; see Fig. 4c for the specific counts of valid vs total
 replicates.
 
@@ -437,9 +439,9 @@ Population type is nearly perfectly confounded with study identity in the
 individual-level data: natural colony records derive almost exclusively from
 NOAA NCRMP (99%), while restoration fragment data come from four separate
 studies with different geographic locations, monitoring protocols, colony sizes,
-and temporal coverage. The expanded meta-analysis (k = 16) includes k = 6
-natural colony studies across 5 regions, yielding a 6.8 percentage-point
-difference (85.1% vs 78.3%, p = 0.30) that is not statistically significant.
+and temporal coverage. The expanded meta-analysis (k = 18) includes k = 7
+natural colony studies, yielding a 7.5 percentage-point
+difference (83.5% vs 76.0%, p = 0.405) that is not statistically significant.
 Within-restoration heterogeneity (31 percentage points between Pausch et al.
 57.5% and FUNDEMAR 88.4%) exceeds the between-type difference, and
 Mendoza-Quiroz natural colonies showed 100% survival (n = 35) within the

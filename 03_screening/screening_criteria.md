@@ -76,7 +76,9 @@ A study was included if it met **all** of the following:
 | **E7** | Lab only | Exclusively laboratory or aquarium experiments with observation periods too short (<1 week) or conditions too artificial to represent field demography. | Papke et al. 2021 (lab micro-fragments), Olsen et al. 2016 (48h in situ chamber), Randall & Szmant 2009 (160h lab), Erwin & Szmant 2010 (36d tiles), Ritson-Williams et al. 2010 (6 weeks) |
 | **E8** | Linear growth only | Studies reporting only linear extension (mm/yr or cm/yr) of branches without areal measurements convertible to planar tissue area. | Gladfelter et al. 1978, Gladfelter 1982, Pinon-Gonzalez & Banaszak 2018 (branch-tip cm^2/day) |
 | **E9** | Invalid mortality proxy | "Recent mortality" (RM) prevalence measures the fraction of colonies showing ANY recent tissue loss, not whole-colony death. A colony with RM is still alive. Using RM prevalence as a survival rate systematically overestimates survival. | Ramos et al. 2024 (initially included, removed after audit) |
-| **E10** | Fragment dynamics only | Studies reporting only fragment production, dispersal, or short-term fragment survival (<6 months) without annual demographic tracking. Fragment data were extracted to a separate fragmentation file where applicable. | Highsmith et al. 1980, Rogers et al. 1982, Forrester et al. 2011 |
+| **E10** | Fragment dynamics only | Studies reporting only fragment production, dispersal, or short-term fragment survival (<6 months) without annual demographic tracking. Fragment data were extracted to a separate fragmentation file where applicable. | Highsmith et al. 1980, Forrester et al. 2011 |
+
+**Note on Rogers et al. 1982:** This study was originally classified under E10 (fragment dynamics only) but was reclassified as INCLUDED after re-evaluation during the IRR audit (March 2026). The study tracked 173 individually labeled storm-damaged branches at 2 St. Croix sites for ~11 months post-Hurricane David (1979), providing extractable annual survival data comparable to existing fragment survival studies in the meta-analysis.
 
 ### 3.1 Exclusion Codes Not Used but Considered
 
@@ -119,15 +121,15 @@ If a study reports data from geographically distinct regions (>100 km apart or d
 
 ### 5.3 Studies with overlapping time periods but different sites
 
-Include both if they track different colony sets at different locations, even within the same monitoring program. Independence must be verified by cross-referencing colony IDs, site names, or GPS coordinates. Example: Rogers & Muller 2012 (Haulover Bay) and Muller et al. 2008 (Hawksnest Bay) -- 4 km apart, different colonies, both included.
+Include both if they track different colony sets at different locations, even within the same monitoring program. Independence must be verified by cross-referencing colony IDs, site names, or GPS coordinates. Example: Rogers & Muller 2012 (Haulover Bay) and Muller et al. 2008 (Hawksnest Bay) -- 4 km apart, different colonies, initially both assessed as independent. (Note: Muller et al. 2008 was later excluded during IRR audit for imprecise survival data, absent colony sizes, and bleaching-confounded mortality; see `overlap_analysis.md`.)
 
 ### 5.4 Studies with partial NOAA overlap
 
-If a study uses some NOAA monitoring sites but also includes independent sites, only the non-overlapping component is included. Example: Sutherland et al. 2016 -- EDR historical dataset (Lower Keys, 1994--2004) is included; FKNMS contemporary component (2008--2014, Carysfort/Molasses reefs) is excluded due to spatial overlap with NOAA.
+If a study uses some NOAA monitoring sites but also includes independent sites, only the non-overlapping component is assessed for inclusion. Example: Sutherland et al. 2016 -- the FKNMS contemporary component (2008--2014, Carysfort/Molasses reefs) was excluded due to spatial overlap with NOAA. The EDR historical dataset (Lower Keys, 1994--2004) was initially assessed as independent but was subsequently excluded during IRR audit because the EDR monitoring used permanent photostations rather than individually tagged colonies (see `overlap_analysis.md` Section 3.3).
 
 ### 5.5 Disease/disturbance events
 
-Studies covering disease outbreaks (e.g., white pox) or bleaching events are included. The survival rate during the event period is a valid demographic parameter. Example: Sutherland et al. 2016 spans the 1994--2004 WPX epidemic (annual survival = 64.1%); Muller et al. 2008 includes the 2005 bleaching event.
+Studies covering disease outbreaks (e.g., white pox) or bleaching events are not excluded on the basis of the disturbance event alone. The survival rate during the event period is a valid demographic parameter. Example: Garrison & Ward 2008 spans a 5-year period including multiple hurricane/disease events. (Note: Sutherland et al. 2016 and Muller et al. 2008, which also covered disease/bleaching periods, were excluded for other reasons -- photostation design and imprecise survival data, respectively -- not because of the disturbance events.)
 
 ### 5.6 Short observation periods
 

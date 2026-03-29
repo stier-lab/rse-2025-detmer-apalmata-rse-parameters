@@ -91,8 +91,12 @@ cat(sprintf("  Subgroup strata: %d\n", nrow(stratified)))
 print_subheader("Preparing study-level data")
 
 # Clean study names
+# FIX: Added NOAA regional splits after meta-analysis restructure (critique audit 2026-03-29)
 name_map <- c(
   "NOAA_survey"                = "NOAA NCRMP",
+  "NOAA_survey_florida_keys"   = "NOAA - Florida Keys",
+  "NOAA_survey_curacao"        = "NOAA - Curacao",
+  "NOAA_survey_navassa"        = "NOAA - Navassa",
   "pausch_et_al_2018"          = "Pausch et al. 2018",
   "USGS_USVI_exp"              = "USGS USVI",
   "kuffner_et_al_2020"         = "Kuffner et al. 2020",
@@ -101,14 +105,19 @@ name_map <- c(
   "vardi_2011_puerto_rico"     = "Vardi 2011 - Puerto Rico",
   "vardi_2011_virgin_gorda"    = "Vardi 2011 - Virgin Gorda",
   "bruckner_bruckner_2001"     = "Bruckner & Bruckner 2001",
-  "roth_et_al_2013"            = "Roth et al. 2013",
   "ortiz_prosper_2005"         = "Ortiz-Prosper 2005",
   "forrester_et_al_2013"       = "Forrester et al. 2013",
   "rosales_et_al_2024"         = "Rosales et al. 2024",
   "maurer_et_al_2022"          = "Maurer et al. 2022",
   "williams_miller_2010"       = "Williams & Miller 2010",
   "garrison_ward_2008"         = "Garrison & Ward 2008",
-  "mendoza_quiroz_et_al_2023"  = "Mendoza-Quiroz et al. 2023"
+  "mendoza_quiroz_et_al_2023"  = "Mendoza-Quiroz et al. 2023",
+  "rogers_muller_2012"         = "Rogers & Muller 2012",
+  "rogers_et_al_1982"          = "Rogers et al. 1982",
+  "ramos_romero_et_al_2025"    = "Ramos-Romero et al. 2025",
+  "chamberland_et_al_2015"     = "Chamberland et al. 2015",
+  "papke_et_al_2021"           = "Papke et al. 2021",
+  "sutherland_et_al_2016"      = "Sutherland et al. 2016"
 )
 
 study_effects <- study_effects %>%
@@ -147,10 +156,11 @@ overall_lower <- as.numeric(results_list[["95% CI lower"]])
 overall_upper <- as.numeric(results_list[["95% CI upper"]])
 pi_lower      <- as.numeric(results_list[["95% PI lower"]])
 pi_upper      <- as.numeric(results_list[["95% PI upper"]])
-i_sq          <- as.numeric(results_list[["I^2 (%)"]])
+# FIX: Handle both old ("I^2 (%)") and new ("I^2 (%) [independent model]") column names
+i_sq          <- as.numeric(results_list[["I^2 (%) [independent model]"]] %||% results_list[["I^2 (%)"]])
 i_sq_lower    <- as.numeric(results_list[["I^2 CI lower"]])
 i_sq_upper    <- as.numeric(results_list[["I^2 CI upper"]])
-tau_sq        <- as.numeric(results_list[["tau^2"]])
+tau_sq        <- as.numeric(results_list[["tau^2 (total)"]] %||% results_list[["tau^2"]])
 q_stat        <- as.numeric(results_list[["Cochran's Q"]])
 total_n       <- as.numeric(results_list[["Total observations (N)"]])
 
@@ -393,8 +403,9 @@ p <- ggplot() +
   annotate("text",
            x = 0.70, y = y_overall - 1.0,
            label = sprintf(
-             "I^2 = %.1f%% [%.1f%%, %.1f%%],  tau^2 = %.3f,  Q = %.1f (p < 0.001),  k = 16,  N = %s",
+             "I^2 = %.1f%% [%.1f%%, %.1f%%],  tau^2 = %.3f,  Q = %.1f (p < 0.001),  k = %s,  N = %s",
              i_sq, i_sq_lower, i_sq_upper, tau_sq, q_stat,
+             results_list[["Number of studies (k)"]] %||% "18",
              format(as.integer(total_n), big.mark = ",")
            ),
            hjust = 0.5, size = 2.7, color = "grey40") +

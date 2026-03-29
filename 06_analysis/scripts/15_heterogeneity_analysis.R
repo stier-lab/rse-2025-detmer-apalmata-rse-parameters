@@ -627,3 +627,238 @@ cat("  - heterogeneity_analysis.csv (summary statistics)\n")
 cat("  - study_effect_sizes.csv (study-level estimates)\n")
 cat("  - moderator_effects.csv (meta-regression results)\n")
 cat("  - heterogeneity_forest_plot.png (visualization)\n\n")
+
+# =============================================================================
+# 8. MORTALITY DEFINITION AS MODERATOR (Tier 1 individual-level studies only)
+# =============================================================================
+# FIX: Add mortality definition as moderator (critique audit 2026-03-29)
+# Mortality definitions vary across studies (CLAUDE.md Critical Constraints):
+#   NOAA = no tissue/skeleton gone
+#   Kuffner = >=50% tissue loss (most liberal)
+#   Others = no live tissue at interval end
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  MORTALITY DEFINITION MODERATOR ANALYSIS\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+mortality_def <- data.frame(
+  study = c("NOAA_survey", "kuffner_et_al_2020", "pausch_et_al_2018",
+            "USGS_USVI_exp", "mendoza_quiroz_et_al_2023", "fundemar_fragments"),
+  mort_definition = c("no_tissue_or_skeleton_gone", "ge_50pct_tissue_loss",
+                       "complete_or_missing", "no_live_tissue", "no_live_tissue", "no_live_tissue"),
+  stringsAsFactors = FALSE
+)
+
+# Merge with study-level effects (Tier 1 only)
+study_effects_mort <- merge(study_effects, mortality_def, by = "study", all.x = TRUE)
+has_mort_data <- sum(!is.na(study_effects_mort$mort_definition))
+
+cat(sprintf("  Studies with mortality definition: %d / %d\n",
+            has_mort_data, nrow(study_effects_mort)))
+
+if (has_mort_data >= 3 && requireNamespace("metafor", quietly = TRUE)) {
+  # Only keep studies with mortality definition data
+  study_effects_mort_valid <- study_effects_mort %>%
+    filter(!is.na(mort_definition))
+
+  cat("\n  Mortality definitions in Tier 1 studies:\n")
+  print(table(study_effects_mort_valid$mort_definition))
+
+  # Meta-regression with mortality definition as moderator
+  # Only feasible if there are at least 2 levels with data
+  n_levels <- length(unique(study_effects_mort_valid$mort_definition))
+  if (n_levels >= 2 && nrow(study_effects_mort_valid) >= 3) {
+    mr_mort <- tryCatch({
+      metafor::rma(yi = log_odds, vi = var_log_odds,
+                   mods = ~mort_definition,
+                   data = study_effects_mort_valid,
+                   method = "REML", test = "knha")
+    }, error = function(e) {
+      cat(sprintf("  Meta-regression failed: %s\n", e$message))
+      NULL
+    })
+
+    if (!is.null(mr_mort)) {
+      cat(sprintf("\n  Mortality definition moderator test (QM): %.2f, p = %.4f\n",
+                  mr_mort$QM, mr_mort$QMp))
+      cat(sprintf("  R² (variance explained by mortality definition): %.1f%%\n",
+                  max(0, mr_mort$R2)))
+      cat("\n  Coefficients:\n")
+      print(coef(summary(mr_mort)))
+
+      # Add to moderator results
+      mort_mod_result <- data.frame(
+        moderator = "Mortality definition",
+        coefficient = NA_real_,  # categorical moderator, no single coefficient
+        p_value = mr_mort$QMp,
+        r_squared = max(0, mr_mort$R2),
+        interpretation = ifelse(mr_mort$QMp < 0.05,
+                                "Significant: mortality definition explains heterogeneity",
+                                "Not significant: mortality definition does not explain heterogeneity")
+      )
+
+      # Append to moderator_df and re-save
+      moderator_df <- bind_rows(moderator_df, mort_mod_result)
+      write_csv(moderator_df, file.path(output_dir, "moderator_effects.csv"))
+      cat("  Updated: moderator_effects.csv (with mortality definition)\n")
+    }
+  } else {
+    cat(sprintf("  Insufficient levels (%d) or studies (%d) for mortality definition meta-regression\n",
+                n_levels, nrow(study_effects_mort_valid)))
+  }
+} else {
+  if (has_mort_data < 3) {
+    cat("  Fewer than 3 studies with mortality definition data — skipping meta-regression\n")
+  } else {
+    cat("  metafor package not available — skipping mortality definition analysis\n")
+  }
+}
+
+# =============================================================================
+# 9. FDR CORRECTION FOR MULTIPLE MODERATOR TESTS
+# =============================================================================
+# FIX: FDR correction for multiple moderator tests (critique audit 2026-03-29)
+# Script 14b tests population_type, colony_size, study_year, region as moderators.
+# Script 15 tests size, fragment_pct, year, and now mortality_definition.
+# Apply Benjamini-Hochberg FDR correction to all moderator p-values.
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  FDR CORRECTION FOR MODERATOR TESTS\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+# Collect p-values from this script's moderator tests
+if (nrow(moderator_df) > 0 && "p_value" %in% names(moderator_df)) {
+  local_pvals <- moderator_df$p_value
+  local_names <- moderator_df$moderator
+
+  # Also try to load expanded meta-analysis moderator p-values (from script 14b)
+  expanded_mod_file <- file.path(output_dir, "expanded_meta_analysis_moderators.csv")
+  if (file.exists(expanded_mod_file)) {
+    expanded_mods <- read_csv(expanded_mod_file, show_col_types = FALSE)
+    if ("p_value" %in% names(expanded_mods) && "moderator" %in% names(expanded_mods)) {
+      # Combine p-values from both sources, avoiding duplicates by moderator name
+      combined_names <- c(local_names, expanded_mods$moderator)
+      combined_pvals <- c(local_pvals, expanded_mods$p_value)
+
+      # De-duplicate: if the same moderator appears in both, keep the expanded meta version
+      dup_idx <- duplicated(combined_names, fromLast = TRUE)
+      combined_names <- combined_names[!dup_idx]
+      combined_pvals <- combined_pvals[!dup_idx]
+    } else {
+      combined_names <- local_names
+      combined_pvals <- local_pvals
+    }
+  } else {
+    combined_names <- local_names
+    combined_pvals <- local_pvals
+    cat("  NOTE: expanded_meta_analysis_moderators.csv not found.\n")
+    cat("  FDR correction applied to script 15 moderators only.\n\n")
+  }
+
+  # Apply Benjamini-Hochberg FDR correction
+  valid_mask <- !is.na(combined_pvals)
+  if (sum(valid_mask) >= 2) {
+    fdr_adjusted <- rep(NA_real_, length(combined_pvals))
+    fdr_adjusted[valid_mask] <- p.adjust(combined_pvals[valid_mask], method = "BH")
+
+    fdr_table <- data.frame(
+      moderator = combined_names,
+      raw_p = combined_pvals,
+      fdr_p = fdr_adjusted,
+      significant_raw = combined_pvals < 0.05,
+      significant_fdr = fdr_adjusted < 0.05,
+      stringsAsFactors = FALSE
+    )
+
+    cat("FDR-adjusted moderator p-values (Benjamini-Hochberg):\n")
+    print(fdr_table)
+
+    # Flag any results that change significance after FDR
+    flipped <- fdr_table %>%
+      filter(significant_raw != significant_fdr)
+    if (nrow(flipped) > 0) {
+      cat("\n  WARNING: The following moderators change significance after FDR correction:\n")
+      for (i in seq_len(nrow(flipped))) {
+        cat(sprintf("    %s: raw p = %.4f -> FDR p = %.4f\n",
+                    flipped$moderator[i], flipped$raw_p[i], flipped$fdr_p[i]))
+      }
+    } else {
+      cat("\n  No moderator tests change significance after FDR correction.\n")
+    }
+
+    # Save FDR-corrected results
+    write_csv(fdr_table, file.path(output_dir, "moderator_fdr_correction.csv"))
+    cat("  Saved: moderator_fdr_correction.csv\n")
+  } else {
+    cat("  Fewer than 2 valid moderator p-values — FDR correction not applicable.\n")
+  }
+} else {
+  cat("  No moderator results available — FDR correction skipped.\n")
+}
+
+# =============================================================================
+# 10. TEMPORAL TREND IN SURVIVAL (expanded meta, study year meta-regression)
+# =============================================================================
+# FIX: Temporal trend in survival via expanded meta study effects (critique audit 2026-03-29)
+# Script 14b already runs this on the expanded meta (k=18). Here we run it on the
+# Tier 1 individual-level studies (k=5) for comparison and to keep script 15 self-contained.
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  TEMPORAL TREND (STUDY YEAR META-REGRESSION, k=5)\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+if (requireNamespace("metafor", quietly = TRUE) && "year_max" %in% names(study_effects)) {
+  temporal_mod <- tryCatch({
+    metafor::rma(yi = log_odds, vi = var_log_odds,
+                 mods = ~year_max,
+                 data = study_effects,
+                 method = "REML", test = "knha")
+  }, error = function(e) {
+    cat(sprintf("  Temporal meta-regression failed: %s\n", e$message))
+    NULL
+  })
+
+  if (!is.null(temporal_mod)) {
+    cat(sprintf("  Slope (log-odds per year): %.4f (SE: %.4f)\n",
+                temporal_mod$beta[2], temporal_mod$se[2]))
+    cat(sprintf("  p-value: %.4f\n", temporal_mod$pval[2]))
+    cat(sprintf("  R² (variance explained): %.1f%%\n", max(0, temporal_mod$R2)))
+
+    if (temporal_mod$pval[2] < 0.05) {
+      direction <- ifelse(temporal_mod$beta[2] > 0, "improving", "declining")
+      cat(sprintf("  Significant temporal trend: survival %s over time\n", direction))
+    } else {
+      cat("  No significant temporal trend detected in Tier 1 studies\n")
+    }
+
+    # Also check expanded meta (k=18) if available
+    expanded_file <- file.path(output_dir, "expanded_meta_analysis_study_effects.csv")
+    if (file.exists(expanded_file)) {
+      expanded_es <- read_csv(expanded_file, show_col_types = FALSE)
+      if (all(c("log_odds", "var_log_odds", "survey_yr") %in% names(expanded_es))) {
+        temporal_expanded <- tryCatch({
+          metafor::rma(yi = log_odds, vi = var_log_odds,
+                       mods = ~survey_yr,
+                       data = expanded_es,
+                       method = "REML", test = "knha")
+        }, error = function(e) NULL)
+
+        if (!is.null(temporal_expanded)) {
+          cat(sprintf("\n  Expanded meta (k=%d): slope = %.4f, p = %.4f, R² = %.1f%%\n",
+                      nrow(expanded_es), temporal_expanded$beta[2],
+                      temporal_expanded$pval[2], max(0, temporal_expanded$R2)))
+        }
+      }
+    }
+  }
+} else {
+  cat("  metafor not available or year_max not in study_effects — skipping\n")
+}
+
+cat("\n")
+cat("╔═══════════════════════════════════════════════════════════════╗\n")
+cat("║  EXTENDED HETEROGENEITY ANALYSIS COMPLETE                    ║\n")
+cat("╚═══════════════════════════════════════════════════════════════╝\n\n")

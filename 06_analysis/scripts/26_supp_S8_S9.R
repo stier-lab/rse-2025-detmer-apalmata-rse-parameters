@@ -80,10 +80,11 @@ pooled_surv_lower <- get_meta_val("95% CI lower")
 pooled_surv_upper <- get_meta_val("95% CI upper")
 pred_surv_lower   <- get_meta_val("95% PI lower")
 pred_surv_upper   <- get_meta_val("95% PI upper")
-I_sq              <- get_meta_val("I^2 (%)")
+# FIX: Handle both old and new column names from three-level model update
+I_sq              <- get_meta_val("I^2 (%) [independent model]") %||% get_meta_val("I^2 (%)")
 I_sq_lower        <- get_meta_val("I^2 CI lower")
 I_sq_upper        <- get_meta_val("I^2 CI upper")
-tau_sq            <- get_meta_val("tau^2")
+tau_sq            <- get_meta_val("tau^2 (total)") %||% get_meta_val("tau^2")
 tau_val           <- get_meta_val("tau")
 Q_stat            <- get_meta_val("Cochran's Q")
 k_studies         <- get_meta_val("Number of studies (k)")
@@ -95,12 +96,16 @@ cat(sprintf("  k = %d studies, I^2 = %.1f%%, pooled survival = %.1f%%\n",
 # STUDY NAME MAPPING (code names -> proper citations)
 # ==============================================================================
 
+# FIX: Added NOAA regional splits after meta-analysis restructure (critique audit 2026-03-29)
 study_name_map <- c(
-  "NOAA_survey"         = "NOAA NCRMP",
-  "kuffner_et_al_2020"  = "Kuffner et al. (2020)",
-  "pausch_et_al_2018"   = "Pausch et al. (2018)",
-  "fundemar_fragments"  = "FUNDEMAR",
-  "USGS_USVI_exp"       = "USGS USVI"
+  "NOAA_survey"                  = "NOAA NCRMP",
+  "NOAA_survey_florida_keys"     = "NOAA (Florida Keys)",
+  "NOAA_survey_curacao"          = "NOAA (Curacao)",
+  "NOAA_survey_navassa"          = "NOAA (Navassa)",
+  "kuffner_et_al_2020"           = "Kuffner et al. (2020)",
+  "pausch_et_al_2018"            = "Pausch et al. (2018)",
+  "fundemar_fragments"           = "FUNDEMAR",
+  "USGS_USVI_exp"                = "USGS USVI"
 )
 
 study_effects <- study_effects %>%

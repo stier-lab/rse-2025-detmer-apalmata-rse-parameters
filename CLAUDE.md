@@ -105,7 +105,7 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | File | Producer | What |
 |------|----------|------|
 | `06_analysis/output/transition_matrix.csv` | Script 13 | 5x5 Lefkovitch projection matrix |
-| `06_analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1479 valid) |
+| `06_analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1519 valid) |
 | `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=18 meta-analysis summary |
 | `06_analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
 | `06_analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |

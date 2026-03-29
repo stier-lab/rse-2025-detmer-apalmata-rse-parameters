@@ -2,7 +2,7 @@
 
 ## 2.1 Literature search and study selection
 
-We conducted a systematic compilation of all published demographic data (survival, growth, fragmentation) for *Acropora palmata* across the Caribbean. The search followed a two-phase protocol; full details are provided in the PRISMA-style protocol in the Supplementary Materials.
+We conducted a systematic compilation of all published demographic data (survival, growth, fragmentation) for *Acropora palmata* across the Caribbean, following PRISMA-EcoEvo guidelines for ecology and evolutionary biology (O'Dea et al. 2021). The search followed a two-phase protocol; full details are provided in the PRISMA-style protocol in the Supplementary Materials.
 
 **Original search.** The initial literature compilation was conducted between June and December 2025. Studies were identified through four channels: (1) data repository mining of NOAA NCEI, NOAA InPort, USGS CMGDS, and USGS ScienceBase; (2) bibliographic database searches using Google Scholar with five structured search strings combining the base query `("Acropora palmata" OR "elkhorn coral")` with terms targeting survival/mortality, growth, recruitment/fecundity, restoration demography, and long-term monitoring; (3) forward and backward citation chaining from key studies (Vardi 2011; Williams and Miller 2012; Lirman 2003); and (4) direct data sharing from restoration practitioners (FUNDEMAR, Dominican Republic). For each set of search terms, results were reviewed sequentially until all results on a page appeared irrelevant (saturation-based stopping rule).
 

@@ -13,7 +13,7 @@
 
 To compile all published demographic data (survival, growth, fragmentation) for *Acropora palmata* across the Caribbean, stratified by colony size, for use in a size-structured population viability assessment (Lefkovitch matrix model).
 
-This is **not a classical systematic review** of treatment effects. It is a systematic data compilation — closer in spirit to an individual participant data (IPD) meta-analysis — where the goal is to recover vital rate parameters from every available source. The PRISMA framework is applied here to make the search and inclusion process reproducible and transparent.
+This is **not a classical systematic review** of treatment effects. It is a systematic data compilation — closer in spirit to an individual participant data (IPD) meta-analysis — where the goal is to recover vital rate parameters from every available source. The PRISMA framework is applied here to make the search and inclusion process reproducible and transparent, following PRISMA-EcoEvo principles for ecology and evolutionary biology (O'Dea et al. 2021, *Nature Ecology & Evolution* 5:1582--1589).
 
 ---
 
@@ -332,10 +332,12 @@ The following counts reconstruct the screening process across both search phases
     │  search (~29):     │    │   8 Tier 2 (hand-extract) │
     │  • Did not meet    │    │   3 Tier 2 (AI-extract)   │
     │    inclusion       │    │                          │
-    │    criteria        │    │  Removed after audit: 2   │
-    │  • Invalid proxy:  │    │   Ramos et al. 2024       │
-    │    1 (removed      │    │   (invalid survival proxy)│
-    │    after audit)    │    │                          │
+    │    criteria        │    │  Removed after audit: 4   │
+    │  • Invalid proxy:  │    │   Ramos 2024 (proxy)      │
+    │    1 (removed      │    │   Muller 2008 (imprecise) │
+    │    after audit)    │    │   Sutherland 2016 (IRR)   │
+    │                    │    │   Roth 2013 (overlap)     │
+    │                    │    │                          │
     │                    │    │  ─────────────────────── │
     └────────────────────┘    │  FINAL: 18 studies        │
                               │  contributing 18 study-   │
@@ -355,8 +357,8 @@ A machine-readable version of the flow diagram:
 flowchart TD
     A["Records identified<br/>Original search (Detmer 2025)<br/>52 unique studies evaluated<br/>(38 survival + 28 growth + 5 reproduction)"] --> C
     B["Records identified<br/>Expanded search (March 2026)<br/>33 new candidates from 80 PDFs"] --> C
-    C["Full-text assessment<br/>85 unique papers"] --> D["EXCLUDED ~67"]
-    C --> E["Extracted: 20 studies"]
+    C["Full-text assessment<br/>85 unique papers"] --> D["EXCLUDED ~69"]
+    C --> E["Extracted: 22 studies"]
     D --- D1["Cross-sectional only (~6)"]
     D --- D2["NOAA/USGS overlap (~8)"]
     D --- D3["Wrong species (~3)"]
@@ -366,7 +368,7 @@ flowchart TD
     D --- D7["Invalid survival proxy (1)"]
     D --- D8["Other exclusions (~34)"]
     E --> F["Independent audit + overlap audit"]
-    F --> G["Removed: 2 studies<br/>Ramos et al. 2024<br/>Roth et al. 2013"]
+    F --> G["Removed: 4 studies<br/>Ramos 2024 (invalid proxy)<br/>Muller 2008 (imprecise/bleaching)<br/>Sutherland 2016 (photostation/NOAA)<br/>Roth 2013 (overlap Rogers & Muller)"]
     F --> H["INCLUDED: 18 studies<br/>18 study-level effects<br/>(6 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI)"]
 ```
 
@@ -412,7 +414,7 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 
 | PRISMA Element | Standard | This Study | Justification |
 |---|---|---|---|
-| Pre-registration | Protocol registered before search | Retrospective documentation | This was a data compilation for a population model, not a treatment-effect review. Protocol formalized post hoc. |
+| Pre-registration | Protocol registered before search | Retrospective documentation (March 2026). This protocol was **not** prospectively registered in PROSPERO or an equivalent registry. | This was a data compilation for a population model, not a treatment-effect review. The data search began in June 2025 and the protocol was formalized retrospectively during manuscript preparation. |
 | Search strings | Exact Boolean strings per database | Partially reconstructed; `[TODO]` items remain | Original search used expert-driven repository mining + citation chaining. Exact strings not recorded at the time. |
 | Dual screening | ≥2 independent screeners | Single screener per phase | Small, specialized literature. Expanded search used AI audit as partial compensation. |
 | Risk of bias tool | Formal tool (e.g., RoB 2, ROBINS-I) | Narrative assessment | No standard risk-of-bias tool exists for vital rate compilations from observational monitoring data. |
@@ -426,9 +428,10 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 | Date | Change | Reason |
 |---|---|---|
 | Dec 2025 | Initial compilation complete | 16 studies (k=16) |
-| March 2026 | Expanded search + AI extraction | Completeness audit; added 4 studies, removed 1 |
+| March 2026 | Expanded search + AI extraction | Completeness audit; net result: 3 new studies added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), 1 reclassified (Rogers 1982 from excluded to included) |
+| March 2026 | IRR audit + overlap audit | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). Final k=18. |
 | March 2026 | Mortality definition criterion tightened | Ramos et al. 2024 audit revealed that partial mortality prevalence was being conflated with whole-colony death |
-| March 2026 | PRISMA protocol formalized (this document) | Reviewer/submission preparation |
+| March 2026 | PRISMA protocol formalized (this document) | Reviewer/submission preparation. Protocol documented retrospectively; not prospectively registered. |
 
 ---
 

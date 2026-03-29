@@ -634,6 +634,23 @@ gam_diagnostics_df <- tibble(
 write_csv(gam_diagnostics_df, file.path(output_dir, "survival_gam_diagnostics.csv"))
 cat("  Saved: survival_gam_diagnostics.csv\n")
 
+# FIX: Add GAM diagnostics — gam.check() and k.check() (critique audit 2026-03-29)
+cat("\n--- GAM Diagnostics ---\n")
+gam_diag <- gam.check(model_gam)
+k_check_result <- k.check(model_gam)
+cat("Effective degrees of freedom:\n")
+print(summary(model_gam)$edf)
+cat("\nk-check (basis dimension adequacy):\n")
+print(k_check_result)
+
+# Save k-check results to CSV
+k_check_df <- as.data.frame(k_check_result)
+k_check_df$smooth_term <- rownames(k_check_df)
+rownames(k_check_df) <- NULL
+k_check_df <- k_check_df[, c("smooth_term", names(k_check_df)[names(k_check_df) != "smooth_term"])]
+write_csv(k_check_df, file.path(output_dir, "gam_diagnostics.csv"))
+cat("  Saved: gam_diagnostics.csv\n")
+
 # GAMM with study random effect
 cat("\nFitting GAMM with study random effect...\n")
 

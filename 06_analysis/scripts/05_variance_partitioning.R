@@ -754,8 +754,59 @@ if (has_lme4 && requireNamespace("MuMIn", quietly = TRUE)) {
   })
   glmm_overdisp_df <- do.call(rbind, glmm_overdisp)
 
-  # Save GLMM R² results
-  write_csv(glmm_r2, file.path(output_dir, "variance_partitioning_glmm_r2.csv"))
+  # FIX: Add growth GLMM marginal/conditional R² (critique audit 2026-03-29)
+  # Growth GLMMs using LMM (Gaussian) with (1|study) random effects
+  cat("\n--- GROWTH GLMM R² (Nakagawa & Schielzeth) ---\n")
+  growth_glmm_r2 <- tryCatch({
+    m0_growth <- lmer(growth_cm2_yr ~ 1 + (1|study), data = growth_data)
+    m_size_growth <- lmer(growth_cm2_yr ~ log_size + (1|study), data = growth_data)
+    m_full_growth <- lmer(growth_cm2_yr ~ log_size + region + survey_yr + (1|study),
+                          data = growth_data)
+
+    growth_glmm_models <- list(
+      "Growth: Intercept only" = m0_growth,
+      "Growth: Size only" = m_size_growth,
+      "Growth: Full (Size + Region + Year)" = m_full_growth
+    )
+
+    growth_r2_list <- lapply(names(growth_glmm_models), function(nm) {
+      r2 <- MuMIn::r.squaredGLMM(growth_glmm_models[[nm]])
+      data.frame(
+        model = nm,
+        R2_marginal = r2[1, "R2m"],
+        R2_conditional = r2[1, "R2c"],
+        stringsAsFactors = FALSE
+      )
+    })
+    growth_r2_df <- do.call(rbind, growth_r2_list)
+    cat("Growth GLMM R²:\n")
+    print(as.data.frame(growth_r2_df %>% mutate(across(where(is.numeric), ~round(., 4)))))
+    growth_r2_df
+  }, error = function(e) {
+    cat(sprintf("  Growth GLMM R² computation failed: %s\n", e$message))
+    NULL
+  })
+
+  # Combine survival and growth R² into one output
+  if (!is.null(growth_glmm_r2)) {
+    glmm_r2_combined <- bind_rows(
+      glmm_r2 %>% mutate(response = "survival"),
+      growth_glmm_r2 %>% mutate(response = "growth", ICC_study = NA_real_)
+    )
+  } else {
+    glmm_r2_combined <- glmm_r2 %>% mutate(response = "survival")
+  }
+
+  # FIX: Explicit marginal/conditional R² summary output (critique audit 2026-03-29)
+  cat("\n--- SUMMARY: Nakagawa-Schielzeth R² interpretation ---\n")
+  for (i in seq_len(nrow(glmm_r2))) {
+    cat(sprintf("  %s:\n", glmm_r2$model[i]))
+    cat(sprintf("    Marginal R² (fixed effects only): %.3f\n", glmm_r2$R2_marginal[i]))
+    cat(sprintf("    Conditional R² (fixed + random):  %.3f\n", glmm_r2$R2_conditional[i]))
+  }
+
+  # Save GLMM R² results (combined survival + growth)
+  write_csv(glmm_r2_combined, file.path(output_dir, "variance_partitioning_glmm_r2.csv"))
   cat("\n✓ Saved: variance_partitioning_glmm_r2.csv\n")
 
 } else {

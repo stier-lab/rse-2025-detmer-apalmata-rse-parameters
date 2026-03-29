@@ -4,7 +4,7 @@
 **Date:** March 2026
 **Authors:** Raine Detmer, Adrian Stier
 
-Numbers derived from `03_screening/full_text_screening.csv` (87 entries) and `01_protocol/systematic_review_protocol.md`.
+Numbers derived from `03_screening/full_text_screening.csv` (91 rows) and `01_protocol/systematic_review_protocol.md`.
 
 ---
 
@@ -12,15 +12,15 @@ Numbers derived from `03_screening/full_text_screening.csv` (87 entries) and `01
 
 | Stage | n | Source |
 |-------|---|--------|
-| Studies evaluated in original search (Detmer 2025) | 52 (literature) + 3 (data repositories) = 55 | `full_text_screening.csv`: 51 literature full-text + 3 data repository entries from Detmer 2025 phase (note: 2 screened entries for the same study are counted once) |
-| New candidates from expanded search (AI, March 2026) | 33 | `full_text_screening.csv`: 33 entries from AI expansion 2026 phase |
+| Studies evaluated in original search (Detmer 2025) | 52 (literature) + 3 (data repositories) = 55 | `full_text_screening.csv`: 54 rows from Detmer 2025 phase (includes 3 data repositories, 1 Gladfelter duplicate, and 3 Vardi entries for the same study; 52 unique literature studies after deduplication) |
+| New candidates from expanded search (AI, March 2026) | 37 | `full_text_screening.csv`: 37 rows from AI expansion 2026 phase (33 unique new papers + 4 that were already variants of studies in the original 52) |
 | **Total unique studies assessed at full text** | **85** | 52 literature studies + 33 expanded = 85 unique papers (data repositories counted separately) |
 | Included from original search | 17 | 14 from literature + 3 from data repositories (Rogers 1982 reclassified as included after re-evaluation) |
 | Included from expanded search | 2 | 2 AI-extracted, passed independent audit |
 | Total extracted for data | 22 | 17 + 5 = 22 (4 later removed) |
 | Removed after independent audit or overlap audit | 4 | Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise survival, no sizes, bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies) |
 | **Final included in meta-analysis** | **18 studies, 18 study-level effects** | k = 18 |
-| Total excluded | 69 | 37 from original + 32 from expanded (Roth moved from included to excluded) |
+| Total excluded | 73 | In `full_text_screening.csv` (see reconciliation note below) |
 
 ---
 
@@ -43,7 +43,7 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
 | Fragment survival only (non-annual) | 1 | Post-hurricane fragment fates over weeks--months, not annual whole-colony survival (Highsmith 1980) |
 | **Total** | **69** | |
 
-**Verification:** 18 included + 69 excluded = 87 = total rows in screening CSV (excluding header). Of the 22 initially extracted, 4 were removed after independent audit or overlap audit (Ramos et al. 2024, Muller et al. 2008, Sutherland et al. 2016, Roth et al. 2013), yielding 18 final studies with 18 study-level effects.
+**Verification:** 18 INCLUDED + 73 EXCLUDED = 91 rows in screening CSV (excluding header). Of the 22 initially extracted, 4 were removed after independent audit or overlap audit (Ramos et al. 2024, Muller et al. 2008, Sutherland et al. 2016, Roth et al. 2013), yielding 18 final studies with 18 study-level effects. See the Reconciliation Note in the Arithmetic Verification section for how 91 CSV rows map to 85 unique papers + 69 unique excluded studies.
 
 ---
 
@@ -228,15 +228,25 @@ The numbers in this flow diagram must satisfy these constraints:
 
 | Check | Calculation | Result |
 |-------|-------------|--------|
-| Total screened entries | 18 included + 69 excluded | = 87 (matches CSV row count) |
-| Original phase | 16 included + 38 excluded | = 54 (matches Detmer 2025 count; Rogers 1982 reclassified from excluded to included; Roth 2013 moved to excluded) |
-| Expanded phase | 2 included + 31 excluded | = 33 (matches AI expansion count; Muller 2008 & Sutherland 2016 moved to excluded) |
+| Total CSV rows | 18 INCLUDED + 73 EXCLUDED | = 91 rows (matches CSV row count) |
+| Original phase rows | 18 INCLUDED + 36 EXCLUDED | = 54 rows from Detmer 2025 phase |
+| Expanded phase rows | 0 INCLUDED + 37 EXCLUDED | = 37 rows from AI expansion 2026 phase |
 | Studies to extraction | 17 original + 5 expanded | = 22 initially extracted |
 | After audit | 22 extracted - 4 removed (Ramos 2024, Muller 2008, Sutherland 2016, Roth 2013) | = 18 studies in final set |
 | Study-level effects | 18 studies | = k=18 effects |
-| Exclusion reasons sum | 16 + 11 + 7 + 7 + 6 + 5 + 6 + 4 + 4 + 2 + 1 | = 69 |
+| Exclusion reasons sum | 16 + 11 + 7 + 7 + 6 + 5 + 6 + 4 + 4 + 2 + 1 | = 69 unique excluded studies |
 
-**Note on audit removals:** Four studies were initially extracted but later removed after independent audit or overlap audit: Ramos et al. 2024 (invalid survival proxy -- RM prevalence, not whole-colony death), Muller et al. 2008 (imprecise survival counts, no size data, bleaching-confounded), Sutherland et al. 2016 (NOAA spatial overlap at EDR site + photostation design not suitable for individual-level tracking), and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colony data, confirmed from the paper's explicit citation and acknowledgments). Meanwhile, Rogers et al. 1982 was reclassified from "excluded -- fragment survival only" to "included" after re-evaluation showed it provides extractable annual survival data (173 labeled branches, 2 St. Croix sites, 11 months post-hurricane). In the screening CSV these four removed studies are coded as EXCLUDED, and Rogers 1982 is coded as INCLUDED. The final arithmetic (18 included + 69 excluded = 87) holds.
+### Reconciliation: 91 CSV rows vs. 85 unique papers vs. 69 excluded studies
+
+The screening CSV contains **91 data rows** (excluding header), but the flow diagram reports **85 unique papers assessed at full text**. The discrepancy arises from:
+
+1. **3 data repository entries** (NOAA_survey, USGS_USVI, Fundemar) -- screened separately from literature publications
+2. **1 duplicate row** (Gladfelter et al. 1978 appears twice, once under survival and once under growth)
+3. **2 extra Vardi entries** (Vardi 2011, Vardi et al. 2011, and Vardi et al. 2012 are three CSV rows representing the same body of work; counted as 1 unique study)
+
+Mapping: 91 rows - 3 data repos - 1 duplicate - 2 Vardi extras = **85 unique literature papers**. Of these 85, plus 3 data repos = 88 unique screening assessments, of which 18 are INCLUDED and 73 are EXCLUDED (in the CSV). The flow diagram reports 69 unique excluded studies because 4 of the 73 EXCLUDED CSV rows are duplicates/variants of the same source (Gladfelter x1, Vardi x2, plus the AI expansion phase re-assessed 4 studies already in the original search phase).
+
+**Note on audit removals:** Four studies were initially extracted but later removed after independent audit or overlap audit: Ramos et al. 2024 (invalid survival proxy -- RM prevalence, not whole-colony death), Muller et al. 2008 (imprecise survival counts, no size data, bleaching-confounded), Sutherland et al. 2016 (NOAA spatial overlap at EDR site + photostation design not suitable for individual-level tracking), and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colony data, confirmed from the paper's explicit citation and acknowledgments). Meanwhile, Rogers et al. 1982 was reclassified from "excluded -- fragment survival only" to "included" after re-evaluation showed it provides extractable annual survival data (173 labeled branches, 2 St. Croix sites, 11 months post-hurricane). In the screening CSV these four removed studies are coded as EXCLUDED, and Rogers 1982 is coded as INCLUDED.
 
 ---
 

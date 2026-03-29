@@ -7,6 +7,14 @@
 
 ---
 
+## Purpose and Framing
+
+The expanded AI-assisted screening served as a **completeness audit** of the original expert-led search (Detmer, Jun--Dec 2025). Raine Detmer's original compilation identified 52 studies through domain expertise, citation chaining, and data repository mining. The March 2026 expansion screened an additional 80 PDFs and 33 new candidate papers to verify that no extractable demographic data had been missed.
+
+The dual AI screening below was conducted on the 31 new candidate papers to assess screening reliability. **A human co-author should ratify the adjudication decisions documented in Section 6 before manuscript submission.**
+
+---
+
 ## 1. Method
 
 Thirty-one candidate papers identified during the expanded literature search (March 2026) were independently screened by two AI models against the same inclusion criteria:
@@ -72,22 +80,20 @@ All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/liter
 
 ---
 
-## 4. Cohen's Kappa
+## 4. Agreement Statistics
 
-**Observed agreement (p_o):** 22/31 = 0.710
+**Percent agreement:** 71% (22 of 31 papers). The two raters agreed on the disposition of 22 papers (all 22 were concordant EXCLUDE decisions). Nine papers had discordant decisions requiring adjudication.
 
-**Expected agreement by chance (p_e):**
-- P(Claude=INCLUDE) x P(Gemini=INCLUDE) = (3/31) x (6/31) = 0.0187
-- P(Claude=EXCLUDE) x P(Gemini=EXCLUDE) = (28/31) x (25/31) = 0.7285
-- p_e = 0.0187 + 0.7285 = 0.747
+**Cohen's kappa:** -0.148. The negative kappa is misleading and reflects the **kappa paradox** (Feinstein & Cicchetti, 1990), not genuine disagreement quality. See Section 5.1 below.
 
-**Cohen's kappa:**
+**Kappa calculation:**
 
-```
-kappa = (p_o - p_e) / (1 - p_e) = (0.710 - 0.747) / (1 - 0.747) = -0.148
-```
-
-**Interpretation (Landis & Koch, 1977):** Less than chance agreement (kappa < 0)
+- Observed agreement (p_o): 22/31 = 0.710
+- Expected agreement by chance (p_e):
+  - P(Claude=INCLUDE) x P(Gemini=INCLUDE) = (3/31) x (6/31) = 0.0187
+  - P(Claude=EXCLUDE) x P(Gemini=EXCLUDE) = (28/31) x (25/31) = 0.7285
+  - p_e = 0.0187 + 0.7285 = 0.747
+- kappa = (p_o - p_e) / (1 - p_e) = (0.710 - 0.747) / (1 - 0.747) = -0.148
 
 ---
 
@@ -110,7 +116,7 @@ Gemini included papers that Claude excluded for valid methodological reasons:
 - **Gladfelter 1982:** Claude excluded (white band disease description); Gemini saw 24 tracked colonies. The paper does describe colony fates but in the context of disease etiology, not a demographic study.
 - **Rogers et al. 1982:** Claude excluded (hurricane impact report); Gemini saw 100 tracked fragments. Fragment survival post-hurricane may qualify under a broad interpretation.
 - **Bythell et al. 1993 (Hugo):** Claude excluded (fixed transects, not individually tagged); Gemini saw before/after mortality data. Transect-based mortality may not meet the "individually tracked" criterion.
-- **Neely et al. 2022:** Claude excluded (geographic overlap with NOAA FL Keys monitoring); Gemini noted different institution (Nova Southeastern). The overlap concern is about site and colony identity, not institutional affiliation.
+- **Neely et al. 2022:** Claude originally excluded citing geographic overlap with NOAA FL Keys monitoring; Gemini noted different institution (Nova Southeastern). Subsequent detailed site comparison (see `overlap_analysis.md` Section 2.5) confirmed **no geographic overlap** -- all Neely sites are in Lower/Middle Keys, Biscayne NP, and Dry Tortugas, while all NOAA plots are in the Upper Keys. Excluded because the paper reports LAI trajectories, not whole-colony survival counts (n_initial, n_dead). Priority data request if raw data obtainable.
 - **Highsmith et al. 1980:** Claude excluded (fragments, not colonies); Gemini saw 412 tracked fragments with survival data. Fragment survival is included in the meta-analysis from other studies (e.g., Vardi 2011).
 
 **Category B: Claude included papers that Gemini excluded as NOAA overlap (2 papers)**
@@ -156,7 +162,7 @@ An independent third review (Claude Opus 4.6 reading each disputed PDF fresh, wi
 | Gladfelter 1982 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | WBD case-fatality (24 infected colonies selected); biased sample |
 | Rogers et al. 1982 | EXCLUDE | INCLUDE | **INCLUDE** | **INCLUDE** | 173 labeled branches tracked 11mo at 2 sites; comparable to existing fragment data |
 | Bythell et al. 1993 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | Chain transect cover data; cannot derive individual survival |
-| Neely et al. 2022 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | NOAA site overlap; uses NOAA protocols/funding; survival not extractable |
+| Neely et al. 2022 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | No NOAA site overlap (verified, see `overlap_analysis.md` Section 2.5), but survival not extractable from publication (reports LAI trajectories, not whole-colony survival counts). Priority data request. |
 | Highsmith et al. 1980 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | Cross-sectional (single survey); not longitudinal individual tracking |
 
 **Net changes to meta-analysis:**

@@ -1,0 +1,4 @@
+scenario,fragmentation_multiplier,lambda,difference_from_full,notes
+with_fragmentation,1,1.0007041799218819,0,"Full Vardi 2011 rates (13 rows, 1 study)"
+half_fragmentation,0.5,0.9635718990936236,-0.03713228082825826,50% of Vardi rates — tests sensitivity to single-study estimates
+without_fragmentation,0,0.9075418645070555,-0.09316231541482634,No fragmentation — survival and growth only

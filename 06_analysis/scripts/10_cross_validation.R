@@ -223,6 +223,21 @@ cat(sprintf("  Mean AUC: %.3f\n", mean(loso_results$auc, na.rm = TRUE)))
 cat(sprintf("  Mean ECE: %.4f\n", mean(loso_results$ece, na.rm = TRUE)))
 cat(sprintf("  Mean MCE: %.4f\n", mean(loso_results$mce, na.rm = TRUE)))
 
+# FIX: Weight LOSO-CV by held-out sample size (critique audit 2026-03-29)
+# Unweighted means give equal voice to each study regardless of size.
+# Sample-size-weighted means better reflect overall predictive performance.
+loso_valid <- loso_results %>% filter(!is.na(brier_score) & !is.na(n_test) & n_test > 0)
+if (nrow(loso_valid) > 0) {
+  loso_valid$weight <- loso_valid$n_test
+  weighted_brier <- weighted.mean(loso_valid$brier_score, loso_valid$weight)
+  weighted_auc <- weighted.mean(loso_valid$auc, loso_valid$weight, na.rm = TRUE)
+  weighted_logloss <- weighted.mean(loso_valid$log_loss, loso_valid$weight, na.rm = TRUE)
+  cat(sprintf("  Weighted mean Brier (by n_test): %.4f\n", weighted_brier))
+  cat(sprintf("  Weighted mean AUC (by n_test): %.4f\n", weighted_auc))
+  cat(sprintf("  Weighted mean log-loss (by n_test): %.4f\n", weighted_logloss))
+  cat("  NOTE: Weighted means account for unequal study sizes (NOAA = 78%% of data).\n")
+}
+
 # =============================================================================
 # 2. LEAVE-ONE-REGION-OUT CROSS-VALIDATION (LORO-CV)
 # =============================================================================
@@ -603,6 +618,14 @@ cv_performance_summary <- all_cv_results %>%
     mean_specificity = mean(specificity, na.rm = TRUE),
     mean_ece = mean(ece, na.rm = TRUE),
     mean_mce = mean(mce, na.rm = TRUE),
+    # FIX: Add sample-size-weighted means to CV summary (critique audit 2026-03-29)
+    weighted_mean_brier = if (all(is.na(n_test) | is.na(brier_score))) NA_real_
+                          else weighted.mean(brier_score[!is.na(brier_score)],
+                                             n_test[!is.na(brier_score)]),
+    weighted_mean_auc = if (all(is.na(n_test) | is.na(auc))) NA_real_
+                        else weighted.mean(auc[!is.na(auc)],
+                                           n_test[!is.na(auc)]),
+    total_n_test = sum(n_test, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   arrange(mean_brier)

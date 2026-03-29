@@ -33,8 +33,8 @@ This organization ensures every step from literature search to final analysis is
 
 | Finding | Value | Interpretation |
 |---------|-------|----------------|
-| **Population Growth Rate (λ)** | 1.001 | Near-stable (CI spans decline and growth) |
-| **Probability of Decline** | 65.1% | Uncertain population trajectory |
+| **Population Growth Rate (λ)** | 1.001 (CI: 0.863–1.035) | Deterministic λ near-stable; bootstrap 95% CI spans decline and growth |
+| **Probability of Decline** | 65.1% | Uncertain trajectory (1519 of 2000 bootstrap replicates valid) |
 | **Most Critical Parameter** | SC5 Stasis | Adult survival has 74.0% elasticity |
 | **Size-Survival R²** | 5.8% (GAM) | Size explains limited variance |
 | **Study Heterogeneity (I²)** | 96.4% | Extreme between-study variation |

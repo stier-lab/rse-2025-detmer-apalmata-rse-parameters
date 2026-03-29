@@ -32,6 +32,10 @@
 #   - 06_analysis/output/transition_matrix.rds
 #   - 06_analysis/output/population_parameters.csv
 #   - 06_analysis/output/elasticity_matrix.csv
+#   - 06_analysis/output/elasticity_bootstrap_ci.csv  (critique audit 2026-03-29)
+#   - 06_analysis/output/fecundity_sensitivity.csv
+#   - 06_analysis/output/fragmentation_scenarios.csv  (critique audit 2026-03-29)
+#   - 06_analysis/output/lambda_bootstrap_samples.rds (now includes imputed + discard approaches)
 #   - 06_analysis/figures/supplementary/exploratory/population_projections.png
 #
 # Author: Detmer & Stier Lab
@@ -327,12 +331,19 @@ cat(sprintf("\nSurvival vector (annualized): %s\n",
             paste(sprintf("%.3f", S), collapse = ", ")))
 
 # --- SC5 DATA CAVEAT ---
+# FIX: Enhanced SC5 single-study dependence warning (critique audit 2026-03-29)
 sc5_studies <- unique(surv_data$study[surv_data$size_class == "SC5"])
 sc5_n <- sum(surv_data$size_class == "SC5", na.rm = TRUE)
-cat(sprintf("\n  SC5 CAVEAT: %d observations from %d study(ies): %s\n",
+cat("\n")
+cat("╔═══════════════════════════════════════════════════════════════╗\n")
+cat("║  WARNING: SC5 SINGLE-STUDY DEPENDENCE                        ║\n")
+cat("╚═══════════════════════════════════════════════════════════════╝\n")
+cat(sprintf("WARNING: SC5 (>4000 cm2) survival estimated entirely from NOAA monitoring.\n"))
+cat(sprintf("  SC5 observations: %d from %d study(ies): %s\n",
             sc5_n, length(sc5_studies), paste(sc5_studies, collapse = ", ")))
 if (length(sc5_studies) == 1) {
   cat("  SC5 stasis (highest elasticity) is estimated from a SINGLE STUDY.\n")
+  cat("  SC5 stasis elasticity will be reported after elasticity analysis below.\n")
 }
 
 # =============================================================================
@@ -758,6 +769,20 @@ for (i in 1:5) {
 cat(sprintf("\nSummary: Survival elasticity total = %.4f, Fragmentation elasticity total = %.4f\n",
             sum(survival_elasticity), sum(frag_elasticity)))
 
+# FIX: Prominent SC5 single-study dependence warning with elasticity value (critique audit 2026-03-29)
+sc5_stasis_elasticity <- elasticity[5, 5]
+cat("\n")
+cat("╔═══════════════════════════════════════════════════════════════╗\n")
+cat("║  SC5 SINGLE-STUDY DEPENDENCE — ELASTICITY IMPACT             ║\n")
+cat("╚═══════════════════════════════════════════════════════════════╝\n")
+cat(sprintf("WARNING: SC5 (>4000 cm2) survival estimated entirely from NOAA monitoring.\n"))
+cat(sprintf("  SC5 stasis elasticity = %.1f%% of total — most influential vital rate from single source.\n",
+            sc5_stasis_elasticity * 100))
+cat(sprintf("  SC5 survival rate = %.3f (annualized), n = %d observations\n",
+            S["SC5"], sum(surv_data$size_class == "SC5", na.rm = TRUE)))
+cat("  NOAA uses conservative mortality definition (no tissue AND skeleton gone).\n")
+cat("  This single-source dependence is the greatest structural uncertainty in the model.\n")
+
 # =============================================================================
 # TRANSITION SAMPLE SIZE ASSESSMENT
 # =============================================================================
@@ -860,6 +885,16 @@ lambda_boot <- numeric(n_boot)
 boot_matrices <- list()  # Store bootstrap matrices for stochastic projection
 boot_failure_log <- list()  # Track bootstrap failure patterns
 
+# FIX: Track imputation vs discard for each bootstrap iteration (critique audit 2026-03-29)
+# Previously, ~24% of bootstrap iterations were discarded when a resampled study set
+# lacked data for a size class (typically SC5). Discarding biases the CI because it
+# conditions on having SC5 data, which is only available from NOAA. Instead, we now
+# impute missing size class survival from the full-data point estimate. We track both
+# approaches: lambda_boot stores the imputed version; lambda_boot_discard stores NA
+# for iterations that would have been discarded under the old approach.
+lambda_boot_discard <- numeric(n_boot)  # Old approach: NA for missing-SC iterations
+boot_imputed_flag <- logical(n_boot)    # TRUE if iteration required imputation
+
 set.seed(42)
 
 # Function to resample fragmentation data and recompute F_mat
@@ -907,6 +942,14 @@ cat(sprintf("  Survival studies: %d (%s)\n", length(surv_studies),
             paste(surv_studies, collapse = ", ")))
 cat(sprintf("  Growth studies: %d (%s)\n", length(growth_studies),
             paste(growth_studies, collapse = ", ")))
+
+# FIX: Initialize storage for bootstrapped elasticity distributions (critique audit 2026-03-29)
+boot_elast_SC5_stasis <- numeric(n_boot)
+boot_elast_SC4_stasis <- numeric(n_boot)
+boot_elast_SC3_stasis <- numeric(n_boot)
+boot_elast_SC5_to_SC4 <- numeric(n_boot)
+boot_elast_SC4_to_SC3 <- numeric(n_boot)
+boot_elast_frag_total <- numeric(n_boot)
 
 pb <- txtProgressBar(min = 0, max = n_boot, style = 3)
 
@@ -958,6 +1001,10 @@ for (b in 1:n_boot) {
 
   S_boot <- S_boot_df %>% pull(survival)
 
+  # FIX: Impute missing size classes from full-data estimate instead of discarding (critique audit 2026-03-29)
+  # When a resampled study set lacks a size class (typically SC5, which comes only from NOAA),
+  # we fill the missing survival from the full-data point estimate (S vector). This avoids
+  # conditioning the bootstrap CI on NOAA inclusion, which biased the original approach.
   if (length(S_boot) < 5) {
     missing_sc <- setdiff(size_class_labels, S_boot_df$size_class)
     boot_failure_log[[length(boot_failure_log) + 1]] <- data.frame(
@@ -966,8 +1013,22 @@ for (b in 1:n_boot) {
       studies_drawn = paste(surv_studies_boot, collapse = ","),
       stringsAsFactors = FALSE
     )
-    lambda_boot[b] <- NA
-    next
+
+    # OLD approach: discard this iteration
+    lambda_boot_discard[b] <- NA
+
+    # NEW approach: impute from full-data point estimate
+    boot_imputed_flag[b] <- TRUE
+    S_boot_full <- S  # Full-data survival vector (5 elements)
+    # Overwrite the size classes we DO have from the bootstrap
+    for (sc_row in 1:nrow(S_boot_df)) {
+      sc_idx <- which(size_class_labels == S_boot_df$size_class[sc_row])
+      S_boot_full[sc_idx] <- S_boot_df$survival[sc_row]
+    }
+    S_boot <- S_boot_full
+  } else {
+    lambda_boot_discard[b] <- NA  # Placeholder; will be filled below with actual lambda
+    boot_imputed_flag[b] <- FALSE
   }
 
   # STAGE 2 for growth: Resample colonies within each resampled study
@@ -990,6 +1051,7 @@ for (b in 1:n_boot) {
       stringsAsFactors = FALSE
     )
     lambda_boot[b] <- NA
+    lambda_boot_discard[b] <- NA
     next
   }
 
@@ -1016,8 +1078,36 @@ for (b in 1:n_boot) {
   A_boot <- G_boot %*% diag(S_boot) + F_mat_boot
 
   # Calculate λ and store matrix
-  lambda_boot[b] <- Re(eigen(A_boot)$values[1])
+  eigen_boot <- eigen(A_boot)
+  lambda_boot[b] <- Re(eigen_boot$values[1])
   boot_matrices[[b]] <- A_boot
+
+  # FIX: Compute bootstrapped elasticity for each iteration (critique audit 2026-03-29)
+  # Elasticity = (v %*% t(w)) * A / lambda, where v = left eigenvector, w = right eigenvector
+  w_boot <- Re(eigen_boot$vectors[, 1])
+  w_boot <- w_boot / sum(w_boot)
+  v_boot <- Re(eigen(t(A_boot))$vectors[, 1])
+  v_boot <- v_boot / v_boot[1]
+  vw_boot <- sum(v_boot * w_boot)
+  sens_boot <- outer(v_boot, w_boot) / vw_boot
+  elast_boot <- (A_boot / lambda_boot[b]) * sens_boot
+  # Store key elasticity elements
+  boot_elast_SC5_stasis[b] <- elast_boot[5, 5]
+  boot_elast_SC4_stasis[b] <- elast_boot[4, 4]
+  boot_elast_SC3_stasis[b] <- elast_boot[3, 3]
+  boot_elast_SC5_to_SC4[b] <- elast_boot[4, 5]  # SC5->SC4 shrinkage/fragmentation
+  boot_elast_SC4_to_SC3[b] <- elast_boot[3, 4]  # SC4->SC3 shrinkage/fragmentation
+  # Total fragmentation elasticity: sum of elements where F_mat > 0, proportionally attributed
+  surv_comp_boot <- G_boot %*% diag(S_boot)
+  frag_prop_boot <- ifelse(A_boot > 0, F_mat_boot / A_boot, 0)
+  boot_elast_frag_total[b] <- sum(frag_prop_boot * elast_boot)
+
+  # FIX: Store lambda for discard-approach comparison (critique audit 2026-03-29)
+  # If this iteration was NOT imputed, the discard approach would also have this lambda.
+  # If it WAS imputed (boot_imputed_flag[b] == TRUE), lambda_boot_discard[b] was already set to NA above.
+  if (!boot_imputed_flag[b]) {
+    lambda_boot_discard[b] <- lambda_boot[b]
+  }
 }
 
 close(pb)
@@ -1056,6 +1146,25 @@ if (length(boot_failure_log) > 0) {
   cat("\n✓ Saved: bootstrap_failure_analysis.csv (0 failures)\n")
 }
 
+# FIX: Report both imputation and discard approaches as sensitivity check (critique audit 2026-03-29)
+n_imputed <- sum(boot_imputed_flag, na.rm = TRUE)
+n_growth_failures <- sum(is.na(lambda_boot))  # Growth failures produce NA in BOTH approaches
+cat(sprintf("\n  Bootstrap imputation summary:\n"))
+cat(sprintf("    Iterations requiring survival imputation: %d of %d (%.1f%%)\n",
+            n_imputed, n_boot, n_imputed / n_boot * 100))
+cat(sprintf("    Growth data failures (discarded in both approaches): %d\n", n_growth_failures))
+
+# Discard-approach results (old behavior, for comparison)
+lambda_boot_discard_valid <- lambda_boot_discard[!is.na(lambda_boot_discard)]
+n_discard_valid <- length(lambda_boot_discard_valid)
+if (n_discard_valid > 30) {
+  cat(sprintf("\n  COMPARISON: Discard approach (old) vs Imputation approach (new):\n"))
+  cat(sprintf("    Discard: n=%d valid, lambda=%.4f (95%% CI: %.4f-%.4f)\n",
+              n_discard_valid, mean(lambda_boot_discard_valid),
+              quantile(lambda_boot_discard_valid, 0.025),
+              quantile(lambda_boot_discard_valid, 0.975)))
+}
+
 # Remove boot_matrices entries corresponding to NA lambda values
 boot_matrices <- boot_matrices[!is.na(lambda_boot)]
 
@@ -1076,7 +1185,7 @@ if (length(boot_matrices) > 30) {
   cat("\n✓ Saved: transition_matrix_bootstrap_ci.csv\n")
 }
 
-cat(sprintf("\n\nHierarchical Bootstrap results (n=%d valid iterations):\n", length(lambda_boot)))
+cat(sprintf("\n\nHierarchical Bootstrap results — IMPUTATION approach (n=%d valid iterations):\n", length(lambda_boot)))
 cat(sprintf("  λ mean: %.4f\n", mean(lambda_boot)))
 cat(sprintf("  λ median: %.4f\n", median(lambda_boot)))
 cat(sprintf("  λ SE: %.4f\n", sd(lambda_boot)))
@@ -1087,6 +1196,19 @@ cat(sprintf("  CV: %.1f%%\n", sd(lambda_boot) / mean(lambda_boot) * 100))
 # Probability of decline
 p_decline <- mean(lambda_boot < 1)
 cat(sprintf("\n  P(λ < 1) = P(decline): %.1f%%\n", p_decline * 100))
+
+# FIX: Report discard approach alongside for comparison (critique audit 2026-03-29)
+if (n_discard_valid > 30) {
+  p_decline_discard <- mean(lambda_boot_discard_valid < 1)
+  cat(sprintf("\n  --- Discard approach (old, for comparison) ---\n"))
+  cat(sprintf("  λ mean: %.4f, 95%% CI: [%.4f, %.4f], P(decline): %.1f%%\n",
+              mean(lambda_boot_discard_valid),
+              quantile(lambda_boot_discard_valid, 0.025),
+              quantile(lambda_boot_discard_valid, 0.975),
+              p_decline_discard * 100))
+  cat(sprintf("  n valid (discard): %d vs n valid (impute): %d\n",
+              n_discard_valid, length(lambda_boot)))
+}
 
 # Compare with simple bootstrap CI width
 simple_ci_width <- 0.030  # Approximate from previous simple bootstrap
@@ -1128,13 +1250,80 @@ if (n_surv_studies <= 3) {
 # Save bootstrap diagnostics
 boot_diag <- data.frame(
   metric = c("n_survival_studies", "n_growth_studies", "n_boot_total",
-             "n_boot_valid", "boot_failure_rate"),
+             "n_boot_valid", "boot_failure_rate", "n_imputed_iterations"),
   value = c(n_surv_studies, length(unique(growth_filtered$study)),
             n_boot_total, n_boot_valid,
-            (n_boot_total - n_boot_valid) / n_boot_total)
+            (n_boot_total - n_boot_valid) / n_boot_total,
+            n_imputed)
 )
 write_csv(boot_diag, file.path(output_dir, "lambda_bootstrap_diagnostics.csv"))
 cat("  Saved: lambda_bootstrap_diagnostics.csv\n")
+
+# FIX: Compute and save bootstrapped elasticity CIs (critique audit 2026-03-29)
+# Filter to valid iterations (non-NA lambda)
+valid_idx <- !is.na(lambda_boot)  # lambda_boot was already filtered above, but the elast vectors weren't
+# The valid_idx here refers to the ORIGINAL pre-filtered lambda_boot
+# Since lambda_boot has already been filtered to remove NAs, we need to use the stored boot_imputed_flag
+# Actually, lambda_boot was filtered in-place. The elasticity vectors are still length n_boot_total.
+# We need to filter them the same way.
+# Reconstruct valid indices: an iteration is valid if lambda_boot was not NA in the original vector
+# We stored lambda values in the vectors before filtering. Growth failures set lambda_boot[b] = NA.
+# After filtering, lambda_boot only has valid values. So we need to match.
+# Safest approach: use the indices where the elasticity values are non-zero or the iteration wasn't a growth failure.
+# Since growth failures also skip elasticity, those entries are 0. Let's use a mask.
+elast_valid_mask <- (boot_elast_SC5_stasis != 0) | (boot_elast_SC4_stasis != 0) | (boot_elast_SC3_stasis != 0)
+# Edge case: some iterations might legitimately have 0 elasticity (unlikely). Cross-check with growth failures.
+# Better: track which iterations actually ran. We know growth failures set lambda_boot[b] = NA before filtering.
+# The boot_imputed_flag is only set for survival imputation. Growth failures are separate.
+# We'll use: valid = not a growth failure. Growth failures have boot_elast_SC5_stasis == 0 AND boot_elast_SC4_stasis == 0.
+# This is safe because real elasticities for stasis are always > 0 for a viable population.
+
+if (sum(elast_valid_mask) > 30) {
+  elasticity_bootstrap_ci <- data.frame(
+    element = c("SC5_stasis", "SC4_stasis", "SC3_stasis",
+                "SC5_to_SC4", "SC4_to_SC3", "fragmentation_total"),
+    point_estimate = c(elasticity[5,5], elasticity[4,4], elasticity[3,3],
+                       elasticity[4,5], elasticity[3,4], e_frag),
+    boot_mean = c(mean(boot_elast_SC5_stasis[elast_valid_mask]),
+                  mean(boot_elast_SC4_stasis[elast_valid_mask]),
+                  mean(boot_elast_SC3_stasis[elast_valid_mask]),
+                  mean(boot_elast_SC5_to_SC4[elast_valid_mask]),
+                  mean(boot_elast_SC4_to_SC3[elast_valid_mask]),
+                  mean(boot_elast_frag_total[elast_valid_mask])),
+    ci_lower = c(quantile(boot_elast_SC5_stasis[elast_valid_mask], 0.025),
+                 quantile(boot_elast_SC4_stasis[elast_valid_mask], 0.025),
+                 quantile(boot_elast_SC3_stasis[elast_valid_mask], 0.025),
+                 quantile(boot_elast_SC5_to_SC4[elast_valid_mask], 0.025),
+                 quantile(boot_elast_SC4_to_SC3[elast_valid_mask], 0.025),
+                 quantile(boot_elast_frag_total[elast_valid_mask], 0.025)),
+    ci_upper = c(quantile(boot_elast_SC5_stasis[elast_valid_mask], 0.975),
+                 quantile(boot_elast_SC4_stasis[elast_valid_mask], 0.975),
+                 quantile(boot_elast_SC3_stasis[elast_valid_mask], 0.975),
+                 quantile(boot_elast_SC5_to_SC4[elast_valid_mask], 0.975),
+                 quantile(boot_elast_SC4_to_SC3[elast_valid_mask], 0.975),
+                 quantile(boot_elast_frag_total[elast_valid_mask], 0.975)),
+    boot_sd = c(sd(boot_elast_SC5_stasis[elast_valid_mask]),
+                sd(boot_elast_SC4_stasis[elast_valid_mask]),
+                sd(boot_elast_SC3_stasis[elast_valid_mask]),
+                sd(boot_elast_SC5_to_SC4[elast_valid_mask]),
+                sd(boot_elast_SC4_to_SC3[elast_valid_mask]),
+                sd(boot_elast_frag_total[elast_valid_mask])),
+    n_valid = sum(elast_valid_mask)
+  )
+  write_csv(elasticity_bootstrap_ci, file.path(output_dir, "elasticity_bootstrap_ci.csv"))
+  cat("\n✓ Saved: elasticity_bootstrap_ci.csv\n")
+
+  cat("\nBootstrapped elasticity 95% CIs:\n")
+  for (i in 1:nrow(elasticity_bootstrap_ci)) {
+    cat(sprintf("  %s: %.4f (95%% CI: %.4f-%.4f)\n",
+                elasticity_bootstrap_ci$element[i],
+                elasticity_bootstrap_ci$point_estimate[i],
+                elasticity_bootstrap_ci$ci_lower[i],
+                elasticity_bootstrap_ci$ci_upper[i]))
+  }
+} else {
+  cat("\n  WARNING: Insufficient valid bootstrap iterations for elasticity CIs.\n")
+}
 
 # =============================================================================
 # 10. POPULATION PROJECTIONS
@@ -1362,19 +1551,26 @@ cat(sprintf("  Deterministic lambda: %.4f\n", lambda))
 
 cat("\n")
 cat("═══════════════════════════════════════════════════════════════\n")
-cat("  FRAGMENTATION-REMOVED SENSITIVITY\n")
+cat("  FRAGMENTATION SCENARIO BRACKETING\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
 
-# Compute lambda without fragmentation contributions
-# A = G %*% diag(S) + F_mat → A_no_frag = G %*% diag(S)
+# FIX: Added three-scenario bracketing for fragmentation sensitivity (critique audit 2026-03-29)
+# Scenario 1: With full fragmentation (current Vardi 2011 rates)
+# Scenario 2: Without fragmentation (F_mat = 0)
+# Scenario 3: With fragmentation x 0.5 (50% of Vardi rates — tests sensitivity to Vardi's specific estimates)
 A_no_frag <- G %*% diag(S)
 lambda_no_frag <- Re(eigen(A_no_frag)$values[1])
 
-cat(sprintf("Lambda with fragmentation: %.4f\n", lambda))
-cat(sprintf("Lambda without fragmentation: %.4f\n", lambda_no_frag))
-cat(sprintf("Difference: %.4f (fragmentation contributes %.1f%% to lambda)\n",
+A_half_frag <- G %*% diag(S) + F_mat * 0.5
+lambda_half_frag <- Re(eigen(A_half_frag)$values[1])
+
+cat(sprintf("Lambda with full fragmentation (Vardi 2011): %.4f\n", lambda))
+cat(sprintf("Lambda with 50%% fragmentation:               %.4f\n", lambda_half_frag))
+cat(sprintf("Lambda without fragmentation:                 %.4f\n", lambda_no_frag))
+cat(sprintf("Full frag contribution: %.4f (%.1f%% of lambda)\n",
             lambda - lambda_no_frag, (lambda - lambda_no_frag) / lambda * 100))
 
+# Save both the old file (for backward compatibility) and the new scenarios file
 frag_sensitivity <- data.frame(
   scenario = c("with_fragmentation", "without_fragmentation"),
   lambda = c(lambda, lambda_no_frag),
@@ -1384,9 +1580,23 @@ frag_sensitivity <- data.frame(
 write_csv(frag_sensitivity, file.path(output_dir, "fragmentation_sensitivity.csv"))
 cat("✓ Saved: fragmentation_sensitivity.csv\n")
 
+# FIX: New three-scenario output (critique audit 2026-03-29)
+frag_scenarios <- data.frame(
+  scenario = c("with_fragmentation", "half_fragmentation", "without_fragmentation"),
+  fragmentation_multiplier = c(1.0, 0.5, 0.0),
+  lambda = c(lambda, lambda_half_frag, lambda_no_frag),
+  difference_from_full = c(0, lambda_half_frag - lambda, lambda_no_frag - lambda),
+  notes = c("Full Vardi 2011 rates (13 rows, 1 study)",
+            "50% of Vardi rates — tests sensitivity to single-study estimates",
+            "No fragmentation — survival and growth only")
+)
+write_csv(frag_scenarios, file.path(output_dir, "fragmentation_scenarios.csv"))
+cat("✓ Saved: fragmentation_scenarios.csv\n")
+
 cat("\n  *** FRAGMENTATION DATA DEPENDENCY ***\n")
 cat("  All fragmentation data: Vardi 2011 (13 rows, 3 regions, 2007-2011)\n")
 cat(sprintf("  Lambda WITH fragmentation:    %.4f\n", lambda))
+cat(sprintf("  Lambda at 50%% fragmentation:  %.4f\n", lambda_half_frag))
 cat(sprintf("  Lambda WITHOUT fragmentation: %.4f\n", lambda_no_frag))
 cat(sprintf("  Fragmentation contribution:   %.4f (%.1f%% of lambda)\n",
             lambda - lambda_no_frag, (lambda - lambda_no_frag) / lambda * 100))
@@ -1395,15 +1605,21 @@ cat("  data from a single study with limited temporal and spatial scope.\n")
 
 # =============================================================================
 # SENSITIVITY: SEXUAL REPRODUCTION (FECUNDITY) TERM
+# FIX: Made more prominent with additional scenarios and minimum fecundity
+# calculation for lambda > 1 (critique audit 2026-03-29)
 # =============================================================================
 cat("\n")
-cat("===================================================================\n")
-cat("  SENSITIVITY: EFFECT OF ADDING SEXUAL REPRODUCTION\n")
-cat("===================================================================\n\n")
-cat("  Current matrix has NO sexual reproduction (fecundity = 0).\n")
-cat("  Testing sensitivity to small fecundity terms:\n\n")
+cat("╔═══════════════════════════════════════════════════════════════╗\n")
+cat("║  CRITICAL: FECUNDITY SENSITIVITY ANALYSIS                    ║\n")
+cat("║  The current model has ZERO sexual reproduction.             ║\n")
+cat("╚═══════════════════════════════════════════════════════════════╝\n\n")
 
-fecundity_values <- c(0, 0.001, 0.005, 0.01, 0.05, 0.1)
+# FIX: Expanded fecundity scenarios (critique audit 2026-03-29)
+# The current model has zero sexual reproduction. Lambda = [X] without fecundity.
+# Testing: what fecundity is needed for lambda > 1?
+cat(sprintf("  The current model has zero sexual reproduction. Lambda = %.4f without fecundity.\n\n", lambda))
+
+fecundity_values <- c(0, 0.001, 0.01, 0.05, 0.10)
 fecundity_sensitivity <- data.frame(
   fecundity_per_adult = fecundity_values,
   lambda = NA_real_
@@ -1428,21 +1644,56 @@ for (i in 1:nrow(fecundity_sensitivity)) {
               fecundity_sensitivity$change[i]))
 }
 
+# FIX: Calculate minimum fecundity for lambda > 1 via bisection (critique audit 2026-03-29)
+# Bisection search: find the fecundity value where lambda crosses 1.0
+f_low <- 0
+f_high <- 1.0
+for (bisect_iter in 1:50) {
+  f_mid <- (f_low + f_high) / 2
+  A_test <- A
+  A_test[1, 4] <- A_test[1, 4] + f_mid
+  A_test[1, 5] <- A_test[1, 5] + f_mid
+  lambda_test <- Re(eigen(A_test)$values[1])
+  if (lambda_test > 1.0) {
+    f_high <- f_mid
+  } else {
+    f_low <- f_mid
+  }
+}
+min_fecundity_for_growth <- (f_low + f_high) / 2
+cat(sprintf("\n  The minimum fecundity needed for lambda > 1 is %.4f recruits per SC4/SC5 adult per year.\n",
+            min_fecundity_for_growth))
+fecundity_sensitivity$min_fecundity_for_lambda_gt_1 <- min_fecundity_for_growth
+
 write_csv(fecundity_sensitivity, file.path(output_dir, "fecundity_sensitivity.csv"))
-cat("\n  Saved: fecundity_sensitivity.csv\n")
-cat("  NOTE: Lambda = 0.986 assumes zero sexual recruitment.\n")
-cat("  Even modest fecundity can shift lambda above 1.0.\n")
+cat("  Saved: fecundity_sensitivity.csv\n")
+cat(sprintf("\n  SUMMARY: Lambda = %.4f assumes zero sexual recruitment.\n", lambda))
+cat(sprintf("  Even fecundity of %.4f recruits/adult/year would push lambda above 1.0.\n",
+            min_fecundity_for_growth))
+cat("  The absence of sexual reproduction in this model is a critical assumption.\n")
 
 # =============================================================================
-# STOCHASTIC LAMBDA APPROXIMATION (Tuljapurkar 1990)
+# TULJAPURKAR APPROXIMATION USING BETWEEN-STUDY VARIANCE
+# FIX: Renamed from "stochastic lambda" to avoid implying true environmental
+# stochasticity. This uses between-study variance as a proxy for environmental
+# variance, which overestimates stochasticity because it includes methodological
+# heterogeneity (different mortality definitions, measurement methods, regions,
+# time periods). (critique audit 2026-03-29)
 # =============================================================================
 cat("\n")
 cat("===================================================================\n")
-cat("  STOCHASTIC LAMBDA APPROXIMATION (Tuljapurkar 1990)\n")
+cat("  TULJAPURKAR APPROXIMATION (between-study variance proxy)\n")
 cat("===================================================================\n\n")
 
+# FIX: Clarified labeling (critique audit 2026-03-29)
+# This uses between-study variance as a proxy for environmental variance,
+# which overestimates stochasticity because it includes methodological
+# heterogeneity (different mortality definitions, measurement methods,
+# regions, time periods, etc.).
 cat("  Deterministic lambda overestimates stochastic growth rate.\n")
-cat("  Using between-study variance as upper bound on environmental variance.\n\n")
+cat("  Using between-study variance as upper bound on environmental variance.\n")
+cat("  CAVEAT: This overestimates stochasticity because between-study variance\n")
+cat("  includes methodological heterogeneity, not just environmental variation.\n\n")
 
 # Load LOSO study-specific lambdas (from script 16) if not already loaded
 # NOTE: sensitivity_lambda_loo.csv is produced by script 16, which runs AFTER
@@ -1481,12 +1732,18 @@ if (exists("loso_results") && !is.null(loso_results) && "lambda" %in% names(loso
     cat("  This estimate is an upper bound on the stochastic correction.\n")
 
     # Save
+    # FIX: Renamed metrics to clarify this is NOT true environmental stochasticity (critique audit 2026-03-29)
     stoch_results <- data.frame(
-      metric = c("lambda_deterministic", "lambda_stochastic_approx",
+      metric = c("lambda_deterministic", "lambda_tuljapurkar_between_study_variance",
                  "var_log_lambda_loso", "tuljapurkar_correction",
                  "n_loso_lambdas"),
       value = c(lambda, lambda_stoch, sigma2_log_lambda,
-                sigma2_log_lambda / 2, length(loso_lambdas))
+                sigma2_log_lambda / 2, length(loso_lambdas)),
+      notes = c("Dominant eigenvalue of point-estimate matrix",
+                "Tuljapurkar approx using LOSO variance as proxy; overestimates stochastic correction",
+                "Variance of log(lambda) across LOSO study exclusions",
+                "sigma^2 / 2 correction term",
+                "Number of LOSO lambda values used")
     )
     write_csv(stoch_results, file.path(output_dir, "stochastic_lambda_estimate.csv"))
     cat("  Saved: stochastic_lambda_estimate.csv\n")
@@ -1534,7 +1791,10 @@ results <- list(
   fragmentation_elasticity = frag_elasticity,
   survival_by_class = survival_by_class,
   size_class_breaks = size_class_breaks,
-  size_class_labels = size_class_labels
+  size_class_labels = size_class_labels,
+  # FIX: Added fragmentation scenario lambdas (critique audit 2026-03-29)
+  lambda_no_frag = lambda_no_frag,
+  lambda_half_frag = lambda_half_frag
 )
 saveRDS(results, file.path(output_dir, "transition_matrix.rds"))
 cat("✓ Saved: transition_matrix.rds\n")
@@ -1635,8 +1895,22 @@ write.csv(stochastic_projection_df, file.path(output_dir, "stochastic_projection
 cat("✓ Saved: stochastic_projections.csv\n")
 
 # Bootstrap samples for downstream analysis
+# FIX: Save imputed lambda vector as primary (backward-compatible format) (critique audit 2026-03-29)
+# Downstream scripts (22_fig6_population_model.R, 23_verification.R) expect a numeric vector.
 saveRDS(lambda_boot, file.path(output_dir, "lambda_bootstrap_samples.rds"))
-cat("✓ Saved: lambda_bootstrap_samples.rds\n")
+cat("✓ Saved: lambda_bootstrap_samples.rds (imputed approach, backward-compatible numeric vector)\n")
+
+# FIX: Also save detailed bootstrap comparison for auditing (critique audit 2026-03-29)
+bootstrap_comparison <- list(
+  lambda_boot_imputed = lambda_boot,           # Primary: missing SCs imputed from full-data
+  lambda_boot_discard = lambda_boot_discard_valid,  # Comparison: iterations with missing SCs discarded
+  boot_imputed_flag = boot_imputed_flag,       # Which iterations required imputation (length = n_boot_total)
+  n_imputed = n_imputed,
+  n_discard_valid = n_discard_valid,
+  n_total = n_boot_total
+)
+saveRDS(bootstrap_comparison, file.path(output_dir, "lambda_bootstrap_comparison.rds"))
+cat("✓ Saved: lambda_bootstrap_comparison.rds (imputed vs discard approaches for auditing)\n")
 
 # =============================================================================
 # 12. VISUALIZATIONS
@@ -1735,7 +2009,7 @@ cat(sprintf("POPULATION GROWTH RATE:\n"))
 cat(sprintf("  Deterministic λ = %.4f (95%% CI: %.4f-%.4f)\n",
             lambda, quantile(lambda_boot, 0.025), quantile(lambda_boot, 0.975)))
 cat(sprintf("  Bias-corrected CI: [%.4f, %.4f]\n", lambda_ci_bc[1], lambda_ci_bc[2]))
-cat(sprintf("  Stochastic λ = %.4f (95%% CI: %.4f-%.4f)\n",
+cat(sprintf("  Parametric uncertainty λ = %.4f (95%% CI: %.4f-%.4f)  [NOT environmental stochasticity]\n",
             stochastic_lambda, stochastic_lambda_ci[1], stochastic_lambda_ci[2]))
 cat(sprintf("  Annual change: %.1f%%\n", (lambda - 1) * 100))
 cat(sprintf("  P(decline): %.0f%%\n\n", p_decline * 100))

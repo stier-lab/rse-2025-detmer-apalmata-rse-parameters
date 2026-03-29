@@ -1,27 +1,31 @@
 statistic,value
-Number of studies (k),18
-Total observations (N),6480
-Tier 1 studies,5
-Tier 2 studies,13
-Natural colony studies,7
-Restoration fragment studies,11
-Pooled survival (RE),0.792
-95% CI lower,0.706
-95% CI upper,0.857
-95% PI lower,0.389
-95% PI upper,0.958
-tau^2,0.6690
-tau,0.8179
-I^2 (%),96.4
-I^2 CI lower,93.0
-I^2 CI upper,98.7
-Cochran's Q,615.29
-Q df,17
+Number of studies (k),16
+Number of effects,20
+Total observations (N),6560
+Tier 1 effects,7
+Tier 2 effects,13
+Natural colony effects,9
+Restoration fragment effects,11
+Primary model,Three-level rma.mv()
+Pooled survival (RE),0.784
+95% CI lower,0.699
+95% CI upper,0.850
+95% PI lower,0.390
+95% PI upper,0.954
+tau^2 (total),0.6457
+tau^2 (between-study),0.3883
+tau^2 (within-study),0.2574
+tau,0.8035
+I^2 (%) [independent model],96.4
+I^2 CI lower,93.3
+I^2 CI upper,98.6
+Cochran's Q,578.38
+Q df,19
 Q p-value,0.0000
 REML estimation method,REML
-Small-sample adjustment,Knapp-Hartung (test='knha')
-MDD SE (log-odds),0.4541
-"MDD (log-odds, 80% power)",1.3552
-"MDD (probability scale, pp)",22.3
-Observed difference (pp),7.5
+Small-sample adjustment,t-test (three-level) / Knapp-Hartung (independent)
+MDD SE (log-odds),0.4112
+"MDD (log-odds, 80% power)",1.2184
+"MDD (probability scale, pp)",20.6
+Observed difference (pp),8.5
 MDD power interpretation,UNDERPOWERED to detect observed difference

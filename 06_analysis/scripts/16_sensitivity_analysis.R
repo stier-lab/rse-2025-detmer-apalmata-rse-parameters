@@ -1075,6 +1075,52 @@ if (exists("transition_results") && !is.null(transition_results$fragmentation)) 
 }
 
 # =============================================================================
+# 9B. FRAGMENTATION SCENARIO BRACKETING
+# FIX: Three-scenario bracketing to test sensitivity to Vardi 2011 (critique audit 2026-03-29)
+# =============================================================================
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  FRAGMENTATION SCENARIO BRACKETING\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+if (exists("transition_results") && !is.null(transition_results$fragmentation)) {
+  F_base <- transition_results$fragmentation
+  G_base <- transition_results$growth_transitions
+  S_base <- transition_results$survival_rates
+  lambda_base <- transition_results$lambda
+
+  # Scenario 1: Full fragmentation (Vardi 2011 rates)
+  # Already computed as lambda_base
+
+  # Scenario 2: No fragmentation
+  A_no_frag <- G_base %*% diag(S_base)
+  lambda_no_frag <- Re(eigen(A_no_frag)$values[1])
+
+  # Scenario 3: 50% of Vardi rates
+  A_half_frag <- G_base %*% diag(S_base) + F_base * 0.5
+  lambda_half_frag <- Re(eigen(A_half_frag)$values[1])
+
+  cat(sprintf("  With full fragmentation (Vardi 2011):  lambda = %.4f\n", lambda_base))
+  cat(sprintf("  With 50%% fragmentation:                lambda = %.4f\n", lambda_half_frag))
+  cat(sprintf("  Without fragmentation:                  lambda = %.4f\n", lambda_no_frag))
+
+  frag_scenarios <- data.frame(
+    scenario = c("with_fragmentation", "half_fragmentation", "without_fragmentation"),
+    fragmentation_multiplier = c(1.0, 0.5, 0.0),
+    lambda = c(lambda_base, lambda_half_frag, lambda_no_frag),
+    difference_from_full = c(0, lambda_half_frag - lambda_base, lambda_no_frag - lambda_base),
+    notes = c("Full Vardi 2011 rates (13 rows, 1 study)",
+              "50% of Vardi rates — tests sensitivity to single-study estimates",
+              "No fragmentation — survival and growth only")
+  )
+  write_csv(frag_scenarios, file.path(output_dir, "fragmentation_scenarios.csv"))
+  cat("  Saved: fragmentation_scenarios.csv\n")
+} else {
+  cat("  SKIPPED: transition_matrix.rds not loaded\n")
+}
+
+# =============================================================================
 # 10. BOOTSTRAP FAILURE CHARACTERIZATION
 # =============================================================================
 

@@ -4,31 +4,37 @@
 # Two-Tier Meta-Analysis: Individual + Summary Data Studies
 #
 # PURPOSE: Expand the meta-analysis from k=5 (individual-level data only) to
-#   k=16 by incorporating summary-level survival data from additional published
-#   studies. This addresses three critical limitations of the Tier 1 analysis:
-#     1. k=1 natural colony study (NOAA only) -- now k=6 with Vardi & Roth & Garrison
-#     2. Meta-regression underpowered (k<10) -- now k=16
+#   ~20 effects by incorporating summary-level survival data from additional
+#   published studies. NOAA and Vardi are split by region for symmetry.
+#   This addresses three critical limitations of the Tier 1 analysis:
+#     1. k=1 natural colony study (NOAA only) -- now multiple natural effects
+#     2. Meta-regression underpowered (k<10) -- now defensible sample sizes
 #     3. Limited geographic scope -- now 9-10 Caribbean regions
 #
 # DESIGN:
-#   Tier 1 = 5 studies with individual-level data (from script 14)
-#   Tier 2 = 12 study-level effects (10 studies; Vardi 2011 split into 3 regions)
-#   Combined = 17+ study-level effects for expanded meta-analysis
+#   Tier 1 = individual-level data studies (from script 14), with NOAA split
+#            into Florida Keys, Curacao, Navassa as separate regional effects
+#   Tier 2 = study-level effects from summary data (Vardi 2011 split into 3 regions)
+#   Combined = all effects analyzed with three-level rma.mv() as PRIMARY model
 #
 # KEY METHODOLOGICAL CHOICES:
-#   - Summary studies are aggregated to one effect per study (or per study-region
-#     for Vardi 2011, which spans 3 geographically distinct regions)
-#   - Non-annual survival is annualized assuming constant hazard:
+#   - PRIMARY MODEL: Three-level rma.mv(~1 | study_id / study) accounts for
+#     within-study correlation when studies contribute multiple regional effects
+#     (NOAA: 3 regions; Vardi 2011: 3 regions). Standard rma() is a sensitivity check.
+#   - NOAA split by region for symmetry with Vardi 2011 treatment
+#   - Summary studies aggregated to one effect per study (except multi-region studies)
+#   - Non-annual survival annualized assuming constant hazard:
 #       surv_annual = surv_raw^(1/time_interval_yr)
 #   - n_initial-weighted means used for within-study aggregation
 #   - Excluded: fundemar_recruits (post-settlement, 0.006 cm^2),
 #     chamberland_et_al_2015 (recruits), mendoza_quiroz_et_al_2023 summary
 #     (lab recruits), papke_et_al_2021 (micro-fragments, lab/nursery)
 #   - Effect size: PLO (proportional log-odds) with Haldane correction
-#   - Estimation: REML with Knapp-Hartung adjustment (test="knha")
+#   - Estimation: REML; three-level model with t-test; independent model with
+#     Knapp-Hartung adjustment (test="knha")
 #
 # OUTPUTS:
-#   CSVs: expanded_meta_analysis_*.csv (7 files)
+#   CSVs: expanded_meta_analysis_*.csv (10 files)
 #   Figures: 06_analysis/figures/supplementary/meta_analysis/expanded_*.png/pdf
 #
 # Author: Detmer & Stier Lab
@@ -79,26 +85,40 @@ cat(sprintf("  Loaded %d Tier 1 studies from individual-level data\n", nrow(tier
 cat(sprintf("  Studies: %s\n", paste(tier1$study, collapse = ", ")))
 cat(sprintf("  Total N (Tier 1): %d\n\n", sum(tier1$n)))
 
-# Standardize Tier 1 columns for merging
-# NOTE: Tier 1 survival_rate is a raw proportion pooled across all survey years
-# (e.g., NOAA pools 2004-2024 without per-interval annualization).
-# Tier 2 rates are annualized via surv^(1/interval_yr). This inconsistency
-# is a known limitation — most Tier 1 studies use ~1-year intervals except NOAA.
-# We need: study, region, n_total, n_survived, survival_rate, mean_size_cm2,
-#           population_type, survey_yr, fragment, data_tier
-tier1_std <- tier1 %>%
+# ===========================================================================
+# FIX: Document Tier 1/Tier 2 annualization inconsistency (critique audit 2026-03-29)
+#
+# IMPORTANT: Tier 1 survival_rate is a RAW POOLED PROPORTION computed across all
+# survey intervals (e.g., NOAA pools 2004-2024). The individual observations have
+# variable-length intervals, but the study-level survival_rate = n_survived / n_total
+# does NOT annualize per interval. In contrast, Tier 2 rates are annualized via
+# S_annual = S_raw^(1/t) assuming a constant-hazard (exponential) model.
+#
+# Expected direction of bias: Most Tier 1 intervals are approximately annual
+# (median ~1 year), so bias is small. However, NOAA includes some multi-year
+# intervals. For intervals >1 year, the raw proportion UNDERESTIMATES annual
+# survival (a colony surviving 2 years at 90%/yr has a 2-year survival of 81%,
+# but the raw rate treats 81% as if it were a 1-year rate). For intervals <1 year,
+# the raw proportion OVERESTIMATES annual survival. The net direction depends on
+# the interval distribution, but the bias is expected to be modest given that
+# most intervals cluster near 1 year.
+# ===========================================================================
 
+# FIX: Split NOAA by region (critique audit 2026-03-29)
+# Previously NOAA was collapsed into a single effect, while Vardi 2011 was split
+# into 3 regional effects. This was asymmetric. NOAA spans Florida Keys, Curacao,
+# and Navassa — three geographically distinct Caribbean regions with different
+# environmental conditions. We now split NOAA into separate regional effects,
+# consistent with the Vardi treatment.
+
+# First, separate NOAA from non-NOAA Tier 1 studies
+tier1_non_noaa <- tier1 %>%
+  filter(study != "NOAA_survey") %>%
   transmute(
     study = study,
-    # Fix NOAA region: it spans FL/Curacao/Navassa, first() picks alphabetically
-    # NOAA spans FL/Curacao/Navassa; assign "Florida" because the plurality
-    # of NOAA observations originate from Florida reef tract sites.
-    region = case_when(
-      study == "NOAA_survey" ~ "Florida",
-      TRUE ~ region
-    ),
+    region = region,
     n_total = n_total,
-    n_first_census = n_total,  # Tier 1: not aggregated across years, so n_first_census = n_total
+    n_first_census = n_total,
     n_survived = n_survived,
     survival_rate = survival_rate,
     mean_size_cm2 = mean_size_cm2,
@@ -107,6 +127,44 @@ tier1_std <- tier1 %>%
     fragment = ifelse(population_type == "Natural colony", "N", "Y"),
     data_tier = "Tier 1 (individual)"
   )
+
+# Split NOAA into regional effects using the individual-level data
+# We need the raw individual data to compute per-region statistics
+surv_ind <- read_csv(file.path(get_project_root(), "05_data/standardized", "apal_surv_ind.csv"),
+                     show_col_types = FALSE)
+
+noaa_ind <- surv_ind %>% filter(study == "NOAA_survey")
+
+noaa_by_region <- noaa_ind %>%
+  group_by(region) %>%
+  summarise(
+    study = paste0("NOAA_survey_", tolower(gsub(" ", "_", first(region)))),
+    n_total = n(),
+    n_first_census = n(),
+    n_survived = sum(survived),
+    survival_rate = mean(survived),
+    mean_size_cm2 = mean(size_cm2, na.rm = TRUE),
+    population_type = "Natural colony",
+    survey_yr = max(survey_yr, na.rm = TRUE),
+    fragment = "N",
+    data_tier = "Tier 1 (individual)",
+    .groups = "drop"
+  )
+
+cat(sprintf("  Split NOAA into %d regional effects:\n", nrow(noaa_by_region)))
+for (i in 1:nrow(noaa_by_region)) {
+  cat(sprintf("    %s: n=%d, surv=%.1f%%\n",
+              noaa_by_region$study[i], noaa_by_region$n_total[i],
+              noaa_by_region$survival_rate[i] * 100))
+}
+
+# Standardize column names for NOAA regional effects
+noaa_std <- noaa_by_region %>%
+  select(study, region, n_total, n_first_census, n_survived, survival_rate,
+         mean_size_cm2, population_type, survey_yr, fragment, data_tier)
+
+# Combine non-NOAA Tier 1 + NOAA regional effects
+tier1_std <- bind_rows(tier1_non_noaa, noaa_std)
 
 # ==============================================================================
 # SECTION 2: PROCESS SUMMARY DATA INTO STUDY-LEVEL EFFECTS
@@ -590,9 +648,19 @@ if (nrow(rogers_1982) > 0) {
       survival_rate = weighted.mean(surv_annual, n_initial, na.rm = TRUE),
       n_survived = round(survival_rate * n_total),
       mean_size_cm2 = NA_real_,
-      population_type = "Natural colony",  # storm-damaged branches, not outplants
+      # FIX: Rogers 1982 fragment/population_type inconsistency (critique audit 2026-03-29)
+      # Rogers et al. 1982 tracked storm-generated fragments of natural colonies
+      # (hurricane-broken branches), NOT restoration outplants. These are classified
+      # as "Natural colony" for the moderator analysis because they originate from
+      # natural populations, even though they are technically fragments. The fragment
+      # flag is set to "Y" to indicate their physical form. In the moderator analysis,
+      # they are grouped with natural colonies (the biological origin matters more
+      # than the physical state for survival comparisons). This is analogous to
+      # Vardi 2011, which also tracked naturally-occurring colonies with fragmentation
+      # events and is classified as "Natural colony".
+      population_type = "Natural colony",
       survey_yr = 1980,
-      fragment = "Y",  # these are storm-generated fragments/broken branches
+      fragment = "Y",  # storm-generated fragments (not outplants)
       data_tier = "Tier 2 (summary) [AI_EXTRACTED]"
     ) %>%
     mutate(
@@ -656,13 +724,20 @@ combined_es <- combined_es %>%
     var_log_odds = as.numeric(vi),
     se_log_odds = sqrt(var_log_odds),
     surv_lower = plogis(log_odds - 1.96 * se_log_odds),
-    surv_upper = plogis(log_odds + 1.96 * se_log_odds)
+    surv_upper = plogis(log_odds + 1.96 * se_log_odds),
+    # FIX: study_id maps regional effects back to parent study (critique audit 2026-03-29)
+    # Needed for three-level model and for reporting k studies vs k effects
+    study_id = case_when(
+      grepl("^vardi_2011_", study) ~ "vardi_2011",
+      grepl("^NOAA_survey_", study) ~ "NOAA_survey",
+      TRUE ~ study
+    )
   )
 
 cat("\n  Study-level effect sizes (expanded):\n")
 combined_es %>%
   as.data.frame() %>%
-  select(study, region, data_tier, population_type, n_total, survival_rate,
+  select(study, study_id, region, data_tier, population_type, n_total, survival_rate,
          log_odds, se_log_odds) %>%
   mutate(
     survival_rate = sprintf("%.1f%%", survival_rate * 100),
@@ -672,7 +747,9 @@ combined_es %>%
   print()
 
 k_expanded <- nrow(combined_es)
-cat(sprintf("\n  === EXPANDED META-ANALYSIS WITH k = %d STUDIES ===\n", k_expanded))
+k_studies <- n_distinct(combined_es$study_id)  # FIX: count unique parent studies (critique audit 2026-03-29)
+cat(sprintf("\n  === EXPANDED META-ANALYSIS: k=%d studies contributing %d effects ===\n",
+            k_studies, k_expanded))
 
 # ==============================================================================
 # SECTION 4: EXPANDED RANDOM-EFFECTS META-ANALYSIS
@@ -681,37 +758,94 @@ cat(sprintf("\n  === EXPANDED META-ANALYSIS WITH k = %d STUDIES ===\n", k_expand
 cat("\nSECTION 4: Expanded Random-Effects Meta-Analysis\n")
 cat(paste(rep("-", 60), collapse = ""), "\n\n")
 
-# Primary model: REML with Knapp-Hartung adjustment
-rma_expanded <- rma(
+# FIX: Make three-level model primary (critique audit 2026-03-29)
+# Rationale: Vardi 2011 contributes 3 regional effects and NOAA contributes 3
+# regional effects from the same parent study. A standard rma() treats all effects
+# as independent, which underestimates the true uncertainty. The three-level model
+# (study_id / effect) accounts for within-study correlation via a nested random
+# effect, producing appropriately wider CIs.
+# The standard rma() is retained as a sensitivity check.
+
+# (study_id already assigned in Section 3 above)
+
+# --- PRIMARY MODEL: Three-level rma.mv() ---
+rma_3level <- tryCatch({
+  metafor::rma.mv(
+    yi = combined_es$log_odds,
+    V = combined_es$var_log_odds,
+    random = ~1 | study_id / study,
+    data = combined_es,
+    method = "REML", test = "t"
+  )
+}, error = function(e) {
+  cat(sprintf("  Three-level model failed: %s\n", e$message))
+  cat("  Falling back to standard rma() as primary.\n")
+  NULL
+})
+
+# --- SENSITIVITY: Standard rma() treating all effects as independent ---
+# FIX: demoted from primary to sensitivity check (critique audit 2026-03-29)
+rma_independent <- rma(
   yi = combined_es$log_odds,
   vi = combined_es$var_log_odds,
   method = "REML",
   test = "knha"
 )
 
-# Extract key statistics
-pooled_lo <- as.numeric(rma_expanded$beta)
-pooled_surv <- plogis(pooled_lo)
-pooled_surv_lower <- plogis(rma_expanded$ci.lb)
-pooled_surv_upper <- plogis(rma_expanded$ci.ub)
-I_sq <- rma_expanded$I2
-Q_stat <- rma_expanded$QE
-Q_p <- rma_expanded$QEp
-tau_sq <- rma_expanded$tau2
-tau <- sqrt(tau_sq)
+# Use three-level model if available; fall back to standard rma
+if (!is.null(rma_3level)) {
+  # Primary results from three-level model
+  rma_expanded <- rma_3level  # alias for downstream code compatibility
+  pooled_lo <- as.numeric(rma_3level$b)
+  pooled_surv <- plogis(pooled_lo)
+  pooled_surv_lower <- plogis(rma_3level$ci.lb)
+  pooled_surv_upper <- plogis(rma_3level$ci.ub)
+  # For rma.mv, extract variance components
+  # sigma2[1] = between-study, sigma2[2] = within-study (between-effect)
+  tau_sq_between <- rma_3level$sigma2[1]
+  tau_sq_within <- rma_3level$sigma2[2]
+  tau_sq <- tau_sq_between + tau_sq_within  # total heterogeneity
+  tau <- sqrt(tau_sq)
+  # Q and I^2 from the independent-effects model (standard diagnostics)
+  Q_stat <- rma_independent$QE
+  Q_p <- rma_independent$QEp
+  I_sq <- rma_independent$I2
+  # Prediction interval: approximate using total tau^2
+  # For three-level model, PI = pooled +/- t * sqrt(tau_sq_total + avg_vi)
+  # But metafor predict.rma.mv handles this
+  rma_pred <- predict(rma_3level)
+  pi_lower <- plogis(rma_pred$pi.lb)
+  pi_upper <- plogis(rma_pred$pi.ub)
+  # I^2 CI from independent-effects model
+  rma_ci <- confint(rma_independent)
+  I_sq_lower <- rma_ci$random["I^2(%)", "ci.lb"]
+  I_sq_upper <- rma_ci$random["I^2(%)", "ci.ub"]
+  primary_model_label <- "Three-level rma.mv()"
+} else {
+  # Fall back to independent-effects model
+  rma_expanded <- rma_independent
+  pooled_lo <- as.numeric(rma_independent$beta)
+  pooled_surv <- plogis(pooled_lo)
+  pooled_surv_lower <- plogis(rma_independent$ci.lb)
+  pooled_surv_upper <- plogis(rma_independent$ci.ub)
+  I_sq <- rma_independent$I2
+  Q_stat <- rma_independent$QE
+  Q_p <- rma_independent$QEp
+  tau_sq <- rma_independent$tau2
+  tau <- sqrt(tau_sq)
+  tau_sq_between <- tau_sq
+  tau_sq_within <- 0
+  rma_pred <- predict(rma_independent)
+  pi_lower <- plogis(rma_pred$pi.lb)
+  pi_upper <- plogis(rma_pred$pi.ub)
+  rma_ci <- confint(rma_independent)
+  I_sq_lower <- rma_ci$random["I^2(%)", "ci.lb"]
+  I_sq_upper <- rma_ci$random["I^2(%)", "ci.ub"]
+  primary_model_label <- "Standard rma() (fallback)"
+}
 
-# Prediction interval
-rma_pred <- predict(rma_expanded)
-pi_lower <- plogis(rma_pred$pi.lb)
-pi_upper <- plogis(rma_pred$pi.ub)
-
-# I-squared confidence interval (Q-profile method)
-rma_ci <- confint(rma_expanded)
-I_sq_lower <- rma_ci$random["I^2(%)", "ci.lb"]
-I_sq_upper <- rma_ci$random["I^2(%)", "ci.ub"]
-
-cat("EXPANDED META-ANALYSIS RESULTS:\n")
-cat(sprintf("  Studies (k): %d\n", k_expanded))
+cat(sprintf("PRIMARY MODEL: %s\n", primary_model_label))
+cat(sprintf("  k = %d studies contributing %d effects\n", k_studies, k_expanded))
 cat(sprintf("  Total observations: %d\n", sum(combined_es$n_total)))
 
 cat(sprintf("\n  *** 95%% PREDICTION INTERVAL: %.1f%% - %.1f%% ***\n",
@@ -722,20 +856,106 @@ cat(sprintf("  Pooled survival (RE): %.1f%% (95%% CI: %.1f%% - %.1f%%)\n",
             pooled_surv * 100, pooled_surv_lower * 100, pooled_surv_upper * 100))
 cat("  NOTE: The CI describes uncertainty in the AVERAGE, not in a new observation.\n")
 
-cat(sprintf("\n  I^2 = %.1f%% (95%% CI: %.1f%% - %.1f%%)\n",
+if (!is.null(rma_3level)) {
+  cat(sprintf("\n  Variance components (three-level):\n"))
+  cat(sprintf("    sigma^2_between (study-level): %.4f\n", tau_sq_between))
+  cat(sprintf("    sigma^2_within  (effect-level): %.4f\n", tau_sq_within))
+  cat(sprintf("    Total tau^2: %.4f, tau: %.4f\n", tau_sq, tau))
+}
+
+cat(sprintf("\n  I^2 = %.1f%% (95%% CI: %.1f%% - %.1f%%) [from independent-effects model]\n",
             I_sq, I_sq_lower, I_sq_upper))
-cat(sprintf("  tau^2 = %.4f, tau = %.4f\n", tau_sq, tau))
 cat(sprintf("  Cochran's Q = %.2f (df = %d, p %s)\n",
             Q_stat, k_expanded - 1,
             ifelse(Q_p < 0.001, "< 0.001", sprintf("= %.4f", Q_p))))
 
-# --- PUBLICATION BIAS: Egger's Test (k=16) ---
+# --- SENSITIVITY: Independent-effects model comparison ---
+cat("\n--- SENSITIVITY: Independent-effects model (standard rma) ---\n")
+indep_surv <- plogis(as.numeric(rma_independent$beta))
+indep_ci_lo <- plogis(rma_independent$ci.lb)
+indep_ci_hi <- plogis(rma_independent$ci.ub)
+cat(sprintf("  Three-level (primary): %.1f%% (CI: %.1f%% - %.1f%%)\n",
+            pooled_surv * 100, pooled_surv_lower * 100, pooled_surv_upper * 100))
+cat(sprintf("  Independent effects:   %.1f%% (CI: %.1f%% - %.1f%%)\n",
+            indep_surv * 100, indep_ci_lo * 100, indep_ci_hi * 100))
+
+# FIX: Add tau-squared estimator sensitivity (critique audit 2026-03-29)
+# Reference: Viechtbauer (2005) "Bias and Efficiency of Meta-Analytic Variance
+# Estimators in the Random-Effects Model" JESS 14:261-293
+cat("\n--- SENSITIVITY: tau^2 Estimator Comparison (Viechtbauer 2005) ---\n")
+rma_dl <- rma(
+  yi = combined_es$log_odds,
+  vi = combined_es$var_log_odds,
+  method = "DL",
+  test = "knha"
+)
+cat(sprintf("  REML tau^2: %.4f (pooled survival: %.1f%%)\n",
+            rma_independent$tau2, plogis(as.numeric(rma_independent$beta)) * 100))
+cat(sprintf("  DL   tau^2: %.4f (pooled survival: %.1f%%)\n",
+            rma_dl$tau2, plogis(as.numeric(rma_dl$beta)) * 100))
+
+tau_estimator_comparison <- data.frame(
+  estimator = c("REML", "DL"),
+  tau2 = c(rma_independent$tau2, rma_dl$tau2),
+  tau = c(sqrt(rma_independent$tau2), sqrt(rma_dl$tau2)),
+  pooled_survival = c(plogis(as.numeric(rma_independent$beta)),
+                      plogis(as.numeric(rma_dl$beta))),
+  ci_lower = c(plogis(rma_independent$ci.lb), plogis(rma_dl$ci.lb)),
+  ci_upper = c(plogis(rma_independent$ci.ub), plogis(rma_dl$ci.ub)),
+  I2 = c(rma_independent$I2, rma_dl$I2),
+  note = c("Preferred (less biased for small k)", "DerSimonian-Laird (comparison)")
+)
+write_csv(tau_estimator_comparison,
+          file.path(output_dir, "expanded_meta_tau_estimator_comparison.csv"))
+cat("  Saved: expanded_meta_tau_estimator_comparison.csv\n")
+
+# --- PUBLICATION BIAS: Egger's Test ---
 cat("\n--- PUBLICATION BIAS ---\n")
-egger_result <- metafor::regtest(rma_expanded)
+# Egger's test uses the independent-effects model (standard for rma objects)
+egger_result <- metafor::regtest(rma_independent)
 cat(sprintf("  Egger's test: test stat = %.3f, p = %.4f\n", egger_result$zval, egger_result$pval))
 cat(sprintf("  Interpretation: %s\n",
             if (egger_result$pval < 0.05) "Significant funnel plot asymmetry"
             else "No significant funnel plot asymmetry"))
+
+# FIX: Add trim-and-fill analysis (critique audit 2026-03-29)
+# NOTE: Trim-and-fill has limited interpretability for single-proportion
+# meta-analyses (as opposed to comparative effect sizes like OR/RR). The method
+# assumes the funnel plot should be symmetric around the true effect, which may
+# not hold for proportions that are bounded [0,1] and often right-skewed on the
+# log-odds scale. Results should be interpreted as a sensitivity check, not as
+# definitive evidence of publication bias.
+cat("\n--- TRIM-AND-FILL ---\n")
+tf <- tryCatch({
+  trimfill(rma_independent)
+}, error = function(e) {
+  cat(sprintf("  Trim-and-fill failed: %s\n", e$message))
+  NULL
+})
+
+if (!is.null(tf)) {
+  tf_surv <- plogis(as.numeric(tf$beta))
+  tf_ci_lo <- plogis(tf$ci.lb)
+  tf_ci_hi <- plogis(tf$ci.ub)
+  n_filled <- tf$k0
+  cat(sprintf("  Imputed studies: %d\n", n_filled))
+  cat(sprintf("  Adjusted pooled survival: %.1f%% (CI: %.1f%% - %.1f%%)\n",
+              tf_surv * 100, tf_ci_lo * 100, tf_ci_hi * 100))
+  cat(sprintf("  Original pooled survival: %.1f%% (CI: %.1f%% - %.1f%%)\n",
+              indep_surv * 100, indep_ci_lo * 100, indep_ci_hi * 100))
+
+  trimfill_results <- data.frame(
+    analysis = c("Original", "Trim-and-fill adjusted"),
+    k = c(k_expanded, k_expanded + n_filled),
+    pooled_survival = c(indep_surv, tf_surv),
+    ci_lower = c(indep_ci_lo, tf_ci_lo),
+    ci_upper = c(indep_ci_hi, tf_ci_hi),
+    n_imputed = c(0, n_filled),
+    note = c("", "Caution: limited interpretability for single-proportion meta-analyses")
+  )
+  write_csv(trimfill_results, file.path(output_dir, "expanded_meta_trimfill.csv"))
+  cat("  Saved: expanded_meta_trimfill.csv\n")
+}
 
 # --- Compare to Tier 1 only ---
 cat("\n--- COMPARISON: Tier 1 Only vs Tier 1+2 Combined ---\n")
@@ -755,8 +975,8 @@ tier1_ci_hi <- plogis(rma_tier1$ci.ub)
 cat(sprintf("  Tier 1 only (k=%d): %.1f%% (CI: %.1f%% - %.1f%%), I^2=%.1f%%\n",
             nrow(tier1_only), tier1_surv * 100, tier1_ci_lo * 100,
             tier1_ci_hi * 100, rma_tier1$I2))
-cat(sprintf("  Tier 1+2   (k=%d): %.1f%% (CI: %.1f%% - %.1f%%), I^2=%.1f%%\n",
-            k_expanded, pooled_surv * 100, pooled_surv_lower * 100,
+cat(sprintf("  Tier 1+2   (k=%d effects from %d studies): %.1f%% (CI: %.1f%% - %.1f%%), I^2=%.1f%%\n",
+            k_expanded, k_studies, pooled_surv * 100, pooled_surv_lower * 100,
             pooled_surv_upper * 100, I_sq))
 cat(sprintf("  Change in pooled estimate: %+.1f pp\n",
             (pooled_surv - tier1_surv) * 100))
@@ -764,10 +984,10 @@ cat(sprintf("  CI width change: %.1f pp -> %.1f pp\n",
             (tier1_ci_hi - tier1_ci_lo) * 100,
             (pooled_surv_upper - pooled_surv_lower) * 100))
 
-# Add RE weights to combined data
+# Add RE weights to combined data (using independent-effects tau^2 for weight calc)
 combined_es <- combined_es %>%
   mutate(
-    weight_re = 1 / (var_log_odds + tau_sq),
+    weight_re = 1 / (var_log_odds + rma_independent$tau2),
     weight_re_pct = weight_re / sum(weight_re) * 100
   )
 
@@ -802,37 +1022,6 @@ if (!is.null(rma_cons)) {
   cat(sprintf("  CI width change: %.1f pp -> %.1f pp\n",
               (pooled_surv_upper - pooled_surv_lower) * 100,
               (ci_cons[2] - ci_cons[1]) * 100))
-}
-
-# --- SENSITIVITY: Three-Level Model (Vardi 2011 within-study correlation) ---
-cat("\n--- SENSITIVITY: Three-Level Model ---\n")
-
-combined_es <- combined_es %>%
-  mutate(study_id = case_when(
-    grepl("^vardi_2011_", study) ~ "vardi_2011",
-    TRUE ~ study
-  ))
-
-rma_3level <- tryCatch({
-  metafor::rma.mv(
-    yi = combined_es$log_odds,
-    V = combined_es$var_log_odds,
-    random = ~1 | study_id / study,
-    data = combined_es,
-    method = "REML", test = "t"
-  )
-}, error = function(e) {
-  cat(sprintf("  Three-level model failed: %s\n", e$message))
-  NULL
-})
-
-if (!is.null(rma_3level)) {
-  pooled_3lev <- plogis(as.numeric(rma_3level$b))
-  ci_3lev <- c(plogis(rma_3level$ci.lb), plogis(rma_3level$ci.ub))
-  cat(sprintf("  Independent effects: %.1f%% (CI: %.1f%% - %.1f%%)\n",
-              pooled_surv * 100, pooled_surv_lower * 100, pooled_surv_upper * 100))
-  cat(sprintf("  Three-level model:  %.1f%% (CI: %.1f%% - %.1f%%)\n",
-              pooled_3lev * 100, ci_3lev[1] * 100, ci_3lev[2] * 100))
 }
 
 # ==============================================================================
@@ -1257,8 +1446,9 @@ cat("\nSECTION 8: Sensitivity Analyses\n")
 cat(paste(rep("-", 60), collapse = ""), "\n\n")
 
 # 8a. Leave-one-out on expanded dataset
-cat("  8a. Leave-one-out analysis (expanded)\n")
-loo_expanded <- leave1out(rma_expanded)
+# Note: LOO uses rma_independent (standard rma) for compatibility with leave1out()
+cat("  8a. Leave-one-out analysis (expanded, using independent-effects model)\n")
+loo_expanded <- leave1out(rma_independent)
 
 loo_df <- data.frame(
   excluded_study = combined_es$study,
@@ -1314,9 +1504,11 @@ tier_comparison %>%
   print()
 
 # 8c. Influence diagnostics
+# FIX: Enhanced influence diagnostics with CSV output (critique audit 2026-03-29)
+# Note: influence() requires an rma object (not rma.mv), so we use rma_independent
 cat("\n  8c. Influence diagnostics\n")
 inf_diag <- tryCatch(
-  influence(rma_expanded),
+  influence(rma_independent),
   error = function(e) {
     cat(sprintf("    Influence diagnostics failed: %s\n", e$message))
     NULL
@@ -1332,6 +1524,22 @@ if (!is.null(inf_diag)) {
   for (i in 1:min(5, length(sort_cd))) {
     cat(sprintf("    %s: %.4f\n", names(sort_cd)[i], sort_cd[i]))
   }
+
+  # Save full influence diagnostics to CSV
+  influence_df <- data.frame(
+    study = combined_es$study,
+    study_id = combined_es$study_id,
+    data_tier = combined_es$data_tier,
+    cooks_distance = inf_diag$inf$cook.d,
+    dffits = inf_diag$inf$dffits,
+    hat_value = inf_diag$inf$hat,
+    weight_pct = combined_es$weight_re_pct,
+    covratio = inf_diag$inf$cov.r,
+    tau2_del = inf_diag$inf$tau2.del,
+    QE_del = inf_diag$inf$QE.del
+  )
+  write_csv(influence_df, file.path(output_dir, "expanded_meta_influence.csv"))
+  cat("  Saved: expanded_meta_influence.csv\n")
 }
 
 # ==============================================================================
@@ -1347,9 +1555,12 @@ pop_colors <- c(
   "Restoration fragment" = MANUSCRIPT_PALETTE$restoration  # "#D55E00"
 )
 
+# FIX: Add AI_EXTRACTED tier to shape mapping (critique audit 2026-03-29)
+# Previously missing "Tier 2 (summary) [AI_EXTRACTED]" caused unmapped points
 tier_shapes <- c(
-  "Tier 1 (individual)" = 16,  # Filled circle
-  "Tier 2 (summary)" = 17      # Filled triangle
+  "Tier 1 (individual)" = 16,           # Filled circle
+  "Tier 2 (summary)" = 17,              # Filled triangle
+  "Tier 2 (summary) [AI_EXTRACTED]" = 18  # Filled diamond — AI-extracted data
 )
 
 # --- Figure 9a: Expanded forest plot ---
@@ -1577,15 +1788,17 @@ cat("\nSECTION 10: Saving Outputs\n")
 cat(paste(rep("-", 60), collapse = ""), "\n\n")
 
 # 10a. Main results summary
+# FIX: Updated to reflect three-level model as primary (critique audit 2026-03-29)
 results_summary <- data.frame(
   statistic = c(
-    "Number of studies (k)", "Total observations (N)",
-    "Tier 1 studies", "Tier 2 studies",
-    "Natural colony studies", "Restoration fragment studies",
-    "Pooled survival (RE)", "95% CI lower", "95% CI upper",
+    "Number of studies (k)", "Number of effects",
+    "Total observations (N)",
+    "Tier 1 effects", "Tier 2 effects",
+    "Natural colony effects", "Restoration fragment effects",
+    "Primary model", "Pooled survival (RE)", "95% CI lower", "95% CI upper",
     "95% PI lower", "95% PI upper",
-    "tau^2", "tau",
-    "I^2 (%)", "I^2 CI lower", "I^2 CI upper",
+    "tau^2 (total)", "tau^2 (between-study)", "tau^2 (within-study)", "tau",
+    "I^2 (%) [independent model]", "I^2 CI lower", "I^2 CI upper",
     "Cochran's Q", "Q df", "Q p-value",
     "REML estimation method", "Small-sample adjustment",
     "MDD SE (log-odds)", "MDD (log-odds, 80% power)",
@@ -1593,18 +1806,22 @@ results_summary <- data.frame(
     "MDD power interpretation"
   ),
   value = c(
+    as.character(k_studies),
     as.character(k_expanded),
     as.character(sum(combined_es$n_total)),
     as.character(sum(combined_es$data_tier == "Tier 1 (individual)")),
     as.character(sum(grepl("Tier 2", combined_es$data_tier))),
     as.character(sum(combined_es$population_type == "Natural colony")),
     as.character(sum(combined_es$population_type == "Restoration fragment")),
+    primary_model_label,
     sprintf("%.3f", pooled_surv),
     sprintf("%.3f", pooled_surv_lower),
     sprintf("%.3f", pooled_surv_upper),
     sprintf("%.3f", pi_lower),
     sprintf("%.3f", pi_upper),
     sprintf("%.4f", tau_sq),
+    sprintf("%.4f", tau_sq_between),
+    sprintf("%.4f", tau_sq_within),
     sprintf("%.4f", tau),
     sprintf("%.1f", I_sq),
     sprintf("%.1f", I_sq_lower),
@@ -1613,7 +1830,7 @@ results_summary <- data.frame(
     as.character(k_expanded - 1),
     sprintf("%.4f", Q_p),
     "REML",
-    "Knapp-Hartung (test='knha')",
+    "t-test (three-level) / Knapp-Hartung (independent)",
     sprintf("%.4f", se_diff_mdd),
     sprintf("%.4f", mdd_log_odds),
     sprintf("%.1f", mdd_prob * 100),
@@ -1629,7 +1846,7 @@ cat("  Saved: expanded_meta_analysis_results.csv\n")
 # 10b. Study effects
 write_csv(
   combined_es %>%
-    select(study, region, data_tier, population_type, n_total, n_survived,
+    select(study, study_id, region, data_tier, population_type, n_total, n_survived,
            survival_rate, mean_size_cm2, survey_yr, fragment,
            log_odds, var_log_odds, se_log_odds, surv_lower, surv_upper,
            weight_re_pct),
@@ -1667,12 +1884,13 @@ cat("  EXPANDED META-ANALYSIS SUMMARY\n")
 cat("==============================================================================\n\n")
 
 cat("KEY ADVANCEMENT:\n")
-cat(sprintf("  Expanded from k=%d to k=%d studies by incorporating summary data.\n",
-            nrow(tier1_only), k_expanded))
-cat(sprintf("  Natural colony studies: k=1 -> k=%d (breaks single-study confound)\n",
+cat(sprintf("  k=%d studies contributing %d effects (NOAA and Vardi split by region).\n",
+            k_studies, k_expanded))
+cat(sprintf("  Natural colony effects: k=%d (breaks single-study confound)\n",
             k_natural))
 cat(sprintf("  Geographic coverage: %d regions across the Caribbean\n",
             n_distinct(combined_es$region)))
+cat(sprintf("  Primary model: %s\n", primary_model_label))
 
 cat("\nMAIN FINDINGS:\n")
 cat(sprintf("  Pooled annual survival: %.1f%% (95%% CI: %.1f%% - %.1f%%)\n",
@@ -1708,10 +1926,14 @@ cat("\nIMPORTANT CAVEATS:\n")
 cat("  1. Summary data has variable quality (histogram-estimated n, non-standard intervals)\n")
 cat("  2. Adding summary studies changes composition: more restoration fragment studies\n")
 cat("  3. Annualization assumes constant hazard (exponential survival model)\n")
-cat("  4. Some n_initial are estimated from figures, not exact counts\n")
-cat("  5. Studies span 2+ decades (2000-2024), different regions, and varied methods\n")
-cat("  6. Vardi 2011 regions treated as independent effects (geographically distinct)\n")
-cat("  7. Garrison & Ward 2008 includes both natural and relocated fragments\n")
+cat("  4. Tier 1/Tier 2 annualization inconsistency: Tier 1 = raw pooled proportion,\n")
+cat("     Tier 2 = annualized via S^(1/t). See Section 1 comment block for details.\n")
+cat("  5. Some n_initial are estimated from figures, not exact counts\n")
+cat("  6. Studies span 2+ decades (1980-2024), different regions, and varied methods\n")
+cat("  7. Vardi 2011 and NOAA regions treated as correlated effects within parent study\n")
+cat("     (three-level model accounts for within-study correlation)\n")
+cat("  8. Garrison & Ward 2008 includes both natural and relocated fragments\n")
+cat("  9. Rogers 1982: storm-generated fragments classified as Natural colony\n")
 
 cat("\nOUTPUTS:\n")
 cat("  Data files:\n")
@@ -1722,6 +1944,9 @@ cat("    - expanded_meta_analysis_stratified.csv\n")
 cat("    - expanded_meta_analysis_by_region.csv\n")
 cat("    - expanded_meta_analysis_tier_comparison.csv\n")
 cat("    - expanded_meta_analysis_loo.csv\n")
+cat("    - expanded_meta_influence.csv\n")
+cat("    - expanded_meta_trimfill.csv\n")
+cat("    - expanded_meta_tau_estimator_comparison.csv\n")
 cat("  Figures:\n")
 cat("    - expanded_forest_plot.png/pdf\n")
 cat("    - expanded_tier_comparison.png/pdf\n")
