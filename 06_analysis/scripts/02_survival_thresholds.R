@@ -244,9 +244,9 @@ print(as.data.frame(size_dist_frag))
 # KEY COMPARISON: Same size class, different survival
 cat("\n★ KEY INSIGHT: Survival comparison at same size class:\n")
 comparison <- size_dist_natural %>%
-  select(size_class, survival_natural = survival) %>%
+  dplyr::select(size_class, survival_natural = survival) %>%
   left_join(
-    size_dist_frag %>% select(size_class, survival_frag = survival),
+    size_dist_frag %>% dplyr::select(size_class, survival_frag = survival),
     by = "size_class"
   ) %>%
   mutate(difference = survival_natural - survival_frag)
@@ -275,7 +275,7 @@ pop_type_surv <- surv_data %>%
     ci_lower = center - margin,
     ci_upper = center + margin
   ) %>%
-  select(-z, -p_hat, -denom, -center, -margin, -n_survived)
+  dplyr::select(-z, -p_hat, -denom, -center, -margin, -n_survived)
 
 # Add effect size (difference in survival: natural - restoration)
 nat_surv <- pop_type_surv$survival[pop_type_surv$population_type == "Natural colony"]

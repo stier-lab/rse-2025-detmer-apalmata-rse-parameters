@@ -1,5 +1,5 @@
 model_name,n_obs,n_params,dispersion_ratio,overdispersed
-GLMM_study,3926,3,0.9761227968675472,FALSE
-GLMM_study_location,3926,4,0.9061433821836719,FALSE
-GLMM_study_location_year,3926,5,0.862165418307914,FALSE
-GLMM_coral_study_location_year,3926,6,0.6228803390618989,FALSE
+GLMM_study,3630,3,0.98774048375941,FALSE
+GLMM_study_location,3630,4,0.8942829618152713,FALSE
+GLMM_study_location_year,3630,5,0.8288507451621691,FALSE
+GLMM_coral_study_location_year,3630,6,0.6722551798357645,FALSE

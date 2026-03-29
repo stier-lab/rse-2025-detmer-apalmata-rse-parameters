@@ -8,12 +8,17 @@ garrison_ward_2008,FALSE,TRUE,single_source
 kuffner_et_al_2020,TRUE,FALSE,single_source
 maurer_et_al_2022,FALSE,TRUE,single_source
 mendoza_quiroz_et_al_2023,TRUE,TRUE,both_kept_as_separate_rows
+muller_et_al_2008,FALSE,TRUE,single_source
 NOAA_survey,TRUE,FALSE,single_source
 ortiz_prosper_2005,FALSE,TRUE,single_source
 papke_et_al_2021,FALSE,TRUE,single_source
 pausch_et_al_2018,TRUE,FALSE,single_source
+ramos_romero_et_al_2025,FALSE,TRUE,single_source
+rogers_et_al_1982,FALSE,TRUE,single_source
+rogers_muller_2012,FALSE,TRUE,single_source
 rosales_et_al_2024,FALSE,TRUE,single_source
 roth_et_al_2013,FALSE,TRUE,single_source
+sutherland_et_al_2016,FALSE,TRUE,single_source
 USGS_USVI_exp,TRUE,FALSE,single_source
 vardi_2011,FALSE,TRUE,single_source
 williams_miller_2010,FALSE,TRUE,single_source

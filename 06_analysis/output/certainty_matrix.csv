@@ -1,31 +1,36 @@
 size_class,region,n,survival,certainty
-SC1,Curacao,16,0.625,Very Low
-SC1,Dominican Republic,36,0.8333333333333334,Low
-SC1,Florida,258,0.6976744186046512,Moderate
-SC1,Mexico,25,1,Very Low
-SC1,Navassa,6,1,Very Low
-SC1,USVI,23,0.5652173913043478,Very Low
-SC2,Curacao,56,0.6428571428571429,Low
-SC2,Dominican Republic,8,1,Very Low
-SC2,Florida,1234,0.646677471636953,High
-SC2,Mexico,6,1,Very Low
-SC2,Navassa,10,0.6,Very Low
-SC2,USVI,12,0.6666666666666666,Very Low
-SC3,Curacao,108,0.7870370370370371,Moderate
+SC1,Curacao,4,0.5,Very Low
+SC1,Dominican Republic,2,0.5,Very Low
+SC1,Dry Tortugas,3,1,Very Low
+SC1,Florida Keys,75,0.5066666666666667,Low
+SC1,Mexican Caribbean,9,1,Very Low
+SC1,Navassa,0,NA,No Data
+SC1,USVI,1,0,Very Low
+SC2,Curacao,68,0.6470588235294118,Low
+SC2,Dominican Republic,42,0.8809523809523809,Low
+SC2,Dry Tortugas,21,1,Very Low
+SC2,Florida Keys,1393,0.6575735821966978,High
+SC2,Mexican Caribbean,22,1,Very Low
+SC2,Navassa,16,0.75,Very Low
+SC2,USVI,34,0.6176470588235294,Low
+SC3,Curacao,175,0.7942857142857143,Moderate
 SC3,Dominican Republic,0,NA,No Data
-SC3,Florida,752,0.7672872340425532,High
-SC3,Mexico,14,1,Very Low
-SC3,Navassa,21,0.8571428571428571,Very Low
+SC3,Dry Tortugas,0,NA,No Data
+SC3,Florida Keys,1000,0.794,High
+SC3,Mexican Caribbean,17,1,Very Low
+SC3,Navassa,22,0.8181818181818182,Very Low
 SC3,USVI,11,0.8181818181818182,Very Low
-SC4,Curacao,209,0.861244019138756,Moderate
+SC4,Curacao,285,0.8947368421052632,Moderate
 SC4,Dominican Republic,0,NA,No Data
-SC4,Florida,594,0.8922558922558923,High
-SC4,Mexico,7,1,Very Low
-SC4,Navassa,15,0.9333333333333333,Very Low
+SC4,Dry Tortugas,0,NA,No Data
+SC4,Florida Keys,635,0.9196850393700787,High
+SC4,Mexican Caribbean,4,1,Very Low
+SC4,Navassa,22,1,Very Low
 SC4,USVI,0,NA,No Data
-SC5,Curacao,467,0.8843683083511777,High
+SC5,Curacao,324,0.8765432098765432,High
 SC5,Dominican Republic,0,NA,No Data
-SC5,Florida,1193,0.9656328583403185,High
-SC5,Mexico,0,NA,No Data
-SC5,Navassa,50,1,Low
+SC5,Dry Tortugas,0,NA,No Data
+SC5,Florida Keys,904,0.9745575221238938,High
+SC5,Mexican Caribbean,0,NA,No Data
+SC5,Navassa,42,1,Low
 SC5,USVI,0,NA,No Data

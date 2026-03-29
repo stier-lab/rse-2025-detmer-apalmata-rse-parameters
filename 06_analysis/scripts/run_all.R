@@ -181,21 +181,20 @@ for (i in seq_along(scripts)) {
 
   script_start <- Sys.time()
 
-  tryCatch({
-    source(script_path, local = new.env())
-    script_end <- Sys.time()
-    duration <- as.numeric(difftime(script_end, script_start, units = "secs"))
+  # Run each script as a subprocess to prevent search path pollution
+  # (library() calls in one script can mask functions needed by later scripts)
+  exit_code <- system2("Rscript", args = script_path, stdout = "", stderr = "")
+  script_end <- Sys.time()
+  duration <- as.numeric(difftime(script_end, script_start, units = "secs"))
+  results$duration_sec[i] <- round(duration, 1)
+
+  if (exit_code == 0) {
     results$status[i] <- "SUCCESS"
-    results$duration_sec[i] <- round(duration, 1)
     cat(sprintf("\n✓ Completed in %.1f seconds\n\n", duration))
-  }, error = function(e) {
-    script_end <- Sys.time()
-    duration <- as.numeric(difftime(script_end, script_start, units = "secs"))
-    results$status[i] <<- "FAILED"
-    results$duration_sec[i] <<- round(duration, 1)
-    cat(sprintf("\n✗ FAILED after %.1f seconds\n", duration))
-    cat(sprintf("  Error: %s\n\n", conditionMessage(e)))
-  })
+  } else {
+    results$status[i] <- "FAILED"
+    cat(sprintf("\n✗ FAILED after %.1f seconds (exit code %d)\n\n", duration, exit_code))
+  }
 }
 
 # =============================================================================
