@@ -198,7 +198,7 @@ The following papers were identified as potentially meeting the inclusion criter
 
 The following papers surfaced in the searches and were confirmed as already accounted for:
 
-**Already included (18 studies):**
+**Already included (16 studies, 20 effects):**
 - Mendoza Quiroz et al. 2023 (PeerJ) -- `mendoza_quiroz_2023`
 - Ramos Romero et al. 2025 (PeerJ) -- `ramos_romero_2025`
 - Pausch et al. 2018 -- `pausch_2018`

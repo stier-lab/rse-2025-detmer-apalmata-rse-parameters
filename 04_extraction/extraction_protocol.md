@@ -35,7 +35,7 @@ A comprehensive literature audit was conducted using AI (Claude) to ensure no ex
 4. **PubMed, Semantic Scholar, and Unpaywall** searches for additional studies
 5. **Critical audit** of all AI-extracted data by independent verification agents
 
-This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5) and overlap audit, resulted in a net change from k=16 to k=18: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, and Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012.
+This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, and NOAA regional split, resulted in a final count of k=16 unique studies contributing 20 study-level effects: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, and NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects).
 
 ### 1.2b Formal Database Searches (2026-03-29)
 
@@ -105,7 +105,7 @@ To assess screening reliability and reduce single-rater bias, 31 candidate paper
 
 **Consensus excludes retained:** 22 papers excluded by both raters remained excluded after adjudication.
 
-**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18). Pooled annual survival is 79.2% (95% CI: 70.6–85.7%, I² = 96.4%). Natural vs. restoration subgroup composition is 7 natural + 11 restoration effects, with a non-significant difference of 7.5 percentage points (p = 0.405).
+**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18), then NOAA was split by region (FL Keys, Curacao, Navassa) yielding 16 unique studies contributing 20 study-level effects. Pooled annual survival is 78.4% (95% CI: 69.9–85.0%, I² = 96.4%). Natural vs. restoration subgroup composition is 9 natural + 11 restoration effects, with a non-significant difference (p = 0.236).
 
 ---
 

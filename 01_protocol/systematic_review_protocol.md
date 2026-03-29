@@ -338,7 +338,7 @@ The following counts reconstruct the screening process across both search phases
     │  • Linear growth   │    ┌────────┴─────────────────┐
     │    only: ~5        │    │  Post-audit inclusion     │
     │  • Other: ~6       │    │                          │
-    │                    │    │  Passed audit: 18 studies │
+    │                    │    │  Passed audit: 16 studies │
     │  From expanded     │    │   6 Tier 1 (individual)   │
     │  search (~29):     │    │   8 Tier 2 (hand-extract) │
     │  • Did not meet    │    │   3 Tier 2 (AI-extract)   │
@@ -350,15 +350,17 @@ The following counts reconstruct the screening process across both search phases
     │                    │    │   Roth 2013 (overlap)     │
     │                    │    │                          │
     │                    │    │  ─────────────────────── │
-    └────────────────────┘    │  FINAL: 18 studies        │
-                              │  contributing 18 study-   │
+    └────────────────────┘    │  FINAL: 16 studies        │
+                              │  contributing 20 study-   │
                               │  level survival effects   │
-                              │  (Vardi 2011 contributes  │
+                              │  (NOAA split into 3       │
+                              │   regional effects;       │
+                              │   Vardi 2011 contributes  │
                               │   3 regional effects)     │
                               └──────────────────────────┘
 ```
 
-> **Important note on k counts:** The meta-analysis reports k=18 study-level effects from 18 unique studies. Vardi 2011 contributes 3 independent regional effects (Jamaica, Puerto Rico, Virgin Gorda), but Roth et al. 2013 was removed for data overlap with Rogers & Muller 2012 (same Haulover Bay colonies), so 18 publications yield 18 effect sizes. Earlier project documentation referencing k=16 reflects the state before the March 2026 AI-assisted expansion, which added 4 studies (rogers_muller_2012, ramos_romero_et_al_2025, muller_et_al_2008, sutherland_et_al_2016) but then removed muller_et_al_2008, sutherland_et_al_2016 (IRR audit), and roth_et_al_2013 (overlap audit).
+> **Important note on k counts:** The meta-analysis reports 20 study-level effects from 16 unique studies. NOAA is split into 3 regional effects (FL Keys, Curacao, Navassa) and Vardi 2011 contributes 3 independent regional effects (Jamaica, Puerto Rico, Virgin Gorda). Roth et al. 2013 was removed for data overlap with Rogers & Muller 2012 (same Haulover Bay colonies). Earlier project documentation referencing k=16 (without the NOAA split) or k=18 reflects intermediate states before the March 2026 restructuring.
 
 ### 6.2 Mermaid Diagram
 
@@ -380,7 +382,7 @@ flowchart TD
     D --- D8["Other exclusions (~34)"]
     E --> F["Independent audit + overlap audit"]
     F --> G["Removed: 4 studies<br/>Ramos 2024 (invalid proxy)<br/>Muller 2008 (imprecise/bleaching)<br/>Sutherland 2016 (photostation/NOAA)<br/>Roth 2013 (overlap Rogers & Muller)"]
-    F --> H["INCLUDED: 18 studies<br/>18 study-level effects<br/>(6 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI)"]
+    F --> H["INCLUDED: 16 studies<br/>20 study-level effects<br/>(6 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI;<br/>NOAA + Vardi split by region)"]
 ```
 
 ---
@@ -440,7 +442,7 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 |---|---|---|
 | Dec 2025 | Initial compilation complete | 16 studies (k=16) |
 | March 2026 | Expanded search + AI extraction | Completeness audit; net result: 3 new studies added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), 1 reclassified (Rogers 1982 from excluded to included) |
-| March 2026 | IRR audit + overlap audit | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). Final k=18. |
+| March 2026 | IRR audit + overlap audit + NOAA regional split | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). NOAA split into FL Keys/Curacao/Navassa. Final: 16 studies, 20 effects. |
 | March 2026 | Mortality definition criterion tightened | Ramos et al. 2024 audit revealed that partial mortality prevalence was being conflated with whole-colony death |
 | March 2026 | PRISMA protocol formalized (this document) | Reviewer/submission preparation. Protocol documented retrospectively; not prospectively registered. |
 

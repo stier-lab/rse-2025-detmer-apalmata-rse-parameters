@@ -25,7 +25,9 @@ We were wondering if you'd be willing to share the colony-level data from that s
 
 We would of course credit your contribution fully — either as a data citation or co-authorship, whatever feels appropriate to you. We're also happy to share our full dataset and analysis pipeline in return.
 
-Our current meta-analysis has k=18 study-level effects from 18 unique studies across 11 Caribbean regions. Your data would be one of the largest single additions and would substantially strengthen the analysis.
+Our current meta-analysis has 20 study-level effects from 16 unique studies across 11 Caribbean regions. Your data would be one of the largest single additions and would substantially strengthen the analysis.
+
+[Note: email sent 2026-03-28 with k=18; meta-analysis subsequently updated to k=16/20 effects after NOAA regional split]
 
 Thank you so much for considering this. I know how much work goes into maintaining long-term monitoring datasets, and we really appreciate your willingness to share (as noted in your data availability statement). Please don't hesitate to reach out if you have any questions about the project.
 

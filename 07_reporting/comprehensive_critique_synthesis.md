@@ -2,6 +2,8 @@
 ## Detmer & Stier — *A. palmata* Size-Dependent Demography Synthesis
 **Date:** 2026-03-29 | **Method:** 6 parallel specialist agents reviewed all code, data, and documentation
 
+> **Note:** This critique was written when k=18. The meta-analysis was subsequently restructured to k=16 studies/20 effects after splitting NOAA by region (FL Keys/Curacao/Navassa).
+
 ---
 
 ## EXECUTIVE SUMMARY

@@ -23,7 +23,7 @@
 
 ## Cross-Reference Against Included Studies
 
-All 19 included studies in the meta-analysis were checked against Elicit results:
+All 19 candidate studies at the time of the Elicit search were checked against results (3 were later removed; final meta-analysis: 16 studies, 20 effects):
 
 | Study | Found by Elicit? |
 |---|---|
@@ -74,7 +74,7 @@ The Elicit search across 125M+ papers confirms:
 2. **No new studies with extractable longitudinal survival data** were identified beyond those already evaluated
 3. **The search is saturated** — additional search strings are unlikely to yield new demographic data sources for A. palmata
 
-This supports the conclusion that the k=18 meta-analysis represents a near-complete compilation of all published A. palmata survival data with individual colony tracking.
+This supports the conclusion that the meta-analysis (k=16 studies, 20 effects) represents a near-complete compilation of all published A. palmata survival data with individual colony tracking.
 
 ---
 

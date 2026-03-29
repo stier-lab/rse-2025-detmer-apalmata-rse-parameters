@@ -40,7 +40,7 @@ Cross-referencing all `[TODO]` items in `docs/PRISMA_Systematic_Review_Protocol.
 | Number of citation chaining records | Line 276 (§6.1 flow diagram) | How many papers were identified through forward/backward citation chaining from Vardi 2011, Williams & Miller 2012, Lirman 2003. | Not recorded. The notes reference specific studies that were found but do not tally how many were screened through citation chaining. |
 | PubMed/Semantic Scholar hit counts (March 2026 expansion) | Lines 122-123 (§3.2 table) | Number of hits from the AI-assisted expanded search. | These searches were run by Claude in a separate session; not in Raine's notes. Recoverable from Claude session logs. |
 | Exact search strings for March 2026 expansion | Line 128 (§3.2) | The PubMed and Semantic Scholar query strings used during the expanded search. | Run by Claude, not by Raine. Recoverable from session logs. |
-| Verify k counts (k=18 studies, 18 effects) | Line 345 (§6.1 note) | Cross-check the final study count against the actual output of `14b_expanded_meta_analysis.R`. Roth et al. 2013 removed for data overlap with Rogers & Muller 2012. | This is a code verification task, not in the notes. Requires running or inspecting the R script output. |
+| Verify k counts (k=16 studies, 20 effects) | Line 345 (§6.1 note) | Cross-check the final study count against the actual output of `14b_expanded_meta_analysis.R`. Roth et al. 2013 removed for data overlap with Rogers & Muller 2012. NOAA split by region (FL Keys/Curacao/Navassa). | This is a code verification task, not in the notes. Requires running or inspecting the R script output. |
 
 ---
 

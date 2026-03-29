@@ -3,7 +3,7 @@
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis (Detmer et al. 2025)
 **Purpose:** Document exactly what was extracted from each included study, where values came from in the source paper, and any assumptions made. A reader should be able to trace any number in the meta-analysis back to a specific page, table, or figure in the source paper.
 
-**Total included studies:** 18 study-level effects from 15 unique papers (Vardi 2011 contributes 3 regional effects). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
+**Total included studies:** 16 unique studies contributing 20 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
 
 **Data tiers:**
 - **Tier 1 (individual-level):** 5 studies with raw colony/fragment-level data from public repositories or direct sharing. Survival rates computed directly from individual fates.
