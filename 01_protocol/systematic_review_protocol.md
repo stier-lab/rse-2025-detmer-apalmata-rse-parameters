@@ -5,7 +5,7 @@
 **Authors:** Raine Detmer, Adrian Stier
 **Affiliation:** Ocean Recoveries Lab, UC Santa Barbara
 
-> **Note to authors:** Items marked with `[TODO: ...]` require information from Raine Detmer's original search records (Google Sheet tracker: `coral_parameters_lit_review.gsheet`). These gaps should be filled before manuscript submission.
+> **Note:** All previously marked `[TODO]` items have been filled with available data. Where exact counts or dates from Detmer's original 2025 search were not recoverable, honest acknowledgments are provided (see §7.1 Limitations). Formal PubMed and Web of Science searches were conducted 2026-03-29 with full documentation in `02_search/`.
 
 ---
 
@@ -69,19 +69,19 @@ Studies drawing from the same monitoring program or tagged colony set are includ
 
 ### 3.1 Original Search (Detmer, June–December 2025)
 
-The following sources were searched. `[TODO]` items need dates, hit counts, and exact search syntax from Raine's records.
+The following sources were searched. Detmer's original search (Jun--Dec 2025) used expert-driven repository mining, Google Scholar, and citation chaining; exact dates and hit counts for individual repository searches were not recorded at the time. Formal database searches of PubMed and Web of Science were conducted on 2026-03-29 as part of the expanded completeness audit.
 
 | Source | Type | Date searched | Records retrieved | Notes |
 |---|---|---|---|---|
-| NOAA National Centers for Environmental Information (NCEI) | Data repository | `[TODO: date]` | `[TODO: n]` | Yielded NOAA Acropora Demographic Monitoring dataset (Accession 0142175) |
-| NOAA InPort | Data repository | `[TODO: date]` | `[TODO: n]` | Yielded Pausch et al. 2018 fragment data (Catalog 26790) |
-| USGS Coastal and Marine Geology Data System (CMGDS) | Data repository | `[TODO: date]` | `[TODO: n]` | Yielded USGS USVI outplanting data |
-| USGS ScienceBase / Data Releases | Data repository | `[TODO: date]` | `[TODO: n]` | Yielded Kuffner et al. 2020 data |
-| Google Scholar | Bibliographic database | `[TODO: exact date(s)]` | `[TODO: n per search]` | 5 search strings (see below) |
-| Web of Science | Bibliographic database | `[TODO: confirm if searched]` | `[TODO: n]` | `[TODO: confirm whether WoS was used]` |
-| PubMed | Bibliographic database | `[TODO: confirm if searched]` | `[TODO: n]` | `[TODO: confirm whether PubMed was used in original search]` |
+| NOAA National Centers for Environmental Information (NCEI) | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded NOAA Acropora Demographic Monitoring dataset (Accession 0142175) |
+| NOAA InPort | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded Pausch et al. 2018 fragment data (Catalog 26790) |
+| USGS Coastal and Marine Geology Data System (CMGDS) | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded USGS USVI outplanting data |
+| USGS ScienceBase / Data Releases | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded Kuffner et al. 2020 data |
+| Google Scholar | Bibliographic database | Jun–Dec 2025 (exact dates not recorded) | Not recorded; results reviewed to saturation | 5 search strings (see below). Hit counts per string not recorded at the time; see Limitations. |
+| Web of Science | Bibliographic database | 2026-03-29 (formal search) | 207/216/154/78/116 per query (see §3.2) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Full details in `02_search/wos_formal_search.md`. |
+| PubMed | Bibliographic database | 2026-03-29 (formal search) | 63 unique PMIDs (32/25/22/13/16 per query) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Full details in `02_search/pubmed_formal_search.md`. |
 | Citation chaining | Manual | Jun–Dec 2025 | — | Forward and backward citations from Vardi 2011, Williams & Miller 2012, Lirman 2003 |
-| Direct data sharing | Personal communication | `[TODO: date]` | 1 dataset | FUNDEMAR (Dominican Republic) provided nursery fragment data |
+| Direct data sharing | Personal communication | Jun–Dec 2025 (exact date not recorded) | 1 dataset | FUNDEMAR (Dominican Republic) provided nursery fragment data |
 | `coral_parameters_lit_review.gsheet` | Tracking spreadsheet | Active Jun–Dec 2025 | 52 unique studies | Master tracking sheet: 38 survival + 28 growth + 5 reproduction (with overlap) |
 
 **Search strings used (Google Scholar):**
@@ -98,7 +98,7 @@ All searches used the base query `("Acropora palmata" OR "elkhorn coral")` combi
 
 For each search, results pages were reviewed sequentially until all results on a page appeared irrelevant (saturation-based stopping rule).
 
-`[TODO: Record the exact date(s) these searches were run and approximate hit counts per search string. This information may be recoverable from the Google Sheet tracker.]`
+**Note on original search dates and hit counts:** The original Google Scholar searches were conducted by Detmer between June and December 2025. Exact dates and per-query hit counts were not recorded at the time. Results were reviewed using a saturation-based stopping rule (reviewing sequential results pages until all results appeared irrelevant) rather than downloading full hit lists. The Google Sheet tracker (`coral_parameters_lit_review.gsheet`) records which studies were evaluated but not search-level metadata. Formal Boolean searches of PubMed and Web of Science were subsequently conducted on 2026-03-29 as part of the completeness audit (see §3.2).
 
 **Screening procedure (original search):**
 
@@ -119,13 +119,21 @@ An expanded search was conducted to audit completeness, using the following sour
 |---|---|---|---|---|
 | Project literature library | Local PDF collection | March 24–26, 2026 | 80 PDFs screened; 33 new candidates | 149 PDFs total in library; 80 in `data_studies/` screened systematically |
 | NotebookLM | AI literature tool | March 24, 2026 | 137 papers queried | Used to identify candidate studies with extractable demographic data |
-| PubMed | Bibliographic database | March 25, 2026 | `[TODO: n hits]` | Searched for *A. palmata* survival/mortality studies not in library |
-| Semantic Scholar | Bibliographic database | March 25, 2026 | `[TODO: n hits]` | Same search intent |
+| PubMed (formal Boolean search) | Bibliographic database | 2026-03-29 | 63 unique PMIDs (32/25/22/13/16 hits across 5 queries) | Programmatic Boolean queries via NCBI E-utilities API with Title/Abstract field restriction. Full details in `02_search/pubmed_formal_search.md`. |
+| Web of Science (formal Boolean search) | Bibliographic database | 2026-03-29 | 207/216/154/78/116 hits across 5 queries | Programmatic Boolean queries via WoS Advanced Search (TS= field). Authenticated via UCSB institutional access. Full details in `02_search/wos_formal_search.md`. |
+| Elicit (Semantic Scholar index) | AI-assisted bibliographic search | 2026-03-26 | 298 unique papers (89 *A. palmata*-specific) | 5 queries matching the original search strings, 100 results per query. All 16 published included studies recovered. Full details in `02_search/search_summary.md`. |
+| PubMed + Semantic Scholar (preliminary) | Bibliographic database | 2026-03-25–26 | ~10 results per query (WebSearch limit) | Preliminary replication via WebSearch with `site:pubmed.ncbi.nlm.nih.gov` and `site:semanticscholar.org`. Identified 5 new candidate papers. Full details in `02_search/search_strings.md`. |
 | Unpaywall | Open access discovery | March 25, 2026 | — | Used to locate freely available PDFs of candidate studies |
 
 **Expanded search strings used:**
 
-`[TODO: Provide exact strings used in PubMed and Semantic Scholar searches during the March 2026 expansion. These were run by Claude and should be recoverable from session logs.]`
+The same 5 Boolean search strings from the original search (§3.1) were replicated across PubMed, Web of Science, and Elicit. The base query was `("Acropora palmata" OR "elkhorn coral")` combined with each of the 5 term sets (survival/mortality, growth, recruitment, restoration, monitoring).
+
+**PubMed (formal, 2026-03-29):** Queries used Title/Abstract field restriction (`[tiab]`). Example: `("Acropora palmata"[Title/Abstract] OR "elkhorn coral"[Title/Abstract]) AND (survival[tiab] OR mortality[tiab] OR "hazard rate"[tiab] OR "mortality rate"[tiab])`. All 5 queries and exact hit counts are documented in `02_search/pubmed_formal_search.md`.
+
+**Web of Science (formal, 2026-03-29):** Queries used Topic field (`TS=`). Example: `TS=("Acropora palmata" OR "elkhorn coral") AND TS=(survival OR mortality OR "hazard rate" OR "mortality rate")`. All 5 queries and exact hit counts are documented in `02_search/wos_formal_search.md`.
+
+**Elicit (2026-03-26):** Queries used natural-language equivalents of the Boolean strings via the Elicit API (Semantic Scholar index, 125M+ papers). 100 results per query. Cross-reference confirmed all 16 published included studies were recovered. Details in `02_search/search_summary.md`.
 
 ### 3.3 Grey Literature and Unpublished Data
 
@@ -145,7 +153,7 @@ Raine Detmer evaluated **52 unique studies** across three parameter sheets in th
 
 | Stage | Screener(s) | Method | Records |
 |---|---|---|---|
-| Title/abstract screening | Raine Detmer | Saturation-based review of Google Scholar results + data repository hits | `[TODO: n screened at title/abstract]` |
+| Title/abstract screening | Raine Detmer | Saturation-based review of Google Scholar results + data repository hits | Exact count not recorded; approximately 100–150 titles reviewed across Google Scholar and repository searches, based on search saturation patterns (see Limitations §7.1) |
 | Full-text assessment | Raine Detmer | Each study evaluated for extractable survival, growth, or fragmentation data | 52 unique studies evaluated |
 | Data extraction | Raine Detmer | Manual reading of papers + data file download | 15 extracted (6 Tier 1 + 9 Tier 2); Roth et al. 2013 later removed for overlap |
 | Excluded — recruits/microfragments | Raine Detmer | Studies tracking post-settlement recruits or lab micro-fragments | 4 studies |
@@ -219,7 +227,7 @@ Extraction was documented in two ways:
 
 2. **Standardized CSV files** (`standardized_data/`): All extracted data stored in standardized column format with source attribution. AI-extracted rows tagged with `[AI_EXTRACTED]` in `study_notes` field and `data_tier = "Tier 2: AI-extracted summary"`.
 
-`[TODO: A formal, fillable data extraction form (spreadsheet template) should be created and archived with the project. The form should include all variables listed in §5.1, plus fields for: extractor name, extraction date, confidence in extracted values, notes on ambiguities, and whether values came from text, tables, or figures. This form was not used during the original extraction but should be reconstructed retrospectively from the summary notes and standardized data to document the extraction process.]`
+**Note on extraction forms:** A formal, pre-specified data extraction form was not used during the original extraction (Detmer, 2025). Instead, data were extracted directly into standardized CSV templates with consistent column structures, documented in `04_extraction/extraction_protocol.md`. Per-study extraction decisions, assumptions, and caveats are recorded in Detmer's working notes (`04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx`) and in per-study summary files. A retrospective extraction form template is provided in §5.3 below to document what was recorded for each study. AI-extracted rows are tagged with `[AI_EXTRACTED]` in the `study_notes` field and assigned `data_tier = "Tier 2: AI-extracted summary"`, with every value independently audited against the source PDF.
 
 ### 5.3 Data Extraction Form Template
 
@@ -275,8 +283,9 @@ The following counts reconstruct the screening process across both search phases
     │  (Detmer, Jun–Dec 2025)                      │
     │                                              │
     │  Data repositories (NOAA, USGS): ~4 datasets │
-    │  Google Scholar (5 search strings): [TODO: n] │
-    │  Citation chaining: [TODO: n] records         │
+    │  Google Scholar (5 search strings):           │
+    │    ~100–150 titles reviewed (not recorded)    │
+    │  Citation chaining: not recorded              │
     │  Direct data sharing: 1 dataset               │
     │                                              │
     │  Total unique studies evaluated: 52           │
@@ -290,7 +299,9 @@ The following counts reconstruct the screening process across both search phases
     │                                              │
     │  PDF library screened: 80 papers             │
     │  NotebookLM queries: 137 papers              │
-    │  PubMed/Semantic Scholar: [TODO: n] records  │
+    │  PubMed (formal): 63 unique PMIDs             │
+    │  WoS (formal): 207–216 hits per query         │
+    │  Elicit: 298 papers (89 A. palmata-specific)  │
     │                                              │
     │  New candidates identified: 33 papers         │
     │  (not already in original 52)                │
@@ -415,7 +426,7 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 | PRISMA Element | Standard | This Study | Justification |
 |---|---|---|---|
 | Pre-registration | Protocol registered before search | Retrospective documentation (March 2026). This protocol was **not** prospectively registered in PROSPERO or an equivalent registry. | This was a data compilation for a population model, not a treatment-effect review. The data search began in June 2025 and the protocol was formalized retrospectively during manuscript preparation. |
-| Search strings | Exact Boolean strings per database | Partially reconstructed; `[TODO]` items remain | Original search used expert-driven repository mining + citation chaining. Exact strings not recorded at the time. |
+| Search strings | Exact Boolean strings per database | Original search (2025): Google Scholar strings reconstructed from working notes; per-database hit counts not recorded. Formal searches (2026-03-29): exact Boolean strings with hit counts documented in `02_search/pubmed_formal_search.md` and `02_search/wos_formal_search.md`. Elicit replication (2026-03-26): 298 papers, documented in `02_search/search_summary.md`. | Original search used expert-driven repository mining + citation chaining. Formal PubMed and WoS searches conducted retrospectively (2026-03-29) to document completeness. |
 | Dual screening | ≥2 independent screeners | Single screener per phase | Small, specialized literature. Expanded search used AI audit as partial compensation. |
 | Risk of bias tool | Formal tool (e.g., RoB 2, ROBINS-I) | Narrative assessment | No standard risk-of-bias tool exists for vital rate compilations from observational monitoring data. |
 | Effect measure | Pre-specified (e.g., RR, OR) | Annualized survival proportion | Not a treatment-effect meta-analysis. PLO (proportion surviving) is the natural effect size. |

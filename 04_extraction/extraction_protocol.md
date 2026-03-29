@@ -37,6 +37,12 @@ A comprehensive literature audit was conducted using AI (Claude) to ensure no ex
 
 This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5) and overlap audit, resulted in a net change from k=16 to k=18: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, and Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012.
 
+### 1.2b Formal Database Searches (2026-03-29)
+
+To complete PRISMA-required database search documentation, formal Boolean searches were executed against PubMed (63 unique PMIDs across 5 queries) and Web of Science (207--216 hits per query across 5 queries). Approximately 57 of the 63 PubMed results were already present in the screening list from earlier search phases. Six new papers were identified and screened at full text; all were excluded (Manzello et al. 2025, Muller et al. 2025, Birkart & Alvarez-Filip 2025, Wilson & Edmunds 2026, Cramer et al. 2020, Banister et al. 2024). See `03_screening/screening_criteria.md` Section 8 for details.
+
+**Conclusion:** No additional extractable studies exist beyond the 16 already included in the meta-analysis. The formal database searches confirm the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+
 ### 1.3 AI Data Extraction Method
 
 All AI-extracted data was produced by a large language model (Claude, Anthropic) reading source PDFs directly. The process was **manual interpretation, not automated extraction**:

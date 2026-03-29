@@ -175,5 +175,49 @@ All hand-extracted values were verified against source PDFs during an inter-rate
 
 ---
 
+## 8. Formal Database Search Screening (2026-03-29)
+
+To complete the PRISMA-required database search documentation, formal Boolean searches were executed against PubMed and Web of Science on 2026-03-29.
+
+### 8.1 PubMed Results
+
+Five Boolean queries (combining `"Acropora palmata"` OR `"elkhorn coral"` with terms targeting survival, growth, restoration, demography, and population dynamics) returned **63 unique PMIDs**. Of these, approximately 57 were already present in the screening list (from the original Detmer 2025 search or the AI expansion March 2026). Six papers were identified as new and screened at full text. **All 6 were excluded.**
+
+### 8.2 Web of Science Results
+
+The same five query structures were run in Web of Science, returning 207/216/154/78/116 hits across the five queries. WoS provided broader coverage than PubMed but saturation was confirmed independently by Elicit, which recovered all 16 published included studies in the meta-analysis.
+
+### 8.3 Outcome
+
+The formal database searches identified **zero new includable studies**, validating the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+
+### 8.4 Six Newly Screened Papers
+
+| Study | PMID | Exclusion Code | Reason |
+|-------|------|----------------|--------|
+| Manzello et al. 2025 | 41129628 | E4 | Data overlap -- compiles 52,356 colonies from NOAA + CRF + Mote + USGS programs already included; combined *Acropora* spp. (*palmata* + *cervicornis* not separable); acute 2023 heatwave event |
+| Muller et al. 2025 | 41273189 | E8 + E4 | Review/synthesis of 20-year FL *Acropora* restoration programs; data from NOAA + CRF + Mote already included; no new primary demographic data |
+| Birkart & Alvarez-Filip 2025 | 41210959 | E2 | Cross-sectional drone aerial imagery assessment of reef-scale mortality; no individual colony tracking; 100% mortality at Puerto Morelos from 2023 heatwave |
+| Wilson & Edmunds 2026 | 41454911 | E8 | Review/conceptual paper on coral rarity; multi-species; *A. palmata* mentioned as one example; no primary demographic data |
+| Cramer et al. 2020 | 32426458 | E2 + E8 | Historical/paleoecological synthesis; cross-sectional surveys + fossil reef cores; combined *Acropora* spp.; no individual colony tracking |
+| Banister et al. 2024 | 38166125 | E2 + E3 | Cross-sectional BRT habitat suitability model; occurrence data not demographic rates; no survival or growth tracking |
+
+### 8.5 Exclusion Code Definitions (Complete Reference)
+
+| Code | Definition |
+|------|-----------|
+| **E1** | Wrong species (not *A. palmata*) |
+| **E2** | Cross-sectional only (no longitudinal tracking of individual colonies) |
+| **E3** | No extractable survival or growth data |
+| **E4** | Data overlap with an already-included study |
+| **E5** | Recruits/microfragments only (<1 cm^2) |
+| **E6** | Laboratory only (or settlement/recruitment stage only) |
+| **E7** | Incompatible metric (not convertible to planar area or annual survival) |
+| **E8** | Review, model, or synthesis paper (no primary demographic data) |
+| **E9** | Grey literature / preprint (not used in this review) |
+| **E10** | Other (specify in notes) |
+
+---
+
 *Document prepared: March 2026*
 *Ocean Recoveries Lab, UC Santa Barbara*
