@@ -40,9 +40,20 @@ WoS returns substantially more hits because: (1) WoS indexes marine ecology jour
 
 ## Cross-Reference Status
 
-Full cross-referencing of all WoS hits against the existing screening list requires export of individual records. The PubMed cross-reference (63 papers, 6 needing screening) provides the higher-confidence check since our included studies are predominantly in PubMed-indexed journals. Any studies unique to WoS but not PubMed would likely be: (a) marine ecology journals not in PubMed (e.g., Coral Reefs, Marine Ecology Progress Series, ICES Journal), (b) conference proceedings, or (c) older literature pre-dating PubMed indexing.
+### Export Completed (2026-03-28)
 
-**Action needed:** Export WoS results as BibTeX/CSV for full cross-referencing. The saturation analysis via Elicit (298 papers, all 16 published included studies recovered) provides strong evidence that no critical studies are missing.
+Search 1 (survival/mortality, 207 hits) exported via Playwright CDP scraping of the WoS results page. Virtual scrolling required slow-scroll triggering to render all records.
+
+**Output:** `02_search/search_results/wos/wos_search1_survival_mortality.csv`
+- **206 unique records** (1 duplicate removed across page boundaries)
+- Fields: title, authors, year, journal, doi, wos_id
+- Year range: 1979-2026
+- Completeness: 206/206 have title + authors + year + WoS ID; 203/206 have journal; DOI extraction not available from rendered DOM
+- Script: `02_search/search_results/wos/extract_wos_results.mjs`
+
+### Prior Notes
+
+The PubMed cross-reference (63 papers, 6 needing screening) provides the higher-confidence check since our included studies are predominantly in PubMed-indexed journals. Any studies unique to WoS but not PubMed would likely be: (a) marine ecology journals not in PubMed (e.g., Coral Reefs, Marine Ecology Progress Series, ICES Journal), (b) conference proceedings, or (c) older literature pre-dating PubMed indexing. The saturation analysis via Elicit (298 papers, all 16 published included studies recovered) provides strong evidence that no critical studies are missing.
 
 ---
 
