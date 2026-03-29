@@ -2125,4 +2125,239 @@ significant_any <- any(class_sens$moderator_p < 0.05, na.rm = TRUE)
 cat(sprintf("  Significant under any scenario: %s\n",
             ifelse(significant_any, "YES", "NO")))
 
+# ==============================================================================
+# SECTION: RISK-OF-BIAS SENSITIVITY ANALYSIS
+# FIX: Added per PRISMA audit 2026-03-29
+# Maps adapted Newcastle-Ottawa Scale scores from 04_extraction/risk_of_bias.md
+# to study_id, then tests whether RoB predicts survival and whether excluding
+# low-quality studies (score <= 5) changes the pooled estimate.
+# ==============================================================================
+
+cat("\n")
+cat("==============================================================================\n")
+cat("  RISK-OF-BIAS SENSITIVITY ANALYSIS\n")
+cat("==============================================================================\n\n")
+
+# --- RoB scores from 04_extraction/risk_of_bias.md (adapted NOS, /10) ---
+# Scores mapped to study_id (parent study), not the regional-split study names.
+# NOAA regional effects inherit the NOAA_survey score (10).
+# Vardi regional effects inherit the vardi_2011 score (9).
+# Muller 2008, Sutherland 2016, and Roth 2013 are excluded from meta and not scored here.
+rob_scores <- data.frame(
+  study_id = c(
+    "NOAA_survey",
+    "pausch_et_al_2018",
+    "USGS_USVI_exp",
+    "kuffner_et_al_2020",
+    "fundemar_fragments",
+    "mendoza_quiroz_et_al_2023",
+    "vardi_2011",
+    "bruckner_bruckner_2001",
+    "ortiz_prosper_2005",
+    "forrester_et_al_2013",
+    "rosales_et_al_2024",
+    "maurer_et_al_2022",
+    "williams_miller_2010",
+    "garrison_ward_2008",
+    "rogers_muller_2012",
+    "ramos_romero_et_al_2025",
+    "rogers_et_al_1982",
+    "chamberland_et_al_2015",
+    "papke_et_al_2021"
+  ),
+  rob_score = c(
+    10,  # NOAA_survey
+     8,  # pausch_et_al_2018
+     7,  # USGS_USVI_exp
+     6,  # kuffner_et_al_2020
+     5,  # fundemar_fragments
+     5,  # mendoza_quiroz_et_al_2023
+     9,  # vardi_2011
+     4,  # bruckner_bruckner_2001
+     8,  # ortiz_prosper_2005
+     6,  # forrester_et_al_2013
+     8,  # rosales_et_al_2024
+     7,  # maurer_et_al_2022
+     5,  # williams_miller_2010
+     7,  # garrison_ward_2008
+     9,  # rogers_muller_2012
+     7,  # ramos_romero_et_al_2025
+     5,  # rogers_et_al_1982 (not scored in risk_of_bias.md; estimated as Moderate [5/10]
+        #   based on 1982 methods: single-site convenience sample, visual tracking of
+        #   hurricane-generated fragments, 11-month interval requiring annualization)
+     7,  # chamberland_et_al_2015 (excluded from meta as recruits)
+     6   # papke_et_al_2021 (excluded from meta as micro-fragments)
+  ),
+  stringsAsFactors = FALSE
+)
+
+# Merge RoB scores into combined_es via study_id
+combined_rob <- merge(combined_es, rob_scores, by = "study_id", all.x = TRUE)
+
+n_matched <- sum(!is.na(combined_rob$rob_score))
+n_missing <- sum(is.na(combined_rob$rob_score))
+cat(sprintf("  RoB scores matched: %d of %d effects\n", n_matched, nrow(combined_rob)))
+if (n_missing > 0) {
+  cat(sprintf("  WARNING: %d effects missing RoB scores:\n", n_missing))
+  cat(sprintf("    %s\n", paste(combined_rob$study[is.na(combined_rob$rob_score)], collapse = ", ")))
+}
+
+cat(sprintf("  RoB score range: %d--%d (mean=%.1f, median=%.1f)\n",
+            min(combined_rob$rob_score, na.rm = TRUE),
+            max(combined_rob$rob_score, na.rm = TRUE),
+            mean(combined_rob$rob_score, na.rm = TRUE),
+            median(combined_rob$rob_score, na.rm = TRUE)))
+
+# --- RoB as continuous moderator (meta-regression) ---
+cat("\n  1. Meta-regression: RoB score as continuous moderator\n")
+rma_rob_mod <- tryCatch({
+  rma(yi = log_odds, vi = var_log_odds, mods = ~ rob_score,
+      data = combined_rob, method = "REML", test = "knha")
+}, error = function(e) {
+  cat(sprintf("    ERROR fitting RoB meta-regression: %s\n", e$message))
+  NULL
+})
+
+if (!is.null(rma_rob_mod)) {
+  rob_coef <- coef(summary(rma_rob_mod))
+  cat(sprintf("    Intercept: %.3f (SE=%.3f)\n", rob_coef[1, "estimate"], rob_coef[1, "se"]))
+  cat(sprintf("    RoB slope: %.3f (SE=%.3f, p=%.4f)\n",
+              rob_coef[2, "estimate"], rob_coef[2, "se"], rob_coef[2, "pval"]))
+  cat(sprintf("    QM (moderator test): %.3f, df=%d, p=%.4f\n",
+              rma_rob_mod$QM, rma_rob_mod$m, rma_rob_mod$QMp))
+  cat(sprintf("    Residual I2: %.1f%%\n", rma_rob_mod$I2))
+  cat(sprintf("    Interpretation: %s\n",
+              ifelse(rma_rob_mod$QMp < 0.05,
+                     "RoB significantly predicts survival (higher-quality studies differ)",
+                     "RoB does NOT significantly predict survival")))
+}
+
+# --- Sensitivity: Exclude low-quality studies (score <= 5) ---
+cat("\n  2. Sensitivity: Excluding studies with RoB score <= 5\n")
+low_rob_studies <- combined_rob %>% filter(rob_score <= 5)
+high_rob_data <- combined_rob %>% filter(rob_score > 5)
+
+cat(sprintf("    Studies excluded (score <= 5): %d effects from %d unique studies\n",
+            nrow(low_rob_studies), n_distinct(low_rob_studies$study_id)))
+if (nrow(low_rob_studies) > 0) {
+  cat(sprintf("    Excluded: %s\n",
+              paste(unique(low_rob_studies$study), collapse = ", ")))
+}
+cat(sprintf("    Remaining: %d effects from %d unique studies\n",
+            nrow(high_rob_data), n_distinct(high_rob_data$study_id)))
+
+rma_high_rob <- tryCatch({
+  rma(yi = log_odds, vi = var_log_odds, data = high_rob_data,
+      method = "REML", test = "knha")
+}, error = function(e) {
+  cat(sprintf("    ERROR fitting high-RoB model: %s\n", e$message))
+  NULL
+})
+
+if (!is.null(rma_high_rob)) {
+  surv_high_rob <- plogis(as.numeric(rma_high_rob$beta))
+  ci_lower_high <- plogis(rma_high_rob$ci.lb)
+  ci_upper_high <- plogis(rma_high_rob$ci.ub)
+  cat(sprintf("    Pooled survival (RoB > 5): %.1f%% (95%% CI: %.1f--%.1f%%)\n",
+              surv_high_rob * 100, ci_lower_high * 100, ci_upper_high * 100))
+  cat(sprintf("    I2: %.1f%%, tau2: %.4f\n", rma_high_rob$I2, rma_high_rob$tau2))
+
+  # Compare to full model
+  # Retrieve pooled survival from the independent model (rma_independent)
+  surv_full <- plogis(as.numeric(rma_independent$beta))
+  diff_pp <- (surv_high_rob - surv_full) * 100
+  cat(sprintf("    Change from full model: %+.1f percentage points (full=%.1f%%, restricted=%.1f%%)\n",
+              diff_pp, surv_full * 100, surv_high_rob * 100))
+}
+
+# --- RoB by data tier ---
+cat("\n  3. RoB scores by data tier:\n")
+tier_rob_summary <- combined_rob %>%
+  group_by(data_tier) %>%
+  summarise(
+    k = n(),
+    mean_rob = mean(rob_score, na.rm = TRUE),
+    median_rob = median(rob_score, na.rm = TRUE),
+    min_rob = min(rob_score, na.rm = TRUE),
+    max_rob = max(rob_score, na.rm = TRUE),
+    .groups = "drop"
+  )
+print(tier_rob_summary)
+
+# --- Save results ---
+rob_sensitivity_results <- data.frame(
+  analysis = c(
+    "Full model (all studies)",
+    "RoB > 5 only",
+    "RoB meta-regression slope",
+    "RoB meta-regression p-value"
+  ),
+  k_effects = c(
+    nrow(combined_rob),
+    nrow(high_rob_data),
+    nrow(combined_rob),
+    nrow(combined_rob)
+  ),
+  k_studies = c(
+    n_distinct(combined_rob$study_id),
+    n_distinct(high_rob_data$study_id),
+    n_distinct(combined_rob$study_id),
+    n_distinct(combined_rob$study_id)
+  ),
+  pooled_survival = c(
+    ifelse(!is.null(rma_independent), plogis(as.numeric(rma_independent$beta)), NA),
+    ifelse(!is.null(rma_high_rob), plogis(as.numeric(rma_high_rob$beta)), NA),
+    NA,
+    NA
+  ),
+  ci_lower = c(
+    ifelse(!is.null(rma_independent), plogis(rma_independent$ci.lb), NA),
+    ifelse(!is.null(rma_high_rob), plogis(rma_high_rob$ci.lb), NA),
+    NA,
+    NA
+  ),
+  ci_upper = c(
+    ifelse(!is.null(rma_independent), plogis(rma_independent$ci.ub), NA),
+    ifelse(!is.null(rma_high_rob), plogis(rma_high_rob$ci.ub), NA),
+    NA,
+    NA
+  ),
+  I2 = c(
+    ifelse(!is.null(rma_independent), rma_independent$I2, NA),
+    ifelse(!is.null(rma_high_rob), rma_high_rob$I2, NA),
+    ifelse(!is.null(rma_rob_mod), rma_rob_mod$I2, NA),
+    NA
+  ),
+  rob_slope = c(
+    NA,
+    NA,
+    ifelse(!is.null(rma_rob_mod), coef(summary(rma_rob_mod))[2, "estimate"], NA),
+    NA
+  ),
+  rob_p_value = c(
+    NA,
+    NA,
+    NA,
+    ifelse(!is.null(rma_rob_mod), rma_rob_mod$QMp, NA)
+  ),
+  mean_rob_score = c(
+    mean(combined_rob$rob_score, na.rm = TRUE),
+    mean(high_rob_data$rob_score, na.rm = TRUE),
+    NA,
+    NA
+  )
+)
+
+write_csv(rob_sensitivity_results, file.path(output_dir, "expanded_meta_rob_sensitivity.csv"))
+cat("\n  Saved: expanded_meta_rob_sensitivity.csv\n")
+
+# Also save per-study RoB assignments for reproducibility
+rob_per_study <- combined_rob %>%
+  as.data.frame() %>%
+  select(study, study_id, region, data_tier, population_type, n_total,
+         survival_rate, rob_score, log_odds, var_log_odds) %>%
+  arrange(rob_score, study)
+write_csv(rob_per_study, file.path(output_dir, "expanded_meta_rob_per_study.csv"))
+cat("  Saved: expanded_meta_rob_per_study.csv\n")
+
 cat("\n\nExpanded meta-analysis complete.\n")
