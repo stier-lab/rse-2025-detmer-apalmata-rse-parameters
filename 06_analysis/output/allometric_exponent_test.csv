@@ -1,0 +1,8 @@
+metric,value
+allometric_beta,0.91475707135578
+beta_se,0.00596220117604994
+beta_ci_lower,0.9030677999043842
+beta_ci_upper,0.9264463428071757
+t_vs_isometry,-14.297224485922984
+p_vs_isometry,2.9899608210583925e-45
+n_observations,3963

@@ -1,0 +1,27 @@
+statistic,value
+Number of studies (k),18
+Total observations (N),6480
+Tier 1 studies,5
+Tier 2 studies,13
+Natural colony studies,7
+Restoration fragment studies,11
+Pooled survival (RE),0.792
+95% CI lower,0.706
+95% CI upper,0.857
+95% PI lower,0.389
+95% PI upper,0.958
+tau^2,0.6690
+tau,0.8179
+I^2 (%),96.4
+I^2 CI lower,93.0
+I^2 CI upper,98.7
+Cochran's Q,615.29
+Q df,17
+Q p-value,0.0000
+REML estimation method,REML
+Small-sample adjustment,Knapp-Hartung (test='knha')
+MDD SE (log-odds),0.4541
+"MDD (log-odds, 80% power)",1.3552
+"MDD (probability scale, pp)",22.3
+Observed difference (pp),7.5
+MDD power interpretation,UNDERPOWERED to detect observed difference

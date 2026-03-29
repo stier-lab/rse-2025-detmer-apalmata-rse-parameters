@@ -1,0 +1,33 @@
+"script","description","status","duration_sec"
+"01_data_preparation.R","Data preparation and cleaning","SUCCESS",1.7
+"02_survival_thresholds.R","Survival threshold analysis","SUCCESS",15.2
+"03_growth_thresholds.R","Growth threshold analysis","SUCCESS",3.9
+"04_growth_rate_comparison.R","Growth rate analysis (AGR vs RGR)","SUCCESS",6.8
+"05_variance_partitioning.R","Variance partitioning (size/space/time)","SUCCESS",14.8
+"06_data_gap_analysis.R","Data gap analysis and certainty scoring","SUCCESS",0.4
+"07_integrate_summary_data.R","Integrate summary data","SUCCESS",0.1
+"08_climate_demography.R","Climate-demography integration","SUCCESS",0.6
+"09_power_analysis.R","Power analysis for future studies","SUCCESS",12.4
+"10_cross_validation.R","Cross-validation framework","SUCCESS",1.3
+"11_context_comparison.R","Context comparison (field/nursery/lab)","SUCCESS",0.5
+"12_model_selection.R","Model selection tables","SUCCESS",2.8
+"13_transition_matrix.R","Transition matrix population model","SUCCESS",1185.4
+"14_meta_analysis.R","Formal meta-analysis (k=5, random effects)","SUCCESS",2
+"14b_expanded_meta_analysis.R","Expanded meta-analysis (k=16, two-tier)","SUCCESS",1.1
+"15_heterogeneity_analysis.R","Heterogeneity analysis (I², Q-tests)","SUCCESS",0.2
+"16_sensitivity_analysis.R","Sensitivity analysis (LOSO, elasticity)","SUCCESS",18.1
+"17_update_parameter_lists.R","Update parameter lists for API","SUCCESS",17
+"18_fig1_study_landscape.R","Figure 1: Study landscape with map","SUCCESS",0.8
+"19_fig2_demographic_rates.R","Figure 2: Demographic rates (survival + RGR)","SUCCESS",0.5
+"20_fig_size_class_survival_synthesis.R","Figure 4: Size-class survival synthesis (k=15)","SUCCESS",0.3
+"20b_fig_expanded_forest_plot.R","Figure 5: Expanded forest plot (k=16)","SUCCESS",0.4
+"20c_fig_regional_survival.R","Figure S15: Regional survival variation","SUCCESS",0.2
+"21_fig3_natural_vs_restoration.R","Figure 3: Natural vs restoration comparison","SUCCESS",0.8
+"22_fig6_population_model.R","Figure 6: Population model & sensitivity","SUCCESS",0.5
+"23_figS2_data_gaps.R","Figure S2: Data gaps heatmap","SUCCESS",0.2
+"24_supp_S3_S4.R","Supplementary S3-S4: Model diagnostics & selection","SUCCESS",0.9
+"25_supp_S5_S6_S7_thresholds_growth.R","Supplementary S5-S7: Thresholds & growth","SUCCESS",2.3
+"26_supp_S8_S9.R","Supplementary S8-S9: Forest plots & heterogeneity","FAILED",0
+"27_supp_S10_S11.R","Supplementary S10-S11: Context & climate","FAILED",0
+"28_supp_S12_S13_S14.R","Supplementary S12-S14: Sensitivity & projections","SUCCESS",1
+"23_verification.R","Pipeline verification","SUCCESS",0.1

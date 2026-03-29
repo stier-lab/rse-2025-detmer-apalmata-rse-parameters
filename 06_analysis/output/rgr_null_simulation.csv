@@ -1,0 +1,10 @@
+metric,value
+observed_rgr_r2,0.21044236017902418
+agr_r2,0.0557616978426938
+null_median_r2,7.93386083202563e-4
+null_mean_r2,0.0016541524196348443
+null_95th_r2,0.006458205979431185
+biological_signal_r2,0.20964897409582162
+observed_percentile,100
+corrected_rgr_vs_agr_ratio,3.7597308225307375
+n_simulations,1000

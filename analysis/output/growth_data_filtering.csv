@@ -1,4 +1,0 @@
-stage,n_before,n_removed,pct_removed,n_after,reason
-raw_data,4325,0,0,4325,initial load
-remove_impossible_values,4325,501,11.583815028901734,3824,tissue loss > initial size (impossible_growth flag)
-remove_extreme_outliers,3824,396,10.355648535564853,3428,pct_change outside -50% to 200% range

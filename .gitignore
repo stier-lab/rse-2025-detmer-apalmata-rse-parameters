@@ -79,3 +79,8 @@ literature/pdfs/restoration/Goergen_etal_2025_coral_restoration_guide.pdf
 literature/notebooklm_upload/Goergen 2025 - restoration guide.pdf
 literature/pdfs/data_studies/Vardi_2011_dissertation.pdf
 literature/notebooklm_upload/Vardi 2011 - dissertation fragmentation.pdf
+
+# Serena plugin cache
+.serena/
+# Papers accidentally placed in scripts dir
+06_analysis/scripts/*.pdf

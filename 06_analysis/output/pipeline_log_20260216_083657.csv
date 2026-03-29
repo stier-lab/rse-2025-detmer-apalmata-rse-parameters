@@ -1,0 +1,24 @@
+"script","description","status","duration_sec"
+"01_data_preparation.R","Data preparation and cleaning","SUCCESS",1.4
+"02_survival_thresholds.R","Survival threshold analysis","SUCCESS",14.8
+"03_growth_thresholds.R","Growth threshold analysis","SUCCESS",3.4
+"04_growth_rate_comparison.R","Growth rate analysis (AGR vs RGR)","SUCCESS",6.4
+"05_variance_partitioning.R","Variance partitioning (size/space/time)","SUCCESS",11
+"06_data_gap_analysis.R","Data gap analysis and certainty scoring","SUCCESS",0.3
+"07_integrate_summary_data.R","Integrate summary data","SUCCESS",0.1
+"08_climate_demography.R","Climate-demography integration","FAILED",0.5
+"09_power_analysis.R","Power analysis for future studies","FAILED",0
+"10_cross_validation.R","Cross-validation framework","SUCCESS",1.3
+"11_context_comparison.R","Context comparison (field/nursery/lab)","SUCCESS",0.4
+"12_model_selection.R","Model selection tables","SUCCESS",2.5
+"13_transition_matrix.R","Transition matrix population model","SUCCESS",1203.1
+"14_meta_analysis.R","Formal meta-analysis (random effects)","SUCCESS",1.8
+"15_heterogeneity_analysis.R","Heterogeneity analysis (I², Q-tests)","SUCCESS",0.2
+"16_sensitivity_analysis.R","Sensitivity analysis (LOSO, elasticity)","SUCCESS",18
+"17_update_parameter_lists.R","Update parameter lists for API","SUCCESS",16.9
+"18_fig1_study_landscape.R","Figure 1: Study landscape with map","SUCCESS",0.8
+"19_fig2_survival.R","Figure 2: Survival (natural corals)","SUCCESS",0.4
+"20_fig3_growth_rates.R","Figure 3: Growth rates (natural corals)","SUCCESS",0.5
+"21_fig4_natural_vs_restoration.R","Figure 4: Natural vs restoration comparison","SUCCESS",0.4
+"22_fig5_population_model.R","Figure 5: Population model & sensitivity","SUCCESS",0.6
+"23_verification.R","Pipeline verification","SUCCESS",0.1

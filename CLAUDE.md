@@ -9,7 +9,7 @@
 
 A synthesis of all existing *Acropora palmata* (Elkhorn Coral) demographic data across the Caribbean. The central question: **how do survival and growth vary as a function of colony size in restored vs. natural populations?**
 
-We compiled ~9,500 individual-level observations from 6 studies plus ~10 additional summary-level studies (k=16 total) across 10 Caribbean regions. The data are standardized to a common size metric (live planar tissue area, cm^2) and analyzed using GAMs, GLMMs, and random-effects meta-analysis. A Lefkovitch population projection matrix translates the size-dependent vital rates into a population growth rate (lambda) and elasticity analysis.
+We compiled ~9,500 individual-level observations from 6 studies plus 12 additional summary-level studies (18 unique studies yielding k=18 study-level effects; Vardi 2011 contributes 3 regional effects) across 11 Caribbean regions. The data are standardized to a common size metric (live planar tissue area, cm^2) and analyzed using GAMs, GLMMs, and random-effects meta-analysis. A Lefkovitch population projection matrix translates the size-dependent vital rates into a population growth rate (lambda) and elasticity analysis.
 
 The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform](https://github.com/stier-lab/Detmer-2025-coral-platform).
 
@@ -19,12 +19,12 @@ The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform
 
 These apply to **every** analysis change:
 
-- **I^2 = 97.8%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
+- **I^2 = 96.4%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
 - **NOAA = 78%** of individual-level data. Results may not generalize. Always check LOSO sensitivity.
-- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are ~99% NOAA. The expanded meta (k=16) has 6 natural + 10 restoration; difference not significant (p=0.30).
+- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are ~99% NOAA. The expanded meta (k=18) has 7 natural + 11 restoration; difference not significant (p=0.405).
 - **Fragmentation data from one study** (Vardi 2011, 13 rows). Cannot be improved without new data.
 - Any new binomial GLMM needs an **overdispersion check** (`sum(pearson_resid^2) / rdf`).
-- Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment). Moderator analyses are exploratory at k=16.
+- Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment). Moderator analyses are exploratory at k=18.
 - **Size measurement varies across studies**: L x W x %live (NOAA, Pausch), photo tracing (USGS, Kuffner), diameter^2 (Mendoza-Quiroz). Pooled analyses assume comparability.
 - **Mortality definitions vary**: NOAA = no tissue/skeleton gone; Kuffner = >=50% tissue loss; others = no live tissue at interval end.
 
@@ -33,6 +33,8 @@ These apply to **every** analysis change:
 ## Pipeline Structure
 
 Scripts run in order. Changes to upstream scripts affect everything downstream.
+
+All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 
 ```
 01_data_prep -> [02-07]_core -> [08-12]_robustness -> [13-17]_synthesis -> [18-22]_main_figs
@@ -44,7 +46,7 @@ Scripts run in order. Changes to upstream scripts affect everything downstream.
 | Data Prep | 01 | Load, clean, standardize, assign size classes |
 | Core | 02-07 | Survival/growth thresholds, growth rates, variance, data gaps |
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
-| Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=16), sensitivity |
+| Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=18), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
 | Supp Figures | 20, 20c, 21, 23-28 | FigS1-S16 |
 | Verification | 23_verification | Pipeline integrity checks |
@@ -56,7 +58,7 @@ Scripts run in order. Changes to upstream scripts affect everything downstream.
 |--------|--------|---------|
 | 18 | Fig 1 + FigS1 | Study landscape map + data availability; size distribution |
 | 19 | Fig 2 | Survival GAM + RGR GAM + size-class synthesis (3 panels) |
-| 20b | Fig 3 | Forest plot k=16 + regional survival (2 panels) |
+| 20b | Fig 3 | Forest plot k=18 + regional survival (2 panels) |
 | 22 | Fig 4 | Transition matrix + elasticity + bootstrap lambda + LOSO (4 panels) |
 | 21 | FigS8 | Natural vs restoration (supplementary) |
 
@@ -91,22 +93,22 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 
 | File | What | Records |
 |------|------|---------|
-| `standardized_data/apal_surv_ind.csv` | Individual survival | ~5,200 |
-| `standardized_data/apal_growth_ind.csv` | Individual growth | ~4,300 |
-| `standardized_data/apal_surv_summ.csv` | Summary survival (study-level) | ~30 |
-| `standardized_data/apal_growth_summ.csv` | Summary growth | ~20 |
-| `standardized_data/apal_fragmentation.csv` | Fragmentation (Vardi 2011) | 13 |
-| `original_data/` | Raw source files — **DO NOT MODIFY** | 14 files |
+| `05_data/standardized/apal_surv_ind.csv` | Individual survival | ~5,200 |
+| `05_data/standardized/apal_growth_ind.csv` | Individual growth | ~4,300 |
+| `05_data/standardized/apal_surv_summ.csv` | Summary survival (study-level) | ~30 |
+| `05_data/standardized/apal_growth_summ.csv` | Summary growth | ~20 |
+| `05_data/standardized/apal_fragmentation.csv` | Fragmentation (Vardi 2011) | 13 |
+| `05_data/original/` | Raw source files — **DO NOT MODIFY** | 14 files |
 
 ### Key Outputs
 
 | File | Producer | What |
 |------|----------|------|
-| `analysis/output/transition_matrix.csv` | Script 13 | 5x5 Lefkovitch projection matrix |
-| `analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1479 valid) |
-| `analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=16 meta-analysis summary |
-| `analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
-| `analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |
+| `06_analysis/output/transition_matrix.csv` | Script 13 | 5x5 Lefkovitch projection matrix |
+| `06_analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1479 valid) |
+| `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=18 meta-analysis summary |
+| `06_analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
+| `06_analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |
 
 ---
 
@@ -121,7 +123,7 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | mendoza_quiroz_et_al_2023 | Natural | Mexico | 52 | Some sizes from diameter only |
 | fundemar_fragments | Restoration | Dominican Rep. | 43 | Nursery fragments |
 
-~10 additional studies contribute summary-level data only (k=16 total in expanded meta).
+12 additional studies contribute summary-level data only (18 unique studies, k=18 study-level effects in expanded meta).
 
 ---
 
@@ -177,14 +179,14 @@ if (ratio > 1.5) warning("Potential overdispersion")
 4. **NOAA dominance**: 78% of data. Always run LOSO to check if results hold without it.
 5. **Year column**: Use `survey_yr`, not `year` (conflicts with `base::year` in dplyr context).
 6. **cairo_pdf**: Fails on some systems. `save_manuscript_fig()` has a fallback PDF device.
-7. **Natural vs restoration**: NOT significant (p=0.30). Study identity confounded with population type. Don't overinterpret.
+7. **Natural vs restoration**: NOT significant (p=0.405 at k=18). Study identity confounded with population type. Don't overinterpret.
 
 ---
 
 ## Running
 
 ```bash
-cd analysis/scripts
+cd 06_analysis/scripts
 Rscript run_all.R              # Full pipeline (~45-60 min)
 Rscript 01_data_preparation.R  # Individual script
 Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
@@ -196,7 +198,9 @@ Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
 
 | Doc | What |
 |-----|------|
-| `docs/ANALYSIS_SUMMARY.md` | All results with effect sizes and p-values |
-| `docs/MANUSCRIPT_FIGURE_PLAN.md` | 4 main + 16 supplementary figure designs |
-| `docs/Data_Methodology_Reference.md` | Study-by-study data provenance |
-| `analysis/figures/manuscript/figure_legends.txt` | Figure legends, methods, results text |
+| `01_protocol/systematic_review_protocol.md` | Systematic review protocol: search strings, screening, flow diagram, risk of bias |
+| `04_extraction/extraction_protocol.md` | Study-by-study data provenance (inclusion/exclusion, overlap rules, audit log) |
+| `04_extraction/study_characteristics.md` | Per-study characteristics table |
+| `04_extraction/risk_of_bias.md` | Risk of bias assessment |
+| `04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx` | Raine's original working notes: per-study extraction decisions and assumptions |
+| `07_reporting/figure_legends.txt` | Figure legends, methods, results text |
