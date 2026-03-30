@@ -16,18 +16,20 @@ Numbers derived from `03_screening/full_text_screening.csv` (97 rows) and `01_pr
 |-------|---|--------|
 | **IDENTIFICATION -- Previous studies (left column)** | | |
 | Data repositories (NOAA NCEI, NOAA InPort, USGS CMGDS, USGS ScienceBase) | 4 datasets identified | Direct repository searches |
-| Citation chaining from 3 seed papers (Vardi 2011, Williams & Miller 2012, Lirman 2003) | Records not independently counted | Forward/backward citation chaining |
+| Forward citation chaining from 12 included studies | 381 citing papers | Semantic Scholar API; `02_search/search_results/citation_chaining_forward.csv` |
+| Backward citation chaining from 3 seed papers (Vardi 2011, Williams & Miller 2012, Lirman 2003) | Records not independently counted | Manual review of reference lists |
 | Direct data sharing (FUNDEMAR, Dominican Republic) | 1 dataset | Practitioner contact |
 | **IDENTIFICATION -- Database searches (right column)** | | |
-| PubMed base query (2026-03-29) | 124 records | `02_search/search_results/pubmed_all_124.csv` |
-| Web of Science base query (2026-03-29) | 628 records | `02_search/search_results/wos/wos_base_query_all.csv` (183 extracted) |
+| PubMed (2026-03-29, base + 6 expanded queries) | 351 unique PMIDs | Base: 124; expanded with genus-level, MeSH, abbreviated name, ESA, restoration queries (+227 new); `02_search/search_results/pubmed_all_expanded.txt` |
+| Web of Science (2026-03-29, base query) | 628 records | `02_search/search_results/wos/wos_base_query_all.csv` (183 extracted) |
 | Google Scholar (Jun--Dec 2025 original + 2026-03-29 formal) | ~100--150 records original (approx.) + 100 exported formal | `02_search/search_results/scholar/` |
 | Elicit / Semantic Scholar (2026-03-26) | 298 records | Elicit AI screening across 125M+ corpus |
-| **Total records identified** | **~1,050** | PubMed 124 + WoS 628 + Elicit 298 |
-| Records removed before screening: duplicates | ~350--400 (estimated 35--40% overlap across databases) | Cross-database deduplication: 271 verified unique from PubMed+WoS; `02_search/search_results/combined_deduplicated.csv` |
+| bioRxiv / EuropePMC preprints (2026-03-29) | 23 preprints | `02_search/search_results/preprints_biorxiv.csv` |
+| **Total records identified** | **~1,783** | PubMed 351 + WoS 628 + Elicit 298 + Citations 381 + Scholar 100 + Preprints 23 + Repositories 5 |
+| Records removed before screening: duplicates | ~700--800 (estimated 40--45% overlap across databases) | Cross-database deduplication by title/author/year matching; `02_search/search_results/combined_deduplicated.csv` |
 | **SCREENING** | | |
-| Title/abstract screening | **~650--700 unique records** (estimated after deduplication) | Single screener (RD) for original search; AI-assisted for expansion |
-| Excluded at title/abstract | ~550--600 (estimated) | Not reporting *A. palmata* demography; wrong topic; review/commentary |
+| Title/abstract screening | **~1,000--1,100 unique records** (estimated after deduplication) | Single screener (RD) for original search; AI-assisted for expansion |
+| Excluded at title/abstract | ~900--1,000 (estimated) | Not reporting *A. palmata* demography; wrong species; wrong topic; review/commentary |
 | Full-text assessed | 91 unique papers + 3 data repositories = 94 | `full_text_screening.csv`: 52 original + 33 expanded + 6 formal database |
 | Full-text excluded with reasons | 75 unique excluded studies (79 CSV rows; see reconciliation) | Categorized below |
 | **INCLUDED** | | |
