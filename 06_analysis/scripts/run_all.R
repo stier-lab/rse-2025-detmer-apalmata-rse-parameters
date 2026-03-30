@@ -112,6 +112,8 @@ scripts <- c(
   "26_supp_S8_S9.R",
   "27_supp_S10_S11.R",
   "28_supp_S12_S13_S14.R",
+  # 29: Natural vs restoration comparison
+  "29_natural_vs_restoration.R",
   # Verification
   "23_verification.R"
 )
@@ -155,6 +157,8 @@ script_descriptions <- c(
   "Supplementary S8-S9: Forest plots & heterogeneity",
   "Supplementary S10-S11: Context & climate",
   "Supplementary S12-S14: Sensitivity & projections",
+  # 29: Natural vs restoration comparison
+  "Natural vs restoration (within-region + size-matched)",
   # Verification
   "Pipeline verification"
 )

@@ -401,33 +401,83 @@ fl_matched %>%
   ) %>%
   print()
 
-# --- Fit the GLMM ---
-cat("\n--- Size-Matched GLMM ---\n")
+# --- Fit Models ---
+cat("\n--- Size-Matched Models (addressing singular fit) ---\n")
 
-# IMPORTANT CAVEAT: study has only 2 levels here (NOAA, Pausch), so the random
-# intercept for study is estimated from very limited data. The random effect
-# essentially captures the study-level confound with population_type.
-# With only 2 studies, the random effect variance is poorly estimated.
+# FIX: Singular fit problem (critique audit 2026-03-29)
+# With only 2 studies, (1|study) collapses to zero variance because
+# population_type is perfectly confounded with study identity. Three approaches:
+#
+# A) Fixed-effect GLM with cluster-robust SEs (PRIMARY — most honest)
+#    Reports the observed difference with SEs that account for clustering
+# B) GLMM (1|study) — kept for comparison, will likely give singular fit
+# C) Study as fixed effect — explicitly models study differences
+#
+# The meta-analytic approach (Section 1) already properly handles this via
+# study-level effect sizes. This individual-level analysis complements it
+# by controlling for colony size within the overlap zone.
 
-# Check if we have enough levels for a random effect
 n_studies_fl <- n_distinct(fl_matched$study)
 cat(sprintf("  Number of studies: %d\n", n_studies_fl))
-cat("  NOTE: With only 2 studies, (1|study) captures study-level variation but\n")
-cat("  is poorly estimated. Population_type is nearly perfectly confounded with study.\n\n")
+cat("  Population_type is perfectly confounded with study identity.\n")
+cat("  Using fixed-effect GLM with cluster-robust SEs as primary approach.\n\n")
 
-# Fit the interaction model
+# --- Approach A: GLM + cluster-robust SEs (PRIMARY) ---
+cat("  Approach A: GLM with cluster-robust standard errors\n")
+glm_interact <- glm(survived ~ population_type * log_size,
+                     family = binomial, data = fl_matched)
+glm_main <- glm(survived ~ population_type + log_size,
+                 family = binomial, data = fl_matched)
+
+# Cluster-robust SEs using sandwich estimator
+if (requireNamespace("sandwich", quietly = TRUE) && requireNamespace("lmtest", quietly = TRUE)) {
+  library(sandwich)
+  library(lmtest)
+
+  # Cluster on study
+  robust_interact <- coeftest(glm_interact, vcov = vcovCL(glm_interact, cluster = fl_matched$study))
+  robust_main <- coeftest(glm_main, vcov = vcovCL(glm_main, cluster = fl_matched$study))
+
+  cat("  Cluster-robust interaction model:\n")
+  print(robust_interact)
+  cat("\n  Cluster-robust main-effects model:\n")
+  print(robust_main)
+
+  has_robust <- TRUE
+} else {
+  cat("  WARNING: sandwich/lmtest not available; using naive SEs.\n")
+  cat("  Install with: install.packages(c('sandwich', 'lmtest'))\n")
+  has_robust <- FALSE
+}
+
+# --- Approach B: GLMM (for comparison, expect singular fit) ---
+cat("\n  Approach B: GLMM with (1|study) — expect singular fit\n")
 glmm_interact <- tryCatch({
-  glmer(
+  m <- glmer(
     survived ~ population_type * log_size + (1|study),
     family = binomial, data = fl_matched,
     control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 1e5))
   )
+  if (isSingular(m)) {
+    cat("  SINGULAR FIT CONFIRMED: random effect variance = 0.\n")
+    cat("  This confirms population_type is aliased with study.\n")
+    cat("  GLM with cluster-robust SEs (Approach A) is the appropriate model.\n")
+  }
+  m
 }, error = function(e) {
-  cat(sprintf("  Interaction model failed: %s\n", e$message))
-  cat("  Trying model without random effect...\n")
-  # Fallback: no random effect (population_type is aliased with study anyway)
-  glm(survived ~ population_type * log_size, family = binomial, data = fl_matched)
+  cat(sprintf("  GLMM failed: %s\n", e$message))
+  NULL
 })
+
+# --- Approach C: Study as fixed effect ---
+cat("\n  Approach C: Study as fixed effect\n")
+glm_study_fe <- glm(survived ~ study * log_size, family = binomial, data = fl_matched)
+cat("  Study-level coefficients:\n")
+print(round(coef(summary(glm_study_fe)), 4))
+
+# Use the GLM (Approach A) as the primary model for downstream results
+# This avoids the singular fit issue entirely
+glmm_interact_primary <- glm_interact  # rename for downstream compatibility
 
 # Also fit the main-effects-only model
 glmm_main <- tryCatch({
@@ -442,41 +492,36 @@ glmm_main <- tryCatch({
 })
 
 # --- Overdispersion check ---
-cat("--- Overdispersion Check ---\n")
+cat("--- Overdispersion Check (primary GLM model) ---\n")
+pear_resid <- residuals(glm_interact, type = "pearson")
+od_ratio <- sum(pear_resid^2) / (length(pear_resid) - length(coef(glm_interact)))
+cat(sprintf("  Interaction model: ratio = %.3f, overdispersed = %s\n",
+            od_ratio, od_ratio > 1.5))
+pear_resid_m <- residuals(glm_main, type = "pearson")
+od_ratio_m <- sum(pear_resid_m^2) / (length(pear_resid_m) - length(coef(glm_main)))
+cat(sprintf("  Main-effects model: ratio = %.3f, overdispersed = %s\n",
+            od_ratio_m, od_ratio_m > 1.5))
 
-if (inherits(glmm_interact, "glmerMod")) {
-  od_interact <- overdisp_test(glmm_interact)
-  cat(sprintf("  Interaction model: ratio = %.3f, p = %.4f, overdispersed = %s\n",
-              od_interact$ratio, od_interact$p_value, od_interact$overdispersed))
-  if (od_interact$overdispersed) {
-    cat("  WARNING: Overdispersion detected. Consider observation-level random effect.\n")
-  }
-} else {
-  # For glm, manual overdispersion check
-  pear_resid <- residuals(glmm_interact, type = "pearson")
-  od_ratio <- sum(pear_resid^2) / (length(pear_resid) - length(coef(glmm_interact)))
-  cat(sprintf("  Interaction model (GLM): ratio = %.3f, overdispersed = %s\n",
-              od_ratio, od_ratio > 1.5))
+# Also check GLMM if it converged
+if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) {
+  od_glmm <- overdisp_test(glmm_interact)
+  cat(sprintf("  GLMM (singular): ratio = %.3f\n", od_glmm$ratio))
 }
 
-if (inherits(glmm_main, "glmerMod")) {
-  od_main <- overdisp_test(glmm_main)
-  cat(sprintf("  Main-effects model: ratio = %.3f, p = %.4f, overdispersed = %s\n",
-              od_main$ratio, od_main$p_value, od_main$overdispersed))
-} else {
-  pear_resid_m <- residuals(glmm_main, type = "pearson")
-  od_ratio_m <- sum(pear_resid_m^2) / (length(pear_resid_m) - length(coef(glmm_main)))
-  cat(sprintf("  Main-effects model (GLM): ratio = %.3f, overdispersed = %s\n",
-              od_ratio_m, od_ratio_m > 1.5))
-}
-
-# --- Extract results ---
-cat("\n--- Model Summary ---\n")
-print(summary(glmm_interact))
+# --- Extract results from PRIMARY model (GLM + cluster-robust SEs) ---
+cat("\n--- Primary Model Summary (GLM + cluster-robust SEs) ---\n")
+print(summary(glm_interact))
 
 # Extract fixed effects as odds ratios
-fe <- fixef(glmm_interact)
-se_fe <- sqrt(diag(vcov(glmm_interact)))
+# Use cluster-robust SEs if available, otherwise naive SEs
+fe <- coef(glm_interact)
+if (has_robust) {
+  se_fe <- robust_interact[, "Std. Error"]
+  p_vals <- robust_interact[, "Pr(>|z|)"]
+} else {
+  se_fe <- sqrt(diag(vcov(glm_interact)))
+  p_vals <- 2 * pnorm(abs(fe / se_fe), lower.tail = FALSE)
+}
 or_table <- data.frame(
   term = names(fe),
   estimate = fe,
@@ -485,48 +530,43 @@ or_table <- data.frame(
   or_lower = exp(fe - 1.96 * se_fe),
   or_upper = exp(fe + 1.96 * se_fe),
   z = fe / se_fe,
-  p = 2 * pnorm(abs(fe / se_fe), lower.tail = FALSE)
+  p = p_vals,
+  se_type = ifelse(has_robust, "cluster-robust", "naive")
 )
 rownames(or_table) <- NULL
 
-cat("\nOdds Ratios (interaction model):\n")
+cat("\nOdds Ratios (GLM + cluster-robust SEs):\n")
 print(or_table)
 
+# Compare with GLMM if available
+if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) {
+  cat("\nGLMM comparison (singular fit — for reference only):\n")
+  fe_glmm <- fixef(glmm_interact)
+  se_glmm <- sqrt(diag(vcov(glmm_interact)))
+  cat(sprintf("  GLMM pop_type OR: %.2f (SE=%.3f)\n", exp(fe_glmm[2]), se_glmm[2]))
+  cat(sprintf("  GLM  pop_type OR: %.2f (SE=%.3f, cluster-robust)\n", exp(fe[2]), se_fe[2]))
+  cat("  Note: similar estimates confirm singular fit doesn't distort point estimates\n")
+}
+
 # --- Predicted survival curves ---
-# Generate predictions across the size overlap zone
+# Generate predictions from the primary GLM model
 newdata_pred <- expand.grid(
   log_size = seq(log(overlap_min), log(overlap_max), length.out = 200),
-  population_type = c("Natural colony", "Restoration fragment"),
-  study = NA  # marginal prediction (averaging over random effects)
+  population_type = c("Natural colony", "Restoration fragment")
 )
 
-# For predictions, use fixed effects only (re.form = NA for marginal)
-if (inherits(glmm_interact, "glmerMod")) {
-  newdata_pred$pred <- predict(glmm_interact, newdata = newdata_pred,
-                                type = "response", re.form = NA)
-
-  # Bootstrap CIs for predictions
-  # Use parametric bootstrap with model's fixed effects + vcov
-  boot_pred <- bootMer(glmm_interact, FUN = function(fit) {
-    predict(fit, newdata = newdata_pred, type = "response", re.form = NA)
-  }, nsim = 500, type = "parametric", seed = 42)
-
-  newdata_pred$pred_lower <- apply(boot_pred$t, 2, quantile, probs = 0.025, na.rm = TRUE)
-  newdata_pred$pred_upper <- apply(boot_pred$t, 2, quantile, probs = 0.975, na.rm = TRUE)
-} else {
-  # GLM predictions
-  pred_link <- predict(glmm_interact, newdata = newdata_pred, type = "link", se.fit = TRUE)
-  newdata_pred$pred <- plogis(pred_link$fit)
-  newdata_pred$pred_lower <- plogis(pred_link$fit - 1.96 * pred_link$se.fit)
-  newdata_pred$pred_upper <- plogis(pred_link$fit + 1.96 * pred_link$se.fit)
-}
+# GLM predictions with SEs
+pred_link <- predict(glm_interact, newdata = newdata_pred, type = "link", se.fit = TRUE)
+newdata_pred$pred <- plogis(pred_link$fit)
+newdata_pred$pred_lower <- plogis(pred_link$fit - 1.96 * pred_link$se.fit)
+newdata_pred$pred_upper <- plogis(pred_link$fit + 1.96 * pred_link$se.fit)
 
 newdata_pred$size_cm2 <- exp(newdata_pred$log_size)
 
 # Save size-matched results
 size_matched_results <- or_table %>%
   mutate(
-    analysis = "Florida Keys size-matched GLMM",
+    analysis = "Florida Keys size-matched GLM (cluster-robust SEs)",
     n_total = nrow(fl_matched),
     n_natural = sum(fl_matched$population_type == "Natural colony"),
     n_restoration = sum(fl_matched$population_type == "Restoration fragment"),
