@@ -57,5 +57,31 @@ The PubMed cross-reference (63 papers, 6 needing screening) provides the higher-
 
 ---
 
+## Broader WoS Queries (2026-03-28)
+
+Additional queries to expand beyond species-specific searches and capture related Caribbean coral demographic literature.
+
+| Search # | Full query | WoS hits | Records extracted |
+|----------|-----------|----------|-------------------|
+| 6 | `TS=("Acropora" AND "Caribbean") AND TS=(survival OR mortality OR growth OR recruitment OR restoration)` | **409** | 344 |
+| 7 | `TS=("threatened coral" OR "endangered coral" OR "ESA" OR "critically endangered") AND TS=("Caribbean" AND (survival OR mortality))` | **58** | 50 |
+
+**Rationale:** Search 6 broadens the taxon from *A. palmata* specifically to all *Acropora* spp. in the Caribbean, capturing *A. cervicornis* and hybrid studies that may contain comparable demographic methodology or overlapping datasets. Search 7 uses ESA/conservation status terminology to capture papers framed around threatened species management rather than species-specific taxonomy.
+
+**Output files:**
+- `02_search/search_results/wos/wos_broader_acropora_caribbean.csv` (344 records)
+- `02_search/search_results/wos/wos_threatened_coral_caribbean.csv` (50 records)
+- Fields: title, authors, year, journal, doi, wos_id
+- Extraction via virtual scroll + DOM parsing (same method as Search 1)
+- Note: Virtual scrolling yields ~85% capture from 409 total due to rendering gaps; the missing ~65 records are distributed across pages
+
+**Comparison with base query:**
+- Base query `TS=("Acropora palmata" OR "elkhorn coral")` = 628 hits (per original search)
+- Search 6 (all *Acropora* + Caribbean demographics) = 409 hits -- a subset filtered by demographic terms
+- Search 7 (threatened/endangered + Caribbean survival) = 58 hits -- mostly *A. palmata* and *A. cervicornis* studies framed in conservation terms
+- These broader queries provide additional cross-reference material but are not expected to yield new *A. palmata*-specific demographic studies beyond those already identified
+
+---
+
 *Search conducted programmatically via Playwright CDP (Chrome DevTools Protocol)*
 *Reproducibility: queries above can be re-run at https://www.webofscience.com/wos/woscc/advanced-search*

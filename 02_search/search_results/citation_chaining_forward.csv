@@ -1,10 +1,13 @@
 paper_id,title,year,first_author,citation_count,doi,n_seeds_cited,cited_seeds_str
 97f0968b5f75d1a35661cce0a0ac96e68ce0972d,Changes in transmission rates drive seasonal patterns of shrimp Black Gill disease.,2026,Megan M Tomamichel,2,10.1098/rstb.2024.0327,1,forrester_et_al_2014
 8704b61fc1bffc143c902e96e5495035fad96889,One-time broadscale SCTLD intervention effectiveness on Montastraea cavernosa in an endemic zone,2026,Amanda Zummo,1,10.1007/s00338-025-02797-5,1,forrester_et_al_2014
+4e532cbb58faa181c3ac66fe3b5b2fb72309390b,Exploring the transformative potential of multi-trophic strategies to enhance coral restoration and mitigate disease.,2026,Bárbara Ribeiro,1,10.1098/rstb.2024.0323,1,rosales_et_al_2024
 0dfa68d8e3b915f58d700fd2a8aca8a79288254b,A double-sided bundle auction mechanism for collaborative additive manufacturing,2026,Mingyue Sun,0,10.1016/j.jmsy.2026.02.006,1,vardi_2012
 1432cbd6bdd7c94d27dcb041ec42604ab6b83b8d,Networked collective dynamics in animal ecology and cell biology.,2026,Yongzheng Sun,0,10.1016/j.plrev.2026.02.003,1,vardi_2012
 6fefddbcfb59ab76e2db464a0f2eeb7f53cb734e,Ineffectiveness of topical antibiotics in treating Acropora spp. affected by white diseases,2026,Avery Coble,0,10.3389/fmars.2025.1720360,1,forrester_et_al_2014
-6cf9d2d88543194c5fa8b0af86dc6fd4613c92da,Heat-driven functional extinction of Caribbean Acropora corals from Florida's Coral Reef.,2025,D. Manzello,17,10.1126/science.adx7825,1,williams_miller_2010
+c21a90a7da1261841f36d6226a31e7b91df46788,"Evaluating Adhesive Materials for Effective Outplanting of
+ Acropora
+ Corals: A Comparative Analysis of Adhesion Performance, Biocompatibility and Cost‐Effectiveness",2026,Haiqing Liao,0,10.1002/aqc.70332,1,maurer_et_al_2022
 cc51d741f2551c331ec8a25a6e75ee5bf1651ef5,Fighting and friendship: sociodemographic factors and provisioning affect feral cattle behaviour,2025,George M. W. Hodgson,5,10.1016/j.anbehav.2025.123210,1,vardi_2012
 69315d1d4399456f87eb907014513435148a8e86,Navigating Decentralized Online Social Networks: An Overview of Technical and Societal Challenges in Architectural Choices,2025,Ujun Jeong,5,10.48550/arXiv.2504.00071,1,vardi_2012
 b187a4a89499c4acdaa509fd7182b268c34b9044,"The role of acoustic telemetry to assess the effects of offshore wind infrastructure on fish behaviour, populations and predation",2025,A. Bicknell,4,10.1016/j.rser.2024.115306,1,kuffner_et_al_2020
@@ -19,38 +22,34 @@ a6dacbe02a5d8d9611160ec3f55a4ad58b9e8e6b,A novel consensus model integrating asy
 dc8205a8a34e09b97ba153a4c0327e5e51672b07,"Collaborative, autonomous, and partially selfish agents: An innovative approach to managing crisis decisions in a hospital merger",2025,Nouha Jlassi,0,10.1109/SKIMA66621.2025.11155728,1,vardi_2012
 b711a807a33d442c015efc268c318b018c57e71e,Descentralización versus centralización: la implementación de la primera etapa del drenaje profundo de la Ciudad de México vista desde el análisis de redes.,2025,José Alberto Nochebuena Miranda,0,10.22201/fcpys.20071949e.2025.50.90787,1,vardi_2012
 ff226061538a860176901ac649f656771d2ee31a,Tank-based bacterial profiling identifies basin-wide white band disease pathogen candidate and no bacterial associations with coral disease resistance,2025,Emily C Trytten,0,10.1093/ismeco/ycaf247,1,forrester_et_al_2014
-08b0c16785bc23b73263509c030ceea923db4cee,Technology Solutions for Overcoming the Coral Recruitment Bottleneck.,2025,Shannon L. Dixon,0,10.1021/acs.est.5c03049,1,williams_miller_2010
+73e6f1dbf221bf969f165f344165de54fdd06345,A Snapshot of the Ecological Contributions of an Active Coral Restoration Effort in an Indo-Pacific Reef,2025,Henriikka Malkamäki,0,10.1007/s41208-025-01018-8,1,maurer_et_al_2022
+8097fe9fe5059d3eb82973d0af6f198908d07d44,"Improving growth monitoring of Acropora cervicornis in nurseries and outplants at Tayrona National Natural Park, Colombian Caribbean",2025,M. Sánchez,0,10.1016/j.jnc.2025.127108,1,maurer_et_al_2022
+7029680841d2cddf6df52559f5c465eb40bc4412,Coral Reef Restoration Techniques and Management Strategies in the Caribbean and Western Atlantic: A Quantitative Literature Review,2025,Leah Hodges,0,10.3390/d17060434,1,maurer_et_al_2022
 49cb32b5fed07292bf88834fc85a41c94ba60483,A cost-minimized two-stage three-way dynamic consensus mechanism for social network-large scale group decision-making: Utilizing K-nearest neighbors for incomplete fuzzy preference relations,2024,Jiaxin Zhan,69,10.1016/j.eswa.2024.125705,1,vardi_2012
 2dac5feaf7458b06c1a12040e098cb220136bd65,"Stony coral tissue loss disease: a review of emergence, impacts, etiology, diagnostics, and intervention",2024,Erin Papke,44,10.3389/fmars.2023.1321271,1,forrester_et_al_2014
 778dd80a2e7c239664cca84beae0b1587240ff0c,Aging of the eye: Lessons from cataracts and age-related macular degeneration.,2024,A. Cvekl,39,10.1016/j.arr.2024.102407,1,pausch_et_al_2018
 656057cb97f76c9a5b2eb80eff8361bc71596c6c,Removal of detritivore sea cucumbers from reefs increases coral disease,2024,Cody S. Clements,27,10.1038/s41467-024-45730-0,1,forrester_et_al_2014
 7cf46ca5aa74b8a1690f6a8c793caec0e0bb57d7,"Restoration success limited by poor long‐term survival after 9 years of Acropora cervicornis outplanting in the upper Florida Keys, United States",2024,Tiffany S. Boisvert,11,10.1111/rec.14129,1,forrester_et_al_2014
-1ebb03ecc5472380e0bb92765e2272d3d7feb19a,"Environmental predictors for the restoration of a critically endangered coral, Acropora palmata, along the Florida reef tract",2024,Raymond B. Banister,10,10.1371/journal.pone.0296485,1,williams_miller_2010
+a3b50597bf08447eb958148e02a8397bdfc85f45,Cost‐efficiency and effectiveness of coral restoration pathways,2024,S. Schmidt‐Roach,11,10.1111/rec.14326,1,maurer_et_al_2022
 72aef80716361de4b0813f562bbfbc2e330458b2,Identification of putative coral pathogens in endangered Caribbean staghorn coral using machine learning.,2024,Jason D. Selwyn,7,10.1111/1462-2920.16700,1,forrester_et_al_2014
 5ee6e2e1449a284a05fff89b47216eea36a7497b,The dynamics of dominance in a ‘despotic’ society,2024,Rosemary A Blersch,6,10.1016/j.anbehav.2024.09.009,1,vardi_2012
 1e7a690993b392e8e81ae65431f0541f273258f7,A data-driven large-scale group decision-making framework for managing ratings and text reviews,2024,Diego García-Zamora,6,10.1016/j.eswa.2024.125726,1,vardi_2012
-2b8f7e9e945db13d63de6c7273d78c5af769af7a,"Impact of Hurricane Irma on coral reef sediment redistribution at Looe Key Reef, Florida, USA",2024,Kimberly K. Yates,6,10.5194/os-20-661-2024,1,williams_miller_2010
 108d34426e001b60ea84f9a4d0f3468576ade9b2,Network relations among open government data stakeholders: a structural social capital and ERGM analysis,2024,Fuchuan Mo,5,10.1108/oir-06-2023-0284,1,vardi_2012
-3e0cd3508a7365411807f556592a845454842001,Measuring coral disease lesions: a comparison of methodologies,2024,Karen L. Neely,4,10.3389/fmars.2024.1348929,1,williams_miller_2010
 304932f18ba52d223d220e83f83933becebcf3dd,Assessing Molecular Localization of Symbiont Microalgae in Coral Branches Through Mass Spectrometry Imaging,2024,Shudai Sasaki,3,10.1007/s10126-024-10294-z,1,forrester_et_al_2014
+124b3ea91714092645fcb056d17420339be3cd2a,Testing the feasibility of coral nurseries in an upwelling area in the North Pacific of Costa Rica,2024,Sònia Fabregat-Malé,3,10.3389/fmars.2024.1400026,1,maurer_et_al_2022
 cf375f3d56683ed98f5936f4282b78aca95c58fe,On the impact of zealots in a population of susceptible agents in a best-of-n problem within a heterogeneous network,2024,Thierry Njougouo,1,10.1016/j.physa.2024.130198,1,vardi_2012
-c2379ffb799a072bcf37869e23dd3b138dea396f,Reef site and habitat influence effectiveness of Acropora palmata restoration and its microbiome in the Florida Keys,2024,Stephanie M. Rosales,1,10.1038/s43247-024-01816-7,1,williams_miller_2010
-db932b429df3a390bb9cbf5cfd07238c197bb9c8,"Shifting patterns in parrotfish corallivory after 12 years of decline on coral depauperate reefs in the Florida Keys, USA",2024,A. Shantz,1,10.1007/s00338-024-02543-3,1,williams_miller_2010
 a45cb2404e85985938ad27ee17dfe572044e01c4,Herding in Small Virtual Teams: An Experiment,2024,A. Aggarwal,0,10.4018/ijec.361904,1,vardi_2012
 0e14b6907211d81631440cf81b8b194b088a6087,Building living systematic reviews and reporting standards for comparative microscopic analysis of white diseases in hard corals,2024,C. Page,0,10.1002/ece3.11616,1,forrester_et_al_2014
 b30f75a84180a367fd9a73a0dcdc42465b6dfe0e,"Acclimation period affects tissue condition in the Caribbean staghorn coral, Acropora cervicornis",2024,M. E. Bock,0,10.1007/s00338-023-02461-w,1,forrester_et_al_2014
 93dbf741f44626855fbd87d949df6f86e63b69aa,Blastocyst-like Structures in the Peripheral Retina of Young Adult Beagles,2024,T. Ikeda,0,10.3390/ijms25116045,1,pausch_et_al_2018
 aa184a5aa40a0a95032d28a22ba9272aa7710d6c,The impact of rising temperatures on the prevalence of coral diseases and its predictability: A global meta-analysis.,2023,Samantha Burke,42,10.1111/ele.14266,1,forrester_et_al_2014
-5cddc855bc3b9ca190c14d34a4b65f5a7166f6a5,Larval dispersal patterns and connectivity of Acropora on Florida’s Coral Reef and its implications for restoration,2023,S. King,23,10.3389/fmars.2022.1038463,1,williams_miller_2010
 a7a0811f777b98a6264c9ab55173f3b42739421b,Local ecological knowledge (LEK) suggests overfishing and sequential depletion of Peruvian coastal groundfish,2023,Fabio Castagnino,21,10.1002/mcf2.10272,1,kuffner_et_al_2020
 148175da16ef6b2fd05c34d6047000982eeed6ab,Human Crowds as Social Networks: Collective Dynamics of Consensus and Polarization,2023,W. Warren,15,10.1177/17456916231186406,1,vardi_2012
 824989d44e07fd83542e7df7173f89fcb32cdb8c,"Impact of Hermodice carunculata (Pallas, 1766) (Polychaeta: Amphinomidae) on artisanal fishery: A case study from the Mediterranean sea.",2023,F. Tiralongo,9,10.1016/j.marenvres.2023.106227,1,forrester_et_al_2014
 cb102dd1ea9ac78e4f28f2fa94e6aaf3504fa988,Shifts in the coral microbiome in response to in situ experimental deoxygenation,2023,Rachel D. Howard,9,10.1128/aem.00577-23,1,forrester_et_al_2014
-3734d158eb1c3856f05bf401f8dc393720526bca,"Heterotrophy, microbiome, and location effects on restoration efficacy of the threatened coral Acropora palmata",2023,L. Chapron,8,10.1038/s43247-023-00888-1,1,williams_miller_2010
 b761f11f44d3c5ced4b6cf9f2c6898e00af13e02,Information Theory Opens New Dimensions in Experimental Studies of Animal Behaviour and Communication,2023,Z. Reznikova,4,10.3390/ani13071174,1,vardi_2012
-383d624deba63b95ff584b797479f078cd9f1ba1,Dead but not forgotten: complexity of Acropora palmata colonies increases with greater composition of dead coral,2023,Abigail Engleman,4,10.7717/peerj.16101,1,williams_miller_2010
-54d4052a49ce8feb00619e6dc8156f94e43fd074,Differential colony size frequency distribution of hard corals across physical reef health gradients in Northeast Peninsula Malaysia,2023,G. Bernard,4,10.1016/j.rsma.2023.102872,1,williams_miller_2010
 748f98fd3bdf0c48729c15657c93063296c3a66a,Pupillometry to show stress release during equine sports massage therapy,2023,K. Wild,3,10.1038/s41598-023-47590-y,1,pausch_et_al_2018
+e76695f3cb23c6944c99c50e37e420ad53a0761d,"Effectiveness of different nursery designs for the restoration of the threatened coral Acropora cervicornis in Culebra, Puerto Rico",2023,Patria I. Aponte-Marcano,3,10.52201/cej20/pnci5011,1,maurer_et_al_2022
 3f9c9f4bbcb7ea8b1439f38f5adb6e22a153d0f0,"Population structure of the fireworm Hermodice carunculata in the wider Caribbean, Atlantic and Mediterranean Sea",2023,Mariel A. Cruz Ramos,2,10.1017/S0025315422001114,1,forrester_et_al_2014
 2f9daa55d176f579152009cb09a2f869f283b606,TRPP2 is located in the primary cilia of human non-pigmented ciliary epithelial cells,2023,Wenxu Zheng,2,10.1007/s00417-023-06150-w,1,pausch_et_al_2018
 4e2f19e89e3010d599937260d4138dd536875c65,"Eco-environmental assessment in the Sembilan Archipelago, Indonesia:
@@ -59,7 +58,6 @@ b761f11f44d3c5ced4b6cf9f2c6898e00af13e02,Information Theory Opens New Dimensions
 4a27ee632526e9e17d89e513ecd0ffd755b99d34,"Nutrient enrichment alters gene expression in ‘Ca.’ Aquarickettsia rohweri, promoting parasite expansion and horizontal transmission",2023,Lauren Speare,1,10.1101/2023.06.08.544262,1,forrester_et_al_2014
 dface2d55e0dd45ce5c01894b6306a7a91a0f08a,Peak Cone Density Predicted from Outer Segment Length Measured on Optical Coherence Tomography,2023,H. Heitkotter,1,10.1080/02713683.2023.2289853,1,pausch_et_al_2018
 31ce4275c198bba7674c269823e63000e5d652b0,Macular Anatomy Differs in Dyslexic Subjects,2023,J. García-Medina,1,10.3390/jcm12062356,1,pausch_et_al_2018
-20d839172077ba9475c32f2209ff1a748922d6b1,Common aquarium antiseptics do not cause long-term shifts in coral microbiota but may impact coral growth rates,2023,J. G. Klinges,1,10.3389/fmars.2023.1281691,1,williams_miller_2010
 4bc19f568087f2fc407853f4d2ac887a67615273,On the role of zealots in a best-of-n problem on a heterogeneous network,2023,Thierry Njougouo,0,,1,vardi_2012
 a5e6c079ef38c9ec684cdc24d116db51e2c39368,Anatomically-specific coupling between innate immune gene repertoire and microbiome structure during coral evolution,2023,Tanya Brown,0,10.1101/2023.04.26.538298,1,forrester_et_al_2014
 e7cc3dc46edea77566dc16afe16dfc76920ee2c1,Stony coral tissue loss disease decimated Caribbean coral populations and reshaped reef functionality,2022,Lorenzo Álvarez‐Filip,117,10.1038/s42003-022-03398-6,1,forrester_et_al_2014
@@ -72,9 +70,7 @@ aa5bade11298c354517439b1fac87b995857933e,Mixtures of genotypes increase disease 
 81fdae9e70228f0e2d048675714a447d2996ccbf,Retinal regions shape human and murine Müller cell proteome profile and functionality,2022,L. Kaplan,10,10.1002/glia.24283,1,pausch_et_al_2018
 582a2c5bb7e41e165b89c81f2caa16cd3996d61f,A robust occlusion-adaptive attention-based deep network for facial landmark detection,2022,M. Sadiq,7,10.1007/s10489-021-02848-8,1,pausch_et_al_2018
 dc600493ce845817967a8ada4999e1b8fdf11106,Phosphate enrichment induces increased dominance of the parasite Aquarickettsia in the coral Acropora cervicornis,2022,J. G. Klinges,6,10.1093/femsec/fiac013,1,forrester_et_al_2014
-a4b067f711f589d9ff4e83dea66c62d4cc3ce0cd,No apparent cost of disease resistance on reproductive output in Acropora cervicornis genets used for active coral reef restoration in Florida,2022,Hanna R Koch,5,10.3389/fmars.2022.958500,2,forrester_et_al_2014; williams_miller_2010
-6ca184c33f787b093f761fcb792a024112d4ec16,Population trajectory and stressors of Acropora palmata sites in the Florida Keys,2022,K. Neely,5,10.3389/fmars.2022.978785,1,williams_miller_2010
-ff064207c91d5caddac9133c06fce7647ff28521,Resource Partitioning by Corallivorous Snails on Bonaire (Southern Caribbean),2022,Lukas Verboom,4,10.3390/d15010034,1,williams_miller_2010
+a4b067f711f589d9ff4e83dea66c62d4cc3ce0cd,No apparent cost of disease resistance on reproductive output in Acropora cervicornis genets used for active coral reef restoration in Florida,2022,Hanna R Koch,5,10.3389/fmars.2022.958500,1,forrester_et_al_2014
 062c55aa695a109477902a5748d2a68c51864b35,"A health survey of the reef forming scleractinian cold-water corals Lophelia pertusa and Madrepora oculata in a remote submarine canyon on the European continental margin, NE Atlantic.",2022,J. Appah,0,10.1016/j.jip.2022.107782,1,forrester_et_al_2014
 36dffb7ae52999b53c4189496073fa559926180e,Commentary: Enigma of foveolar hyper-reflective track in photic retinopathy,2022,K. Delhiwala,0,10.4103/ijo.ijo_3134_21,1,pausch_et_al_2018
 2fb639641554c46c568ba7f70e89fae747b01657,References,2022,,0,10.1016/b978-0-323-90467-4.00011-5,1,pausch_et_al_2018
@@ -83,7 +79,6 @@ ff064207c91d5caddac9133c06fce7647ff28521,Resource Partitioning by Corallivorous 
 5a4380ef4bccd0dd6461f641f7fc94658ce59c83,Comprehensive minimum cost models for large scale group decision making with consistent fuzzy preference relations,2021,Rosa M. Rodríguez,90,10.1016/j.knosys.2021.106780,1,vardi_2012
 f83d0470b3e676a49c98f8cd2951ab011483c99e,Müller cells and astrocytes in tractional macular disorders.,2021,A. Bringmann,61,10.1016/j.preteyeres.2021.100977,1,pausch_et_al_2018
 972952688dbea8b1917170dab28f9b13bc997106,Macrophage-Like Cell Density Is Increased in Proliferative Diabetic Retinopathy Characterized by Optical Coherence Tomography Angiography,2021,Janice X. Ong,60,10.1167/iovs.62.10.2,1,pausch_et_al_2018
-5b0234e6dc3cdbee58a217472a2c7900228769dc,Assisted gene flow using cryopreserved sperm in critically endangered coral,2021,M. Hagedorn,60,10.1073/pnas.2110559118,1,williams_miller_2010
 c02e08a6f57dde89d0d3a82ee82221766a60a68c,An optimal Best-Worst prioritization method under a 2-tuple linguistic environment in decision making,2021,Álvaro Labella,46,10.1016/J.CIE.2021.107141,1,vardi_2012
 db0fef641926042805f0d1492989f325afdccbe3,Consensus model based on probability K-means clustering algorithm for large scale group decision making,2021,Qian Liu,45,10.1007/s13042-020-01258-5,1,vardi_2012
 d5a8705a4c843c29c4ae59e727a0077a0ecc9d75,Short- and Long-Term Effectiveness of Coral Disease Treatments,2021,K. Neely,40,10.3389/fmars.2021.675349,1,forrester_et_al_2014
@@ -95,23 +90,18 @@ e4462a7bb1e3640369b49814f61b690a5c7bf350,Nonlinear preferences in group decision
 bab0cbd174d66dedafc68357bda9dbee9c6dde5d,Exploring the performance of mid‐water lagoon nurseries for coral restoration in the Maldives,2021,I. Dehnert,12,10.1111/rec.13600,1,forrester_et_al_2014
 4b45caa0e46ce8126f4f5c531cfe8a23c7c479d4,Better baboon break-ups: collective decision theory of complex social network fissions,2021,Brian A. Lerch,10,10.1098/rspb.2021.2060,1,vardi_2012
 ae3da3698317fefb26f1ac77888c42dffbe6e5f1,Host-specific epibiomes of distinct Acropora cervicornis genotypes persist after field transplantation,2021,Emily G. Aguirre,10,10.1007/s00338-022-02218-x,1,forrester_et_al_2014
-5a9182c29ea69694491e050e871dba83b8061e7b,Differential Effects of Substrate Type and Genet on Growth of Microfragments of Acropora palmata,2021,E. Papke,10,10.3389/fmars.2021.623963,1,williams_miller_2010
 5ecc2ef33a6124e57883eae8650470e7d2f9cfff,Attentive occlusion-adaptive deep network for facial landmark detection,2021,M. Sadiq,8,10.1016/j.patcog.2021.108510,1,pausch_et_al_2018
 5fe1f2c9cf200c892c56ca349d5259bf969dbb8f,Identifying interaction neighbours in animal groups,2021,Hadrien-Matthieu Gascuel,7,10.1016/j.anbehav.2021.01.019,1,vardi_2012
 38ada81b72dd80c5d2968df0c94af89dde0c64ee,Pathology of growth anomalies in massive Caribbean corals of the family Faviidae,2021,Louis-Pierre Rich,7,10.1177/03009858211020675,1,forrester_et_al_2014
-f057cd1fc16a7147b978073609737a4042bd2a91,Complex interactions with nutrients and sediment alter the effects of predation on a reef‐building coral,2021,Mallory M. Rice,2,10.1111/MAEC.12670,1,williams_miller_2010
 6eff6cc97ea3030e25599e64283b5c1df0e6ebd0,An emerging coral disease outbreak decimated Caribbean coral populations and reshaped reef functionality,2021,Lorenzo Álvarez‐Filip,1,10.21203/rs.3.rs-734716/v1,1,forrester_et_al_2014
 6e94ff09392ff3e398a14cf6b3f6e2ce640caebf,"Cold-water Coral Microbiome and Environmental Microbial Communities in a Remote NE Atlantic Submarine Canyon Setting: Microbial Diversity, Coral Health and Prospects",2021,J. Appah,1,10.21203/RS.3.RS-192160/V1,1,forrester_et_al_2014
 ca7452e5bae3ce673101f28fb82d931e77555ee1,Social Sensors in Epidemiological Networks via Graph Eigenvectors,2021,Shubhajit Sen,0,,1,vardi_2012
 18697b5749fad71203f2e6bfe0a895eca29a6354,"Health Screening of the Reef Forming Scleractinian Cold-Water Corals Lophelia pertusa and Madrepora oculata in a Remote Submarine Canyon on the European Continental Margin, NE Atlantic",2021,J. Appah,0,10.20944/PREPRINTS202105.0538.V1,1,forrester_et_al_2014
 8418bee496615e626d077c393870502b8957b66d,THE USE OF ACOUSTIC TELEMETRY TO MONITOR FISH SPECIES IN MARINE PROTECTED AREAS: A SYSTEMATIC REVIEW WITH NOTES ON BRAZILIAN PERSPECTIVES,2021,D. Lippi,0,10.32360/ACMAR.V54I1.61296,1,kuffner_et_al_2020
-c2ec513e33e3b213224e8f1c7865097fb5538dfa,Stony Coral Tissue Loss Disease in Florida Is Associated With Disruption of Host–Zooxanthellae Physiology,2020,J. Landsberg,80,10.3389/fmars.2020.576013,2,forrester_et_al_2014; williams_miller_2010
-8e79b1045b1a87e3e60c49c2c69f39cb0ae4f144,Coral Restoration Effectiveness: Multiregional Snapshots of the Long-Term Responses of Coral Assemblages to Restoration,2020,M. Hein,64,10.3390/d12040153,2,forrester_et_al_2014; williams_miller_2010
+c2ec513e33e3b213224e8f1c7865097fb5538dfa,Stony Coral Tissue Loss Disease in Florida Is Associated With Disruption of Host–Zooxanthellae Physiology,2020,J. Landsberg,80,10.3389/fmars.2020.576013,1,forrester_et_al_2014
+8e79b1045b1a87e3e60c49c2c69f39cb0ae4f144,Coral Restoration Effectiveness: Multiregional Snapshots of the Long-Term Responses of Coral Assemblages to Restoration,2020,M. Hein,64,10.3390/d12040153,1,forrester_et_al_2014
 1f0fb9786556dfab71d67629e70cf1a639041403,"Coral Disease Causes, Consequences, and Risk within Coral Restoration.",2020,T. Moriarty,60,10.1016/j.tim.2020.06.002,1,forrester_et_al_2014
-fa0dbb35401cb09d1a37b91131705f2970f8db61,Fine-Scale Coral Connectivity Pathways in the Florida Reef Tract: Implications for Conservation and Restoration,2020,Charles Frys,55,10.3389/fmars.2020.00312,1,williams_miller_2010
 8c422ec8167b13438b73b37bf095139bb849d481,Interactions between coral restoration and fish assemblages: implications for reef management.,2020,M. Seraphim,53,10.1111/jfb.14440,1,forrester_et_al_2014
-642e184978d073fb89106507c036eb80b8838081,Rapid Population Decline of the Pillar Coral Dendrogyra cylindrus Along the Florida Reef Tract,2020,K. Neely,52,10.3389/fmars.2021.656515,1,williams_miller_2010
-7e28b3c19e50c2fbbe3c5414a4b710f2e5782114,Trophic interactions in coral reef restoration: A review,2020,Mark C. Ladd,39,10.1016/j.fooweb.2020.e00149,1,williams_miller_2010
 9b6beb0096550b4d5614b1109a8db4bd90d3658c,Considerations for a More Ethical Approach to Data in AI: On Data Representation and Infrastructure,2020,Alice Baird,34,10.3389/fdata.2020.00025,1,vardi_2012
 eae4900aae075cd4915bed9dfa6c69ce6452bd0d,Parasitic ‘Candidatus Aquarickettsia rohweri’ is a marker of disease susceptibility in Acropora cervicornis but is lost during thermal stress,2020,J. G. Klinges,33,10.1111/1462-2920.15245,1,forrester_et_al_2014
 811271c4afcd4e256bc068a15bab2af3de097444,Hyperreflective Stress Lines and Macular Holes,2020,J. Scharf,28,10.1167/iovs.61.4.50,1,pausch_et_al_2018
@@ -121,15 +111,9 @@ e1148a90d22947696a4e2d90dc1f2aaa128e23b5,Treatment of Coral Wounds by Combining 
 f2295866221de10dc441e55a724e13aea4ce8bfe,Spatial distribution of microbial communities among colonies and genotypes in nursery-reared Acropora cervicornis,2020,Nicole Miller,16,10.7717/peerj.9635,1,forrester_et_al_2014
 2329e81c146fd2d62170b5e829814ebcaa6a5072,Heterogeneous Explore-Exploit Strategies on Multi-Star Networks,2020,Udari Madhushani,15,10.1109/LCSYS.2020.3042459,1,vardi_2012
 b9dfa14fe7c0779d06d1fed031cf02741c252780,Growth dynamics in Acropora cervicornis and A. prolifera in southwest Puerto Rico,2020,E. Weil,15,10.7717/peerj.8435,1,forrester_et_al_2014
-695830c27e7aaf225f90b453c51e4590bbf383ba,Gene expression associated with disease resistance and long-term growth in a reef-building coral,2020,E. Kelley,14,10.1098/rsos.210113,1,williams_miller_2010
 5ed21406baca5aaabcfebc37bc66dfb6ad7e2396,Differential disturbance effects and phenotypic plasticity among outplanted corals at patch and fore reef sites,2020,K. Lohr,11,10.1016/j.jnc.2020.125827,1,forrester_et_al_2014
-268411b457f0e4871f913cfb140dd63519aaeca8,"Coral Gardens Reef, Belize: A refugium in the face of Caribbean-wide Acropora spp. coral decline",2020,L. Greer,9,10.1371/journal.pone.0239267,1,williams_miller_2010
-13f8456337b2f31237dc893e0848f952df72c13c,"Population status of Acropora palmata (Lamarck, 1816) in Cuban coral reefs",2020,Hansel Caballero-Aragón,9,10.1016/j.rsma.2019.101029,1,williams_miller_2010
-c7dd2ab6b422f785c2bf2ef6ff8e9375a0e128bc,Spatio‐temporal dynamics of the threatened elkhorn coral Acropora palmata: Implications for conservation,2020,Yi-Hsiu Chen,7,10.1111/ddi.13143,1,williams_miller_2010
-99deb0925014eba218292966c285aed97f7784ab,"Mechanical properties, spectral vibrational response, and flow-field analysis of the aragonite skeleton of the staghorn coral (Acropora cervicornis)",2020,Alejandro Carrasco-Peña,6,10.1007/s00338-020-02003-8,1,williams_miller_2010
 cdf3b9692e3a2011b21b19319cdd68ffc5e59eef,Agent-based simulation for reconstructing social structure by observing collective movements with special reference to single-file movement,2020,Hiroki Koda,5,10.1371/journal.pone.0243173,1,vardi_2012
 1f9b2ebcc3e9faee8cb14579edea5c7c82a2c89c,Evolution and visual outcomes of outer foveolar lucency after surgery for large idiopathic macular hole,2020,B. Qi,4,10.1007/s00417-020-04814-5,1,pausch_et_al_2018
-e95c576e8f623c49055a5e2177cbc3761efa4000,Population dynamics of diseased corals: Effects of a Shut Down Reaction outbreak in Puerto Rican Acropora cervicornis.,2020,A. Mercado-Molina,4,10.1016/bs.amb.2020.08.001,1,williams_miller_2010
 f57fd5092dea961a1541dfea5548224e7f107042,A Participatory Modelling approach for enabling Nature-based Solutions implementation through Networking Interventions,2020,R. Giordano,3,10.1002/essoar.10503041.1,1,vardi_2012
 1fee634ca7cf2a0993dcd7f6cf3d65ead3a54531,Infection Patterns and Fitness Effects of Rickettsia and Sodalis Symbionts in the Green Lacewing Chrysoperla carnea,2020,R. Sontowski,3,10.3390/insects11120867,1,forrester_et_al_2014
 f2e70c4c474298173ef70fa11bab45bce6a1b938,"First Report on the Density and Size Frequency Distribution of the Napoleon Wrasse, Cheilinus undulatus in the Tubbataha Reefs Natural Park, Philippines",2020,C. Nañola,3,10.56899/150.01.18,1,kuffner_et_al_2020
@@ -149,7 +133,6 @@ c215a81dc2f7a643c435000a0bffd190d300079a,Identifying Causes of Temporal Changes 
 890fbcca3a75eb19c7fbc3ccb888e0a30304be51,Primate Infectious Disease Ecology: Insights and Future Directions at the Human-Macaque Interface,2019,K. Balasubramaniam,13,10.1007/978-3-030-27920-2_13,1,vardi_2012
 9a4ad16177dbe86e198deb29fd30c298eb7a2738,Phase transitions and asymmetry between signal comprehension and production in biological communication,2019,M. Salahshour,12,10.1038/s41598-019-40141-4,1,vardi_2012
 f1acad8ece6c7035272c1225085f0912a4dbac1e,Multimodal imaging including optical coherence tomography angiography in patients with type B Niemann–Pick disease,2019,S. Bolukbasi,9,10.1007/s10792-019-01102-y,1,pausch_et_al_2018
-38f53e868b2d198a92493fdac1ddc244efe8f8ad,Variations in the density of two ectoparasitic gastropods (Coralliophila spp.) on scleractinian corals on a coast-reef scale,2019,D. Kaullysing,8,10.1007/s13199-019-00608-4,1,williams_miller_2010
 8b693320bd7d797361e2f33bedf806bc53f822c7,Social Network Structures in African American Churches: Implications for Health Promotion Programs,2019,Soohyun Nam,7,10.1007/s11524-018-00339-9,1,vardi_2012
 45dc2241fe4532c6d7a198ba461a700b07f45ac8,Do Müller Cells Act as Optical Fibers in the Primate Retina?,2019,K. Kirschfeld,6,10.1167/iovs.18-25831,1,pausch_et_al_2018
 7a43443b0bce186d7326a8fd7ff096b557443fff,A Cohesion Measure for Improving the Weighting of Experts’ subgroups in Large-scale Group Decision Making Clustering Methods,2019,Álvaro Labella,4,10.1109/FUZZ-IEEE.2019.8858858,1,vardi_2012
@@ -158,20 +141,13 @@ f1acad8ece6c7035272c1225085f0912a4dbac1e,Multimodal imaging including optical co
 980a5e3d99592abd9c21fb6fbf7ac6ca0ff056f5,A Novel Linguistic Cohesion Measure for Weighting Experts’ Subgroups in Large-Scale Group Decision Making Methods,2019,Álvaro Labella,0,10.1109/ISKE47853.2019.9170458,1,vardi_2012
 b8f62c29b1ae0095e48b67eff2e2d7ebb8792336,"Recently several agro-industrial parks have been developed as applications of industrial ecology to agriculture, aiming at improved sustainability performance. Grounded in industrial ecology and the literature on inter-organizational networks, this study explores the social structure of sustainabili",2019,,0,,1,vardi_2012
 ea975ad98dfc1589d8b4cb6d7cfdcc64c64f7223,Using sensor fusion for parallel image classiﬁcation,2019,Teodor Atroshenko,0,,1,pausch_et_al_2018
-9c119bd652ed68edbcc765ba4d8a62747bad4564,Habitat selection of coral reef invertebrates mediated by environmental stimuli,2019,Molly M Ashur,0,,1,williams_miller_2010
 be55fb18ad28336082c25d8561b1d5b05956cdd1,Bleaching causes loss of disease resistance within the threatened coral species Acropora cervicornis,2018,E. Muller,116,10.7554/eLife.35066,1,forrester_et_al_2014
-d802b86861caaf3eeb9b6e5f0d076fb4f4bc499c,Gap models and their individual-based relatives in the assessment of the consequences of global change,2018,H. Shugart,80,10.1088/1748-9326/aaaacc,1,rogers_et_al_1982
-79a03b31dc4c7b6f91c43000c3bd10a8cbf3d93e,Local management actions can increase coral resilience to thermally-induced bleaching,2018,Elizabeth C. Shaver,69,10.1038/s41559-018-0589-0,1,williams_miller_2010
 214ae520a3d8fd7484f55746f886cd6438d5e4e4,Disentangling causation: complex roles of coral‐associated microorganisms in disease,2018,Hanaka Mera,59,10.1111/1462-2920.13958,1,forrester_et_al_2014
 1eb6a46d8e1e1383e9f0dd1cb449db354e87db16,Social transmission in networks: global efficiency peaks with intermediate levels of modularity,2018,V. Romano,45,10.1007/s00265-018-2564-9,1,vardi_2012
 3116eb78faa5588d2705cb8f7b901701276dd761,"Outplanting technique, host genotype, and site affect the initial success of outplanted Acropora cervicornis",2018,E. Goergen,44,10.7717/peerj.4433,1,forrester_et_al_2014
-0d5c024d0fbdd849f40106878702577c18785aa6,Genomic Variants Among Threatened Acropora Corals,2018,Sheila A. Kitchen,41,10.1534/g3.119.400125,1,williams_miller_2010
 763683cc14934ace6bdb51c0b42ef4bfe3e3881a,"Mechanisms of network evolution: a focus on socioecological factors, intermediary mechanisms, and selection pressures",2018,C. Sueur,40,10.1007/s10329-018-0682-7,1,vardi_2012
 c6b72ea8fcc419091172be046251ababcc6c703e,Macroalgae reduces survival of nursery‐reared Acropora corals in the Florida reef tract,2018,R. van Woesik,40,10.1111/rec.12590,1,forrester_et_al_2014
 f809657b1d0c45a5d6a2332553656a940259fad4,"How Does the Coral Microbiome Cause, Respond to, or Modulate the Bleaching Process?",2018,Kathleen M. Morrow,36,10.1007/978-3-319-75393-5_7,1,forrester_et_al_2014
-b85513c736eb5b3ec1d9bc4ee622874d888ee134,"Effects of thermal stress on amount, composition, and antibacterial properties of coral mucus",2018,Rachel M. Wright,28,10.7717/peerj.6849,1,williams_miller_2010
-6c8aa99a6d6c7bced6e5cdfead029752bbe7b806,Suitability Evaluation of Urban Construction Land Based on an Approach of Vertical-Horizontal Processes,2018,Yu Yan,20,10.3390/IJGI7050198,1,rogers_et_al_1982
-df1390ae7b63ce1de5e9d359fcf74c4346ed8507,Transitioning western U.S. dry forests to limited committed warming with bet-hedging and natural disturbances,2018,W. Baker,17,10.1002/ECS2.2288,1,rogers_et_al_1982
 8d6d6f318861d9ffc6bc641f428cc291d2cfa784,"Do Social Resources Matter? Social Capital, Personality Traits, and the Ability to Plan Ahead",2018,P. Anand,16,10.1111/KYKL.12173,1,vardi_2012
 ccb01a4d094deeaeeebae4bc2502ea8044ca4d22,Role analysis using the ego-ERGM: A look at environmental interest group coalitions,2018,J. Box-Steffensmeier,15,10.1016/j.socnet.2017.08.004,1,vardi_2012
 ce358dca9241156215d9d141d020488b9033fca3,Networks of economic policy expertise in Germany and the United States in the wake of the Great Recession,2018,Michael Flickenschild,14,10.1080/13501763.2018.1518992,1,vardi_2012
@@ -184,20 +160,14 @@ f52689d29350be12df5a789f58783fde7c4af6ce,"Incidence of black band disease, brown
 1bc38f8619bfc6345d9b85239d40b314cf197bfc,The network theory: a new language for speaking about chemical elements relations through stoichiometric binary compounds,2018,R. Suárez,0,10.1007/s10698-018-9319-6,1,vardi_2012
 3c947661d3f0eba7c5d0ee656c1d37039c70a141,nalyzing the performance of classical consensus models in large cale group decision making : A comparative study,2018,.. Labellaa,0,,1,vardi_2012
 73d2b4c3a632c6a2b831d7ad3cb4f6060e5eb9e7,Data showing the shapes of cones and Müller cells within the fovea of monkeys reconstructed from serial sections and focused ion beam analysis,2018,U. Schraermeyer,0,10.1016/j.dib.2018.08.195,1,pausch_et_al_2018
-b68c031a80a7ada7452623ba7f072d42093a1fa7,Environmental drivers of recruitment success in Caribbean corals : Applications to aid the recovery of threatened coral populations,2018,V. Chamberland,0,,1,williams_miller_2010
 abfae0103319ee814127b134ffb25bf2c1534cc3,Analyzing the performance of classical consensus models in large scale group decision making: A comparative study,2017,Á. L. Romero,209,10.1016/j.asoc.2017.05.045,1,vardi_2012
 c676ea3d4210bee9eadb9f8d96f7f7d5497b5500,A Survey of Self-Organization Mechanisms in Multiagent Systems,2017,Dayong Ye,138,10.1109/TSMC.2015.2504350,1,vardi_2012
-f61229f85e16cf4415d139f73f678c09059b66fa,"Natural range of variation for yellow pine and mixed-conifer forests in the Sierra Nevada, southern Cascades, and Modoc and Inyo National Forests, California, USA",2017,H. Safford,135,,1,rogers_et_al_1982
-926796aa78799d44b010dbc2df70226cacb391ff,Fire-BGC: A mechanistic ecological process model for simulating fire succession on coniferous forest landscapes of the northern Rocky Mountains. Forest Service research paper,2017,R. Keane,124,,1,rogers_et_al_1982
 4f324ac55f88a229c1815fadff5c2c60b1dc32cc,Sustainable mobility indicators for Indian cities: Selection methodology and application,2017,Deepty Jain,58,10.1016/J.ECOLIND.2017.03.059,1,vardi_2012
-858144baf339f0cc6b5833084ad263eb1f49455d,Effects of predation and nutrient enrichment on the success and microbiome of a foundational coral.,2017,Elizabeth C. Shaver,56,10.1002/ecy.1709,2,forrester_et_al_2014; williams_miller_2010
+858144baf339f0cc6b5833084ad263eb1f49455d,Effects of predation and nutrient enrichment on the success and microbiome of a foundational coral.,2017,Elizabeth C. Shaver,56,10.1002/ecy.1709,1,forrester_et_al_2014
 a052636259de41f78c495c2cd6f68cf9cc54e6e5,"Intraspecific variation in phenotype among nursery-reared staghorn coral Acropora cervicornis (Lamarck, 1816)",2017,K. Lohr,50,10.1016/J.JEMBE.2016.10.005,1,forrester_et_al_2014
 a64e807b38b371c3dd9a9e7a6178765c83166a8c,The influence of demographic variation on social network stability in wild vervet monkeys,2017,C. Borgeaud,42,10.1016/J.ANBEHAV.2017.09.028,1,vardi_2012
 b4b7e9f2e197b0e1543ddece76d50f57aab3cbf2,"Tough, armed and omnivorous: Hermodice carunculata (Annelida: Amphinomidae) is prepared for ecological challenges",2017,A. Schulze,42,10.1017/S0025315417000091,1,forrester_et_al_2014
-230103eda7ffc568d0fd2d6b1dc921d71b19e6a0,"Thermal stress exposure, bleaching response, and mortality in the threatened coral Acropora palmata.",2017,Dana E. Williams,29,10.1016/j.marpolbul.2017.07.001,1,williams_miller_2010
 502c38b9140fe3e747e834f017497c924c3a1649,Network structure in sustainable agro-industrial parks,2017,G. Nuhoff-Isakhanyan,23,10.1016/J.JCLEPRO.2016.09.196,1,vardi_2012
-6d0d8d3fdfbd9f5e34f319448160787dc34393ad,Abundance and Multilocus Sequence Analysis of Vibrio Bacteria Associated with Diseased Elkhorn Coral (Acropora palmata) of the Florida Keys,2017,Keri M Kemp,23,10.1128/AEM.01035-17,1,williams_miller_2010
-be8d17626fc327a2af053f113a5e84ba145a1c80,Validation and application of a forest gap model to the southern Rocky Mountains,2017,A. Foster,22,10.1016/J.ECOLMODEL.2017.02.019,1,rogers_et_al_1982
 ed087133cc210350893a7d7d007c80333090f151,Assessment of wild and restored staghorn coral Acropora cervicornis across three reef zones in the Cayman Islands,2017,K. Lohr,16,10.1016/J.RSMA.2016.11.003,1,forrester_et_al_2014
 736e8d07753153a09c8535abf8c54408f147b814,Friendships and Social Networks in an Individual-Based Model of Primate Social Behaviour,2017,Ivan Puga‐Gonzalez,10,10.18564/jasss.3450,1,vardi_2012
 775dd2f3c94cf57e0c455c2d92c7cb933e8bae89,Editorial: Social Interaction in Animals: Linking Experimental Approach and Social Network Analysis,2017,C. Sueur,8,10.3389/fpsyg.2017.00035,1,vardi_2012
@@ -205,43 +175,26 @@ ed087133cc210350893a7d7d007c80333090f151,Assessment of wild and restored staghor
 3209abfffecc7151f638c2cb7e50a39cf82b9867,Coral Reef Conservation Solution-Scape White Paper,2017,A. Wenger,5,10.31230/osf.io/yd4zg,1,forrester_et_al_2014
 4a291dc7deb2a268cde83080c5024dc2abbb4de3,Rehabilitation release of vervet monkeys (Chlorocebus pygerythrus hilgerti) in south coast Kenya : a scientific approach,2017,A. Donaldson,3,,1,vardi_2012
 e3886c419275b1ba5b15bd993952928800b85f72,Can classical consensus models deal with large scale group decision making?,2017,Á. L. Romero,2,10.1109/ISKE.2017.8258740,1,vardi_2012
-2a81e92fb17b324e7fa458e49b219fede58a30b7,Data from: Anthropogenic ecosystem disturbance and the recovery debt,2017,M. David,1,10.5061/DRYAD.T5C97,1,williams_miller_2010
 27f1db55d89c3239677e00d4cb6ff6b687180144,"Social dynamics, network structure, and information diffusion in fish shoals.",2017,M. Hasenjager,0,10.18297/etd/2628,1,vardi_2012
 dc60276e63014c553ddb10f6aac98e5ff23e8597,Ecological solutions to reef degradation: optimizing coral reef restoration in the Caribbean and Western Atlantic,2016,D. Lirman,185,10.7717/peerj.2597,1,forrester_et_al_2014
 ea0672e03abb6c6d9a592a3a88b9f820073e72c2,Coral-Associated Bacterial Diversity Is Conserved across Two Deep-Sea Anthothela Species,2016,Stephanie N. Lawler,92,10.3389/fmicb.2016.00458,1,forrester_et_al_2014
 0542fc73f2d0877b0a523f00feb7b5680dabcc74,"Detecting sedimentation impacts to coral reefs resulting from dredging the Port of Miami, Florida USA",2016,Margaret W. Miller,82,10.7717/peerj.2711,1,forrester_et_al_2014
 63b9916a542dfcef0e10111e7493622d79ef8387,Modeling infection transmission in primate networks to predict centrality‐based risk,2016,V. Romano,61,10.1002/ajp.22542,1,vardi_2012
-8c72b162434b3fa8b18ba26c08b024ca5009734e,How old are you? Genet age estimates in a clonal animal,2016,M. Devlin-Durante,52,10.1111/mec.13865,1,williams_miller_2010
-cc190b8c95707454a31f580ee74c79a64e9a898b,Complementary approaches to diagnosing marine diseases: a union of the modern and the classic,2016,C. Burge,47,10.1098/rstb.2015.0207,1,williams_miller_2010
 c990b1ed7d44c7496229a668391f3c635e1a5bf0,How social network structure affects decision-making in Drosophila melanogaster,2016,C. Pasquaretta,38,10.1098/rspb.2015.2954,1,vardi_2012
-2f80a622196af082b58089b66c5df5627af07afa,"Shifting white pox aetiologies affecting Acropora palmata in the Florida Keys, 1994–2014",2016,K. Sutherland,36,10.1098/rstb.2015.0205,2,forrester_et_al_2014; williams_miller_2010
+2f80a622196af082b58089b66c5df5627af07afa,"Shifting white pox aetiologies affecting Acropora palmata in the Florida Keys, 1994–2014",2016,K. Sutherland,36,10.1098/rstb.2015.0205,1,forrester_et_al_2014
 00afa2def22efb4ef6b4f381b05cd6a3b01b1c81,"Social power, conflict policing, and the role of subordination signals in rhesus macaque society.",2016,B. Beisner,23,10.1002/ajpa.22945,1,vardi_2012
-71b5b7fbb438bdbb71ac8125441dec085d6010c4,Reef-scale trends in Florida Acropora spp. abundance and the effects of population enhancement,2016,Margaret W. Miller,21,10.7717/peerj.2523,2,forrester_et_al_2014; williams_miller_2010
-0dd18a125a35f7c68540ad4de023e7c6e020289a,"Disease Prevalence and Snail Predation Associated with Swell-Generated Damage on the Threatened Coral, Acropora palmata (Lamarck)",2016,A. J. Bright,16,10.3389/fmars.2016.00077,1,williams_miller_2010
-86168601b8da386b66c8e2d36685c85d453ca838,Genet-specific spawning patterns in Acropora palmata,2016,M. Miller,15,10.1007/s00338-016-1472-6,1,williams_miller_2010
-c78b5409a78b1eb803dea6ff3c19933aab2772bf,"Is Acropora palmata recovering? A case study in Los Roques National Park, Venezuela",2016,A. Cróquer,15,10.7717/peerj.1539,1,williams_miller_2010
-6476e7c0ec358be3019ed085f0c1ec2ad4ad67c9,Quantifying exceptionally large populations of Acropora spp. corals off Belize using sub-meter satellite imagery classification,2016,J. Busch,15,10.5343/BMS.2015.1038,1,williams_miller_2010
-59305aa21b3e9b1840d9d9fb71024146b2670ac9,MCFire model technical description,2016,D. Conklin,12,,1,rogers_et_al_1982
-9468aa4a5cdac8c38d25bb0b1852978e9363eabf,Temporal consistency in background mortality of four dominant coral taxa along Australia’s Great Barrier Reef,2016,C. Pisapia,8,10.1007/s00338-016-1421-4,1,williams_miller_2010
+71b5b7fbb438bdbb71ac8125441dec085d6010c4,Reef-scale trends in Florida Acropora spp. abundance and the effects of population enhancement,2016,Margaret W. Miller,21,10.7717/peerj.2523,1,forrester_et_al_2014
 b83d5e925b1b1d6aa44752abc0c33c149265a5dd,Acropora Habitat Evaluation and Restoration Site Selection Using a Species Distribution Modeling Approach,2016,K. Ames,4,,1,forrester_et_al_2014
-1ca5e242fd51cd644d48e914822381c49794adf7,Revised paleoenvironmental analysis of the Holocene portion of the Barbados sea-level record: Cobbler’s Reef revisited,2016,M. Toscano,4,10.1007/s00338-016-1397-0,1,williams_miller_2010
 f40b63a2ec68457608c3a70e36f86df8164c62e6,Inter-organizational collaboration in bio-based business : sustainability-oriented networks inagro-industrial parks,2016,G. Nuhoff-Isakhanyan,1,,1,vardi_2012
 84d13d2fd0ff658beae1e4c0f70afcc4ac85992a,Shared decision-making in palliative cancer care : a life span perspective,2016,C. Groot-Kormelink,0,,1,vardi_2012
 474f838728557be8a7758fe295decca4f02bc846,Balancing between exploration and exploitation in a lean business environment,2016,M. V. Oort,0,,1,vardi_2012
 18ff81bab07e56fcaede706d47f8843dfcdacb06,Understanding distortion and biases in individual information processing under social impact,2016,Yonghua Cen,0,,1,vardi_2012
 e58f8f17765e6f0a55cc4abae38f6407295e91ca,Histological Analysis of Threespot Damselfish (Stegastes planifrons) Gastrointestinal Tract and Implications for Staghorn Coral (Acropora cervicornis) Health,2016,William A. Norfolk,0,,1,forrester_et_al_2014
-acf48aba89d1ed396db8118e04acf9ea2e03b3da,Coral conservation in times of change: letting nature pick the winners,2016,K. S. Lunz,0,,2,forrester_et_al_2014; williams_miller_2010
-ce44bf35f87b437da44b68fc2c9ccaa1bcf8d94b,Quantifying the effects of white pox disease and bleaching in elkhorn coral in the Florida Keys from 1994-2014,2016,Brett Berry,0,,1,williams_miller_2010
+acf48aba89d1ed396db8118e04acf9ea2e03b3da,Coral conservation in times of change: letting nature pick the winners,2016,K. S. Lunz,0,,1,forrester_et_al_2014
 7d6cf232f1a94579efe8abf67e441fc1a2d3e9a3,The Microfoundations of Organizational Social Networks,2015,S. Tasselli,244,10.1177/0149206315573996,1,vardi_2012
-6bc75d2c7a9d8244e45f671dae1f96d3d4c1e877,Herbivory and the Resilience of Caribbean Coral Reefs: Knowledge Gaps and Implications for Management,2015,T. Adam,171,10.3354/MEPS11170,1,williams_miller_2010
-4fdf553dec16b623a5e71e13c0fa7624d3aff4e7,Restoration of critically endangered elkhorn coral (Acropora palmata) populations using larvae reared from wild-caught gametes,2015,V. Chamberland,94,10.1016/J.GECCO.2015.10.005,1,williams_miller_2010
 bfa8550d9f7b297da6906c5e00a5469d435765ea,Diseases of Coral Reef Organisms,2015,E. Peters,65,10.1007/978-94-017-7249-5_8,1,forrester_et_al_2014
-c9a98db02a0403270e613ec3478003bf9b510872,Population dynamics of giant barrel sponges on Florida coral reefs,2015,S. McMurray,54,10.1016/J.JEMBE.2015.08.007,1,williams_miller_2010
-10f12d5e392cd0cfc8a90d3b8b0218f83cfd4981,"Occupation Dynamics and Impacts of Damselfish Territoriality on Recovering Populations of the Threatened Staghorn Coral, Acropora cervicornis",2015,S. Schopmeyer,47,10.1371/journal.pone.0141302,1,williams_miller_2010
-7694abf1c627a938bf7db4aca186cb196bac174a,Climate Change Projected Effects on Coastal Foundation Communities of the Greater Everglades Using a 2060 Scenario: Need for a New Management Paradigm,2015,M. Koch,43,10.1007/s00267-014-0375-y,1,williams_miller_2010
 909a44240d52147307754197c41bed90afdc9ce6,Social Network Analysis in Behavioral Ecology,2015,M. Hasenjager,27,10.1016/BS.ASB.2015.02.003,1,vardi_2012
 eead5777eca14dd118d3aa3555afad2e6161115c,Optimizing the productivity of a coral nursery focused on staghorn coral Acropora cervicornis,2015,K. Lohr,24,10.3354/ESR00667,1,forrester_et_al_2014
-b0ebc3d292edeca08ea65bd6d37e2de876e182e6,Enhanced susceptibility to predation in corals of compromised condition,2015,A. J. Bright,19,10.7717/peerj.1239,1,williams_miller_2010
 7c9b63b74c688dbfba3ac13223d163fcffbdae61,Exploring social network analysis techniques on decision support,2015,Manuela Freire,6,,1,vardi_2012
 20b8a5874ca4c01633f6ca4241fcb7f845271159,A Survey of Self-organisation Mechanisms in Multi-Agent Systems,2015,Dayong Ye,3,,1,vardi_2012
 9bf63cd9fa5c932a605313b80f224d60a5f052b1,"Female Social Connectivity through the Leadership and Movement Progression of Tibetan Macaques at Mt. Huangshan, China",2015,Gregory P. Fratellone,3,,1,vardi_2012
@@ -250,35 +203,22 @@ b065e6730e25fdeec02400dcd0541141e809eebf,"The Histology, MicrobiOlogy, and Molec
 e9487c3209005aad95cd57fdba1530234e51a50d,Déplacements collectifs auto-organisés : décision individuelle et transfert d'information,2015,Sylvain Toulet,0,,1,vardi_2012
 d6c1cf18cacfb2a31f6646e98a01071aa1319e51,A comparative approach to social learning from the bottom up,2015,E. P. O’Sullivan,0,,1,vardi_2012
 9ca078c009afa67a9f1b5de3c68dc916404e31b8,"Discurso Web, Modelos Teóricos e Sistemas de Argumentação: Implicações para a Tomada de Decisão",2015,Manuela Freire,0,,1,vardi_2012
-cb327ba07b9819e692ac47f272450ef33c626bb1,"Spatial, temporal and taxonomic variation in the incidence of partial mortality among reef-building corals",2015,C. Pisapia,0,,1,williams_miller_2010
 0a2015fed470e75ff233941a1c3203f4c6575f64,A Consensus Model to Detect and Manage Noncooperative Behaviors in Large-Scale Group Decision Making,2014,I. Palomares,477,10.1109/TFUZZ.2013.2262769,1,vardi_2012
 9d69d8f81ee2870e92a2da331ca77ce52dcec3cb,Social networks in primates: smart and tolerant species have more efficient networks,2014,C. Pasquaretta,139,10.1038/srep07600,1,vardi_2012
 ac27fb9260b243792d0cfa3cd1f969575e07b8bb,MENTOR: A graphical monitoring tool of preferences evolution in large-scale group decision making,2014,I. Palomares,91,10.1016/j.knosys.2013.07.003,1,vardi_2012
 d0765b908011f6e5e213b4d90aef01e2f64d36b9,A Semisupervised Multiagent System Model to Support Consensus-Reaching Processes,2014,I. Palomares,81,10.1109/TFUZZ.2013.2272588,1,vardi_2012
-28e000d071f42a581c52e766102b029f0f28f004,"To Understand Coral Disease, Look at Coral Cells",2014,T. Work,79,10.1007/s10393-014-0931-1,1,williams_miller_2010
 76bfd0c327572418589b35ba577dae85bf7449df,Movement initiation in groups of feral horses.,2014,K. Krueger,76,10.1016/j.beproc.2013.10.007,1,vardi_2012
-f62d1f142596931a4bb44446892905823ea101fa,Lost opportunities: coral recruitment does not translate to reef recovery in the Florida Keys.,2014,R. van Woesik,72,10.1016/j.marpolbul.2014.09.017,1,williams_miller_2010
-0308c2217c8744df98440d6567e34578c6e26ab9,"Prevalence, consequences, and mitigation of fireworm predation on endangered staghorn coral",2014,Margaret W. Miller,32,10.3354/MEPS10996,2,forrester_et_al_2014; williams_miller_2010
+0308c2217c8744df98440d6567e34578c6e26ab9,"Prevalence, consequences, and mitigation of fireworm predation on endangered staghorn coral",2014,Margaret W. Miller,32,10.3354/MEPS10996,1,forrester_et_al_2014
 9880e738833dc63d66de2a7c4d85d3bc964e01cb,Modelling Animal Group Fission Using Social Network Dynamics,2014,C. Sueur,30,10.1371/journal.pone.0097813,1,vardi_2012
-0babd6dc497268880835e7187084d14c0aed14ef,Cryptic changes in the genetic structure of a highly clonal coral population and the relationship with ecological performance,2014,Dana E Williams,29,10.1007/s00338-014-1157-y,1,williams_miller_2010
-d602bd984dcd6311d46365107cc11a5682c1176b,Long‐term survival and colony growth of Acropora palmata fragments transplanted by volunteers for restoration,2014,Graham E. Forrester,28,10.1002/AQC.2374,1,williams_miller_2010
-19cd98851d6217f3415bac67fad8c425f2c67695,Negative indirect effects of neighbors on imperiled scleractinian corals,2014,Lyza Johnston,27,10.1007/s00338-014-1176-8,1,williams_miller_2010
-941afc9d0c1d6f88d989741ba91a7311edaa180f,Removal of corallivorous snails as a proactive tool for the conservation of acroporid corals,2014,Dana E Williams,25,10.7717/peerj.680,1,williams_miller_2010
-105cf69546553ef8e37decf2b89d54652762bba6,"Possible Recovery of Acropora palmata (Scleractinia:Acroporidae) Within the Veracruz Reef System, Gulf of Mexico: A Survey of 24 Reefs to Assess the Benthic Communities",2014,E. A. Larson,24,10.15517/RBT.V62I0.15903,1,williams_miller_2010
-1083803274853af8e09697ff0a1127ad93925d7e,Climate change effects on vegetation in the Pacific Northwest: a review and synthesis of the scientific literature and simulation model projections,2014,D. Peterson,21,10.2737/PNW-GTR-900,1,rogers_et_al_1982
-f91929940176ddbca894d9860e96f4c39372c89e,"Early signs of recovery of Acropora palmata in St. John, US Virgin Islands",2014,E. Muller,15,10.1007/S00227-013-2341-2,1,williams_miller_2010
 86b022f6cb39c30b6262b659f5c0fdb5a5dc622e,Food reduction has a limited effect on following relations in house sparrow flocks,2014,Z. Tóth,10,10.1016/J.ANBEHAV.2014.01.018,1,vardi_2012
 0edc11fb815ddc5f6b32645c93ab149b0daa1019,Attitude-Based Consensus Model for Heterogeneous Group Decision Making,2014,Rosa M. Rodríguez,5,10.1007/978-3-642-37832-4_26,1,vardi_2012
 6ffd9808206ac43d993e468cb2b7bb3f59bff255,Multi-agent-Based Semi-supervised Consensus Support System for Large-Scale Group Decision Making,2014,I. Palomares,4,10.1007/978-3-642-54924-3_23,1,vardi_2012
 19f4565549b3f093a02ba99f5cbc284182e351b2,TrustCV : supporting reputation-based trust for collectivist digital business ecosystems,2014,D. Isherwood,2,,1,vardi_2012
-87b36e474e5ac7586b3adcf5258d4885934c041f,Stakeholder Perceptions and Preferences for Coral Reef Restoration and Sustainable Resource Management,2014,James Harper,1,10.25148/ETD.FI14071138,1,williams_miller_2010
 f27fcd83768f763a4c3b79e7d72d2e0040757c29,Déterminants individuels de la position sociale et du rôle dans la cohésion de groupe chez trois espèces de cercopithecinae,2014,C. Bret,0,,1,vardi_2012
 358fc0c6cde2b5aa426aad52f73d624691674363,Sistema multiagente para modelar procesos de consenso en toma de decisión en grupo a gran escala usando técnicas de soft computing,2014,Iván Palomares Carrascosa,0,,1,vardi_2012
 31666bb830d7ff644ed84438f13a11b3db46b335,A Study of How to Build an Aggregated Volunteer Community Online for Social Good,2014,Rachel A Kubiak,0,,1,vardi_2012
 4a5bd925624f6d3c3594377210cd57426582ab6d,Creating a Space for Collective Problem-Solving,2014,Kshanti A. Greene,0,10.1007/978-1-4614-6170-8_102001,1,vardi_2012
 08b8e61fb6eb9e28022f1e01d7ed9783263013ad,Bio-Inspired Collective Decision Making Algorithms in Multiagent System From Low- to High-Cognition Algorithms,2014,H. Z. Aichour,0,,1,vardi_2012
-dafdc0960311cfe646b6b8537e3bfbfff5b38974,Removal of corallivorous snails as a proactive conservation tool,2014,Dana E Williams,0,10.7287/PEERJ.PREPRINTS.478V1,1,williams_miller_2010
-d8ca037976ffb6e74780973bed086a89a645b576,Temporal changes in benthic assemblages on Florida Keys reefs 11 years after the 1997/1998 El Niño,2013,R. Ruzicka,242,10.3354/MEPS10427,1,williams_miller_2010
 23385f39590a4d53bd954e6d2e78b4c62c934ebc,Context-dependent hierarchies in pigeons,2013,Máté Nagy,166,10.1073/pnas.1305552110,1,vardi_2012
 51a35b5837dfd0a6516932584a4430f022eff181,An attitude-driven web consensus support system for heterogeneous group decision making,2013,I. Palomares,105,10.1016/j.eswa.2012.07.029,1,vardi_2012
 22001b269fe97af03b72e1590c5473ed0dd915ba,Genetic relatedness does not predict racoon social network structure,2013,Ben T. Hirsch,71,10.1016/J.ANBEHAV.2012.12.011,1,vardi_2012
@@ -286,99 +226,8 @@ d8ca037976ffb6e74780973bed086a89a645b576,Temporal changes in benthic assemblages
 1b10373f362ca56486e92670231d2083d26d2cb9,Social Structure of a Semi-Free Ranging Group of Mandrills (Mandrillus sphinx): A Social Network Analysis,2013,Céline Bret,37,10.1371/journal.pone.0083015,1,vardi_2012
 958ac9b7a5be87ab044fa99bbc85191cb7939915,Group performance is maximized by hierarchical competence distribution,2013,Anna Zafeiris,34,10.1038/ncomms3484,1,vardi_2012
 74a3676ec0c7902f1983597759595ad115e0a2a3,Leaders of spontaneous group movements influence whole-group social organization: an experimental study on grazing heifers,2013,L. Della-Rossa,18,10.1163/1568539X-00003043,1,vardi_2012
-be59c3813adf8f8254ba57ba1e79d2b7c584c7c4,Remote Sensing and Modeling Applications to Wildland Fires,2013,J. Qu,12,10.1007/978-3-642-32530-4,1,rogers_et_al_1982
-58828e67123bf56f7f4d3606920a197d6b5b74f4,Vegetation projections for Wind Cave National Park with three future climate scenarios: Final report in completion of Task Agreement J8W07100052,2013,D. A. King,8,,1,rogers_et_al_1982
-872ca0b80ebbd45b9bee55d2d28c57b5849b5c94,Florida Keys Population Abundance Estimates for Nine Coral Species Proposed for Listing Under the U.S. Endangered Species Act,2013,S. Miller,5,,1,williams_miller_2010
-942381b6f02c747f37573e2c5409dcf49662e93d,"ESTRUCTURA POBLACIONAL DE ACROPORA PALMATA (SCLERACTINIA: ACROPORIDAE) EN EL PARQUE NACIONAL SAN ESTEBAN, VENEZUELA",2013,Kimberly Martínez,3,,1,williams_miller_2010
 595261f0cc33ebc0475468d5773b5165b27c5e05,Fuzzy Clustering Approach forNon-cooperative Behavior Detection inConsensus Reaching Processes,2013,I. Palomares,1,10.2991/.2013.5,1,vardi_2012
-4ce268a13770ff107ebdbf8ee2640ad1f4a76201,"Fire Spread Regulated by Weather, Landscape Structure, and Management in Wisconsin Oak- Dominated Forests and New Jersey Pinelands",2013,D. Zheng,1,10.1007/978-3-642-32530-4_22,1,rogers_et_al_1982
 69ca967fab2f038f650f8cc42ea46ebccff6000c,"Solidarity, synchronization and collective action",2013,J. Bruggeman,0,,1,vardi_2012
-0efb35710af18bf60eff183c0472f3a069abbd13,"Early signs of recovery of Acropora palmata in St. John, US Virgin Islands",2013,E. Muller,0,10.1007/s00227-013-2341-2,1,williams_miller_2010
-3a8bc533dab2c1f3ea0a9e82741731e6eacd0c00,Interdependencies between flame length and fireline intensity in predicting crown fire initiation and crown scorch height,2012,M. E. Alexander,196,10.1071/WF11001,1,rogers_et_al_1982
-0a9199bb2f5c7ed9c1b3af2a8a52b9a1cd40f33a,Corals Chemically Cue Mutualistic Fishes to Remove Competing Seaweeds,2012,D. Dixson,59,10.1126/science.1225748,1,williams_miller_2010
-08bd5d7c26d1c627e6c11b951a413ef7cef8fe65,"Population dynamics of threatened elkhorn coral in the northern Florida Keys, USA",2012,Tali Vardi,26,10.3354/ESR00475,1,williams_miller_2010
-02413251b71b557de7d4988f274a1978fc418292,Assessment of Host-Associated Genetic Differentiation among Phenotypically Divergent Populations of a Coral-Eating Gastropod across the Caribbean,2012,Lyza Johnston,16,10.1371/journal.pone.0047630,1,williams_miller_2010
-50dfeefab632578a72a71fd4c14028d04b0f686e,Incorporating canopy gap-induced growth responses into spatially implicit growth model projections,2012,Justin E. Arseneault,12,10.1016/J.ECOLMODEL.2012.04.003,1,rogers_et_al_1982
-540567f703b7d6d86a76880dbfadcee34c919abb,"Evolutionary ecology of the corallivorous gastropod, Coralliophila abbreviata: Implications for imperiled Caribbean corals",2012,Lyza Johnston,3,,1,williams_miller_2010
-eebc681a4526e42400b5333c5320d3c053ad4865,The FireBGCv2 landscape fire and succession model: a research simulation platform for exploring fire and vegetation dynamics,2011,R. Keane,98,10.2737/RMRS-GTR-255,1,rogers_et_al_1982
-2577914d344f765e7ef3de2f9f5f14efb7d897b8,Resource-Dependent Growth Models for Sierran Mixed-Conifer Saplings,2009,Seth W. Bigelow,8,10.2174/1874398600902010031,1,rogers_et_al_1982
-4032578d8a1f8c6d8e44c8ae89e55d2289e4bb3b,Structure changes and succession dynamic of the natural secondary forest after severe fire interference,2009,Bin-fan Liu,4,10.1007/s11676-009-0022-2,1,rogers_et_al_1982
-35c7e46c53f95f36ae4537be8849f7d9131b58a2,"Surface fuel litterfall and decomposition in the northern Rocky Mountains, U.S.A.",2008,R. Keane,22,10.2737/RMRS-RP-70,1,rogers_et_al_1982
-4688be06bf38551391c5081f151f21e081bd618f,Estimating direct carbon emissions from Canadian wildland fires 1,2007,William J. de Groot,122,10.1071/WF06150,1,rogers_et_al_1982
-87f40937902751cb6a2408f329c51ecf9f4a1c5e,A heat transfer model of crown scorch in forest fires,2006,S. Michaletz,74,10.1139/X06-158,1,rogers_et_al_1982
-0b50894f411125b7c3061b2dcea4ac44315629d3,Modeling the Effects of Fire Frequency and Severity on Forests in the Northwestern United States,2006,R. Busing,5,10.3133/SIR20065061,1,rogers_et_al_1982
-656aa0320769f9659c88d2d19e71f51a7234a4f2,Succession after slashburning in an Engelmann Spruce-Subalpine Fir subzone variant: West Twin site.,2006,E. Hamilton,4,,1,rogers_et_al_1982
-a39815fd5360bd4fe1dcde82bb13096ae46d9da5,Modelling of carbon cycle and fire regime in an east Siberian larch forest,2005,A. Ito,46,10.1016/J.ECOLMODEL.2005.01.037,1,rogers_et_al_1982
-26d499041231e8771c929592ee0fbb4f5705f877,Simulating the impact of small-scale extrinsic disturbances over forest species volumetric light environment,2005,P. Dubé,7,10.1016/J.ECOLMODEL.2004.04.030,1,rogers_et_al_1982
-4f05f2249fdb4d7e36d6645ad59a646a210cd880,A 200-year Fire History in a Remnant Oak Savanna in Southeastern Wisconsin,2004,Joy J. Wolf,56,10.1674/0003-0031(2004)152[0201:AYFHIA]2.0.CO;2,1,rogers_et_al_1982
-3f584d79570ca29fdbfc6b9055aa5dc99e91d1c3,"The Simulation of Landscape Fire, Climate, and Ecosystem Dynamics",2003,R. Keane,45,10.1007/0-387-21710-X_2,1,rogers_et_al_1982
-3a08c18d11cda0d82ac1865b8becc555a6343fd9,Modelling mixed forest growth: a review of models for forest management,2002,A. Porté,388,10.1016/S0304-3800(01)00476-8,1,rogers_et_al_1982
-5ab9d238ead94ae39a8b18575477fec0f0dce132,Evaluating the potential of the SORTIE forest succession model for spatio-temporal analysis of small-scale disturbances,2002,Andrew Menard,33,10.1016/S0304-3800(01)00503-8,1,rogers_et_al_1982
-dd9b98453ec2a34d1679af7b1a5b08fc05aee360,Release episodes at the periphery of gaps: a modeling assessment of gap impact extent,2002,Andrew Menard,15,10.1139/X02-090,1,rogers_et_al_1982
-176ec37e413953bce9c3f14bb5c4ed69e8a54dc0,A Review of Forest Gap Models,2001,H. Bugmann,696,10.1023/A:1012525626267,1,rogers_et_al_1982
-9ba585a81527f3d1d61b7790fb70c7f7d3b188a0,Tree Mortality in Gap Models: Application to Climate Change,2001,R. Keane,193,10.1023/A:1012539409854,1,rogers_et_al_1982
-bea11d72eab68651171b86ac809b85b08737d926,A generic process-based SImulator for meditERRanean landscApes (SIERRA): design and validation exercises,2001,F. Mouillot,76,10.1016/S0378-1127(00)00432-1,1,rogers_et_al_1982
-8812acad31569a4ab2b80fdf4816de2d436e394f,Preliminary measurements of summer nitric acid and ammonia concentrations in the Lake Tahoe Basin air-shed: implications for dry deposition of atmospheric nitrogen.,2001,L. Tarnay,65,10.1016/S0269-7491(00)00168-8,1,rogers_et_al_1982
-cb443b605cf6d7b7d89dee27760c4ba37870e07d,Modeling Ecological Restoration Effects on Ponderosa Pine Forest Structure,2001,W. Covington,62,10.1046/j.1526-100X.2001.94011.x,1,rogers_et_al_1982
-0760637be51cdfd9ce056bff4c3df83010cd2293,The relative importance of fire and watercourse proximity in determining stand composition in mixed conifer riparian forests,2001,W. Russell,24,10.1016/S0378-1127(00)00586-7,1,rogers_et_al_1982
-84c6578144464c2e98c6d7998180ff743aef2958,Spatial simulation of forest succession and timber harvesting using LANDIS.,2000,E. Gustafson,292,10.1139/CJFR-30-1-32,1,rogers_et_al_1982
-b2637d3a5c031477b6ab744d5ca8923e4dd43b60,EXPLAINING FOREST COMPOSITION AND BIOMASS ACROSS MULTIPLE BIOGEOGRAPHICAL REGIONS,2000,H. Bugmann,160,10.1890/1051-0761(2000)010[0095:EFCABA]2.0.CO;2,1,rogers_et_al_1982
-81b0f4ccef6b7e1467e8994d20d7a9e415ead366,"Californian mixed‐conifer forests under unmanaged fire regimes in the Sierra San Pedro Mártir, Baja California, Mexico",2000,R. Minnich,150,10.1046/J.1365-2699.2000.00368.X,1,rogers_et_al_1982
-31f500b7f14e48f07f19b45440215529e6549919,FIRE FREQUENCY IN THE INTERIOR COLUMBIA RIVER BASIN: BUILDING REGIONAL MODELS FROM FIRE HISTORY DATA,2000,D. McKenzie,65,10.1890/1051-0761(2000)010[1497:FFITIC]2.0.CO;2,1,rogers_et_al_1982
-410a7bfda23b79ad3490fa8b3161924ba06c8bcd,"Disturbance and succession in a coniferous forest of northwestern North America: simulations with DRYADES, a spatial gap model.",2000,Daniel Mailly,37,10.1016/S0304-3800(99)00208-2,1,rogers_et_al_1982
-32d7bf26bacb271683d637780cf8744d8663556c,Importance of structure in the longer-term dynamics of landscapes,2000,H. Shugart,23,10.1029/2000JD900096,1,rogers_et_al_1982
-401f6a19c96bf16e34ba9467b63714b2288f3c52,Wilderness fire science: a state-of-knowledge review.,2000,J. Agee,16,,1,rogers_et_al_1982
-b5dfa412eb5d9e1a6ce626f59b43aa2cd0ee6fe7,"REFERENCE CONDITIONS FOR GIANT SEQUOIA FOREST RESTORATION: STRUCTURE, PROCESS, AND PRECISION",1999,N. Stephenson,190,10.1890/1051-0761(1999)009[1253:RCFGSF]2.0.CO;2,1,rogers_et_al_1982
-3160d3e84c3c6b3ce5aa8bb953eb4ee66bd5c663,Private Versus Common Property Forests: Forest Conditions and Tenure in a Honduran Community,1999,C. Tucker,128,10.1023/A:1018721826964,1,rogers_et_al_1982
-f44ac9401b7f271ca691108fa1ed215bd6224f9a,"Late Glacial and Holocene vegetation history and paleoclimate of the Kaibab Plateau, Arizona",1999,C. Weng,111,10.1016/S0031-0182(99)00070-X,1,rogers_et_al_1982
-6cbfe9be3d44750dc42ab225df69b33fe03b05fe,"A model of surface fire, climate and forest pattern in the Sierra Nevada, California",1999,Carol Miller,106,10.1016/S0304-3800(98)00119-7,1,rogers_et_al_1982
-beccf9afdb1e7e38343c883ba286611bf87c0ae2,"Forest Pattern, Fire, and Climatic Change in the Sierra Nevada",1999,Carol Miller,93,10.1007/s100219900060,1,rogers_et_al_1982
-2aaf16ccacb92ddbb7a643600f5f0ef230268048,Assessing the effects of fire disturbances on ecosystems: A scientific agenda for research and management,1999,D. Schmoldt,41,10.2737/PNW-GTR-455,1,rogers_et_al_1982
-d2ce4889b91b4cefd8ed0f1e4ce26570804259b4,Modelling the net primary productivity of temperate forest ecosystems in China with a GAP model,1999,Hong Jiang,26,10.1016/S0304-3800(99)00139-8,1,rogers_et_al_1982
-9686906be10170bfbcacaabcef50ab1264824901,Spatial Modeling of Forest Landscape Change: Approaches and Applications,1999,D. Mladenoff,20,,1,rogers_et_al_1982
-3506d8587f4751ffc0a33e2559c22c62c52f5a99,"Vegetation, fire regimes, and forest dynamics.",1999,R. Minnich,20,10.1007/978-1-4612-1436-6_4,1,rogers_et_al_1982
-79198b1b848289b19239c3044f0b531ea2314a3c,Twentieth Century Changes in Forests of the Sierra Nevada Mountains,1999,J. Bouldin,18,,1,rogers_et_al_1982
-342776824ffe79f3f7543d20dafecb3e63e73076,Simulation Modeling for The Study of Forest Succesions in Central Russia,1999,Alexandre Sorokine,0,,1,rogers_et_al_1982
-76a6d202bc5ebf2080e8334e9b8842a58490ec17,Revegetation after four stand-replacing fires in the Lake Tahoe basin,1998,W. Russell,33,,1,rogers_et_al_1982
-bd4a610d61d291dc9a2144031f34cad410fae533,55 Ecology and Management of Giant Sequoia Groves,1997,N. Stephenson,9,,1,rogers_et_al_1982
-af6fea3ad995e3a898dcb1927bab61e9e5d04e3f,A review of forest patch models and their application to global change research,1996,H. Shugart,112,10.1007/BF00224626,1,rogers_et_al_1982
-6faf1b474cf37a3f58bff800a7f86fb68c27d577,Simulating effects of fire on northern Rocky Mountain landscapes with the ecological process model FIRE-BGC.,1996,Robert E. Keane,101,10.1093/TREEPHYS/16.3.319,1,rogers_et_al_1982
-b6d56ebfa107be54e963a2d2944fadaa139af430,Modeling the effects of temperature on growth and persistence of tree species: A critical review of tree population models,1996,H. Schenk,90,10.1016/0304-3800(95)00212-X,1,rogers_et_al_1982
-3e9fc7b6b012e50af955429808b09821ed715169,Modelling forest dynamics with vital attributes and fuzzy systems theory,1996,D. Roberts,59,10.1016/0304-3800(95)00163-8,1,rogers_et_al_1982
-2877c70d1c0bcb7c1ec0b3aeef36570b9ba6b6ea,Kill thy neighbour: an individulalistic argument for the evolution of flammability,1995,W. Bond,281,10.2307/3545728,1,rogers_et_al_1982
-47e7c50b5cfd9a2ce900935c7a217045f3da229d,Individual-based simulation models for forest succession and management,1995,Jianguo Liu,169,10.1016/0378-1127(94)03490-N,1,rogers_et_al_1982
-c0a694d961ef8ad8ed0ac61d1e9951b184cae365,Productivity of America's forests and climate change,1995,L. Joyce,99,10.5962/bhl.title.99533,1,rogers_et_al_1982
-702623dccab98efea782dc89674fb0a6c9fe1f54,Pinyon-juniper woodlands,1995,G. Gottfried,33,,1,rogers_et_al_1982
-089d01a91d71cc49078b9d06d619d98eb422cac8,Assessing ecological implications of climatic change: Can we rely on our simulation models?,1995,H. Hänninen,23,10.1007/BF01092977,1,rogers_et_al_1982
-256e4d9d10bfb16048e50240266d0e50d5a7dc84,A simulation model for the transient effects of climate change on forest landscapes,1993,I. Prentice,311,10.1016/0304-3800(93)90126-D,1,rogers_et_al_1982
-ddfbeb1826b0ee92f8dbc570af89a4d1c531c7aa,A simulation model for the transient effects of climate change on forest landscapes,1993,I. Colinprentice,220,,1,rogers_et_al_1982
-17984c378afaf2b4c02fd86205bfaf1abf4bd75e,"Potential response of pacific northwestern forests to climatic change, effects of stand age and initial composition",1993,D. Urban,132,10.1007/BF01091618,1,rogers_et_al_1982
-2ff1b975946c2a97ce2a90d33e6238b8b3973892,Modeling Large-Scale Vegetation Dynamics,1993,I. Prentice,26,10.1007/978-1-4615-2816-6_12,1,rogers_et_al_1982
-ebd2b9352ff84374c915ef39a3e08ab4343880b3,Predicting Afforestation Success During Climatic Warming at the Northern Limit of Forests,1993,A. Solomon,7,10.1007/978-1-4899-1600-6_11,1,rogers_et_al_1982
-be5e514fbfa89d57f6b1f4f7ec1b5addadfa2cae,The potential for application of individual-based simulation models for assessing the effects of global change,1992,H. Shugart,153,10.1146/ANNUREV.ES.23.110192.000311,1,rogers_et_al_1982
-a67682301b8399111035fbc460f1ea3f64191b99,Simulation of tree species composition and organic matter accumulation in Finnish boreal forests under changing climatic conditions,1992,S. Kellomäki,18,10.1007/BF00031703,1,rogers_et_al_1982
-f63ddbf3da7275d6922bd5ab79f8ef65ed200878,"Resilience of a heavily logged grove of giant sequoia (Sequoiadendron giganteum) in Kings Canyon National Park, California",1992,T. Stohlgren,12,10.1016/0378-1127(92)90008-W,1,rogers_et_al_1982
-7cb1ab6ea8bdfa5e559d9357cfcefdb76a95d8f6,Tree mortality in midwestern oak-hickory forests : rates and processes,1992,B. Pedersen,6,,1,rogers_et_al_1982
-910631e6a31a52589f01967e4de9e9055f42bc3e,Sensitivity analysis of a forest succession model,1991,R. Leemans,53,10.1016/0304-3800(91)90158-W,1,rogers_et_al_1982
-a77fa64ed8a39de8c615194090d255a5d742fc82,Modeling plant response to tropospheric ozone: a critical review.,1991,R. N. Kickert,46,10.1016/0269-7491(91)90057-4,1,rogers_et_al_1982
-bb2bc9cccc3bd04100965cf7a205f3eca7a1c945,Simulating Cumulative Fire Effects in Ponderosa Pine/Douglas-Fir Forests,1990,R. Keane,117,10.2307/1940259,1,rogers_et_al_1982
-f0ec05e1a3b8562071c6f58c0b7c7249a16e4494,Modelling stand dynamics in whitebark pine (Pinus albicaulis) forests.,1990,R. Keane,69,10.1016/0304-3800(90)90059-P,1,rogers_et_al_1982
-99e370fa0b7c7d1de3d4f54a9732cf1036d98cd0,Using ecosystem models to assess potential consequences of global climatic change.,1990,H. Shugart,57,10.1016/0169-5347(90)90086-S,1,rogers_et_al_1982
-ccbcad0a34d638bf5e2fa756430683eae678c61b,A spatial dynamic approach to ecological modeling: Simulating fire spread.,1990,G. Ball,4,,1,rogers_et_al_1982
-f06e6e199db6171f5d66a663c4b29b1a0aba9bea,MTCLIM: a mountain microclimate simulation model,1989,R. Hungerford,245,10.2737/INT-RP-414,1,rogers_et_al_1982
-43e10f904a922a9a81bc3c701a4198bcd9180743,Developing a Global Vegetation Dynamics Model: Results of an IIASA Summer Workshop,1989,I. Prentice,36,,1,rogers_et_al_1982
-ebd492a7c06f0ce0c3101819a243bcc6b69e7b72,"Large-Scale Disturbances in Boreal Forest Dynamics: Fire, Bog and Substrate Effects",1989,B. McLaren,0,,1,rogers_et_al_1982
-290ae8766e6c7110ae91f91c8d4be7fca9b054a3,Mathematical modelling of ecological succesion—a review,1988,J. Lepš,22,10.1007/BF02853297,1,rogers_et_al_1982
-7827f825c674c440f38700508e45feb817ddda09,Dynamic Ecosystem Consequences of Tree Birth and Death Patterns,1987,H. Shugart,41,10.2307/1310670,1,rogers_et_al_1982
-9d4dbb450d6f6bb9fd55a1d6604b57677e417068,On Spatial Modelling of Long-Term Forest Fire Dynamics,1987,M. Y. Antonovsky,2,,1,rogers_et_al_1982
-574f28e6e314cdf921bb9f046de7593f20c0af4b,References no. 12912-14765/ABD-ZUR,1986,J. Pospišilová,1,10.1007/978-94-009-4816-7_1,1,rogers_et_al_1982
-13771fd81993947ccc09f7a6303442dfbd32b0c5,Vegetation Science (Sociobiological Geobotany),1985,R. Knapp,0,10.1007/978-3-642-45607-7_20,1,rogers_et_al_1982
-94b6c73f7fb79fce43cd2f2afce8b4fede91868d,Analysis of silva: A model for forecasting the effects of SO2 pollution and fire on western coniferous forests,1984,J. Kercher,27,10.1016/0304-3800(84)90124-8,1,rogers_et_al_1982
-7cd805a66317a8454cd662871f8754fe911a2e72,Predicting successional plant composition on a Pseudotsuga menziesii/Physocarpus malvaceus habitat type in western Montana,1984,R. Keane,1,,1,rogers_et_al_1982
-24da5d0b06b8411190bf5363112eca57540f93cb,Ecosystem Research (Ecological Geobotany),1983,W. Schmidt,0,10.1007/978-3-642-69445-5_21,1,rogers_et_al_1982
 cc5f54dd63207f7139b9ae830ec69d8520f1b7e5,Digital Commons @ University of South Florida Digital Commons @ University of South Florida,,C. Connelly,781,,1,forrester_et_al_2014
 66d0f31bfbc6f51fd07676e306aa857f39287261,The Puzzle of Leadership: The Interplay between Individual Traits and Coordination Mechanisms,,Kasper F. Hlebowicz,0,,1,vardi_2012
 37d4485482ddfb8f484487396597424ccae46c3e,Leadership in Animal Groups: The Interplay between Individual Traits and Coordination Mechanisms,,Kasper F. Hlebowicz,0,,1,vardi_2012
-f36dd6524d0fdd564d23dcce98a6a387da995504,Smith ScholarWorks Smith ScholarWorks,,James Busch,0,,1,williams_miller_2010
-c237dfa2715b114e67c8a04644dcd3ffe0618e06,Smith ScholarWorks Smith ScholarWorks,,Rachel M Wright,0,,1,williams_miller_2010
-a957e7b61d903a548c97bc3e969be9041d7a45c6,Smith ScholarWorks Smith ScholarWorks,,Lisa Greer,0,,1,williams_miller_2010
