@@ -1,0 +1,48 @@
+EXPANDED PUBMED SEARCH LOG
+Date: 2026-03-29 20:09:19
+Original PMIDs: 124
+Total unique PMIDs: 351
+New PMIDs: 227
+
+Q0_base:
+  Query: ("Acropora palmata"[Title/Abstract] OR "elkhorn coral"[Title/Abstract])
+  Hits: 124
+  Retrieved: 124
+  New: 0
+
+Q1_genus_caribbean:
+  Query: ("Acropora"[Title/Abstract] AND "Caribbean"[Title/Abstract])
+  Hits: 169
+  Retrieved: 169
+  New: 102
+
+Q2_abbreviated:
+  Query: ("A. palmata"[Title/Abstract])
+  Hits: 88
+  Retrieved: 88
+  New: 22
+
+Q3_mesh_anthozoa:
+  Query: ("Acropora palmata"[MeSH] OR ("Anthozoa"[MeSH] AND ("survival"[Title/Abstract] OR "mortality"[Title/Abstract]) AND "Caribbean"[Title/Abstract]))
+  Hits: 148
+  Retrieved: 148
+  New: 136
+
+Q4_esa_threatened:
+  Query: (("threatened coral"[Title/Abstract] OR "endangered coral"[Title/Abstract] OR "ESA coral"[Title/Abstract]) AND "Caribbean"[Title/Abstract])
+  Hits: 25
+  Retrieved: 25
+  New: 21
+
+Q5_restoration:
+  Query: ("coral restoration"[Title/Abstract] AND "Caribbean"[Title/Abstract] AND ("survival"[Title/Abstract] OR "growth"[Title/Abstract]))
+  Hits: 7
+  Retrieved: 7
+  New: 6
+
+Q6_spanish:
+  Query: ("cuerno de alce"[Title/Abstract] OR "coral cuerno"[Title/Abstract])
+  Hits: 0
+  Retrieved: 0
+  New: 0
+
