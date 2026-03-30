@@ -78,8 +78,8 @@ The following sources were searched. Detmer's original search (Jun--Dec 2025) us
 | USGS Coastal and Marine Geology Data System (CMGDS) | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded USGS USVI outplanting data |
 | USGS ScienceBase / Data Releases | Data repository | Jun–Dec 2025 (exact dates not recorded) | 1 dataset | Yielded Kuffner et al. 2020 data |
 | Google Scholar | Bibliographic database | Jun–Dec 2025 (exact dates not recorded) | Not recorded; results reviewed to saturation | 5 search strings (see below). Hit counts per string not recorded at the time; see Limitations. |
-| Web of Science | Bibliographic database | 2026-03-29 (formal search) | 207/216/154/78/116 per query (see §3.2) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Full details in `02_search/wos_formal_search.md`. |
-| PubMed | Bibliographic database | 2026-03-29 (formal search) | 63 unique PMIDs (32/25/22/13/16 per query) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Full details in `02_search/pubmed_formal_search.md`. |
+| Web of Science | Bibliographic database | 2026-03-29 (formal search) | 1,095 records across 3 query sets (base 628, broader *Acropora*+Caribbean 409, threatened coral 58) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Full details in `02_search/wos_formal_search.md`. |
+| PubMed | Bibliographic database | 2026-03-29 (formal search) | 351 unique PMIDs (base 124 + 6 expanded queries +227 new) | Not searched in the original 2025 search. Formal Boolean search conducted as part of completeness audit. Expanded queries added genus-level, MeSH, abbreviated name, ESA, and restoration terms. Full details in `02_search/pubmed_formal_search.md`. |
 | Citation chaining | Manual | Jun–Dec 2025 | — | Forward and backward citations from Vardi 2011, Williams & Miller 2012, Lirman 2003 |
 | Direct data sharing | Personal communication | Jun–Dec 2025 (exact date not recorded) | 1 dataset | FUNDEMAR (Dominican Republic) provided nursery fragment data |
 | `coral_parameters_lit_review.gsheet` | Tracking spreadsheet | Active Jun–Dec 2025 | 52 unique studies | Master tracking sheet: 38 survival + 28 growth + 5 reproduction (with overlap) |
@@ -119,8 +119,8 @@ An expanded search was conducted to audit completeness, using the following sour
 |---|---|---|---|---|
 | Project literature library | Local PDF collection | March 24–26, 2026 | 80 PDFs screened; 33 new candidates | 149 PDFs total in library; 80 in `data_studies/` screened systematically |
 | NotebookLM | AI literature tool | March 24, 2026 | 137 papers queried | Used to identify candidate studies with extractable demographic data |
-| PubMed (formal Boolean search) | Bibliographic database | 2026-03-29 | 63 unique PMIDs (32/25/22/13/16 hits across 5 queries) | Programmatic Boolean queries via NCBI E-utilities API with Title/Abstract field restriction. Full details in `02_search/pubmed_formal_search.md`. |
-| Web of Science (formal Boolean search) | Bibliographic database | 2026-03-29 | 207/216/154/78/116 hits across 5 queries | Programmatic Boolean queries via WoS Advanced Search (TS= field). Authenticated via UCSB institutional access. Full details in `02_search/wos_formal_search.md`. |
+| PubMed (formal Boolean search) | Bibliographic database | 2026-03-29 | 351 unique PMIDs (base 124 + 6 expanded queries +227 new) | Programmatic Boolean queries via NCBI E-utilities API with Title/Abstract field restriction. Expanded queries added genus-level, MeSH, abbreviated name, ESA, and restoration terms. Full details in `02_search/pubmed_formal_search.md`. |
+| Web of Science (formal Boolean search) | Bibliographic database | 2026-03-29 | 1,095 records across 3 query sets (base 628, broader *Acropora*+Caribbean 409, threatened coral 58) | Programmatic Boolean queries via WoS Advanced Search (TS= field). Authenticated via UCSB institutional access. Full details in `02_search/wos_formal_search.md`. |
 | Elicit (Semantic Scholar index) | AI-assisted bibliographic search | 2026-03-26 | 298 unique papers (89 *A. palmata*-specific) | 5 queries matching the original search strings, 100 results per query. All 16 published included studies recovered. Full details in `02_search/search_summary.md`. |
 | PubMed + Semantic Scholar (preliminary) | Bibliographic database | 2026-03-25–26 | ~10 results per query (WebSearch limit) | Preliminary replication via WebSearch with `site:pubmed.ncbi.nlm.nih.gov` and `site:semanticscholar.org`. Identified 5 new candidate papers. Full details in `02_search/search_strings.md`. |
 | Unpaywall | Open access discovery | March 25, 2026 | — | Used to locate freely available PDFs of candidate studies |
@@ -129,9 +129,9 @@ An expanded search was conducted to audit completeness, using the following sour
 
 The same 5 Boolean search strings from the original search (§3.1) were replicated across PubMed, Web of Science, and Elicit. The base query was `("Acropora palmata" OR "elkhorn coral")` combined with each of the 5 term sets (survival/mortality, growth, recruitment, restoration, monitoring).
 
-**PubMed (formal, 2026-03-29):** Queries used Title/Abstract field restriction (`[tiab]`). Example: `("Acropora palmata"[Title/Abstract] OR "elkhorn coral"[Title/Abstract]) AND (survival[tiab] OR mortality[tiab] OR "hazard rate"[tiab] OR "mortality rate"[tiab])`. All 5 queries and exact hit counts are documented in `02_search/pubmed_formal_search.md`.
+**PubMed (formal, 2026-03-29):** Base queries used Title/Abstract field restriction (`[tiab]`). Example: `("Acropora palmata"[Title/Abstract] OR "elkhorn coral"[Title/Abstract]) AND (survival[tiab] OR mortality[tiab] OR "hazard rate"[tiab] OR "mortality rate"[tiab])`. Six additional expanded queries targeted genus-level terms (*Acropora* + Caribbean demography), MeSH headings (Anthozoa), abbreviated species names ("A. palmata"), ESA-listed coral species, and restoration-specific vocabulary. The base 5 queries returned 124 unique PMIDs; the 6 expanded queries added 227 new PMIDs for a total of 351. All queries and exact hit counts are documented in `02_search/pubmed_formal_search.md`.
 
-**Web of Science (formal, 2026-03-29):** Queries used Topic field (`TS=`). Example: `TS=("Acropora palmata" OR "elkhorn coral") AND TS=(survival OR mortality OR "hazard rate" OR "mortality rate")`. All 5 queries and exact hit counts are documented in `02_search/wos_formal_search.md`.
+**Web of Science (formal, 2026-03-29):** Three query sets were run using Topic field (`TS=`): (1) base query matching the PubMed structure (628 records); (2) broader *Acropora*+Caribbean query (409 records); (3) threatened coral demography query (58 records), totaling 1,095 records. Example: `TS=("Acropora palmata" OR "elkhorn coral") AND TS=(survival OR mortality OR "hazard rate" OR "mortality rate")`. All queries and exact hit counts are documented in `02_search/wos_formal_search.md`.
 
 **Elicit (2026-03-26):** Queries used natural-language equivalents of the Boolean strings via the Elicit API (Semantic Scholar index, 125M+ papers). 100 results per query. Cross-reference confirmed all 16 published included studies were recovered. Details in `02_search/search_summary.md`.
 
@@ -295,16 +295,20 @@ The following counts reconstruct the screening process across both search phases
                            │
     ┌──────────────────────┴──────────────────────┐
     │  Records identified through expanded search  │
-    │  (AI-assisted, March 2026)                   │
+    │  (AI-assisted + formal databases, Mar 2026)  │
     │                                              │
     │  PDF library screened: 80 papers             │
     │  NotebookLM queries: 137 papers              │
-    │  PubMed (formal): 63 unique PMIDs             │
-    │  WoS (formal): 207–216 hits per query         │
+    │  PubMed (formal): 351 unique PMIDs            │
+    │  WoS (formal): 1,095 records (3 query sets)   │
     │  Elicit: 298 papers (89 A. palmata-specific)  │
+    │  Citation chaining: 381 citing papers         │
+    │  bioRxiv/EuropePMC: 23 preprints              │
+    │  Total records identified: ~2,518             │
     │                                              │
     │  New candidates identified: 33 papers         │
     │  (not already in original 52)                │
+    │  + 13 from formal/expanded search 2026-03-29 │
     └──────────────────────┬──────────────────────┘
                            │
                     SCREENING
@@ -314,45 +318,49 @@ The following counts reconstruct the screening process across both search phases
     │  Full-text assessment                        │
     │  Original search: 52 studies evaluated        │
     │  Expanded search: 33 papers                  │
+    │  Formal/expanded 2026-03-29: 13 papers       │
     │                                              │
-    │  Combined: 85 unique papers assessed          │
+    │  Combined: 98 unique papers + 3 data repos   │
+    │           = 101 assessed at full text         │
     └──────────────────────┬──────────────────────┘
                            │
               ┌────────────┴────────────┐
               │                         │
     ┌─────────┴──────────┐    ┌────────┴─────────────────┐
-    │  EXCLUDED (~66)    │    │  INCLUDED for extraction │
-    │                    │    │                          │
-    │  From original     │    │  Original: 15 studies     │
-    │  search (~37):     │    │   (6 Tier 1 + 9 Tier 2)  │
-    │  • Cross-sectional │    │                          │
-    │    only: ~6        │    │  Expanded: 5 extracted    │
-    │  • NOAA/USGS data  │    │   (1 later removed)       │
-    │    overlap: ~7     │    │                          │
-    │  • Wrong species:  │    │  Total extracted: 20      │
-    │    ~3              │    └────────┬─────────────────┘
-    │  • Recruits/micro- │             │
-    │    fragments: 4    │       AUDIT & INCLUSION
-    │  • No demographic  │       ─────────────────
-    │    data: ~6        │             │
-    │  • Linear growth   │    ┌────────┴─────────────────┐
-    │    only: ~5        │    │  Post-audit inclusion     │
-    │  • Other: ~6       │    │                          │
-    │                    │    │  Passed audit: 16 studies │
-    │  From expanded     │    │   6 Tier 1 (individual)   │
-    │  search (~29):     │    │   8 Tier 2 (hand-extract) │
-    │  • Did not meet    │    │   3 Tier 2 (AI-extract)   │
-    │    inclusion       │    │                          │
-    │    criteria        │    │  Removed after audit: 4   │
-    │  • Invalid proxy:  │    │   Ramos 2024 (proxy)      │
-    │    1 (removed      │    │   Muller 2008 (imprecise) │
-    │    after audit)    │    │   Sutherland 2016 (IRR)   │
-    │                    │    │   Roth 2013 (overlap)     │
-    │                    │    │                          │
-    │                    │    │  ─────────────────────── │
-    └────────────────────┘    │  FINAL: 16 studies        │
-                              │  contributing 20 study-   │
-                              │  level survival effects   │
+    │  EXCLUDED (82       │    │  INCLUDED for extraction │
+    │   unique studies)   │    │                          │
+    │                     │    │  Original: 15 studies     │
+    │  From original      │    │   (6 Tier 1 + 9 Tier 2)  │
+    │  search (~37):      │    │                          │
+    │  • Cross-sectional  │    │  Expanded: 5 extracted    │
+    │    only: ~6         │    │   (1 later removed)       │
+    │  • NOAA/USGS data   │    │                          │
+    │    overlap: ~7      │    │  Total extracted: 20      │
+    │  • Wrong species:   │    └────────┬─────────────────┘
+    │    ~3               │             │
+    │  • Recruits/micro-  │       AUDIT & INCLUSION
+    │    fragments: 4     │       ─────────────────
+    │  • No demographic   │             │
+    │    data: ~6         │    ┌────────┴─────────────────┐
+    │  • Linear growth    │    │  Post-audit inclusion     │
+    │    only: ~5         │    │                          │
+    │  • Other: ~6        │    │  Passed audit: 16 studies │
+    │                     │    │   6 Tier 1 (individual)   │
+    │  From expanded      │    │   8 Tier 2 (hand-extract) │
+    │  search (~29):      │    │   3 Tier 2 (AI-extract)   │
+    │  • Did not meet     │    │                          │
+    │    inclusion        │    │  Removed after audit: 4   │
+    │    criteria         │    │   Ramos 2024 (proxy)      │
+    │  • Invalid proxy:   │    │   Muller 2008 (imprecise) │
+    │    1 (removed       │    │   Sutherland 2016 (IRR)   │
+    │    after audit)     │    │   Roth 2013 (overlap)     │
+    │                     │    │                          │
+    │  From formal/       │    │  ─────────────────────── │
+    │  expanded 2026-03-29│    │  FINAL: 16 studies        │
+    │  (13 papers):       │    │                          │
+    │  • All excluded     │    │  contributing 20 study-   │
+    │                     │    │  level survival effects   │
+    └─────────────────────┘    │
                               │  (NOAA split into 3       │
                               │   regional effects;       │
                               │   Vardi 2011 contributes  │
@@ -369,17 +377,20 @@ A machine-readable version of the flow diagram:
 ```mermaid
 flowchart TD
     A["Records identified<br/>Original search (Detmer 2025)<br/>52 unique studies evaluated<br/>(38 survival + 28 growth + 5 reproduction)"] --> C
-    B["Records identified<br/>Expanded search (March 2026)<br/>33 new candidates from 80 PDFs"] --> C
-    C["Full-text assessment<br/>85 unique papers"] --> D["EXCLUDED ~69"]
+    B["Records identified<br/>Expanded search + formal databases (March 2026)<br/>~2,518 total records; 46 new candidates from<br/>80 PDFs + formal/expanded search"] --> C
+    C["Full-text assessment<br/>98 unique papers + 3 data repos = 101"] --> D["EXCLUDED: 82 unique studies"]
     C --> E["Extracted: 22 studies"]
-    D --- D1["Cross-sectional only (~6)"]
-    D --- D2["NOAA/USGS overlap (~8)"]
-    D --- D3["Wrong species (~3)"]
-    D --- D4["Recruits/microfragments (4)"]
-    D --- D5["No demographic data (~6)"]
-    D --- D6["Linear growth only (~5)"]
-    D --- D7["Invalid survival proxy (1)"]
-    D --- D8["Other exclusions (~34)"]
+    D --- D1["E1 Wrong species (16)"]
+    D --- D2["E2 Data overlap (13)"]
+    D --- D3["E3 Cross-sectional/invalid (11)"]
+    D --- D4["E4 Linear growth (7)"]
+    D --- D5["E5 Recruits/microfragments (6)"]
+    D --- D6["E6 Too short (6)"]
+    D --- D7["E7 Other criteria (8)"]
+    D --- D8["E8 No demographic data (8)"]
+    D --- D9["E9 Reproduction/genetics (4)"]
+    D --- D10["E10 Model-derived (2)"]
+    D --- D11["E11 Fragment survival (1)"]
     E --> F["Independent audit + overlap audit"]
     F --> G["Removed: 4 studies<br/>Ramos 2024 (invalid proxy)<br/>Muller 2008 (imprecise/bleaching)<br/>Sutherland 2016 (photostation/NOAA)<br/>Roth 2013 (overlap Rogers & Muller)"]
     F --> H["INCLUDED: 16 studies<br/>20 study-level effects<br/>(6 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI;<br/>NOAA + Vardi split by region)"]

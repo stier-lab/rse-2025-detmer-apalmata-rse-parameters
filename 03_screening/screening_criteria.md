@@ -175,23 +175,25 @@ All hand-extracted values were verified against source PDFs during an inter-rate
 
 ---
 
-## 8. Formal Database Search Screening (2026-03-29)
+## 8. Formal Database Search and Expanded Screening (2026-03-29)
 
-To complete the PRISMA-required database search documentation, formal Boolean searches were executed against PubMed and Web of Science on 2026-03-29.
+To complete the PRISMA-required database search documentation, formal Boolean searches were executed against PubMed and Web of Science on 2026-03-29, along with an expanded search that screened additional candidate papers.
 
 ### 8.1 PubMed Results
 
-Five Boolean queries (combining `"Acropora palmata"` OR `"elkhorn coral"` with terms targeting survival, growth, restoration, demography, and population dynamics) returned **63 unique PMIDs**. Of these, approximately 57 were already present in the screening list (from the original Detmer 2025 search or the AI expansion March 2026). Six papers were identified as new and screened at full text. **All 6 were excluded.**
+The base 5 Boolean queries plus 6 expanded queries (adding genus-level, MeSH, abbreviated name, ESA, and restoration terms) returned **351 unique PMIDs**. The base queries returned 124 PMIDs; the 6 expanded queries added 227 new PMIDs. The majority were already present in the screening list (from the original Detmer 2025 search or the AI expansion March 2026). Six papers from the PubMed formal search were identified as new and screened at full text. **All 6 were excluded.**
 
 ### 8.2 Web of Science Results
 
-The same five query structures were run in Web of Science, returning 207/216/154/78/116 hits across the five queries. WoS provided broader coverage than PubMed but saturation was confirmed independently by Elicit, which recovered all 16 published included studies in the meta-analysis.
+Three query sets were run in Web of Science: the base query (628 records), a broader *Acropora*+Caribbean query (409 records), and a threatened coral demography query (58 records), totaling **1,095 records**. WoS provided broader coverage than PubMed but saturation was confirmed independently by Elicit, which recovered all 16 published included studies in the meta-analysis.
 
 ### 8.3 Outcome
 
-The formal database searches identified **zero new includable studies**, validating the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+The formal database searches and expanded screening identified **zero new includable studies** from 13 newly screened papers, validating the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
 
-### 8.4 Six Newly Screened Papers
+### 8.4 Thirteen Newly Screened Papers
+
+**Six from PubMed formal search:**
 
 | Study | PMID | Exclusion Code | Reason |
 |-------|------|----------------|--------|
@@ -201,6 +203,18 @@ The formal database searches identified **zero new includable studies**, validat
 | Wilson & Edmunds 2026 | 41454911 | E8 | Review/conceptual paper on coral rarity; multi-species; *A. palmata* mentioned as one example; no primary demographic data |
 | Cramer et al. 2020 | 32426458 | E2 + E8 | Historical/paleoecological synthesis; cross-sectional surveys + fossil reef cores; combined *Acropora* spp.; no individual colony tracking |
 | Banister et al. 2024 | 38166125 | E2 + E3 | Cross-sectional BRT habitat suitability model; occurrence data not demographic rates; no survival or growth tracking |
+
+**Seven from expanded search (2026-03-29):**
+
+| Study | Exclusion Code | Reason |
+|-------|----------------|--------|
+| Young et al. 2024 | E3 | Gene expression/transcriptomics study; no demographic survival or growth data |
+| Yuen et al. 2023 | E2 | Habitat suitability model (occurrence-based); no individual colony survival or growth tracking |
+| Souza et al. 2023 | E7 | Measures donor colony tissue recovery after pruning (3D modeling); not fragment survival or whole-colony demographic tracking |
+| Forrester et al. 2012 | E6 | Observation period 2 weeks (below 3-month threshold); transplant stress assessment not demographic monitoring |
+| Miller & Williams 2015 | E8 | Methodological framework paper for outplant design evaluation; no primary survival data reported |
+| Hernandez-Delgado et al. 2024 | E3 | Reef fish community response to elkhorn restoration; no coral survival or growth data |
+| Bak 1983 | E7 | Neoplasia/lesion regeneration and linear growth suppression study (n=32 lesions); not whole-colony survival or areal growth tracking |
 
 ### 8.5 Exclusion Code Definitions (Complete Reference)
 

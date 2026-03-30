@@ -19,7 +19,7 @@ This repository follows a **PRISMA-first layout** where top-level directories ma
 |-----------|-------------|----------|
 | `01_protocol/` | Registration | Pre-analysis plan, systematic review protocol |
 | `02_search/` | Identification | Search strings, Elicit/Google Scholar exports |
-| `03_screening/` | Screening | Full-text screening decisions (91 studies), IRR assessment |
+| `03_screening/` | Screening | Full-text screening decisions (104 data rows, 101 unique assessments), IRR assessment |
 | `04_extraction/` | Data extraction | Extraction protocol, study characteristics, risk of bias, original researcher notes |
 | `05_data/` | Data | Original (14 raw files), standardized (analysis-ready CSVs), AI-extracted audit trail |
 | `06_analysis/` | Analysis | 33 R scripts, generated outputs, figures |
@@ -58,7 +58,7 @@ Detmer-2025-coral-parameters/
 │   ├── search_summary.md
 │   └── search_results/             # Elicit + Google Scholar exports
 ├── 03_screening/                   # Screening phase
-│   └── full_text_screening.csv       # 91 studies with decisions
+│   └── full_text_screening.csv       # 104 data rows (101 unique assessments)
 ├── 04_extraction/                  # Data extraction phase
 │   ├── extraction_protocol.md        # Inclusion/exclusion, overlap rules, audit log
 │   ├── study_characteristics.md
