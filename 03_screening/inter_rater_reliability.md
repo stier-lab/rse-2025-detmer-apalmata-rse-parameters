@@ -168,7 +168,7 @@ An independent third review (Claude Opus 4.6 reading each disputed PDF fresh, wi
 **Net changes to meta-analysis:**
 - Removed: Muller et al. 2008, Sutherland et al. 2016 (both originally included by Claude)
 - Added: Rogers et al. 1982 (originally excluded by Claude, identified as includable during adjudication)
-- k changed from 20 → 19 → 16 studies (20 effects after NOAA regional split); pooled survival from 80.3% → 79.2% → 78.4%
+- k changed from 20 → 19 → 16 studies (21 effects after NOAA regional split and Garrison & Ward 2008 treatment split); pooled survival from 80.3% → 79.2% → 78.5%
 
 ---
 

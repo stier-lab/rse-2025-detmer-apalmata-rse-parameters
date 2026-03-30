@@ -35,7 +35,7 @@ A comprehensive literature audit was conducted using AI (Claude) to ensure no ex
 4. **PubMed, Semantic Scholar, and Unpaywall** searches for additional studies
 5. **Critical audit** of all AI-extracted data by independent verification agents
 
-This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, and NOAA regional split, resulted in a final count of k=16 unique studies contributing 20 study-level effects: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, and NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects).
+This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, NOAA regional split, and Garrison & Ward treatment split, resulted in a final count of k=16 unique studies contributing 21 study-level effects: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects), and Garrison & Ward 2008 was split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival).
 
 ### 1.2b Formal Database Searches and Expanded Screening (2026-03-29)
 
@@ -107,7 +107,7 @@ To assess screening reliability and reduce single-rater bias, 31 candidate paper
 
 **Consensus excludes retained:** 22 papers excluded by both raters remained excluded after adjudication.
 
-**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18), then NOAA was split by region (FL Keys, Curacao, Navassa) yielding 16 unique studies contributing 20 study-level effects. Pooled annual survival is 78.4% (95% CI: 69.9–85.0%, I² = 96.4%). Natural vs. restoration subgroup composition is 9 natural + 11 restoration effects, with a non-significant difference (p = 0.236).
+**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18), then NOAA was split by region (FL Keys, Curacao, Navassa) and Garrison & Ward 2008 was split into control (Natural, n=45, 80% survival) and relocated (Restoration, n=30, 55% survival) treatment-group effects, yielding 16 unique studies contributing 21 study-level effects. Pooled annual survival is 78.5% (95% CI: 70.1–85.0%, I² = 96.3%). Natural vs. restoration subgroup composition is 9 natural + 12 restoration effects, with a non-significant difference (p = 0.110).
 
 ---
 
@@ -195,7 +195,8 @@ Because multiple studies from the same monitoring programs exist, the following 
 | rosales_et_al_2024 | FL Keys | Restoration | 58 | 79.3% | Detmer | Published tables |
 | maurer_et_al_2022 | Bahamas | Restoration | 24 | 95.8% | Detmer | Published tables |
 | williams_miller_2010 | FL Keys | Restoration | 18 | 77.8% | Detmer | Published tables |
-| garrison_ward_2008 | USVI | Natural | 45 | 68.9% | Detmer | Published tables |
+| garrison_ward_2008 (control) | USVI | Natural | 45 | 80.0% | Detmer | Fig. 4b |
+| garrison_ward_2008 (relocated) | USVI | Restoration | 30 | 55.0% | Detmer | Fig. 4b |
 
 ---
 

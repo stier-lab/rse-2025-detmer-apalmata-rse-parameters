@@ -3,7 +3,7 @@
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis (Detmer et al. 2025)
 **Purpose:** Document exactly what was extracted from each included study, where values came from in the source paper, and any assumptions made. A reader should be able to trace any number in the meta-analysis back to a specific page, table, or figure in the source paper.
 
-**Total included studies:** 16 unique studies contributing 20 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
+**Total included studies:** 16 unique studies contributing 21 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
 
 **Data tiers:**
 - **Tier 1 (individual-level):** 5 studies with raw colony/fragment-level data from public repositories or direct sharing. Survival rates computed directly from individual fates.
@@ -496,7 +496,10 @@
 
 **Audit status:** N/A (hand-extracted by domain expert)
 
-**Value entering meta-analysis:** survival_rate = 0.689 (n_survived=31, n=45), n-weighted mean. log_odds = 0.795, SE = 0.322
+**Values entering meta-analysis (split into 2 treatment-group effects):**
+- Control (Natural colony): survival_rate = 0.800, n = 45
+- Relocated (Restoration fragment): survival_rate = 0.550, n = 30
+- The within-study difference (25 pp) was being masked by aggregation into a single n-weighted mean (0.689). The split parallels the NOAA and Vardi regional splits.
 
 ---
 
@@ -720,7 +723,8 @@
 | 13 | rosales_et_al_2024 | 2 | Detmer | 58 | 79.3% | FL Keys | Restoration | Table S3 + GitHub |
 | 14 | maurer_et_al_2022 | 2 | Detmer | 24 | 95.8% | Bahamas | Restoration | Published tables |
 | 15 | williams_miller_2010 | 2 | Detmer | 18 | 77.8% | FL Keys | Restoration | Published tables |
-| 16 | garrison_ward_2008 | 2 | Detmer | 45 | 68.9% | USVI | Natural | Fig. 4b + text |
+| 16a | garrison_ward_2008_control | 2 | Detmer | 45 | 80.0% | USVI | Natural | Fig. 4b + text |
+| 16b | garrison_ward_2008_relocated | 2 | Detmer | 30 | 55.0% | USVI | Restoration | Fig. 4b + text |
 | 17 | rogers_muller_2012 | 2 | AI (Claude) | 69 | 94.2% | USVI | Natural | Paper text: "44/69" |
 | 18 | ramos_romero_et_al_2025 | 2 | AI (Claude) | 200 | 70.5% | Cuba | Restoration | Table 2 KM survival |
 | 19 | muller_et_al_2008 | 2 | AI (Claude) | 60 | EXCLUDED | USVI | Natural | EXCLUDED during IRR audit |

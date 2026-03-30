@@ -79,7 +79,7 @@ print_header("SECTION 1: Within-Region Paired Meta-Analysis")
 cat("Three regions have both natural AND restoration data:\n")
 cat("  - Florida Keys: NOAA (nat) vs Pausch, Rosales, Williams (rest)\n")
 cat("  - Puerto Rico: Vardi (nat) vs Bruckner, Ortiz (rest)\n")
-cat("  - US Virgin Islands: Garrison, Rogers&Muller, Rogers1982 (nat) vs USGS (rest)\n\n")
+cat("  - US Virgin Islands: Garrison-control, Rogers&Muller, Rogers1982 (nat) vs USGS, Garrison-relocated (rest)\n\n")
 
 # Load expanded meta-analysis study effects
 study_effects <- read_csv(

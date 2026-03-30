@@ -1,31 +1,31 @@
 statistic,value
 Number of studies (k),16
-Number of effects,20
-Total observations (N),6560
+Number of effects,21
+Total observations (N),6590
 Tier 1 effects,7
-Tier 2 effects,13
+Tier 2 effects,14
 Natural colony effects,9
-Restoration fragment effects,11
+Restoration fragment effects,12
 Primary model,Three-level rma.mv()
-Pooled survival (RE),0.784
-95% CI lower,0.699
+Pooled survival (RE),0.785
+95% CI lower,0.701
 95% CI upper,0.850
-95% PI lower,0.390
-95% PI upper,0.954
-tau^2 (total),0.6457
-tau^2 (between-study),0.3883
-tau^2 (within-study),0.2574
-tau,0.8035
-I^2 (%) [independent model],96.4
+95% PI lower,0.385
+95% PI upper,0.955
+tau^2 (total),0.6672
+tau^2 (between-study),0.3302
+tau^2 (within-study),0.3369
+tau,0.8168
+I^2 (%) [independent model],96.3
 I^2 CI lower,93.3
-I^2 CI upper,98.6
-Cochran's Q,578.38
-Q df,19
+I^2 CI upper,98.5
+Cochran's Q,585.42
+Q df,20
 Q p-value,0.0000
 REML estimation method,REML
 Small-sample adjustment,t-test (three-level) / Knapp-Hartung (independent)
-MDD SE (log-odds),0.4112
-"MDD (log-odds, 80% power)",1.2184
-"MDD (probability scale, pp)",20.6
-Observed difference (pp),8.5
+MDD SE (log-odds),0.4087
+"MDD (log-odds, 80% power)",1.2072
+"MDD (probability scale, pp)",20.4
+Observed difference (pp),10.8
 MDD power interpretation,UNDERPOWERED to detect observed difference

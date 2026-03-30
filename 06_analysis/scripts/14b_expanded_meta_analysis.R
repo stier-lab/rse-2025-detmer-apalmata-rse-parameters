@@ -475,37 +475,70 @@ cat(sprintf("    Aggregated: n=%d, surv_annual=%.1f%%\n",
 tier2_list <- c(tier2_list, list(williams_agg))
 
 # --- 2b.9: garrison_ward_2008 ---
-# USVI, 2 size groups (control=natural, relocated=fragments), 1-year interval
-# Mixed natural/restoration -- classify as "Mixed" since it contains both
+# USVI (St. John), 1-year interval (2000-2001)
+# FIX: Split into 2 effects (analogous to Vardi regional split, NOAA regional split)
+# Control = 45 natural colonies (80% survival), Relocated = 30 transplanted fragments (55% survival)
+# Previously aggregated into a single "Natural colony" effect, which obscured the
+# natural-vs-restoration comparison that is central to this study's contribution.
+# The two groups differ by 25 percentage points — aggregation masked a key signal.
 garrison <- summ %>% filter(study == "garrison_ward_2008")
 cat(sprintf("\n  garrison_ward_2008: %d rows, 1-year interval\n", nrow(garrison)))
 
-garrison_agg <- garrison %>%
-  # Already annual
-  summarise(
-    study = "garrison_ward_2008",
-    region = first(region),
-    # Effective sample size: max(n_initial) avoids double-counting individuals
-    # tracked across multiple census intervals
-    n_total = max(n_initial),
-    n_first_census = max(n_initial),
-    survival_rate = wmean(prop_survived, n_initial),
-    n_survived = round(survival_rate * max(n_initial)),
-    mean_size_cm2 = wmean(size_cm2_mean, n_initial),
-    # Mixed: includes both natural (control) and relocated fragments
-    population_type = "Natural colony",
-    survey_yr = round(mean(survey_yr, na.rm = TRUE)),
-    fragment = "N",
-    data_tier = "Tier 2 (summary)"
-  ) %>%
-  mutate(
-    n_survived = pmin(n_survived, n_total),
-    n_survived = pmax(n_survived, 0L),
-    survival_rate = n_survived / n_total
-  )
-cat(sprintf("    Aggregated: n=%d, surv_annual=%.1f%%\n",
-            garrison_agg$n_total, garrison_agg$survival_rate * 100))
-tier2_list <- c(tier2_list, list(garrison_agg))
+# Split by treatment group (control vs relocated)
+garrison_control <- garrison %>% filter(grepl("control", treatment_1, ignore.case = TRUE))
+garrison_relocated <- garrison %>% filter(grepl("reloc", treatment_1, ignore.case = TRUE))
+
+# Control group: natural colonies monitored in situ
+if (nrow(garrison_control) > 0) {
+  garrison_control_agg <- garrison_control %>%
+    summarise(
+      study = "garrison_ward_2008_control",
+      region = first(region),
+      n_total = first(n_initial),
+      n_first_census = first(n_initial),
+      survival_rate = first(prop_survived),
+      n_survived = round(survival_rate * n_total),
+      mean_size_cm2 = first(size_cm2_mean),
+      population_type = "Natural colony",
+      survey_yr = first(survey_yr),
+      fragment = "N",
+      data_tier = "Tier 2 (summary)"
+    ) %>%
+    mutate(
+      n_survived = pmin(n_survived, n_total),
+      n_survived = pmax(n_survived, 0L),
+      survival_rate = n_survived / n_total
+    )
+  cat(sprintf("    Control (natural): n=%d, surv_annual=%.1f%%\n",
+              garrison_control_agg$n_total, garrison_control_agg$survival_rate * 100))
+  tier2_list <- c(tier2_list, list(garrison_control_agg))
+}
+
+# Relocated group: transplanted fragments
+if (nrow(garrison_relocated) > 0) {
+  garrison_relocated_agg <- garrison_relocated %>%
+    summarise(
+      study = "garrison_ward_2008_relocated",
+      region = first(region),
+      n_total = first(n_initial),
+      n_first_census = first(n_initial),
+      survival_rate = first(prop_survived),
+      n_survived = round(survival_rate * n_total),
+      mean_size_cm2 = first(size_cm2_mean),
+      population_type = "Restoration fragment",
+      survey_yr = first(survey_yr),
+      fragment = "Y",
+      data_tier = "Tier 2 (summary)"
+    ) %>%
+    mutate(
+      n_survived = pmin(n_survived, n_total),
+      n_survived = pmax(n_survived, 0L),
+      survival_rate = n_survived / n_total
+    )
+  cat(sprintf("    Relocated (restoration): n=%d, surv_annual=%.1f%%\n",
+              garrison_relocated_agg$n_total, garrison_relocated_agg$survival_rate * 100))
+  tier2_list <- c(tier2_list, list(garrison_relocated_agg))
+}
 
 
 # --- 2b.10: rogers_muller_2012 ---
@@ -730,6 +763,7 @@ combined_es <- combined_es %>%
     study_id = case_when(
       grepl("^vardi_2011_", study) ~ "vardi_2011",
       grepl("^NOAA_survey_", study) ~ "NOAA_survey",
+      grepl("^garrison_ward_2008_", study) ~ "garrison_ward_2008",
       TRUE ~ study
     )
   )
@@ -1932,7 +1966,7 @@ cat("  5. Some n_initial are estimated from figures, not exact counts\n")
 cat("  6. Studies span 2+ decades (1980-2024), different regions, and varied methods\n")
 cat("  7. Vardi 2011 and NOAA regions treated as correlated effects within parent study\n")
 cat("     (three-level model accounts for within-study correlation)\n")
-cat("  8. Garrison & Ward 2008 includes both natural and relocated fragments\n")
+cat("  8. Garrison & Ward 2008 split into 2 effects: control (Natural) and relocated (Restoration)\n")
 cat("  9. Rogers 1982: storm-generated fragments classified as Natural colony\n")
 
 cat("\nOUTPUTS:\n")
@@ -1961,15 +1995,19 @@ cat("\nSECTION 11: Classification Sensitivity Analysis\n")
 cat(paste(rep("-", 60), collapse = ""), "\n\n")
 
 # Test how study classification (natural vs restoration) affects subgroup results.
-# Three scenarios:
-#   1. Current: Vardi=Natural, Garrison=Natural (k=6 nat, k=10 rest)
-#   2. Conservative: Vardi=Natural, Garrison=excluded (k=5 nat, k=10 rest)
-#   3. Original coding: Vardi=Restoration, Garrison=excluded (k=2 nat, k=13 rest)
+# Garrison & Ward 2008 is now split: control=Natural, relocated=Restoration.
+# Vardi 2011 is the remaining ambiguous case (naturally-occurring colonies at
+# sites where restoration also occurred — classified as Natural).
+# Four scenarios:
+#   1. Current: Vardi=Natural, Garrison split (control=Nat, relocated=Rest)
+#   2. Conservative: Vardi=Natural, Garrison excluded entirely
+#   3. Original coding: Vardi=Restoration, Garrison excluded
+#   4. Bruckner=Natural (storm fragments reclassified)
 
 classification_results <- list()
 
 # --- Scenario 1: Current classification (already computed above) ---
-cat("  Scenario 1 (Current): Vardi=Natural, Garrison=Natural\n")
+cat("  Scenario 1 (Current): Vardi=Natural, Garrison split (control=Nat, relocated=Rest)\n")
 scenario1 <- combined_es  # already has the current classification
 rma_s1 <- rma(yi = log_odds, vi = var_log_odds, data = scenario1, method = "REML", test = "knha")
 rma_s1_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
@@ -1987,7 +2025,7 @@ if (nrow(s1_rest) > 0) {
 } else { s1_rest_surv <- NA }
 
 classification_results[[1]] <- data.frame(
-  scenario = "Current (Vardi=Nat, Garrison=Nat)",
+  scenario = "Current (Vardi=Nat, Garrison split)",
   k_total = nrow(scenario1),
   k_natural = nrow(s1_nat), k_restoration = nrow(s1_rest),
   pooled_survival = plogis(as.numeric(rma_s1$beta)),
@@ -2003,7 +2041,7 @@ cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
 
 # --- Scenario 2: Conservative (Garrison excluded) ---
 cat("  Scenario 2 (Conservative): Vardi=Natural, Garrison=excluded\n")
-scenario2 <- combined_es %>% filter(study != "garrison_ward_2008")
+scenario2 <- combined_es %>% filter(!grepl("^garrison_ward_2008", study))
 rma_s2 <- rma(yi = log_odds, vi = var_log_odds, data = scenario2, method = "REML", test = "knha")
 rma_s2_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
                    data = scenario2, method = "REML", test = "knha")
@@ -2037,7 +2075,7 @@ cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
 # --- Scenario 3: Original coding (Vardi=Restoration, Garrison=excluded) ---
 cat("  Scenario 3 (Original): Vardi=Restoration, Garrison=excluded\n")
 scenario3 <- combined_es %>%
-  filter(study != "garrison_ward_2008") %>%
+  filter(!grepl("^garrison_ward_2008", study)) %>%
   mutate(
     population_type = ifelse(grepl("^vardi_2011", study),
                               "Restoration fragment", population_type)

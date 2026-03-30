@@ -128,25 +128,26 @@ FIGURE 3
 LEGEND:
 Fig. 3 Caribbean-wide survival synthesis for Acropora palmata. (a) Forest plot
 of annual survival probability from the expanded meta-analysis (k = 16 studies,
-20 effects, N = 6,560). Studies are grouped by population type: natural colonies
-(k = 9, blue) and restoration fragments (k = 11, orange). Within each group, studies are
+21 effects, N = 6,590). Studies are grouped by population type: natural colonies
+(k = 9, blue) and restoration fragments (k = 12, orange). Within each group, studies are
 ordered by survival rate. Point estimates with 95% confidence intervals are
 shown for each study. Point size is proportional to random-effects weight. Shape
 indicates data tier: circles for individual-level data, triangles for
 summary-level data. Diamonds show subgroup pooled estimates and the overall
 random-effects pooled estimate (bottom). The dashed vertical line marks the
-overall pooled survival (78.4%). The light blue shaded band indicates the 95%
-prediction interval (39.0-95.4%). Heterogeneity: I^2 = 96.4% [93.3%, 98.6%],
-tau^2 = 0.646. (b) Geographic variation in annual survival across 9 Caribbean
+overall pooled survival (78.5%). The light blue shaded band indicates the 95%
+prediction interval (38.5-95.5%). Heterogeneity: I^2 = 96.3% [93.3%, 98.5%],
+tau^2 = 0.667. (b) Geographic variation in annual survival across 9 Caribbean
 regions. Points show individual study estimates colored by population type.
 Diamonds with CIs show pooled regional estimates (k >= 2). Dashed vertical line
-at overall pooled (78.4%).
+at overall pooled (78.5%).
 
 METHODS:
 We conducted a two-tier random-effects meta-analysis combining individual-level
 data from 6 studies (Tier 1, contributing 7 effects after splitting NOAA by
 region) with study-level survival estimates from 10 additional published studies
-(Tier 2, contributing 13 effects after splitting Vardi 2011 by region). Effect sizes were computed as
+(Tier 2, contributing 14 effects after splitting Vardi 2011 by region and
+Garrison & Ward 2008 into control/relocated). Effect sizes were computed as
 proportional log-odds (PLO) using the escalc function in metafor (R). The
 random-effects model used restricted maximum likelihood (REML) estimation with
 the Knapp-Hartung small-sample adjustment. Non-annual survival rates were
@@ -158,18 +159,19 @@ regions with k >= 2 contributing studies using the same random-effects
 framework.
 
 RESULTS:
-The expanded meta-analysis (k = 16 studies, 20 effects) yielded a pooled annual
-survival of 78.4%, but the 95% prediction interval (39.0-95.4%) indicates that
+The expanded meta-analysis (k = 16 studies, 21 effects) yielded a pooled annual
+survival of 78.5%, but the 95% prediction interval (38.5-95.5%) indicates that
 a new study could plausibly observe survival anywhere in this range — reflecting
-extreme heterogeneity (I^2 = 96.4%). The 95% confidence interval for the pooled
-estimate was 69.9-85.0%. Natural colony effects (k = 9) showed higher pooled
-survival (84.6%, CI: 71.4-92.3%) than restoration fragment effects (k = 11;
-76.0%, CI: 65.4-84.2%), but the 8.5 percentage point difference was not
-statistically significant (Q-moderator p = 0.236). Splitting NOAA by region
-(FL Keys, Curacao, Navassa) and Vardi 2011 by region (Jamaica, PR, Virgin
-Gorda) increased natural colony representation from k = 1 (NOAA only) to
-k = 9 effects across multiple regions, modeled with a three-level
-random-effects structure to account for within-study correlation.
+extreme heterogeneity (I^2 = 96.3%). The 95% confidence interval for the pooled
+estimate was 70.1-85.0%. Natural colony effects (k = 9) showed higher pooled
+survival (85.4%, CI: 73.4-92.5%) than restoration fragment effects (k = 12;
+74.5%, CI: 63.9-82.9%), but the 10.8 percentage point difference was not
+statistically significant (Q-moderator p = 0.110). Splitting NOAA by region
+(FL Keys, Curacao, Navassa), Vardi 2011 by region (Jamaica, PR, Virgin
+Gorda), and Garrison & Ward 2008 by treatment (control, relocated) increased
+natural colony representation from k = 1 (NOAA only) to k = 9 effects across
+multiple regions, modeled with a three-level random-effects structure to
+account for within-study correlation.
 Regionally, survival estimates ranged widely across the 9 Caribbean regions,
 with pooled estimates available for regions with multiple contributing studies.
 The geographic pattern shows substantial variation that is not fully explained
@@ -385,7 +387,7 @@ population type (blue = natural colonies, orange = restoration fragments) and
 sized by sample size. Dark diamonds with confidence intervals show pooled
 regional estimates for regions with k >= 2 studies. Regions are ordered by
 pooled survival rate. The dashed vertical line indicates the overall
-meta-analytic pooled estimate (78.4%). Sample sizes (N) are shown in
+meta-analytic pooled estimate (78.5%). Sample sizes (N) are shown in
 parentheses.
 
 
@@ -442,9 +444,9 @@ Population type is nearly perfectly confounded with study identity in the
 individual-level data: natural colony records derive almost exclusively from
 NOAA NCRMP (99%), while restoration fragment data come from four separate
 studies with different geographic locations, monitoring protocols, colony sizes,
-and temporal coverage. The expanded meta-analysis (k = 16 studies, 20 effects) includes 9 natural
-colony effects, yielding an 8.5 percentage-point difference (84.6% vs 76.0%,
-p = 0.236) that is not statistically significant.
+and temporal coverage. The expanded meta-analysis (k = 16 studies, 21 effects) includes 9 natural
+colony and 12 restoration effects, yielding a 10.8 percentage-point difference (85.4% vs 74.5%,
+p = 0.110) that is not statistically significant.
 Within-restoration heterogeneity (31 percentage points between Pausch et al.
 57.5% and FUNDEMAR 88.4%) exceeds the between-type difference, and
 Mendoza-Quiroz natural colonies showed 100% survival (n = 35) within the

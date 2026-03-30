@@ -111,6 +111,8 @@ name_map <- c(
   "maurer_et_al_2022"          = "Maurer et al. 2022",
   "williams_miller_2010"       = "Williams & Miller 2010",
   "garrison_ward_2008"         = "Garrison & Ward 2008",
+  "garrison_ward_2008_control" = "Garrison & Ward 2008 - Control",
+  "garrison_ward_2008_relocated" = "Garrison & Ward 2008 - Relocated",
   "mendoza_quiroz_et_al_2023"  = "Mendoza-Quiroz et al. 2023",
   "rogers_muller_2012"         = "Rogers & Muller 2012",
   "rogers_et_al_1982"          = "Rogers et al. 1982",

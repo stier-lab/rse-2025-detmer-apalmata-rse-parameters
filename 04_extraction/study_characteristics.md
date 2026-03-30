@@ -17,7 +17,7 @@ The expanded AI-assisted search (March 2026) screened an additional 80 PDFs and 
 
 | Category | Count |
 |----------|-------|
-| Studies included in meta-analysis (survival) | 16 unique studies contributing 20 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda) |
+| Studies included in meta-analysis (survival) | 16 unique studies contributing 21 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated) |
 | Studies contributing growth data only | 2 additional (Schutter et al. 2023, Papke et al. 2021 -- growth/lab only) |
 | Studies contributing fragmentation context | 3 additional (Lirman 2000, Fong & Lirman 1995, Highsmith et al. 1980) |
 | Studies contributing short-term lab survival | 2 (Chamberland et al. 2015, Randall & Szmant 2009 -- also contribute other data) |
@@ -232,7 +232,7 @@ These studies were identified during the March 2026 AI-assisted expanded search 
 
 ### Study count reconciliation
 
-Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contains entries for **52 unique studies** across three sheets (survival: 38 rows of study-level entries, growth: 28 rows, reproduction: 5 rows, with overlap). This count is larger than the 16 studies (20 effects) that entered the final meta-analysis because the tracker served as a comprehensive catalog of all Caribbean coral demographic literature examined, including:
+Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contains entries for **52 unique studies** across three sheets (survival: 38 rows of study-level entries, growth: 28 rows, reproduction: 5 rows, with overlap). This count is larger than the 16 studies (21 effects) that entered the final meta-analysis because the tracker served as a comprehensive catalog of all Caribbean coral demographic literature examined, including:
 
 - Studies of other species (*A. cervicornis*, *Orbicella*, *Diploria*, *Porites*, *Siderastrea*, *Montastraea*, *Pseudodiploria*) documented for comparative context
 - Settlement and recruitment studies that report pre-demographic-stage data
@@ -240,7 +240,7 @@ Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contain
 - Fragment dynamics studies contributing context rather than survival rates
 - Studies whose data overlap with existing entries (especially the large NOAA monitoring program)
 
-The expanded March 2026 search screened an additional ~33 candidate papers (from 80 PDFs + database searches), yielding 5 initial extractions and 3 removals after audit (Ramos et al. 2024: invalid survival proxy; Muller et al. 2008: imprecise survival, no sizes, bleaching-confounded; Sutherland et al. 2016: NOAA overlap + photostation design). Rogers et al. 1982 was reclassified from excluded to included. Roth et al. 2013 was subsequently removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012. Search saturation confirmed via Elicit replication across 298 papers. Final: 16 studies, 20 effects (after NOAA regional split).
+The expanded March 2026 search screened an additional ~33 candidate papers (from 80 PDFs + database searches), yielding 5 initial extractions and 3 removals after audit (Ramos et al. 2024: invalid survival proxy; Muller et al. 2008: imprecise survival, no sizes, bleaching-confounded; Sutherland et al. 2016: NOAA overlap + photostation design). Rogers et al. 1982 was reclassified from excluded to included. Roth et al. 2013 was subsequently removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012. Search saturation confirmed via Elicit replication across 298 papers. Final: 16 studies, 21 effects (after NOAA regional split and Garrison & Ward 2008 treatment split).
 
 ### Species exclusions in Raine's tracker
 
@@ -265,7 +265,7 @@ These entries demonstrate that the literature search was broad enough to capture
 | Tier 1: Individual-level | Raw data with colony IDs | 6 (NOAA, Pausch, Kuffner, USGS, Fundemar, Mendoza-Quiroz) | 5,213 |
 | Tier 2: Hand-extracted summary | Detmer reading tables/figures | 8 (Vardi 2011, Bruckner, Ortiz Prosper, Forrester 2013, Rosales, Maurer, Williams-Miller, Garrison-Ward) | ~961 |
 | Tier 2: AI-extracted summary | Claude reading PDFs, audited | 3 (Rogers-Muller 2012, Ramos-Romero 2025, Rogers 1982; Muller 2008 & Sutherland 2016 removed after data audit) | ~442 |
-| **Total** | | **16 unique studies, 20 study-level effects** | **~6,616** |
+| **Total** | | **16 unique studies, 21 study-level effects** | **~6,616** |
 
 ---
 

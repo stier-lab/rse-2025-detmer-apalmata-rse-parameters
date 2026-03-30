@@ -3,11 +3,11 @@
 [![R Analysis](https://img.shields.io/badge/R-4.3+-blue.svg)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **~9,500 individual-level observations** from **6 studies** and **10 additional summary-level studies** (16 unique studies contributing 20 study-level effects; NOAA split into FL Keys/Curacao/Navassa and Vardi 2011 split into Jamaica/PR/Virgin Gorda) across **11 Caribbean regions**. Manuscript targeting *Coral Reefs*.
+R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **~9,500 individual-level observations** from **6 studies** and **10 additional summary-level studies** (16 unique studies contributing 21 study-level effects; NOAA split into FL Keys/Curacao/Navassa, Vardi 2011 split into Jamaica/PR/Virgin Gorda, and Garrison & Ward 2008 split into control/relocated) across **11 Caribbean regions**. Manuscript targeting *Coral Reefs*.
 
 > **Interactive Platform**: An interactive web tool for exploring this data is available in a [separate repository](https://github.com/stier-lab/Detmer-2025-coral-platform).
 
-> **Design Philosophy**: Transparency over false precision. Given extreme heterogeneity across studies (I² = 96.4%), we present data stratified by study by default, always show uncertainty, and warn when pooled estimates may be misleading.
+> **Design Philosophy**: Transparency over false precision. Given extreme heterogeneity across studies (I² = 96.3%), we present data stratified by study by default, always show uncertainty, and warn when pooled estimates may be misleading.
 
 ---
 
@@ -37,9 +37,9 @@ This organization ensures every step from literature search to final analysis is
 | **Probability of Decline** | 65.1% | Uncertain trajectory (1519 of 2000 bootstrap replicates valid) |
 | **Most Critical Parameter** | SC5 Stasis | Adult survival has 74.0% elasticity |
 | **Size-Survival R²** | 5.8% (GAM) | Size explains limited variance |
-| **Study Heterogeneity (I²)** | 96.4% | Extreme between-study variation |
-| **Expanded Meta-Analysis** | k=16 (20 effects), 78.4% | CI: 69.9–85.0% pooled annual survival |
-| **Natural vs Restoration** | 84.6% vs 76.0% | 8.5 pp difference, p=0.236 |
+| **Study Heterogeneity (I²)** | 96.3% | Extreme between-study variation |
+| **Expanded Meta-Analysis** | k=16 (21 effects), 78.5% | CI: 70.1–85.0% pooled annual survival |
+| **Natural vs Restoration** | 84.6% vs 76.0% | 8.5 pp difference, p=0.110 |
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
 
 > See `docs/ANALYSIS_SUMMARY.md` (archived) for the complete Q&A breakdown with all effect sizes and p-values.
@@ -75,7 +75,7 @@ Detmer-2025-coral-parameters/
 │   │   ├── 01_data_preparation.R
 │   │   ├── 02-07_*.R                   # Core analysis
 │   │   ├── 08-12_*.R                   # Robustness & evaluation
-│   │   ├── 13-17_*.R, 14b_*.R          # Synthesis (matrix, meta-analysis k=16/20 effects)
+│   │   ├── 13-17_*.R, 14b_*.R          # Synthesis (matrix, meta-analysis k=16/21 effects)
 │   │   ├── 18-23_*.R, 20b/c_*.R        # Manuscript figures
 │   │   ├── 24-28_*.R                   # Supplementary figures
 │   │   ├── run_all.R                   # Pipeline orchestrator
@@ -133,7 +133,7 @@ Rscript -e "tryCatch({parse('06_analysis/scripts/01_data_preparation.R'); cat('O
 | **Data Prep** | 01 | Load, clean, standardize, define size classes |
 | **Core Analysis** | 02–07 | Survival/growth thresholds, variance partitioning, data gaps |
 | **Robustness** | 08–12 | Climate, power, cross-validation, model selection |
-| **Synthesis** | 13–17, 14b | Transition matrix, meta-analysis (k=16, 20 effects), sensitivity |
+| **Synthesis** | 13–17, 14b | Transition matrix, meta-analysis (k=16, 21 effects), sensitivity |
 | **Main Figures** | 18–22, 20b/c | 4 manuscript figures |
 | **Supp Figures** | 23–28 | Data gaps heatmap, supplementary S3–S14 |
 
@@ -177,7 +177,7 @@ Rscript -e "tryCatch({parse('06_analysis/scripts/01_data_preparation.R'); cat('O
 | Rosales et al. 2024 | Restoration | FL Keys | 58 | 79.3% | Hand |
 | Maurer et al. 2022 | Restoration | Bahamas | 24 | 95.8% | Hand |
 | Williams & Miller 2010 | Restoration | FL Keys | 18 | 77.8% | Hand |
-| Garrison & Ward 2008 | Natural | USVI | 45 | 68.9% | Hand |
+| Garrison & Ward 2008 (2 effects) | Natural + Restoration | USVI | 75 | 80% / 55% | Hand |
 | Rogers & Muller 2012 | Natural | USVI | 69 | 94.2% | AI |
 | Ramos-Romero et al. 2025 | Restoration | Cuba | 200 | 70.5% | AI |
 | Rogers et al. 1982 | Natural | USVI | 12 | 75.0% | AI |
@@ -221,7 +221,7 @@ Rscript run_all.R
 # Key individual scripts
 Rscript 01_data_preparation.R      # Data cleaning
 Rscript 13_transition_matrix.R      # Population model (slow: 2000 bootstrap iterations)
-Rscript 14b_expanded_meta_analysis.R  # Meta-analysis k=16 (20 effects)
+Rscript 14b_expanded_meta_analysis.R  # Meta-analysis k=16 (21 effects)
 ```
 
 Note: Some scripts (02, 04, 05) have a pre-existing `dplyr::select` masking issue. The key outputs (meta-analysis, transition matrix, all manuscript figures) generate successfully.

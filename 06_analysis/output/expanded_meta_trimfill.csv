@@ -1,3 +1,3 @@
 analysis,k,pooled_survival,ci_lower,ci_upper,n_imputed,note
-Original,20,0.8034245024434641,0.7280111695989738,0.8618948480569195,0,
-Trim-and-fill adjusted,22,0.7895427457139235,0.7178275130713639,0.8469182463204462,2,Caution: limited interpretability for single-proportion meta-analyses
+Original,21,0.7987135716068866,0.7232914549934975,0.8576246292558921,0,
+Trim-and-fill adjusted,26,0.7463787219184562,0.6601437357558033,0.8168046993814462,5,Caution: limited interpretability for single-proportion meta-analyses

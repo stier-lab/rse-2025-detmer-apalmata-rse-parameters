@@ -91,7 +91,7 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 2. **Tier structure matters**: The 6 Tier 1 (individual-level) studies average 6.8/10, while the 12 Tier 2 (summary/AI-extracted) studies average 7.0/10. The Tier 2 studies are not systematically lower quality, but their data contribute less statistical weight due to summary-level reporting.
 
-3. **Mortality definition heterogeneity**: The single biggest methodological concern is that "mortality" means different things across studies. NOAA defines it as no tissue/skeleton remaining; Kuffner et al. use >=50% tissue loss; Garrison & Ward include colony disappearance. This heterogeneity likely contributes to the extreme I-squared of 96.4% observed in the meta-analysis.
+3. **Mortality definition heterogeneity**: The single biggest methodological concern is that "mortality" means different things across studies. NOAA defines it as no tissue/skeleton remaining; Kuffner et al. use >=50% tissue loss; Garrison & Ward include colony disappearance. This heterogeneity likely contributes to the extreme I-squared of 96.3% observed in the meta-analysis.
 
 4. **No study scored 0 on selection**: Even restoration/experimental studies described their selection methods adequately. This is reassuring for transparency but does not eliminate the fundamental non-representativeness of fragment-based studies for inferring wild population vital rates.
 
