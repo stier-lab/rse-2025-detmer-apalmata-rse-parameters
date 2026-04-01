@@ -1,4 +1,4 @@
 population_type,k,n,pooled_survival,ci_lower,ci_upper,pi_lower,pi_upper,tau_sq,I_sq,Q,p_Q,caveat
-Natural colony,9,4580,0.8535910854122435,0.7344140536217523,0.9247677797872673,0.3943809079703279,0.9812020677590578,0.7989236442199813,96.80311488503992,165.04433476891555,1.4077330427854922e-31,Meta-analytic estimate from k=9 studies. Includes Vardi 2011 regional effects. Major improvement over k=1 (Tier 1 only).
+Natural colony,10,6795,0.8406674451051221,0.7282028242153792,0.9122067213696538,0.39791861885430113,0.9768095309565085,0.7535386000498844,98.24713428560021,298.3574359503792,5.822049416288759e-59,Meta-analytic estimate from k=10 studies. Includes Vardi 2011 regional effects. Major improvement over k=1 (Tier 1 only).
 Restoration fragment,12,2010,0.7452457184416146,0.6390807526256557,0.8285595079407155,0.3800352242690235,0.9331570537212304,0.45214519557437827,92.09243196101421,107.02852788275948,7.172571563798606e-18,Meta-analytic estimate from k=12 restoration fragment studies.
-Difference (Natural - Restoration),NA,NA,0.10834536697062891,NA,NA,NA,NA,NA,NA,NA,NA,10.8 pp difference. Q_moderator p=0.1096. Not statistically significant.
+Difference (Natural - Restoration),NA,NA,0.09542172666350757,NA,NA,NA,NA,NA,NA,NA,NA,9.5 pp difference. Q_moderator p=0.1530. Not statistically significant.

@@ -1,2 +1,2 @@
 n_missing_studies,adjusted_pooled_estimate,adjusted_ci_lower,adjusted_ci_upper,side,k_original,caveat
-0,0.7689449985636582,0.5689157916018254,0.8935282577074285,left,5,Unreliable with k < 10 studies
+0,0.7591189974871533,0.6094680440094108,0.8642015579687724,left,6,Unreliable with k < 10 studies

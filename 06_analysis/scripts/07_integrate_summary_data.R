@@ -105,12 +105,12 @@ cat(sprintf("  Individual growth: %d records from %d studies\n",
 
 # Summary data
 surv_summ <- read_csv(file.path(data_dir, "apal_surv_summ.csv"),
-                      show_col_types = FALSE) %>%
-  select(-1)  # Remove row number
+                      show_col_types = FALSE)
+if (names(surv_summ)[1] %in% c("...1", "X1", "")) surv_summ <- surv_summ %>% select(-1)
 
 growth_summ <- read_csv(file.path(data_dir, "apal_growth_summ.csv"),
-                        show_col_types = FALSE) %>%
-  select(-1)
+                        show_col_types = FALSE)
+if (names(growth_summ)[1] %in% c("...1", "X1", "")) growth_summ <- growth_summ %>% select(-1)
 
 cat(sprintf("  Summary survival: %d records from %d studies\n",
             nrow(surv_summ), n_distinct(surv_summ$study)))

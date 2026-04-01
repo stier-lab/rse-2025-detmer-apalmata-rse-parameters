@@ -1,0 +1,5 @@
+scenario,k,n_total,pooled_survival,ci_lower,ci_upper,I2,tau2,pi_lower,pi_upper,neely_survival,neely_n
+All data (including disease 2014),6,7294,0.7591,0.6095,0.8642,98.4,0.41,0.3448,0.9497,0.7183,2215
+Excluding disease 2014 intervals,6,6280,0.7858,0.638,0.8842,98,0.4566,0.3577,0.9603,0.8501,1201
+Neely: disease_2014 intervals only,NA,639,0.5321,NA,NA,NA,NA,NA,NA,NA,NA
+Neely: aftermath intervals only,NA,375,0.6133,NA,NA,NA,NA,NA,NA,NA,NA

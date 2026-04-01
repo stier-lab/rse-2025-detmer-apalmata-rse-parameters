@@ -2184,6 +2184,7 @@ cat("===========================================================================
 rob_scores <- data.frame(
   study_id = c(
     "NOAA_survey",
+    "neely_et_al_2022",
     "pausch_et_al_2018",
     "USGS_USVI_exp",
     "kuffner_et_al_2020",
@@ -2205,6 +2206,7 @@ rob_scores <- data.frame(
   ),
   rob_score = c(
     10,  # NOAA_survey
+     8,  # neely_et_al_2022 (individual tracking, 878 colonies, 7 timepoints, clear mortality definition)
      8,  # pausch_et_al_2018
      7,  # USGS_USVI_exp
      6,  # kuffner_et_al_2020

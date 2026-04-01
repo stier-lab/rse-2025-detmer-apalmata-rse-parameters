@@ -74,6 +74,8 @@ cat(sprintf("Working directory: %s\n\n", getwd()))
 # =============================================================================
 
 scripts <- c(
+  # 00: Data standardization (new sources)
+  "00_standardize_neely.R",
   # 01: Data preparation
   "01_data_preparation.R",
   # 02-07: Core analysis
@@ -114,11 +116,15 @@ scripts <- c(
   "28_supp_S12_S13_S14.R",
   # 29: Natural vs restoration comparison
   "29_natural_vs_restoration.R",
+  # 30: Disturbance sensitivity
+  "30_disturbance_sensitivity.R",
   # Verification
   "23_verification.R"
 )
 
 script_descriptions <- c(
+  # 00: Data standardization
+  "Standardize Neely et al. 2022 FKNMS data",
   # 01: Data preparation
   "Data preparation and cleaning",
   # 02-07: Core analysis
@@ -159,6 +165,8 @@ script_descriptions <- c(
   "Supplementary S12-S14: Sensitivity & projections",
   # 29: Natural vs restoration comparison
   "Natural vs restoration (within-region + size-matched)",
+  # 30: Disturbance sensitivity
+  "Disturbance sensitivity analysis (Neely 2014 event)",
   # Verification
   "Pipeline verification"
 )

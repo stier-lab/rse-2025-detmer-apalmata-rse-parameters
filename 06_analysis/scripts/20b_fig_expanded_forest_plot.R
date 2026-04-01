@@ -94,6 +94,7 @@ print_subheader("Preparing study-level data")
 # FIX: Added NOAA regional splits after meta-analysis restructure (critique audit 2026-03-29)
 name_map <- c(
   "NOAA_survey"                = "NOAA NCRMP",
+  "neely_et_al_2022"           = "Neely et al. 2022",
   "NOAA_survey_florida_keys"   = "NOAA - Florida Keys",
   "NOAA_survey_curacao"        = "NOAA - Curacao",
   "NOAA_survey_navassa"        = "NOAA - Navassa",

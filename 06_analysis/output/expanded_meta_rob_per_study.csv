@@ -1,0 +1,23 @@
+study,study_id,region,data_tier,population_type,n_total,survival_rate,rob_score,log_odds,var_log_odds
+bruckner_bruckner_2001,bruckner_bruckner_2001,Puerto Rico,Tier 2 (summary),Restoration fragment,105,0.9047619047619048,4,2.2512917986064953,0.1105263157894737
+fundemar_fragments,fundemar_fragments,Dominican Republic,Tier 1 (individual),Restoration fragment,44,0.8636363636363636,5,1.845826690498331,0.19298245614035087
+rogers_et_al_1982,rogers_et_al_1982,US Virgin Islands,Tier 2 (summary) [AI_EXTRACTED],Natural colony,173,0.4797687861271676,5,-0.08096906253366733,0.023159303882195448
+williams_miller_2010,williams_miller_2010,Florida Keys,Tier 2 (summary),Restoration fragment,18,0.7777777777777778,5,1.252762968495368,0.3214285714285714
+forrester_et_al_2013,forrester_et_al_2013,British Virgin Islands,Tier 2 (summary),Restoration fragment,257,0.5330739299610895,6,0.13248918304607887,0.015632603406326034
+kuffner_et_al_2020,kuffner_et_al_2020,Dry Tortugas,Tier 1 (individual),Restoration fragment,53,0.8113207547169812,6,1.4586150226995171,0.12325581395348838
+USGS_USVI_exp,USGS_USVI_exp,US Virgin Islands,Tier 1 (individual),Restoration fragment,46,0.6521739130434783,7,0.6286086594223741,0.09583333333333333
+garrison_ward_2008_control,garrison_ward_2008,USVI,Tier 2 (summary),Natural colony,45,0.8,7,1.3862943611198908,0.1388888888888889
+garrison_ward_2008_relocated,garrison_ward_2008,USVI,Tier 2 (summary),Restoration fragment,30,0.5333333333333333,7,0.13353139262452257,0.13392857142857142
+maurer_et_al_2022,maurer_et_al_2022,Bahamas,Tier 2 (summary),Restoration fragment,24,0.9583333333333334,7,3.1354942159291506,1.0434782608695652
+ramos_romero_et_al_2025,ramos_romero_et_al_2025,Cuba,Tier 2 (summary) [AI_EXTRACTED],Restoration fragment,200,0.705,7,0.8712224464724486,0.024041351123933165
+neely_et_al_2022,neely_et_al_2022,Florida Keys,Tier 1 (individual),Natural colony,2215,0.7182844243792325,8,0.9359676599683588,0.002231099614820545
+ortiz_prosper_2005,ortiz_prosper_2005,Puerto Rico,Tier 2 (summary),Restoration fragment,207,0.7874396135265701,8,1.3095605668885015,0.0288622420524261
+pausch_et_al_2018,pausch_et_al_2018,Florida Keys,Tier 1 (individual),Restoration fragment,968,0.5743801652892562,8,0.29974494490105585,0.004225745617098554
+rosales_et_al_2024,rosales_et_al_2024,Florida Keys,Tier 2 (summary),Restoration fragment,58,0.7931034482758621,8,1.343734746701095,0.10507246376811594
+rogers_muller_2012,rogers_muller_2012,US Virgin Islands,Tier 2 (summary) [AI_EXTRACTED],Natural colony,69,0.9420289855072463,9,2.788092908775746,0.2653846153846154
+vardi_2011_jamaica,vardi_2011,Jamaica,Tier 2 (summary),Natural colony,88,0.7613636363636364,9,1.160170181667543,0.06254442075337598
+vardi_2011_puerto_rico,vardi_2011,Puerto Rico,Tier 2 (summary),Natural colony,130,0.9230769230769231,9,2.4849066497880012,0.10833333333333334
+vardi_2011_virgin_gorda,vardi_2011,Virgin Gorda,Tier 2 (summary),Natural colony,27,0.9629629629629629,9,3.2580965380214804,1.0384615384615385
+NOAA_survey_curacao,NOAA_survey,Curacao,Tier 1 (individual),Natural colony,868,0.8467741935483869,10,1.709521370991083,0.008879341210168278
+NOAA_survey_florida_keys,NOAA_survey,Florida Keys,Tier 1 (individual),Natural colony,3078,0.8622482131254063,10,1.834089759660195,0.0027352803173565
+NOAA_survey_navassa,NOAA_survey,Navassa,Tier 1 (individual),Natural colony,102,0.9215686274509804,10,2.463853240590167,0.1356382978723404

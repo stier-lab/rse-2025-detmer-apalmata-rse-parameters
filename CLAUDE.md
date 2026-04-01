@@ -9,7 +9,7 @@
 
 A synthesis of all existing *Acropora palmata* (Elkhorn Coral) demographic data across the Caribbean. The central question: **how do survival and growth vary as a function of colony size in restored vs. natural populations?**
 
-We compiled ~9,500 individual-level observations from 6 studies plus 10 additional summary-level studies (16 unique studies contributing 21 study-level effects; NOAA split into FL Keys/Curacao/Navassa = 3 effects, Vardi 2011 split into Jamaica/PR/Virgin Gorda = 3 effects, Garrison & Ward 2008 split into control/relocated = 2 effects) across 11 Caribbean regions. The data are standardized to a common size metric (live planar tissue area, cm^2) and analyzed using GAMs, GLMMs, and random-effects meta-analysis. A Lefkovitch population projection matrix translates the size-dependent vital rates into a population growth rate (lambda) and elasticity analysis.
+We compiled ~12,000 individual-level observations from 7 studies (including the newly added Neely et al. 2022 FKNMS dataset: 878 colonies, FL Keys 2010-2016) plus 10 additional summary-level studies (17 unique studies contributing 22 study-level effects) across 13 Caribbean regions. The data are standardized to a common size metric (live planar tissue area, cm^2) and analyzed using GAMs, GLMMs, and random-effects meta-analysis. A Lefkovitch population projection matrix translates the size-dependent vital rates into a population growth rate (lambda) and elasticity analysis.
 
 The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform](https://github.com/stier-lab/Detmer-2025-coral-platform).
 
@@ -19,12 +19,13 @@ The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform
 
 These apply to **every** analysis change:
 
-- **I^2 = 96.3%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
+- **I^2 = 96.6%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
 - **NOAA = 78%** of individual-level data. Results may not generalize. Always check LOSO sensitivity.
-- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are ~99% NOAA. The expanded meta (k=16, 21 effects) has 9 natural + 12 restoration effects; difference not significant (p=0.110).
+- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are mostly NOAA + Neely. The expanded meta (k=17, 22 effects) has 10 natural + 12 restoration effects; difference not significant (p=0.153).
+- **Neely 2014 disturbance event** — Neely et al. 2022 includes a catastrophic mortality event (53% surv in 2014 vs 88% in non-disturbance intervals). Disturbance intervals are flagged; sensitivity analysis shows excluding them shifts pooled survival by +2.7 pp.
 - **Fragmentation data from one study** (Vardi 2011, 13 rows). Cannot be improved without new data.
 - Any new binomial GLMM needs an **overdispersion check** (`sum(pearson_resid^2) / rdf`).
-- Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment) for independent models; three-level `rma.mv()` is the primary model. Moderator analyses are exploratory at k=16 (21 effects).
+- Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment) for independent models; three-level `rma.mv()` is the primary model. Moderator analyses are exploratory at k=17 (22 effects).
 - **Size measurement varies across studies**: L x W x %live (NOAA, Pausch), photo tracing (USGS, Kuffner), diameter^2 (Mendoza-Quiroz). Pooled analyses assume comparability.
 - **Mortality definitions vary**: NOAA = no tissue/skeleton gone; Kuffner = >=50% tissue loss; others = no live tissue at interval end.
 
@@ -58,7 +59,7 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 |--------|--------|---------|
 | 18 | Fig 1 + FigS1 | Study landscape map + data availability; size distribution |
 | 19 | Fig 2 | Survival GAM + RGR GAM + size-class synthesis (3 panels) |
-| 20b | Fig 3 | Forest plot k=16 (21 effects) + regional survival (2 panels) |
+| 20b | Fig 3 | Forest plot k=17 (22 effects) + regional survival (2 panels) |
 | 22 | Fig 4 | Transition matrix + elasticity + bootstrap lambda + LOSO (4 panels) |
 | 21 | FigS8 | Natural vs restoration (supplementary) |
 
@@ -93,8 +94,8 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 
 | File | What | Records |
 |------|------|---------|
-| `05_data/standardized/apal_surv_ind.csv` | Individual survival | ~5,200 |
-| `05_data/standardized/apal_growth_ind.csv` | Individual growth | ~4,300 |
+| `05_data/standardized/apal_surv_ind.csv` | Individual survival | ~7,800 |
+| `05_data/standardized/apal_growth_ind.csv` | Individual growth | ~6,300 |
 | `05_data/standardized/apal_surv_summ.csv` | Summary survival (study-level) | ~30 |
 | `05_data/standardized/apal_growth_summ.csv` | Summary growth | ~20 |
 | `05_data/standardized/apal_fragmentation.csv` | Fragmentation (Vardi 2011) | 13 |
@@ -106,24 +107,25 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 |------|----------|------|
 | `06_analysis/output/transition_matrix.csv` | Script 13 | 5x5 Lefkovitch projection matrix |
 | `06_analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1519 valid) |
-| `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=16 (21 effects) meta-analysis summary |
+| `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=17 (22 effects) meta-analysis summary |
 | `06_analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
 | `06_analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |
 
 ---
 
-## 6 Individual-Level Studies
+## 7 Individual-Level Studies
 
 | Study | Type | Region | n | Key Issue |
 |-------|------|--------|---|-----------|
-| NOAA_survey | Natural | FL, Curacao, Navassa | 4,031 | 78% of data; large colonies |
+| NOAA_survey | Natural | FL, Curacao, Navassa | 4,031 | Largest dataset; large colonies |
+| neely_et_al_2022 | Natural | FL Keys | 878 | 2014 disease catastrophe (53% surv); disturbance-flagged |
 | pausch_et_al_2018 | Restoration | Florida | 966 | Fragment experiments |
 | USGS_USVI_exp | Restoration | USVI | 46 | Outplanted 2019 |
 | kuffner_et_al_2020 | Restoration | Florida | 52 | Mortality = >=50% tissue loss |
 | mendoza_quiroz_et_al_2023 | Natural | Mexico | 52 | Some sizes from diameter only |
 | fundemar_fragments | Restoration | Dominican Rep. | 43 | Nursery fragments |
 
-10 additional studies contribute summary-level data only (16 unique studies, 21 study-level effects in expanded meta; NOAA, Vardi, and Garrison each split into sub-effects).
+10 additional studies contribute summary-level data only (17 unique studies, 22 study-level effects in expanded meta; NOAA, Vardi, and Garrison each split into sub-effects).
 
 ---
 
@@ -179,7 +181,7 @@ if (ratio > 1.5) warning("Potential overdispersion")
 4. **NOAA dominance**: 78% of data. Always run LOSO to check if results hold without it.
 5. **Year column**: Use `survey_yr`, not `year` (conflicts with `base::year` in dplyr context).
 6. **cairo_pdf**: Fails on some systems. `save_manuscript_fig()` has a fallback PDF device.
-7. **Natural vs restoration**: NOT significant (p=0.110 at k=16, 21 effects). Study identity confounded with population type. Don't overinterpret.
+7. **Natural vs restoration**: NOT significant (p=0.153 at k=17, 22 effects). Study identity confounded with population type. Don't overinterpret.
 
 ---
 

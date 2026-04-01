@@ -101,8 +101,9 @@ cat("Loading data files...\n")
 
 # Individual survival data
 surv_ind <- read_csv(file.path(data_dir, "apal_surv_ind.csv"),
-                     show_col_types = FALSE) %>%
-  select(-1)  # Remove row number column
+                     show_col_types = FALSE)
+# Remove row index column if present (legacy CSV format)
+if (names(surv_ind)[1] %in% c("...1", "X1", "")) surv_ind <- surv_ind %>% select(-1)
 
 cat(sprintf("  Survival (individual): %d records\n", nrow(surv_ind)))
 n_surv_loaded <- nrow(surv_ind)
@@ -133,8 +134,8 @@ if (nrow(surv_dupes) > 0) {
 
 # Individual growth data
 growth_ind <- read_csv(file.path(data_dir, "apal_growth_ind.csv"),
-                       show_col_types = FALSE) %>%
-  select(-1)  # Remove row number column
+                       show_col_types = FALSE)
+if (names(growth_ind)[1] %in% c("...1", "X1", "")) growth_ind <- growth_ind %>% select(-1)
 
 cat(sprintf("  Growth (individual): %d records\n", nrow(growth_ind)))
 n_growth_loaded <- nrow(growth_ind)
@@ -166,8 +167,8 @@ if (nrow(growth_dupes) > 0) {
 # Summarized survival data (if exists)
 surv_summ_file <- file.path(data_dir, "apal_surv_summ.csv")
 if (file.exists(surv_summ_file)) {
-  surv_summ <- read_csv(surv_summ_file, show_col_types = FALSE) %>%
-    select(-1)
+  surv_summ <- read_csv(surv_summ_file, show_col_types = FALSE)
+  if (names(surv_summ)[1] %in% c("...1", "X1", "")) surv_summ <- surv_summ %>% select(-1)
   cat(sprintf("  Survival (summary): %d records\n", nrow(surv_summ)))
 } else {
   surv_summ <- NULL
