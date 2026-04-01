@@ -1,7 +1,7 @@
 "component","value"
-"tau_sq",0.0374457217068038
-"mean_within_var",0.0034937571208916
-"icc",0.914660439728703
-"deff",782.272458934934
-"mean_cluster_size",855.166666666667
-"k_studies",6
+"tau_sq",0.0190991722631179
+"mean_within_var",0.00301077279178648
+"icc",0.863827215114737
+"deff",906.661133103865
+"mean_cluster_size",1049.42857142857
+"k_studies",7

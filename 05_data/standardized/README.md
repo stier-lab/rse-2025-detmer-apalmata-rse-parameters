@@ -402,7 +402,7 @@ ai_extracted <- surv_summ %>% filter(grepl("AI_EXTRACTED", study_notes))
 
 ### Key Caveats
 
-1. **NOAA dominance**: 78% of individual survival data comes from NOAA survey
+1. **NOAA dominance**: NOAA survey is the largest single contributor to individual survival data
 2. **Fragment vs. colony**: Size classes SC1-SC2 are predominantly fragments; SC4-SC5 are predominantly intact colonies
 3. **Simpson's Paradox**: Apparent survival differences by size may be confounded by fragment status
 4. **Negative growth**: Present in NOAA data; may indicate tissue loss or measurement uncertainty

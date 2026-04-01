@@ -197,7 +197,7 @@ This script:
 
 ## Caveats
 
-1. **NOAA dominance**: Field parameters are heavily influenced by NOAA survey data (78%)
+1. **NOAA dominance**: Field parameters are heavily influenced by NOAA survey data (largest single contributor)
 2. **Size class confounding**: SC1-SC2 are predominantly fragments; SC4-SC5 are predominantly colonies
 3. **Nursery effects**: Nursery survival may be elevated due to maintenance
 4. **Lab limitations**: Very small sample sizes for lab context

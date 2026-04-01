@@ -9,6 +9,7 @@ kuffner_et_al_2020,TRUE,FALSE,single_source
 maurer_et_al_2022,FALSE,TRUE,single_source
 mendoza_quiroz_et_al_2023,TRUE,TRUE,both_kept_as_separate_rows
 muller_et_al_2008,FALSE,TRUE,single_source
+neely_et_al_2022,TRUE,FALSE,single_source
 NOAA_survey,TRUE,FALSE,single_source
 ortiz_prosper_2005,FALSE,TRUE,single_source
 papke_et_al_2021,FALSE,TRUE,single_source

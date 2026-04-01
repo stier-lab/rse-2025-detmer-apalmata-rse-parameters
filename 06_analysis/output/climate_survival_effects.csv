@@ -1,6 +1,7 @@
 effect,coefficient,p_value,interpretation
-"Temporal trend (WLS, probability scale)",-0.018833314558607747,0.001677897545535485,WLS: -0.0188 change in survival per year (probability scale)
-"Temporal trend (GLMM, log-odds scale)",-0.11064910250745941,3.7422904099367136e-21,GLMM: Significant temporal trend detected (log-odds scale)
-Disturbance: Storm,0.060812732443666584,NA,6.1% change vs baseline
-Most climate-vulnerable size class,NA,NA,SC2 (CV = 0.25)
-Most climate-variable region,NA,NA,Florida Keys (CV = 0.14)
+"Temporal trend (WLS, probability scale)",-0.01944115745353294,0.0019032465051668317,WLS: -0.0194 change in survival per year (probability scale)
+"Temporal trend (GLMM, log-odds scale)",-0.13222359764671504,0,GLMM: Significant temporal trend detected (log-odds scale)
+Disturbance: Disease,-0.25387813849352314,NA,-25.4% change vs baseline
+Disturbance: Storm,0.05184882684882686,NA,5.2% change vs baseline
+Most climate-vulnerable size class,NA,NA,SC2 (CV = 0.26)
+Most climate-variable region,NA,NA,Florida Keys (CV = 0.15)

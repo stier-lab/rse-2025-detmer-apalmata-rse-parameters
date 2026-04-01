@@ -45,7 +45,7 @@ Long-term demographic monitoring of tagged *A. palmata* colonies in Florida Keys
 **Notes:**
 - Colonies considered dead if skeleton found with no tissue OR no skeleton/tissue remaining
 - Size measured as live planar area = L × W × (% Live / 100)
-- Primary data source for the database (78% of survival records)
+- Largest single data source for the database
 
 ---
 
