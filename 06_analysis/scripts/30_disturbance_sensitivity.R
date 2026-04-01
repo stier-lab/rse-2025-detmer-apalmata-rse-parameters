@@ -1,21 +1,27 @@
 #!/usr/bin/env Rscript
 ################################################################################
 # 30_DISTURBANCE_SENSITIVITY.R
-# Sensitivity Analysis: Effect of 2014 Disease Event on Survival Estimates
+# Sensitivity Analysis: Effect of Disturbance Events on Survival Estimates
 ################################################################################
 #
-# PURPOSE: Assess how the catastrophic 2014 disease mortality in the Neely et al.
-#   (2022) dataset influences survival estimates and meta-analytic results.
+# PURPOSE: Assess how disturbance events (disease, storms) influence survival
+#   estimates and meta-analytic results. Tests four scenarios:
+#     1. All data (primary/baseline)
+#     2. Excluding Neely disease intervals (disease_2014 + aftermath)
+#     3. Excluding NOAA storm intervals
+#     4. Excluding ALL flagged disturbance (Neely disease + aftermath + NOAA storm)
+#
 #   The `disturbance` column flags affected intervals:
-#     - "disease_2014": TP4->TP5 interval (~53% survival vs ~85-90% normal)
-#     - "disease_2014_aftermath": TP5->TP6 interval (~61% survival)
+#     - "disease_2014": Neely TP4->TP5 interval (~53% survival vs ~85-90% normal)
+#     - "disease_2014_aftermath": Neely TP5->TP6 interval (~61% survival)
+#     - "storm": NOAA storm-affected intervals (571 records, ~85% survival)
 #     - NA: non-disturbance intervals
 #
 # ANALYSES:
 #   1. Overall survival by study: with vs without disturbance-flagged intervals
-#   2. Tier 1 meta-analysis (k=6-7) re-run excluding disturbance rows
+#   2. Tier 1 meta-analysis (k=6-7) re-run under four disturbance scenarios
 #   3. Neely effect comparison: all intervals vs non-disturbance only
-#   4. Survival-size GAM: with vs without disturbance intervals
+#   4. Survival-size GAM: with vs without disturbance intervals (3 curves)
 #
 # OUTPUTS:
 #   CSVs:
@@ -83,6 +89,8 @@ if (!"population_type" %in% names(surv_data)) {
 surv_data <- surv_data %>%
   mutate(
     is_disease_2014 = !is.na(disturbance) & disturbance %in% c("disease_2014", "disease_2014_aftermath"),
+    is_storm = !is.na(disturbance) & disturbance == "storm",
+    is_any_disturbance = !is.na(disturbance) & disturbance %in% c("disease_2014", "disease_2014_aftermath", "storm"),
     disturbance_label = case_when(
       disturbance == "disease_2014" ~ "Disease 2014 (TP4-TP5)",
       disturbance == "disease_2014_aftermath" ~ "Aftermath (TP5-TP6)",
@@ -91,13 +99,23 @@ surv_data <- surv_data %>%
     )
   )
 
-neely_data <- surv_data %>% filter(study == "neely_et_al_2022")
+neely_data <- surv_data %>% dplyr::filter(study == "neely_et_al_2022")
 n_disease <- sum(surv_data$is_disease_2014)
 n_neely_disease <- sum(neely_data$is_disease_2014)
+n_storm <- sum(surv_data$is_storm)
+n_any_disturbance <- sum(surv_data$is_any_disturbance)
 
 cat(sprintf("  Disease-flagged intervals (total): %d\n", n_disease))
 cat(sprintf("  Disease-flagged intervals (Neely): %d\n", n_neely_disease))
 cat(sprintf("  Non-disturbance intervals (Neely): %d\n", sum(!neely_data$is_disease_2014)))
+cat(sprintf("  Storm-flagged intervals (NOAA): %d\n", n_storm))
+cat(sprintf("  All flagged disturbance intervals: %d\n", n_any_disturbance))
+
+# Storm survival summary
+noaa_data <- surv_data %>% dplyr::filter(study == "NOAA_survey")
+cat(sprintf("  NOAA storm survival: %.1f%% (n=%d) vs non-storm: %.1f%% (n=%d)\n",
+            mean(noaa_data$survived[noaa_data$is_storm]) * 100, sum(noaa_data$is_storm),
+            mean(noaa_data$survived[!noaa_data$is_storm]) * 100, sum(!noaa_data$is_storm)))
 
 # ==============================================================================
 # SECTION 2: SURVIVAL BY STUDY — WITH VS WITHOUT DISTURBANCE INTERVALS
@@ -117,7 +135,7 @@ study_surv_full <- surv_data %>%
   )
 
 # Excluding disease_2014 intervals
-surv_no_disease <- surv_data %>% filter(!is_disease_2014)
+surv_no_disease <- surv_data %>% dplyr::filter(!is_disease_2014)
 
 study_surv_excl <- surv_no_disease %>%
   group_by(study) %>%
@@ -178,7 +196,7 @@ neely_overall_all$ci_lower <- neely_overall_all_ci$lower
 neely_overall_all$ci_upper <- neely_overall_all_ci$upper
 
 neely_overall_nondist <- neely_data %>%
-  filter(!is_disease_2014) %>%
+  dplyr::filter(!is_disease_2014) %>%
   summarise(
     disturbance_label = "Non-disturbance only (Neely)",
     n = n(),
@@ -224,7 +242,7 @@ run_tier1_meta <- function(data, label) {
       .groups = "drop"
     ) %>%
     # Filter for valid meta-analysis inclusion (need both events and non-events)
-    filter(n >= 10, n_survived > 0, n_died > 0)
+    dplyr::filter(n >= 10, n_survived > 0, n_died > 0)
 
   k <- nrow(study_stats)
 
@@ -305,8 +323,16 @@ run_tier1_meta <- function(data, label) {
 # Run with ALL data
 meta_full <- run_tier1_meta(surv_data, "All data")
 
-# Run EXCLUDING disease_2014 intervals
+# Run EXCLUDING disease_2014 intervals (Neely disease + aftermath)
 meta_no_disease <- run_tier1_meta(surv_no_disease, "Excl. disease 2014")
+
+# Run EXCLUDING NOAA storm intervals only
+surv_no_storm <- surv_data %>% dplyr::filter(!is_storm)
+meta_no_storm <- run_tier1_meta(surv_no_storm, "Excl. NOAA storm")
+
+# Run EXCLUDING ALL flagged disturbance (Neely disease + aftermath + NOAA storm)
+surv_no_any_disturbance <- surv_data %>% dplyr::filter(!is_any_disturbance)
+meta_no_any_disturbance <- run_tier1_meta(surv_no_any_disturbance, "Excl. all disturbance")
 
 # ==============================================================================
 # SECTION 5: COMPILE SENSITIVITY SUMMARY
@@ -335,7 +361,7 @@ if (!is.null(meta_full)) {
 }
 
 if (!is.null(meta_no_disease)) {
-  neely_no_disease <- neely_data %>% filter(!is_disease_2014)
+  neely_no_disease <- neely_data %>% dplyr::filter(!is_disease_2014)
   sensitivity_rows[["no_disease"]] <- data.frame(
     scenario = "Excluding disease 2014 intervals",
     k = meta_no_disease$k,
@@ -353,9 +379,48 @@ if (!is.null(meta_no_disease)) {
   )
 }
 
+if (!is.null(meta_no_storm)) {
+  # NOAA storm exclusion — Neely is unaffected (no storm records), report as-is
+  sensitivity_rows[["no_storm"]] <- data.frame(
+    scenario = "Excluding NOAA storm intervals",
+    k = meta_no_storm$k,
+    n_total = meta_no_storm$n_total,
+    pooled_survival = round(meta_no_storm$pooled_surv, 4),
+    ci_lower = round(meta_no_storm$pooled_lower, 4),
+    ci_upper = round(meta_no_storm$pooled_upper, 4),
+    I2 = round(meta_no_storm$I2, 1),
+    tau2 = round(meta_no_storm$tau2, 4),
+    pi_lower = round(meta_no_storm$pi_lower, 4),
+    pi_upper = round(meta_no_storm$pi_upper, 4),
+    neely_survival = round(mean(neely_data$survived), 4),
+    neely_n = nrow(neely_data),
+    stringsAsFactors = FALSE
+  )
+}
+
+if (!is.null(meta_no_any_disturbance)) {
+  neely_no_disease <- neely_data %>% dplyr::filter(!is_disease_2014)
+  sensitivity_rows[["no_any_disturbance"]] <- data.frame(
+    scenario = "Excluding all flagged disturbance",
+    k = meta_no_any_disturbance$k,
+    n_total = meta_no_any_disturbance$n_total,
+    pooled_survival = round(meta_no_any_disturbance$pooled_surv, 4),
+    ci_lower = round(meta_no_any_disturbance$pooled_lower, 4),
+    ci_upper = round(meta_no_any_disturbance$pooled_upper, 4),
+    I2 = round(meta_no_any_disturbance$I2, 1),
+    tau2 = round(meta_no_any_disturbance$tau2, 4),
+    pi_lower = round(meta_no_any_disturbance$pi_lower, 4),
+    pi_upper = round(meta_no_any_disturbance$pi_upper, 4),
+    neely_survival = round(mean(neely_no_disease$survived), 4),
+    neely_n = nrow(neely_no_disease),
+    stringsAsFactors = FALSE
+  )
+}
+
 sensitivity_summary <- bind_rows(sensitivity_rows)
 
-# Add the study-level comparison
+# Add the study-level comparison (descriptive rows for individual disturbance types)
+noaa_storm_rows <- surv_data %>% dplyr::filter(is_storm)
 sensitivity_summary_full <- bind_rows(
   sensitivity_summary,
   data.frame(
@@ -369,6 +434,13 @@ sensitivity_summary_full <- bind_rows(
     scenario = "Neely: aftermath intervals only",
     k = NA, n_total = sum(neely_data$disturbance == "disease_2014_aftermath", na.rm = TRUE),
     pooled_survival = round(mean(neely_data$survived[neely_data$disturbance == "disease_2014_aftermath" & !is.na(neely_data$disturbance)]), 4),
+    ci_lower = NA, ci_upper = NA, I2 = NA, tau2 = NA, pi_lower = NA, pi_upper = NA,
+    neely_survival = NA, neely_n = NA, stringsAsFactors = FALSE
+  ),
+  data.frame(
+    scenario = "NOAA: storm intervals only",
+    k = NA, n_total = nrow(noaa_storm_rows),
+    pooled_survival = round(mean(noaa_storm_rows$survived), 4),
     ci_lower = NA, ci_upper = NA, I2 = NA, tau2 = NA, pi_lower = NA, pi_upper = NA,
     neely_survival = NA, neely_n = NA, stringsAsFactors = FALSE
   )
@@ -389,25 +461,31 @@ print_subheader("Section 6: Survival-Size GAM Comparison")
 
 # Filter to natural colonies (consistent with manuscript Fig 2)
 surv_natural <- surv_data %>%
-  filter(population_type == "Natural colony") %>%
-  filter(!is.na(size_cm2), !is.na(survived)) %>%
+  dplyr::filter(population_type == "Natural colony") %>%
+  dplyr::filter(!is.na(size_cm2), !is.na(survived)) %>%
   mutate(log_size = log(size_cm2))
 
-surv_natural_no_disease <- surv_natural %>% filter(!is_disease_2014)
+surv_natural_no_disease <- surv_natural %>% dplyr::filter(!is_disease_2014)
+surv_natural_no_any <- surv_natural %>% dplyr::filter(!is_any_disturbance)
 
 cat(sprintf("  Natural colony records (all): %d\n", nrow(surv_natural)))
 cat(sprintf("  Natural colony records (excl. disease): %d\n", nrow(surv_natural_no_disease)))
+cat(sprintf("  Natural colony records (excl. all disturbance): %d\n", nrow(surv_natural_no_any)))
 
 # Fit GAMs
 gam_full <- gam(survived ~ s(log_size, k = 4),
                 data = surv_natural, family = binomial, method = "REML")
 gam_no_disease <- gam(survived ~ s(log_size, k = 4),
                       data = surv_natural_no_disease, family = binomial, method = "REML")
+gam_no_any <- gam(survived ~ s(log_size, k = 4),
+                  data = surv_natural_no_any, family = binomial, method = "REML")
 
 cat(sprintf("  GAM (all data) R2 = %.3f, deviance explained = %.1f%%\n",
             summary(gam_full)$r.sq, summary(gam_full)$dev.expl * 100))
 cat(sprintf("  GAM (excl. disease) R2 = %.3f, deviance explained = %.1f%%\n",
             summary(gam_no_disease)$r.sq, summary(gam_no_disease)$dev.expl * 100))
+cat(sprintf("  GAM (excl. all disturbance) R2 = %.3f, deviance explained = %.1f%%\n",
+            summary(gam_no_any)$r.sq, summary(gam_no_any)$dev.expl * 100))
 
 # Generate predictions over shared size range
 pred_grid <- data.frame(
@@ -436,7 +514,18 @@ pred_excl <- pred_grid %>%
     scenario = "Excluding disease 2014"
   )
 
-pred_combined <- bind_rows(pred_full, pred_excl)
+# Excluding ALL flagged disturbance predictions
+link_no_any <- predict(gam_no_any, newdata = pred_grid, type = "link", se.fit = TRUE)
+pred_no_any <- pred_grid %>%
+  mutate(
+    size_cm2 = exp(log_size),
+    fit = plogis(link_no_any$fit),
+    lower = plogis(link_no_any$fit - 1.96 * link_no_any$se.fit),
+    upper = plogis(link_no_any$fit + 1.96 * link_no_any$se.fit),
+    scenario = "Excluding all disturbance"
+  )
+
+pred_combined <- bind_rows(pred_full, pred_excl, pred_no_any)
 
 # ==============================================================================
 # SECTION 7: TWO-PANEL FIGURE
@@ -548,7 +637,7 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
         n = n(),
         .groups = "drop"
       ) %>%
-      filter(n >= 5) %>%
+      dplyr::filter(n >= 5) %>%
       mutate(scenario = scenario_label)
   }
 
@@ -647,7 +736,7 @@ if (requireNamespace("lme4", quietly = TRUE)) {
   library(lme4)
 
   neely_for_glmm <- neely_data %>%
-    filter(!is.na(size_cm2), !is.na(survived)) %>%
+    dplyr::filter(!is.na(size_cm2), !is.na(survived)) %>%
     mutate(log_size = log(size_cm2))
 
   glmm_neely <- glmer(
@@ -693,6 +782,22 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
               meta_full$pooled_surv * 100, meta_no_disease$pooled_surv * 100))
   cat(sprintf("  - I2 change: %.1f%% -> %.1f%%\n", meta_full$I2, meta_no_disease$I2))
 }
+if (!is.null(meta_full) && !is.null(meta_no_storm)) {
+  delta_storm <- (meta_no_storm$pooled_surv - meta_full$pooled_surv) * 100
+  cat(sprintf("  - Excluding NOAA storm intervals shifts pooled survival by %+.1f pp\n",
+              delta_storm))
+  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. storm: %.1f%%\n",
+              meta_full$pooled_surv * 100, meta_no_storm$pooled_surv * 100))
+}
+if (!is.null(meta_full) && !is.null(meta_no_any_disturbance)) {
+  delta_all <- (meta_no_any_disturbance$pooled_surv - meta_full$pooled_surv) * 100
+  cat(sprintf("  - Excluding ALL flagged disturbance shifts pooled survival by %+.1f pp\n",
+              delta_all))
+  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. all disturbance: %.1f%%\n",
+              meta_full$pooled_surv * 100, meta_no_any_disturbance$pooled_surv * 100))
+  cat(sprintf("  - I2 change (all disturbance): %.1f%% -> %.1f%%\n",
+              meta_full$I2, meta_no_any_disturbance$I2))
+}
 cat(sprintf("  - Neely all intervals: %.1f%% survival (n=%d)\n",
             mean(neely_data$survived) * 100, nrow(neely_data)))
 cat(sprintf("  - Neely non-disturbance: %.1f%% survival (n=%d)\n",
@@ -701,6 +806,9 @@ cat(sprintf("  - Neely non-disturbance: %.1f%% survival (n=%d)\n",
 cat(sprintf("  - Disease 2014 intervals: %.1f%% survival (n=%d)\n",
             mean(neely_data$survived[neely_data$disturbance == "disease_2014" & !is.na(neely_data$disturbance)]) * 100,
             sum(neely_data$disturbance == "disease_2014", na.rm = TRUE)))
+cat(sprintf("  - NOAA storm intervals: %.1f%% survival (n=%d)\n",
+            mean(surv_data$survived[surv_data$is_storm]) * 100,
+            sum(surv_data$is_storm)))
 
 cat("\n  Outputs saved to 06_analysis/output/:\n")
 cat("    - disturbance_sensitivity_summary.csv\n")

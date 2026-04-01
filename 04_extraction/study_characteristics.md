@@ -17,7 +17,7 @@ The expanded AI-assisted search (March 2026) screened an additional 80 PDFs and 
 
 | Category | Count |
 |----------|-------|
-| Studies included in meta-analysis (survival) | 16 unique studies contributing 21 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated) |
+| Studies included in meta-analysis (survival) | 17 unique studies contributing 22 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated; Neely et al. 2022 added April 2026 via direct data sharing) |
 | Studies contributing growth data only | 2 additional (Schutter et al. 2023, Papke et al. 2021 -- growth/lab only) |
 | Studies contributing fragmentation context | 3 additional (Lirman 2000, Fong & Lirman 1995, Highsmith et al. 1980) |
 | Studies contributing short-term lab survival | 2 (Chamberland et al. 2015, Randall & Szmant 2009 -- also contribute other data) |
@@ -36,20 +36,21 @@ The expanded AI-assisted search (March 2026) screened an additional 80 PDFs and 
 
 ## Table 1: Characteristics of Included Studies
 
-### 1A. Tier 1 -- Individual-Level Data (n = 6 studies)
+### 1A. Tier 1 -- Individual-Level Data (n = 7 studies)
 
 These studies provide raw, individual-level data with colony identifiers, sizes at each census, and individual survival/growth outcomes.
 
 | Study ID | Citation | Region | Pop. Type | Design | n (survival) | Outcome Extracted | Size Metric | Time Interval | Extractor | Key Caveats |
 |----------|----------|--------|-----------|--------|--------------|-------------------|-------------|---------------|-----------|-------------|
-| NOAA_survey | Southeast Fisheries Science Center (2025). NOAA NCEI Accession 0142175. | Florida Keys, Curacao, Navassa | Natural | Long-term demographic monitoring of tagged colonies, 2004--2024 | 4,025 | Survival, growth, fragmentation (via Vardi 2011 matrices) | L x W x %live = live planar area (cm^2) | Variable (selected ~annual intervals) | Detmer | 78% of all individual data. Size = L x W x %live. Mortality = no tissue/skeleton gone. Sampling intervals vary from sub-annual to triennial (Navassa). Disturbance years from Vardi 2011 Fig. 4-2 (no info post-2011). |
+| NOAA_survey | Southeast Fisheries Science Center (2025). NOAA NCEI Accession 0142175. | Florida Keys, Curacao, Navassa | Natural | Long-term demographic monitoring of tagged colonies, 2004--2024 | 4,025 | Survival, growth, fragmentation (via Vardi 2011 matrices) | L x W x %live = live planar area (cm^2) | Variable (selected ~annual intervals) | Detmer | Largest single study. Size = L x W x %live. Mortality = no tissue/skeleton gone. Sampling intervals vary from sub-annual to triennial (Navassa). Disturbance years from Vardi 2011 Fig. 4-2 (no info post-2011). |
 | pausch_et_al_2018 | Pausch et al. (2018). *Mar Ecol Prog Ser* 592:1--12. NOAA InPort 26790. | Florida Keys | Restoration | Nursery-cultured fragments outplanted to forereef and patch reef; two experiments (size x genet, habitat x genet) | 789 | Survival, growth | L x W x %live = live planar area (cm^2) | ~1 year (assumed; dead fragments not in subsequent data) | Detmer | Survival rates matched publication only if dead fragments assumed absent from subsequent years. Two experimental designs with different treatments. |
 | kuffner_et_al_2020 | Kuffner et al. (2020). *Endang Species Res* 43:293--304. USGS Data Release. | Florida Keys (Dry Tortugas, Upper Keys, Biscayne Bay) | Restoration | Nursery-raised fragments outplanted spring 2018, monitored to fall 2019 | 106 | Survival, growth | Photo tracing of planar area (cm^2); initial sizes estimated from raw photographs | ~1 year (spring 2018 to spring 2019) | Detmer | Mortality defined as >=50% tissue loss (checked photos; all looked 100% dead). Initial sizes not in dataset -- estimated from photographs. |
 | USGS_USVI_exp | USGS (unpublished). Coral growth VI USA. USGS CMGDS. | USVI | Restoration | Tagged outplanted colonies, June 2019 to July 2021 | 92 | Survival, growth | Photo tracing of planar footprint area (cm^2); initial sizes estimated from June 2019 photographs and growth rates | Two ~annual intervals (Jun 2019--Jun 2020; Jun 2020--Aug 2021) | Detmer | Initial colony size not in dataset -- estimated from raw photographs. Growth given as cm^2/day normalized to days between visits. Dead = no live tissue remaining. |
 | fundemar_fragments | FUNDEMAR (unpublished). Shared directly. | Dominican Republic | Restoration | Nursery fragments on PVC tables at 6 localities; sub-fragmented and monitored with regular maintenance | 156 | Survival, growth | L x W (assumed rectangular) | Only Table 1 spans a full year; Tables 2--6 span 5 months only | Detmer | Direct data sharing from restoration practitioners. Tables 4 and 5 have tag/label mismatches between timepoints. Only Table 1 used for survival (full-year data). |
 | mendoza_quiroz_2023 | Mendoza-Quiroz et al. (2023). *PeerJ* 11:e15813. | Mexican Caribbean | Mixed (nursery + field) | In situ nursery juveniles and outplanted adults on two reefs; growth tracked over months to years | 45 | Survival, growth | Diameter^2 (Cuevones reef, nursery) or L x W (Picudas reef) | ~1 year (Picudas: month/year only, assumed 1 yr) | Detmer | Size from diameter only at some sites (area = diameter^2, square assumption). Picudas reef longitude corrected (-87.85 to -86.85). Exact sampling dates only for nursery and Cuevones. |
+| neely_et_al_2022 | Neely KL, Lewis CL, Lunz KS, Kabay L (2022). Frontiers in Marine Science 8:799187. Data shared directly. | Florida Keys (Lower Keys, Middle Keys, Biscayne NP, Dry Tortugas) | Natural | Long-term demographic monitoring of tagged colonies at 9 reef sites, 19 plots; 7 timepoints from Winter 2010/2011 to Fall 2016 | 878 | Survival, growth | LAI = live planar tissue area (cm^2) | 6 inter-census intervals (~5-14 months each, annualized) | Direct sharing (K. Neely) | Second-largest Tier 1 dataset. No NOAA overlap (verified: all sites in Lower/Middle Keys + Dry Tortugas; NOAA monitors Upper Keys only). Includes catastrophic 2014 disease event (53% survival TP4-TP5; disturbance-flagged). Published paper focuses on *Dendrogyra*; APAL data unpublished. See `04_extraction/neely_2022_data_integration.md`. |
 
-### 1B. Tier 2 -- Summary-Level Data, Hand-Extracted (n = 8 studies)
+### 1B. Tier 2 -- Summary-Level Data, Hand-Extracted (n = 8 studies, unchanged)
 
 These studies provide summary-level data (proportion survived, sample size, mean size) extracted by Detmer from published tables, figures, or text.
 
@@ -150,7 +151,7 @@ These studies analyze data from the same monitoring programs or tagged colonies 
 | Williams & Miller 2012 | Williams, D.E. & Miller, M.W. (2012). *PLoS ONE* 7:e38906. | *A. palmata* demographic analysis, Florida Keys | NOAA_survey | Analyzes a subset of the NOAA Acropora Demographic Monitoring Program data, which is included as NOAA_survey (full dataset). |
 | Bright 2013 | Bright, A.J. et al. (2013). | *A. palmata* monitoring analysis, Florida | NOAA_survey | Another analysis of NOAA SEFSC monitoring data, same tagged colony program. |
 | Muller 2014 / Miller 2009 | Muller, E.M. et al. (2014) / Miller, M.W. et al. (2009). | *A. palmata* disease or monitoring in Florida Keys | NOAA_survey | Publications analyzing NOAA monitoring data subsets. Same colony sets. |
-| Neely et al. 2022 | Neely, K.L. et al. (2022). | 508 *A. palmata* colonies at 9 Florida Keys sites (Lower Keys, Middle Keys, Biscayne NP, Dry Tortugas) | No NOAA overlap | **No geographic overlap** with NOAA monitoring (see `03_screening/overlap_analysis.md` Section 2.5 for site-by-site verification). All 22 NOAA FL Keys plots are in the Upper Keys; Neely's sites are in entirely non-overlapping sub-regions. Excluded because the paper reports LAI trajectories and stressor prevalence, not whole-colony survival counts. Priority data request if raw colony-level data obtainable from authors. |
+| Neely et al. 2022 | Neely, K.L. et al. (2022). | 878 *A. palmata* colonies at 9 Florida Keys sites (Lower Keys, Middle Keys, Biscayne NP, Dry Tortugas) | No NOAA overlap | **No geographic overlap** with NOAA monitoring (see `03_screening/overlap_analysis.md` Section 2.5 for site-by-site verification). All 22 NOAA FL Keys plots are in the Upper Keys; Neely's sites are in entirely non-overlapping sub-regions. **Now INCLUDED (April 2026):** raw colony-level data shared directly by K. Neely. See Table 1A and `04_extraction/neely_2022_data_integration.md`. |
 | Sutherland et al. 2016 (both components) | Sutherland, K.P. et al. (2016). *PLoS Pathog* 12:e1005904. | FKNMS contemporary monitoring (2008--2014), Carysfort and Molasses reefs; EDR historical (1994--2004), 92 colonies | NOAA_survey (FKNMS); photostation design (EDR) | **Both components excluded.** FKNMS excluded for spatial overlap at Carysfort and Molasses with NOAA monitoring. EDR excluded during IRR audit because the monitoring used permanent photostations/quadrats rather than individually tagged colonies. |
 | Chapron et al. 2023 | Chapron, L. et al. (2023). | Follow-up monitoring of outplanted *A. palmata* | kuffner_et_al_2020 | Explicitly sampled "the surviving corals from Kuffner et al." -- same individuals. Only Kuffner included. |
 | Chen et al. 2020 | Chen, T. et al. (2020). | Spatio-temporal dynamics of *A. palmata* in USVI | Vardi 2011 / NOAA_survey | Uses Bayesian estimation with strong beta priors based on Vardi et al. 2012 data. Same size classes and sites. NOAA reef-level data, not independent tracking. |
@@ -232,7 +233,7 @@ These studies were identified during the March 2026 AI-assisted expanded search 
 
 ### Study count reconciliation
 
-Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contains entries for **52 unique studies** across three sheets (survival: 38 rows of study-level entries, growth: 28 rows, reproduction: 5 rows, with overlap). This count is larger than the 16 studies (21 effects) that entered the final meta-analysis because the tracker served as a comprehensive catalog of all Caribbean coral demographic literature examined, including:
+Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contains entries for **52 unique studies** across three sheets (survival: 38 rows of study-level entries, growth: 28 rows, reproduction: 5 rows, with overlap). This count is larger than the 17 studies (22 effects) that entered the final meta-analysis because the tracker served as a comprehensive catalog of all Caribbean coral demographic literature examined, including:
 
 - Studies of other species (*A. cervicornis*, *Orbicella*, *Diploria*, *Porites*, *Siderastrea*, *Montastraea*, *Pseudodiploria*) documented for comparative context
 - Settlement and recruitment studies that report pre-demographic-stage data
@@ -240,7 +241,7 @@ Raine Detmer's tracking spreadsheet (`coral_parameters_lit_review.xlsx`) contain
 - Fragment dynamics studies contributing context rather than survival rates
 - Studies whose data overlap with existing entries (especially the large NOAA monitoring program)
 
-The expanded March 2026 search screened an additional ~33 candidate papers (from 80 PDFs + database searches), yielding 5 initial extractions and 3 removals after audit (Ramos et al. 2024: invalid survival proxy; Muller et al. 2008: imprecise survival, no sizes, bleaching-confounded; Sutherland et al. 2016: NOAA overlap + photostation design). Rogers et al. 1982 was reclassified from excluded to included. Roth et al. 2013 was subsequently removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012. Search saturation confirmed via Elicit replication across 298 papers. Final: 16 studies, 21 effects (after NOAA regional split and Garrison & Ward 2008 treatment split).
+The expanded March 2026 search screened an additional ~33 candidate papers (from 80 PDFs + database searches), yielding 5 initial extractions and 3 removals after audit (Ramos et al. 2024: invalid survival proxy; Muller et al. 2008: imprecise survival, no sizes, bleaching-confounded; Sutherland et al. 2016: NOAA overlap + photostation design). Rogers et al. 1982 was reclassified from excluded to included. Roth et al. 2013 was subsequently removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012. Search saturation confirmed via Elicit replication across 298 papers. Final (March 2026): 16 studies, 21 effects (after NOAA regional split and Garrison & Ward 2008 treatment split). Subsequently updated to 17 studies, 22 effects after adding Neely et al. 2022 (April 2026, direct data sharing).
 
 ### Species exclusions in Raine's tracker
 
@@ -262,10 +263,10 @@ These entries demonstrate that the literature search was broad enough to capture
 
 | Data Tier | Description | Studies | Total n (survival) |
 |-----------|-------------|---------|---------------------|
-| Tier 1: Individual-level | Raw data with colony IDs | 6 (NOAA, Pausch, Kuffner, USGS, Fundemar, Mendoza-Quiroz) | 5,213 |
+| Tier 1: Individual-level | Raw data with colony IDs | 7 (NOAA, Neely, Pausch, Kuffner, USGS, Fundemar, Mendoza-Quiroz) | ~7,800 |
 | Tier 2: Hand-extracted summary | Detmer reading tables/figures | 8 (Vardi 2011, Bruckner, Ortiz Prosper, Forrester 2013, Rosales, Maurer, Williams-Miller, Garrison-Ward) | ~961 |
 | Tier 2: AI-extracted summary | Claude reading PDFs, audited | 3 (Rogers-Muller 2012, Ramos-Romero 2025, Rogers 1982; Muller 2008 & Sutherland 2016 removed after data audit) | ~442 |
-| **Total** | | **16 unique studies, 21 study-level effects** | **~6,616** |
+| **Total** | | **17 unique studies, 22 study-level effects** | **~8,805** |
 
 ---
 

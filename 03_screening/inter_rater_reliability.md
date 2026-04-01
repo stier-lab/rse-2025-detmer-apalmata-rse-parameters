@@ -116,7 +116,7 @@ Gemini included papers that Claude excluded for valid methodological reasons:
 - **Gladfelter 1982:** Claude excluded (white band disease description); Gemini saw 24 tracked colonies. The paper does describe colony fates but in the context of disease etiology, not a demographic study.
 - **Rogers et al. 1982:** Claude excluded (hurricane impact report); Gemini saw 100 tracked fragments. Fragment survival post-hurricane may qualify under a broad interpretation.
 - **Bythell et al. 1993 (Hugo):** Claude excluded (fixed transects, not individually tagged); Gemini saw before/after mortality data. Transect-based mortality may not meet the "individually tracked" criterion.
-- **Neely et al. 2022:** Claude originally excluded citing geographic overlap with NOAA FL Keys monitoring; Gemini noted different institution (Nova Southeastern). Subsequent detailed site comparison (see `overlap_analysis.md` Section 2.5) confirmed **no geographic overlap** -- all Neely sites are in Lower/Middle Keys, Biscayne NP, and Dry Tortugas, while all NOAA plots are in the Upper Keys. Excluded because the paper reports LAI trajectories, not whole-colony survival counts (n_initial, n_dead). Priority data request if raw data obtainable.
+- **Neely et al. 2022:** Claude originally excluded citing geographic overlap with NOAA FL Keys monitoring; Gemini noted different institution (Nova Southeastern). Subsequent detailed site comparison (see `overlap_analysis.md` Section 2.5) confirmed **no geographic overlap** -- all Neely sites are in Lower/Middle Keys, Biscayne NP, and Dry Tortugas, while all NOAA plots are in the Upper Keys. Originally excluded because the paper reports LAI trajectories, not whole-colony survival counts. **Now INCLUDED (April 2026):** raw colony-level data were shared directly by K. Neely (878 colonies, Tier 1).
 - **Highsmith et al. 1980:** Claude excluded (fragments, not colonies); Gemini saw 412 tracked fragments with survival data. Fragment survival is included in the meta-analysis from other studies (e.g., Vardi 2011).
 
 **Category B: Claude included papers that Gemini excluded as NOAA overlap (2 papers)**
@@ -162,13 +162,13 @@ An independent third review (Claude Opus 4.6 reading each disputed PDF fresh, wi
 | Gladfelter 1982 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | WBD case-fatality (24 infected colonies selected); biased sample |
 | Rogers et al. 1982 | EXCLUDE | INCLUDE | **INCLUDE** | **INCLUDE** | 173 labeled branches tracked 11mo at 2 sites; comparable to existing fragment data |
 | Bythell et al. 1993 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | Chain transect cover data; cannot derive individual survival |
-| Neely et al. 2022 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | No NOAA site overlap (verified, see `overlap_analysis.md` Section 2.5), but survival not extractable from publication (reports LAI trajectories, not whole-colony survival counts). Priority data request. |
+| Neely et al. 2022 | EXCLUDE | INCLUDE | **EXCLUDE** | **INCLUDE** | No NOAA site overlap (verified, see `overlap_analysis.md` Section 2.5). Originally excluded because survival not extractable from publication. **Now INCLUDED (April 2026)** after raw colony-level data shared directly by K. Neely; 878 colonies, Tier 1. |
 | Highsmith et al. 1980 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | Cross-sectional (single survey); not longitudinal individual tracking |
 
 **Net changes to meta-analysis:**
 - Removed: Muller et al. 2008, Sutherland et al. 2016 (both originally included by Claude)
 - Added: Rogers et al. 1982 (originally excluded by Claude, identified as includable during adjudication)
-- k changed from 20 → 19 → 16 studies (21 effects after NOAA regional split and Garrison & Ward 2008 treatment split); pooled survival from 80.3% → 79.2% → 78.5%
+- k changed from 20 → 19 → 16 studies (21 effects after NOAA regional split and Garrison & Ward 2008 treatment split); pooled survival from 80.3% → 79.2% → 78.5%. Subsequently updated to k=17 (22 effects) after adding Neely et al. 2022 (April 2026, direct data sharing); pooled survival 78.0%
 
 ---
 

@@ -11,8 +11,8 @@ FIGURE 1
 LEGEND:
 Fig. 1 Study landscape for Acropora palmata demographic data across the
 Caribbean. (a) Geographic distribution of observations. Bubble size is
-proportional to the number of observations at each site (6 studies, 6 regions,
-N = 9,456 total observations). Study locations were geocoded to region
+proportional to the number of observations at each site (7 studies, 13 regions,
+N = 14,160 total observations). Study locations were geocoded to region
 centroids. (b) Data availability matrix showing sample sizes across 5 size
 classes (SC1-SC5) and Caribbean regions. Cell fill indicates sample size (n);
 grey cells indicate no data. Regions ordered by total sample size.
@@ -28,10 +28,12 @@ cross-tabulating survival records across the 5 canonical size classes
 SC5: >4,000 cm2) and Caribbean regions.
 
 RESULTS:
-The synthesis encompasses 9,456 observations from 6 studies conducted across 6
+The synthesis encompasses 14,160 observations from 7 studies conducted across 13
 Caribbean regions between 2004 and 2024. The data are geographically uneven:
-Florida contributed the largest share of observations (n = 4,031; 78% from the
-NOAA National Coral Reef Monitoring Program), followed by Curacao (n = 856),
+Florida contributed the largest share of observations, with the NOAA National
+Coral Reef Monitoring Program (n = 4,031) and Neely et al. 2022 (n = 878 colonies
+across Lower Keys, Middle Keys, Biscayne NP, and Dry Tortugas) providing the
+two largest individual-level datasets, followed by Curacao (n = 856),
 Navassa (n = 102), Mexico (n = 52), USVI (n = 46), and the Dominican Republic
 (n = 44). Florida had the most complete size-class coverage, with observations
 in all five classes. Several regions (Mexico, USVI, Dominican Republic) had
@@ -52,7 +54,7 @@ k = 4 basis dimensions, REML smoothness selection). Shaded ribbon indicates the
 bins on the log scale, minimum n = 5 per bin). Rug marks along the top axis
 indicate colonies that survived; rug marks along the bottom axis (orange)
 indicate colonies that died (n = 3,926 natural colonies from 2 studies; of
-these, 99% are from NOAA NCRMP). (b) Relative growth rate (RGR) as a function
+the majority are from NOAA NCRMP and Neely et al. 2022). (b) Relative growth rate (RGR) as a function
 of colony live tissue area. Solid teal line shows the fitted GAM (Gaussian
 family, k = 4). Orange points show binned median RGR values (25 bins). Grey
 points show individual observations (n = 3,034). Dashed horizontal line
@@ -87,8 +89,8 @@ framework of Detmer et al. (2025) to the size-RGR relationship. The gate test
 confirmed significant nonlinearity (delta AICc = 58.4, threshold = 2). The
 functional form was classified as sigmoidal, and the recommended threshold
 definition (T2: most negative second derivative) was used. Threshold uncertainty
-was estimated via leave-one-study-out cross-validation across 6 study folds.
-For the size-class synthesis (panel c), individual-level survival data from 6
+was estimated via leave-one-study-out cross-validation across 7 study folds.
+For the size-class synthesis (panel c), individual-level survival data from 7
 studies were binned into 5 size classes following Vardi et al. (2012).
 Summary-level data from 9 additional studies were assigned to size classes based
 on reported mean colony sizes or midpoints of reported size ranges. Non-annual
@@ -127,24 +129,24 @@ FIGURE 3
 
 LEGEND:
 Fig. 3 Caribbean-wide survival synthesis for Acropora palmata. (a) Forest plot
-of annual survival probability from the expanded meta-analysis (k = 16 studies,
-21 effects, N = 6,590). Studies are grouped by population type: natural colonies
-(k = 9, blue) and restoration fragments (k = 12, orange). Within each group, studies are
+of annual survival probability from the expanded meta-analysis (k = 17 studies,
+22 effects, N = 8,805). Studies are grouped by population type: natural colonies
+(k = 10, blue) and restoration fragments (k = 12, orange). Within each group, studies are
 ordered by survival rate. Point estimates with 95% confidence intervals are
 shown for each study. Point size is proportional to random-effects weight. Shape
 indicates data tier: circles for individual-level data, triangles for
 summary-level data. Diamonds show subgroup pooled estimates and the overall
 random-effects pooled estimate (bottom). The dashed vertical line marks the
-overall pooled survival (78.5%). The light blue shaded band indicates the 95%
-prediction interval (38.5-95.5%). Heterogeneity: I^2 = 96.3% [93.3%, 98.5%],
-tau^2 = 0.667. (b) Geographic variation in annual survival across 9 Caribbean
+overall pooled survival (78.0%). The light blue shaded band indicates the 95%
+prediction interval (39.5-95.1%). Heterogeneity: I^2 = 96.6%,
+tau^2 = 0.623. (b) Geographic variation in annual survival across 13 Caribbean
 regions. Points show individual study estimates colored by population type.
 Diamonds with CIs show pooled regional estimates (k >= 2). Dashed vertical line
-at overall pooled (78.5%).
+at overall pooled (78.0%).
 
 METHODS:
 We conducted a two-tier random-effects meta-analysis combining individual-level
-data from 6 studies (Tier 1, contributing 7 effects after splitting NOAA by
+data from 7 studies (Tier 1, contributing 8 effects after splitting NOAA by
 region) with study-level survival estimates from 10 additional published studies
 (Tier 2, contributing 14 effects after splitting Vardi 2011 by region and
 Garrison & Ward 2008 into control/relocated). Effect sizes were computed as
@@ -159,20 +161,21 @@ regions with k >= 2 contributing studies using the same random-effects
 framework.
 
 RESULTS:
-The expanded meta-analysis (k = 16 studies, 21 effects) yielded a pooled annual
-survival of 78.5%, but the 95% prediction interval (38.5-95.5%) indicates that
+The expanded meta-analysis (k = 17 studies, 22 effects) yielded a pooled annual
+survival of 78.0%, but the 95% prediction interval (39.5-95.1%) indicates that
 a new study could plausibly observe survival anywhere in this range — reflecting
-extreme heterogeneity (I^2 = 96.3%). The 95% confidence interval for the pooled
-estimate was 70.1-85.0%. Natural colony effects (k = 9) showed higher pooled
-survival (85.4%, CI: 73.4-92.5%) than restoration fragment effects (k = 12;
-74.5%, CI: 63.9-82.9%), but the 10.8 percentage point difference was not
-statistically significant (Q-moderator p = 0.110). Splitting NOAA by region
+extreme heterogeneity (I^2 = 96.6%). The 95% confidence interval for the pooled
+estimate was 70.1-84.3%. Natural colony effects (k = 10) showed higher pooled
+survival (84.1%, CI: 72.8-91.2%) than restoration fragment effects (k = 12;
+74.5%, CI: 63.9-82.9%), but the 9.5 percentage point difference was not
+statistically significant (Q-moderator p = 0.153). Splitting NOAA by region
 (FL Keys, Curacao, Navassa), Vardi 2011 by region (Jamaica, PR, Virgin
-Gorda), and Garrison & Ward 2008 by treatment (control, relocated) increased
-natural colony representation from k = 1 (NOAA only) to k = 9 effects across
+Gorda), Garrison & Ward 2008 by treatment (control, relocated), and adding
+Neely et al. 2022 as an independent FL Keys natural colony effect increased
+natural colony representation from k = 1 (NOAA only) to k = 10 effects across
 multiple regions, modeled with a three-level random-effects structure to
 account for within-study correlation.
-Regionally, survival estimates ranged widely across the 9 Caribbean regions,
+Regionally, survival estimates ranged widely across the 13 Caribbean regions,
 with pooled estimates available for regions with multiple contributing studies.
 The geographic pattern shows substantial variation that is not fully explained
 by population type, reinforcing the extreme heterogeneity detected in the
@@ -256,7 +259,7 @@ SUPPLEMENTARY FIGURE S1
 
 LEGEND:
 Fig. S1 Frequency distribution of colony live tissue area (cm2, log10 scale)
-across all survival and growth records (N = 9,456 from 6 studies across 6
+across all survival and growth records (N = 14,160 from 7 studies across 13
 regions). Dotted vertical lines indicate size class boundaries (SC1: 0-10 cm2;
 SC2: 10-100 cm2; SC3: 100-900 cm2; SC4: 900-4,000 cm2; SC5: >4,000 cm2).
 Orange vertical line marks the median colony size (585 cm2). Rug marks along
@@ -313,7 +316,7 @@ Fig. S8 Study-level demographic comparison of Acropora palmata within the
 shared size range (11-202 cm2, log10 scale) where both natural colonies and
 restoration fragments have data. This range spans less than 2% of the full
 size domain observed for natural colonies (1-15,000 cm2). Each study is
-displayed in its own panel column (6 studies x 2 metric rows = 12 panels),
+displayed in its own panel column (7 studies x 2 metric rows = 14 panels),
 with a distinct color per study to emphasize that study identity is the primary
 source of variation. (a) Annual survival probability by colony live tissue
 area. Faint points show individual observations (jittered at 0 and 1 for died
@@ -325,8 +328,8 @@ individual growth observations. Lines show fitted ordinary least-squares
 regressions with 95% confidence ribbons. Dashed horizontal line indicates zero
 growth. NOAA "fragment" records (n = 94) were excluded because these represent
 naturally broken colonies, not restoration outplants (59 of 73 unique NOAA
-fragment IDs also appear as natural colonies). Data from 6 studies: natural
-colony data from NOAA NCRMP and Mendoza-Quiroz et al. (2023); restoration
+fragment IDs also appear as natural colonies). Data from 7 studies: natural
+colony data from NOAA NCRMP, Neely et al. (2022), and Mendoza-Quiroz et al. (2023); restoration
 fragment data from Pausch et al. (2018), Kuffner et al. (2020), USGS USVI,
 and FUNDEMAR.
 
@@ -349,7 +352,7 @@ coral IDs revealed that the majority (59 of 73, 81%) also appeared as natural
 colonies in the same dataset. Study identity is encoded as the primary visual
 channel (distinct color per study, separate panels) because study identity is
 nearly perfectly confounded with population type: natural colony data derive
-almost exclusively from NOAA NCRMP (99% of natural colony records), while
+primarily from NOAA NCRMP and Neely et al. (2022), while
 restoration fragment data come from four separate studies, each with different
 geographic locations, monitoring protocols, and fragment handling histories.
 
@@ -381,13 +384,13 @@ SUPPLEMENTARY FIGURE S15
 ================================================================================
 
 LEGEND:
-Fig. S15 Geographic variation in annual Acropora palmata survival across 9
+Fig. S15 Geographic variation in annual Acropora palmata survival across 13
 Caribbean regions. Points show individual study estimates, colored by
 population type (blue = natural colonies, orange = restoration fragments) and
 sized by sample size. Dark diamonds with confidence intervals show pooled
 regional estimates for regions with k >= 2 studies. Regions are ordered by
 pooled survival rate. The dashed vertical line indicates the overall
-meta-analytic pooled estimate (78.5%). Sample sizes (N) are shown in
+meta-analytic pooled estimate (78.0%). Sample sizes (N) are shown in
 parentheses.
 
 
@@ -428,25 +431,25 @@ from assuming linear growth over multi-year periods.
 
 POPULATION MATRIX COMPOSITION:
 The transition matrix was restricted to natural colonies, making it heavily
-dependent on NOAA NCRMP data (which provides 99% of natural colony
+dependent on NOAA NCRMP and Neely et al. 2022 data (which provide the majority of natural colony
 observations). SC5 stasis — the parameter with the highest elasticity (54.8%)
 — derives entirely from NOAA data across Florida, Curacao, and Navassa. No
 non-NOAA study monitored colonies in the SC5 size range (>4,000 cm2). The
 bootstrap confidence interval for lambda [0.863, 1.035] includes replacement
 (lambda = 1), so population decline cannot be confirmed at the 95% level,
 though 65.1% of replicates indicate decline. The bootstrap failure rate (481 of
-2000 replicates invalid) reflects the small number of studies (k = 6) in
+2000 replicates invalid) reflects the small number of studies (k = 7) in
 hierarchical resampling; see Fig. 4c for the specific counts of valid vs total
 replicates.
 
 NATURAL VS. RESTORATION CONFOUNDING:
 Population type is nearly perfectly confounded with study identity in the
 individual-level data: natural colony records derive almost exclusively from
-NOAA NCRMP (99%), while restoration fragment data come from four separate
+NOAA NCRMP and Neely et al. (2022), while restoration fragment data come from four separate
 studies with different geographic locations, monitoring protocols, colony sizes,
-and temporal coverage. The expanded meta-analysis (k = 16 studies, 21 effects) includes 9 natural
-colony and 12 restoration effects, yielding a 10.8 percentage-point difference (85.4% vs 74.5%,
-p = 0.110) that is not statistically significant.
+and temporal coverage. The expanded meta-analysis (k = 17 studies, 22 effects) includes 10 natural
+colony and 12 restoration effects, yielding a 9.5 percentage-point difference (84.1% vs 74.5%,
+p = 0.153) that is not statistically significant.
 Within-restoration heterogeneity (31 percentage points between Pausch et al.
 57.5% and FUNDEMAR 88.4%) exceeds the between-type difference, and
 Mendoza-Quiroz natural colonies showed 100% survival (n = 35) within the

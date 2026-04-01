@@ -27,7 +27,7 @@ We would of course credit your contribution fully — either as a data citation 
 
 Our current meta-analysis has 21 study-level effects from 16 unique studies across 11 Caribbean regions. Your data would be one of the largest single additions and would substantially strengthen the analysis.
 
-[Note: email sent 2026-03-28 with k=18; meta-analysis subsequently updated to k=16/21 effects after NOAA regional split and Garrison & Ward 2008 treatment split]
+[Note: email sent 2026-03-28 with k=18; meta-analysis subsequently updated to k=16/21 effects after NOAA regional split and Garrison & Ward 2008 treatment split. Data received 2026-04-01; Neely et al. 2022 integrated as Tier 1 study (878 colonies). Meta-analysis now k=17/22 effects.]
 
 Thank you so much for considering this. I know how much work goes into maintaining long-term monitoring datasets, and we really appreciate your willingness to share (as noted in your data availability statement). Please don't hesitate to reach out if you have any questions about the project.
 

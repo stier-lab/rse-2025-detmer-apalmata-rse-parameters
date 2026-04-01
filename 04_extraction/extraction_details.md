@@ -3,10 +3,10 @@
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis (Detmer et al. 2025)
 **Purpose:** Document exactly what was extracted from each included study, where values came from in the source paper, and any assumptions made. A reader should be able to trace any number in the meta-analysis back to a specific page, table, or figure in the source paper.
 
-**Total included studies:** 16 unique studies contributing 21 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
+**Total included studies:** 17 unique studies contributing 22 study-level effects (NOAA split into FL Keys/Curacao/Navassa; Vardi 2011 split into Jamaica/PR/Virgin Gorda; Garrison & Ward 2008 split into control/relocated; Neely et al. 2022 added April 2026 via direct data sharing). Two additional studies were initially included but later removed: Ramos et al. 2024 (invalid survival proxy) and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colonies).
 
 **Data tiers:**
-- **Tier 1 (individual-level):** 5 studies with raw colony/fragment-level data from public repositories or direct sharing. Survival rates computed directly from individual fates.
+- **Tier 1 (individual-level):** 7 studies with raw colony/fragment-level data from public repositories or direct sharing. Survival rates computed directly from individual fates.
 - **Tier 2 (summary, hand-extracted):** 10 study-level effects from 8 papers, extracted by R. Detmer from published tables, figures, and text. (Roth et al. 2013 was subsequently removed for data overlap with Rogers & Muller 2012.)
 - **Tier 2 (summary, AI-extracted):** 3 study-level effects from 3 papers, extracted by Claude (Anthropic) from source PDFs in March 2026 and independently audited.
 

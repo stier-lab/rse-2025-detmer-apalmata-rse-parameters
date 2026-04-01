@@ -68,9 +68,9 @@ All 22 NOAA FL Keys plots are in the **Upper Keys** (Carysfort to Molasses, lat 
 
 The false overlap impression arose from: (a) NOAA funding, (b) methods trained by Dana Williams (NOAA), (c) use of the Williams & Miller 2006 monitoring protocol. None of these indicate shared colonies or sites.
 
-**Current exclusion reason:** The paper reports LAI trajectories and stressor prevalence, NOT whole-colony survival counts (n_initial, n_dead). Survival data cannot be extracted from the publication as written.
+**Former exclusion reason:** The paper reports LAI trajectories and stressor prevalence, NOT whole-colony survival counts (n_initial, n_dead). Survival data could not be extracted from the publication as written.
 
-**Priority data request:** If raw colony-level data were obtained from the authors (Karen Neely, kneely0@nova.edu), this study would contribute 508 colonies across 5 FL sub-regions entirely absent from the current dataset, dramatically improving geographic coverage and reducing NOAA dominance (currently 78%). This is the single highest-value data request for improving the meta-analysis.
+**Data request fulfilled (April 2026):** Raw colony-level data were shared directly by K. Neely. The dataset contains 878 colonies across 9 sites in 5 FL sub-regions entirely absent from the NOAA dataset, dramatically improving geographic coverage. Neely et al. 2022 is now INCLUDED as a Tier 1 individual-level study. See `04_extraction/neely_2022_data_integration.md` for integration details.
 
 ---
 
@@ -139,7 +139,7 @@ The false overlap impression arose from: (a) NOAA funding, (b) methods trained b
 | Miller et al. 2009 | -- | EXCLUDED (E4) | NOAA community monitoring overlap |
 | Muller et al. 2014 | -- | EXCLUDED (E4) | Same Haulover Bay colonies as Rogers & Muller 2012 |
 | Chapron et al. 2023 | -- | EXCLUDED (E4) | Same colonies as Kuffner et al. 2020 |
-| Neely et al. 2022 | 508 | EXCLUDED (no extractable data) | **No overlap** (Lower/Middle Keys + Biscayne + Dry Tortugas). Excluded because paper reports LAI only, not survival counts. **Priority data request.** |
+| Neely et al. 2022 | 878 | **INCLUDED** (Tier 1, April 2026) | **No overlap** (Lower/Middle Keys + Biscayne + Dry Tortugas). Raw data shared directly by K. Neely. |
 | Sutherland et al. 2016 (FKNMS) | 126 | EXCLUDED (E4) | Carysfort/Molasses overlap with NOAA (paper acknowledges p. 11) |
 | Sutherland et al. 2016 (EDR) | 92 | EXCLUDED (IRR audit) | Photostation design, not tagged colonies; TKO ambiguity; catastrophic WPX decline |
 | Lirman 2003 | -- | EXCLUDED (E4) | Model re-parameterization of Lirman 2000 data |

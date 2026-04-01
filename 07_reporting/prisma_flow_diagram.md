@@ -33,7 +33,7 @@ Numbers derived from `03_screening/full_text_screening.csv` (104 data rows) and 
 | Full-text assessed | 98 unique papers + 3 data repositories = 101 | `full_text_screening.csv`: 52 original + 33 expanded + 13 formal/expanded database (2026-03-29) |
 | Full-text excluded with reasons | 82 unique excluded studies (86 CSV rows; see reconciliation) | Categorized below |
 | **INCLUDED** | | |
-| Studies included in synthesis | 16 studies contributing 21 study-level effects | 6 Tier 1 individual + 7 Tier 2 hand-extracted + 3 Tier 2 AI-extracted |
+| Studies included in synthesis | 17 studies contributing 22 study-level effects | 7 Tier 1 individual + 7 Tier 2 hand-extracted + 3 Tier 2 AI-extracted |
 
 ---
 
@@ -159,9 +159,9 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
  ║                                INCLUDED                                          ║
  ╠═════════════════════════════════════════════════════════════════════════════════╣
  ║                                                                                 ║
- ║  16 studies contributing 21 study-level effects                                 ║
+ ║  17 studies contributing 22 study-level effects                                 ║
  ║                                                                                 ║
- ║  Tier 1 (individual-level):   6 studies (7 effects), ~5,200 survival records   ║
+ ║  Tier 1 (individual-level):   7 studies (8 effects), ~7,800 survival records   ║
  ║  Tier 2 (summary, hand):      7 studies (10 effects)                            ║
  ║  Tier 2 (summary, AI):        3 studies (3 effects)                             ║
  ║                                                                                 ║
@@ -169,9 +169,9 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
  ║    NOAA_survey -> FL Keys / Curacao / Navassa (3 effects)                       ║
  ║    Vardi 2011 -> Jamaica / Puerto Rico / Virgin Gorda (3 effects)               ║
  ║                                                                                 ║
- ║  Qualitative synthesis:    16 studies (all)                                     ║
- ║  Quantitative synthesis:   21 effects (three-level RE meta, PLO)               ║
- ║  Population model:         6 Tier 1 studies (Lefkovitch matrix)                ║
+ ║  Qualitative synthesis:    17 studies (all)                                     ║
+ ║  Quantitative synthesis:   22 effects (three-level RE meta, PLO)               ║
+ ║  Population model:         7 Tier 1 studies (Lefkovitch matrix)                ║
  ╚═════════════════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -255,16 +255,16 @@ flowchart TD
     E --> F
     F --> G
 
-    subgraph included["INCLUDED: 16 studies, 21 effects"]
-        H["<b>Tier 1 individual:</b> 6 studies (7 effects)<br/><b>Tier 2 hand-extracted:</b> 7 studies (10 effects)<br/><b>Tier 2 AI-extracted:</b> 3 studies (3 effects)<br/><br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda"]
+    subgraph included["INCLUDED: 17 studies, 22 effects"]
+        H["<b>Tier 1 individual:</b> 7 studies (8 effects)<br/><b>Tier 2 hand-extracted:</b> 7 studies (10 effects)<br/><b>Tier 2 AI-extracted:</b> 3 studies (3 effects)<br/><br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda<br/>Neely 2022: FL Keys (direct data sharing)"]
     end
 
     F --> H
 
     subgraph synthesis["SYNTHESIS"]
-        I["<b>Qualitative synthesis</b><br/>16 studies"]
-        J["<b>Quantitative meta-analysis</b><br/>21 effects, three-level RE, PLO"]
-        K["<b>Population model</b><br/>6 Tier 1 studies, Lefkovitch matrix"]
+        I["<b>Qualitative synthesis</b><br/>17 studies"]
+        J["<b>Quantitative meta-analysis</b><br/>22 effects, three-level RE, PLO"]
+        K["<b>Population model</b><br/>7 Tier 1 studies, Lefkovitch matrix"]
     end
 
     H --> I
@@ -295,8 +295,8 @@ The numbers in this flow diagram must satisfy these constraints:
 | Expanded search rows (2026-03-29) | 0 INCLUDED + 7 EXCLUDED | = 7 rows from expanded search 2026-03-29 phase |
 | Studies to extraction | 17 original + 5 expanded + 0 formal | = 22 initially extracted |
 | After audit | 22 extracted - 4 removed (Ramos 2024, Muller 2008, Sutherland 2016, Roth 2013) | = 18 entries in final data set (17 unique studies; Vardi = 3 regional entries) |
-| In meta-analysis | 16 unique studies enter meta (Mendoza-Quiroz contributes individual-level data for GAMs only) | = 16 studies |
-| Study-level effects | NOAA 3 regional + Vardi 3 regional + Garrison 2 treatment + 13 other studies x1 each | = 21 effects |
+| In meta-analysis | 17 unique studies enter meta (Mendoza-Quiroz contributes individual-level data for GAMs only) | = 17 studies |
+| Study-level effects | NOAA 3 regional + Vardi 3 regional + Garrison 2 treatment + 14 other studies x1 each | = 22 effects |
 | Exclusion reasons sum | 16 + 13 + 11 + 7 + 6 + 6 + 8 + 8 + 4 + 2 + 1 | = 82 unique excluded studies |
 
 ### Reconciliation: 104 CSV rows vs. 98 unique papers vs. 82 excluded studies
@@ -322,7 +322,7 @@ The original search (Jun--Dec 2025) did not record exact per-database hit counts
 
 **Note on audit removals:** Four studies were initially extracted but later removed after independent audit or overlap audit: Ramos et al. 2024 (invalid survival proxy -- RM prevalence, not whole-colony death), Muller et al. 2008 (imprecise survival counts, no size data, bleaching-confounded), Sutherland et al. 2016 (NOAA spatial overlap at EDR site + photostation design not suitable for individual-level tracking), and Roth et al. 2013 (data overlap with Rogers & Muller 2012 -- same Haulover Bay colony data, confirmed from the paper's explicit citation and acknowledgments). Meanwhile, Rogers et al. 1982 was reclassified from "excluded -- fragment survival only" to "included" after re-evaluation showed it provides extractable annual survival data (173 labeled branches, 2 St. Croix sites, 11 months post-hurricane). In the screening CSV these four removed studies are coded as EXCLUDED, and Rogers 1982 is coded as INCLUDED.
 
-**Note on study splits:** In the expanded meta-analysis, three studies were split into multiple effects: NOAA into 3 geographically independent regional effects (FL Keys, Curacao, Navassa), Vardi 2011 into 3 regional effects (Jamaica, Puerto Rico, Virgin Gorda), and Garrison & Ward 2008 into 2 treatment groups (control = Natural, relocated = Restoration). All split effects are modeled using a three-level random-effects structure (effects nested within studies) to account for within-study correlation. This yields 21 effects from 16 unique studies.
+**Note on study splits:** In the expanded meta-analysis, three studies were split into multiple effects: NOAA into 3 geographically independent regional effects (FL Keys, Curacao, Navassa), Vardi 2011 into 3 regional effects (Jamaica, Puerto Rico, Virgin Gorda), and Garrison & Ward 2008 into 2 treatment groups (control = Natural, relocated = Restoration). All split effects are modeled using a three-level random-effects structure (effects nested within studies) to account for within-study correlation. Including Neely et al. 2022 (added via direct data sharing, April 2026), this yields 22 effects from 17 unique studies.
 
 ---
 

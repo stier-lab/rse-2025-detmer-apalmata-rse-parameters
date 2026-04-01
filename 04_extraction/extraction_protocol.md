@@ -20,7 +20,7 @@ The search was tracked in `coral_parameters_lit_review.gsheet` (Google Drive). D
 **Reproducibility note:** Exact database-specific query dates and hit counts per search string were not formally recorded. These are flagged as `[TODO]` items in the PRISMA protocol.
 
 **52 unique studies were evaluated** across three parameter categories (38 survival, 28 growth, 5 reproduction, with overlap), yielding:
-- 6 studies with individual-level raw data (Tier 1)
+- 7 studies with individual-level raw data (Tier 1)
 - 9 studies with summary-level data hand-extracted from tables/figures (Tier 2)
 - 4 studies excluded (recruits/micro-fragments)
 - ~33 studies excluded for other reasons (cross-sectional only, data overlap, wrong species, no demographic data, linear growth only, etc.)
@@ -35,7 +35,7 @@ A comprehensive literature audit was conducted using AI (Claude) to ensure no ex
 4. **PubMed, Semantic Scholar, and Unpaywall** searches for additional studies
 5. **Critical audit** of all AI-extracted data by independent verification agents
 
-This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, NOAA regional split, and Garrison & Ward treatment split, resulted in a final count of k=16 unique studies contributing 21 study-level effects: three new studies were added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects), and Garrison & Ward 2008 was split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival).
+This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, NOAA regional split, Garrison & Ward treatment split, and the April 2026 addition of Neely et al. 2022 (direct data sharing), resulted in a final count of k=17 unique studies contributing 22 study-level effects: three new studies were added during the March 2026 expansion (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects), Garrison & Ward 2008 was split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival), and Neely et al. 2022 was added as a Tier 1 individual-level study (878 colonies, FL Keys, natural colonies) after raw data were shared directly by the authors.
 
 ### 1.2b Formal Database Searches and Expanded Screening (2026-03-29)
 
@@ -43,7 +43,7 @@ To complete PRISMA-required database search documentation, formal Boolean search
 
 Total records identified across all databases: ~2,518 (PubMed 351 + WoS 1,095 + Elicit 298 + citation chaining 381 + Google Scholar ~150 + bioRxiv/EuropePMC 23 + data repositories 5). Scopus was not accessible and is documented as a limitation. Estimated unique after deduplication: ~1,200--1,400.
 
-**Conclusion:** No additional extractable studies exist beyond the 16 already included in the meta-analysis. The formal database searches confirm the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+**Conclusion:** No additional extractable studies exist beyond the 17 already included in the meta-analysis (the 16th was added via the March 2026 search; the 17th, Neely et al. 2022, was added in April 2026 via direct data sharing after outreach to the authors). The formal database searches confirm the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
 
 ### 1.3 AI Data Extraction Method
 
@@ -107,7 +107,7 @@ To assess screening reliability and reduce single-rater bias, 31 candidate paper
 
 **Consensus excludes retained:** 22 papers excluded by both raters remained excluded after adjudication.
 
-**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18), then NOAA was split by region (FL Keys, Curacao, Navassa) and Garrison & Ward 2008 was split into control (Natural, n=45, 80% survival) and relocated (Restoration, n=30, 55% survival) treatment-group effects, yielding 16 unique studies contributing 21 study-level effects. Pooled annual survival is 78.5% (95% CI: 70.1–85.0%, I² = 96.3%). Natural vs. restoration subgroup composition is 9 natural + 12 restoration effects, with a non-significant difference (p = 0.110).
+**Net effect on meta-analysis:** k changed from 20 to 18 (via IRR audit to k=19, then overlap audit removing Roth et al. 2013 to k=18), then NOAA was split by region (FL Keys, Curacao, Navassa) and Garrison & Ward 2008 was split into control (Natural, n=45, 80% survival) and relocated (Restoration, n=30, 55% survival) treatment-group effects, yielding 16 unique studies contributing 21 study-level effects. Subsequently, Neely et al. 2022 was added (April 2026, direct data sharing) as a Tier 1 study with 878 FL Keys natural colonies, bringing the final count to 17 unique studies contributing 22 study-level effects. Pooled annual survival is 78.0% (95% CI: 70.1–84.3%, I² = 96.6%). Natural vs. restoration subgroup composition is 10 natural + 12 restoration effects, with a non-significant difference (p = 0.153).
 
 ---
 
@@ -167,7 +167,7 @@ Because multiple studies from the same monitoring programs exist, the following 
 
 4. **Sutherland et al. 2016**: Excluded during the IRR audit (Section 1.5). The contemporary survey component (FKNMS, 2008–2014) overlapped spatially with NOAA monitoring. The EDR historical dataset (1994–2004, Lower Keys) tracked permanent photostations/quadrats rather than individually tagged colonies, violating the longitudinal individual-tracking inclusion criterion.
 
-5. **Neely et al. 2022**: 508 colonies at 9 FL Keys sites. Detailed site comparison reveals **no geographic overlap** with NOAA monitoring (see `03_screening/overlap_analysis.md` Section 2.5 for site-by-site verification). Excluded because the paper reports LAI trajectories and stressor prevalence, NOT whole-colony survival counts (n_initial, n_dead). If raw colony-level data were obtained from the authors, this study would be a high-priority addition (508 colonies across Lower Keys, Middle Keys, Biscayne NP, and Dry Tortugas — regions absent from the current dataset).
+5. **Neely et al. 2022**: 878 colonies at 9 FL Keys sites. Detailed site comparison reveals **no geographic overlap** with NOAA monitoring (see `03_screening/overlap_analysis.md` Section 2.5 for site-by-site verification). Originally excluded because the published paper reports LAI trajectories and stressor prevalence, not whole-colony survival counts. **Now included (April 2026):** raw colony-level data were shared directly by K. Neely. See `04_extraction/neely_2022_data_integration.md` for full integration notes.
 
 ---
 

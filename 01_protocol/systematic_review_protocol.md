@@ -344,8 +344,8 @@ The following counts reconstruct the screening process across both search phases
     │    data: ~6         │    ┌────────┴─────────────────┐
     │  • Linear growth    │    │  Post-audit inclusion     │
     │    only: ~5         │    │                          │
-    │  • Other: ~6        │    │  Passed audit: 16 studies │
-    │                     │    │   6 Tier 1 (individual)   │
+    │  • Other: ~6        │    │  Passed audit: 17 studies │
+    │                     │    │   7 Tier 1 (individual)   │
     │  From expanded      │    │   8 Tier 2 (hand-extract) │
     │  search (~29):      │    │   3 Tier 2 (AI-extract)   │
     │  • Did not meet     │    │                          │
@@ -356,9 +356,9 @@ The following counts reconstruct the screening process across both search phases
     │    after audit)     │    │   Roth 2013 (overlap)     │
     │                     │    │                          │
     │  From formal/       │    │  ─────────────────────── │
-    │  expanded 2026-03-29│    │  FINAL: 16 studies        │
+    │  expanded 2026-03-29│    │  FINAL: 17 studies        │
     │  (13 papers):       │    │                          │
-    │  • All excluded     │    │  contributing 21 study-   │
+    │  • All excluded     │    │  contributing 22 study-   │
     │                     │    │  level survival effects   │
     └─────────────────────┘    │
                               │  (NOAA split into 3       │
@@ -371,7 +371,7 @@ The following counts reconstruct the screening process across both search phases
                               └──────────────────────────┘
 ```
 
-> **Important note on k counts:** The meta-analysis reports 21 study-level effects from 16 unique studies. NOAA is split into 3 regional effects (FL Keys, Curacao, Navassa), Vardi 2011 contributes 3 independent regional effects (Jamaica, Puerto Rico, Virgin Gorda), and Garrison & Ward 2008 is split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival) because the study explicitly tracked both natural and transplanted colonies. Roth et al. 2013 was removed for data overlap with Rogers & Muller 2012 (same Haulover Bay colonies). Earlier project documentation referencing k=16 (without the NOAA split) or k=18 reflects intermediate states before the March 2026 restructuring.
+> **Important note on k counts:** The meta-analysis reports 22 study-level effects from 17 unique studies. NOAA is split into 3 regional effects (FL Keys, Curacao, Navassa), Vardi 2011 contributes 3 independent regional effects (Jamaica, Puerto Rico, Virgin Gorda), Garrison & Ward 2008 is split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival), and Neely et al. 2022 contributes 1 FL Keys natural colony effect (878 colonies, added April 2026 via direct data sharing). Roth et al. 2013 was removed for data overlap with Rogers & Muller 2012 (same Haulover Bay colonies). Earlier project documentation referencing k=16 (without the NOAA split) or k=18 reflects intermediate states before the March 2026 restructuring.
 
 ### 6.2 Mermaid Diagram
 
@@ -396,7 +396,7 @@ flowchart TD
     D --- D11["E11 Fragment survival (1)"]
     E --> F["Independent audit + overlap audit"]
     F --> G["Removed: 4 studies<br/>Ramos 2024 (invalid proxy)<br/>Muller 2008 (imprecise/bleaching)<br/>Sutherland 2016 (photostation/NOAA)<br/>Roth 2013 (overlap Rogers & Muller)"]
-    F --> H["INCLUDED: 16 studies<br/>21 study-level effects<br/>(6 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI;<br/>NOAA + Vardi split by region;<br/>Garrison & Ward split by treatment)"]
+    F --> H["INCLUDED: 17 studies<br/>22 study-level effects<br/>(7 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI;<br/>NOAA + Vardi split by region;<br/>Garrison & Ward split by treatment;<br/>Neely 2022 added Apr 2026)"]
 ```
 
 ---
@@ -431,7 +431,7 @@ No formal assessment of publication bias (e.g., funnel plot, Egger's test) has b
 
 ### 7.5 NOAA Data Dominance
 
-The NOAA Acropora Demographic Monitoring Program contributes 78% of individual-level observations (4,025 of 5,213). Results are assessed for robustness via leave-one-study-out (LOSO) sensitivity analysis (Script 15), which removes NOAA data entirely and re-estimates all vital rates.
+The NOAA Acropora Demographic Monitoring Program is the largest single contributor to individual-level observations (4,025 colonies). With the addition of Neely et al. 2022 (878 colonies), NOAA dominance is reduced but remains substantial. Results are assessed for robustness via leave-one-study-out (LOSO) sensitivity analysis (Script 15), which removes NOAA data entirely and re-estimates all vital rates.
 
 ---
 
@@ -456,7 +456,8 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 |---|---|---|
 | Dec 2025 | Initial compilation complete | 16 studies (k=16) |
 | March 2026 | Expanded search + AI extraction | Completeness audit; net result: 3 new studies added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), 1 reclassified (Rogers 1982 from excluded to included) |
-| March 2026 | IRR audit + overlap audit + NOAA regional split + Garrison treatment split | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). NOAA split into FL Keys/Curacao/Navassa. Garrison & Ward 2008 split into control/relocated (2 effects). Final: 16 studies, 21 effects. |
+| March 2026 | IRR audit + overlap audit + NOAA regional split + Garrison treatment split | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). NOAA split into FL Keys/Curacao/Navassa. Garrison & Ward 2008 split into control/relocated (2 effects). Interim: 16 studies, 21 effects. |
+| April 2026 | Neely et al. 2022 data received (direct sharing from K. Neely) | 878 FL Keys natural colonies added as Tier 1 individual-level study. No NOAA overlap (Lower/Middle Keys + Dry Tortugas vs. NOAA Upper Keys). Includes 2014 disease catastrophe (flagged). Final: 17 studies, 22 effects. |
 | March 2026 | Mortality definition criterion tightened | Ramos et al. 2024 audit revealed that partial mortality prevalence was being conflated with whole-colony death |
 | March 2026 | PRISMA protocol formalized (this document) | Reviewer/submission preparation. Protocol documented retrospectively; not prospectively registered. |
 

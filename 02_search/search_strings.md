@@ -198,7 +198,7 @@ The following papers were identified as potentially meeting the inclusion criter
 
 The following papers surfaced in the searches and were confirmed as already accounted for:
 
-**Already included (16 studies, 21 effects):**
+**Already included (17 studies, 22 effects):**
 - Mendoza Quiroz et al. 2023 (PeerJ) -- `mendoza_quiroz_2023`
 - Ramos Romero et al. 2025 (PeerJ) -- `ramos_romero_2025`
 - Pausch et al. 2018 -- `pausch_2018`
@@ -210,7 +210,7 @@ The following papers surfaced in the searches and were confirmed as already acco
 - Forrester et al. 2013 -- `forrester_2013`
 
 **Already excluded:**
-- Neely et al. 2022 (population trajectory, Florida Keys) -- no individual-level survival
+- Neely et al. 2022 (population trajectory, Florida Keys) -- NOW INCLUDED (April 2026, direct data sharing; 878 colonies)
 - Lirman 2000 (fragmentation) -- excluded per protocol
 - Miller 2009 / Muller 2014 -- excluded per protocol
 - Garcia-Uruena 2020 -- excluded per protocol

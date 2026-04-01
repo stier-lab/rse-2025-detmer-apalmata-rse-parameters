@@ -137,7 +137,7 @@ This is consistent with our treatment of NOAA data, which includes all years (in
 ## Impact on Meta-Analysis
 
 Adding Neely with **all intervals** (including catastrophe):
-- N increases from ~5,200 to ~8,000+ individual survival records
+- N increases from ~5,200 to ~7,800 individual survival records
 - Becomes second-largest Tier 1 study after NOAA
 - Mean survival likely **decreases** substantially (overall 33.9% across 5 years)
 - **Breaks the NOAA dominance** — first independent large-scale FL Keys dataset

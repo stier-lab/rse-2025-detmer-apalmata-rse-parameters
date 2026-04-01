@@ -77,7 +77,7 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 **Measurement quality is generally strong** (mean 1.68/2). Most studies used tagged, individually tracked colonies with repeated measurements of size (L x W x %Live or equivalent). The NOAA survey, Vardi dissertation, and Rogers & Muller (2012) represent particularly rigorous measurement protocols with repeat photography, GPS relocation, and standardized size metrics. The weakest measurement scores come from studies that relied on visual estimation of tissue cover without direct measurement (Bruckner & Bruckner 2001, Maurer et al. 2022, Fundemar).
 
-**Selection is the weakest domain** (mean 1.28/2). Only 3 of 16 studies used truly random or census-based sampling (NOAA, Vardi, Rogers & Muller). The remaining 13 studies used convenience or experimental designs -- fragments selected from donor colonies, nursery stock, or storm-generated material. This is inherent to the mix of natural population monitoring and restoration studies in this synthesis, and it means that the individual-level data are dominated by fragments/outplants in small size classes and NOAA census data in large size classes.
+**Selection is the weakest domain** (mean 1.28/2). Only 4 of 17 studies used truly random or census-based sampling (NOAA, Neely, Vardi, Rogers & Muller). The remaining 13 studies used convenience or experimental designs -- fragments selected from donor colonies, nursery stock, or storm-generated material. This is inherent to the mix of natural population monitoring and restoration studies in this synthesis, and it means that the individual-level data are dominated by fragments/outplants in small size classes and NOAA census data in large size classes.
 
 **Attrition is the most problematic domain** (mean 1.00/2). Three studies scored 0 (Bruckner & Bruckner 2001, Garrison & Ward 2008, Sutherland et al. 2016), reflecting either high fragment loss, colony disappearance, or extreme biological mortality. However, for studies of a declining species experiencing disease outbreaks and hurricanes, high observed mortality is not methodological bias but genuine biological signal. The distinction between "lost to follow-up" (methodological) and "died" (biological) is blurred in coral demography, since colony disappearance (no skeleton found) could represent either. Studies that explicitly distinguished these fates (Garrison & Ward, Sutherland et al.) received credit for methodological rigor even when biological attrition was high.
 
@@ -87,11 +87,11 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 **Key caveats for the synthesis:**
 
-1. **NOAA dominance**: The highest-quality study (10/10) contributes 78% of individual-level data. Results are heavily weighted toward this single data source.
+1. **NOAA dominance**: The highest-quality study (10/10) is the largest single contributor to individual-level data. Results are heavily weighted toward this data source, though the addition of Neely et al. 2022 (878 colonies) has partially reduced NOAA's dominance.
 
-2. **Tier structure matters**: The 6 Tier 1 (individual-level) studies average 6.8/10, while the 12 Tier 2 (summary/AI-extracted) studies average 7.0/10. The Tier 2 studies are not systematically lower quality, but their data contribute less statistical weight due to summary-level reporting.
+2. **Tier structure matters**: The 7 Tier 1 (individual-level) studies average 7.1/10, while the 11 Tier 2 (summary/AI-extracted) studies average 6.8/10. The Tier 2 studies are not systematically lower quality, but their data contribute less statistical weight due to summary-level reporting.
 
-3. **Mortality definition heterogeneity**: The single biggest methodological concern is that "mortality" means different things across studies. NOAA defines it as no tissue/skeleton remaining; Kuffner et al. use >=50% tissue loss; Garrison & Ward include colony disappearance. This heterogeneity likely contributes to the extreme I-squared of 96.3% observed in the meta-analysis.
+3. **Mortality definition heterogeneity**: The single biggest methodological concern is that "mortality" means different things across studies. NOAA defines it as no tissue/skeleton remaining; Kuffner et al. use >=50% tissue loss; Garrison & Ward include colony disappearance. This heterogeneity likely contributes to the extreme I-squared of 96.6% observed in the meta-analysis.
 
 4. **No study scored 0 on selection**: Even restoration/experimental studies described their selection methods adequately. This is reassuring for transparency but does not eliminate the fundamental non-representativeness of fragment-based studies for inferring wild population vital rates.
 
