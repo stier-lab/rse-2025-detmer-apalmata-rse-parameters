@@ -1,0 +1,8 @@
+metric,value,n,total,region,notes
+frac_study_years_any_disturbance,0.7608695652173914,35,46,all,Fraction of all study-region-years with >= 1 documented event
+frac_study_years_major_catastrophic,0.30434782608695654,14,46,all,Fraction with severity >= major (3) or catastrophic (4)
+return_interval_major_flk,2.625,8,21,Florida Keys,Estimated return interval: 2.6 yr (8 major/catastrophic years in 21-year span)
+return_interval_bleaching_flk,2.625,8,21,Florida Keys,bleaching: 8 events in 8 unique years over 21-year span
+return_interval_cold_snap_flk,21,1,21,Florida Keys,cold_snap: 1 events in 1 unique years over 21-year span
+return_interval_disease_flk,2.3333333333333335,9,21,Florida Keys,disease: 9 events in 9 unique years over 21-year span
+return_interval_hurricane_flk,4.2,5,21,Florida Keys,hurricane: 8 events in 5 unique years over 21-year span
