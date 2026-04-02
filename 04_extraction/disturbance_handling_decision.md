@@ -12,9 +12,9 @@ Three categories of disturbance are present in the data:
 | Study | Flag | N records | Survival | Context |
 |-------|------|-----------|----------|---------|
 | NOAA_survey | `storm` | 571 | 85.1% | FL Keys (91%) + Curacao (55%); storms are part of normal FL Keys regime |
-| neely_et_al_2022 | `disease_2014` | 639 | 53.2% | Catastrophic mortality event, likely white pox or WBD |
-| neely_et_al_2022 | `disease_2014_aftermath` | 375 | 61.3% | Continued elevated mortality post-event |
-| pausch_et_al_2018 | *none* | 969 | 57.4% | FL Keys 2015-2016; overlaps disease aftermath but not flagged |
+| neely_et_al_2022 | `disease_2014` | 639 | 53.2% | 2014-2015 thermal bleaching + *Coralliophila* predation (Williams et al. 2017; flag name is a misnomer) |
+| neely_et_al_2022 | `disease_2014_aftermath` | 375 | 61.3% | Continued post-bleaching mortality |
+| pausch_et_al_2018 | *none* | 969 | 57.4% | FL Keys 2015-2016; same bleaching event as Neely but unflagged |
 | All others | *none* | varies | varies | Many span hurricane/disease years but disturbance not recorded |
 
 Only 2 of 17 studies have any disturbance flagging. The remaining 15 studies almost certainly include disturbance-affected intervals but lack metadata to identify them.

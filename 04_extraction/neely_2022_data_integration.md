@@ -79,15 +79,18 @@ Between Fall 2013 (TP4) and Winter 2014-15 (TP5), survival plummeted:
 
 **~300 colonies died in a single year.** Sites in the Lower Keys (West Sambo: 0% final survival; Sand Key: 3-4%) were nearly completely wiped out, while Dry Tortugas (53-54%) and Sombrero Reef (61-91%) fared better.
 
-### Likely cause
+### Confirmed cause: 2014-2015 thermal bleaching
 
-The timing (2014) and geographic pattern (strongest in Lower Keys, weaker offshore/south) align with:
-1. **Stony Coral Tissue Loss Disease (SCTLD)** — first documented in Miami-Dade in 2014, though it primarily affects massive/brain corals, not *Acropora*
-2. **Cold stress / bleaching** — the 2014-2015 winter was a La Nina year with potential cold snaps in the Keys
-3. **White pox/white band disease** — the primary *A. palmata* diseases, which can cause mass mortality
-4. **Hurricane/storm damage** — no major hurricanes hit the Keys in 2013-2014
+Published evidence (Williams et al. 2017, Marine Pollution Bulletin; Neely et al. 2022, Frontiers in Marine Science) confirms this was caused by **back-to-back thermal bleaching events in 2014 and 2015**, compounded by chronic corallivorous snail predation (*Coralliophila abbreviata*):
 
-The exact cause should be confirmed with the Neely lab. The disturbance is not specified in the data file.
+- SST exceeded 31C (87.8F) at FL Keys sites in August 2014; DHW reached 7.5-10.9
+- Up to 100% of *A. palmata* colonies were bleached at NOAA Upper Keys sites
+- Sites with chronic *Coralliophila* predation experienced near-total mortality
+- Geographic pattern: inshore/forereef sites (Marker 3, Sand Key, West Sambo) hit hardest; offshore backreef (Dry Tortugas) largely spared — consistent with thermal stress refugia
+
+**Ruled out:** SCTLD (does not affect *Acropora* spp.); cold stress (no cold snap in 2014); hurricanes (none in 2013-2014). White pox may have contributed secondarily (bleaching increases disease susceptibility) but was not the primary driver.
+
+Note: The disturbance flag `disease_2014` is a misnomer; `bleaching_2014` would be more accurate but is retained for pipeline compatibility.
 
 ### Implications for analysis
 

@@ -15,15 +15,19 @@
 
 **Confirmed: Back-to-back thermal bleaching events in 2014 and 2015**, compounded by corallivorous snail predation (*Coralliophila abbreviata*).
 
-Evidence from the actual Neely et al. (2022) Frontiers paper:
-- SST exceeded 31C (87.8F) at Upper Keys sites in August 2014
-- An estimated 50% of the monitored elkhorn coral population died
-- Sites chronically impacted by corallivorous snails experienced near-complete mortality
-- Geographic pattern: Marker 3 Reef (inshore, Biscayne NP) suffered 75% mortality; Dry Tortugas (offshore, cooler) retained >90% survival
+Evidence from published literature:
+- Williams et al. (2017, *Marine Pollution Bulletin*) documented the same event at NOAA Upper Keys sites: "severe and unprecedented bleaching was observed with up to 100% of colonies bleached" in both 2014 and 2015; DHW reached 7.5-10.9; *A. palmata* live tissue cover declined by one-third
+- SST exceeded 31.3C at Keys reef sites in August 2014
+- Neely et al. (2022, *Frontiers*) documents acute stressors including "severe bleaching events" compounded by chronic *Coralliophila* predation
+- Geographic pattern: inshore/forereef sites with chronic snail stress (Marker 3: 25% survival; Sand Key: 5.6%) hit hardest; offshore backreef (Dry Tortugas: 93%) largely spared — signature of compounding thermal + predation stress
 
-**NOT caused by SCTLD** — which primarily affects massive corals, not *Acropora*.
+**NOT caused by SCTLD** — *Acropora* spp. are not susceptible to SCTLD. White pox may have contributed secondarily (bleaching increases disease susceptibility) but was not the primary driver.
 
-Source: [Neely et al. 2022, Frontiers in Marine Science](https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2022.978785/full)
+Sources:
+- [Williams et al. 2017, Marine Pollution Bulletin (PubMed 28751030)](https://pubmed.ncbi.nlm.nih.gov/28751030/)
+- [Neely et al. 2022, Frontiers in Marine Science](https://www.frontiersin.org/journals/marine-science/articles/10.3389/fmars.2022.978785/full)
+
+Note: The data flag `disease_2014` is a misnomer; `bleaching_2014` would be more accurate but is retained for pipeline compatibility.
 
 ---
 
