@@ -1,0 +1,166 @@
+region,category_at_closest,n_storms,n_direct_hits,mean_distance_km
+Bahamas,Tropical Depression,11,0,128.5
+Bahamas,Tropical Storm,12,4,114.6
+Bahamas,Category 1,7,1,103.4
+Bahamas,Category 2,3,0,102.9
+Bahamas,Category 3,2,0,130.7
+Bahamas,Category 4,1,0,60.5
+Bahamas,Category 5,2,0,113.4
+Bahamas,Subtropical,1,0,179.7
+Bahamas,Post-tropical,0,0,NA
+Bahamas,Miscellaneous,4,0,113.9
+Bahamas,Unknown,0,0,NA
+British Virgin Islands,Tropical Depression,10,1,124.8
+British Virgin Islands,Tropical Storm,20,3,90.1
+British Virgin Islands,Category 1,5,2,90.6
+British Virgin Islands,Category 2,3,1,75.5
+British Virgin Islands,Category 3,0,0,NA
+British Virgin Islands,Category 4,8,0,123.5
+British Virgin Islands,Category 5,2,1,64.3
+British Virgin Islands,Subtropical,1,1,15.3
+British Virgin Islands,Post-tropical,0,0,NA
+British Virgin Islands,Miscellaneous,3,1,138.5
+British Virgin Islands,Unknown,0,0,NA
+Cuba,Tropical Depression,12,3,85.9
+Cuba,Tropical Storm,12,3,83.8
+Cuba,Category 1,5,1,116.3
+Cuba,Category 2,5,1,103.6
+Cuba,Category 3,3,0,94.8
+Cuba,Category 4,3,0,121.1
+Cuba,Category 5,0,0,NA
+Cuba,Subtropical,0,0,NA
+Cuba,Post-tropical,0,0,NA
+Cuba,Miscellaneous,4,2,74.9
+Cuba,Unknown,0,0,NA
+Curacao,Tropical Depression,4,1,132.1
+Curacao,Tropical Storm,5,2,85.2
+Curacao,Category 1,0,0,NA
+Curacao,Category 2,1,0,89.1
+Curacao,Category 3,0,0,NA
+Curacao,Category 4,2,0,171.5
+Curacao,Category 5,0,0,NA
+Curacao,Subtropical,0,0,NA
+Curacao,Post-tropical,0,0,NA
+Curacao,Miscellaneous,2,1,46.9
+Curacao,Unknown,0,0,NA
+Dominican Republic,Tropical Depression,7,2,105.2
+Dominican Republic,Tropical Storm,13,5,84.1
+Dominican Republic,Category 1,5,2,81.5
+Dominican Republic,Category 2,0,0,NA
+Dominican Republic,Category 3,3,1,107.6
+Dominican Republic,Category 4,0,0,NA
+Dominican Republic,Category 5,2,0,142.5
+Dominican Republic,Subtropical,0,0,NA
+Dominican Republic,Post-tropical,0,0,NA
+Dominican Republic,Miscellaneous,4,1,109.8
+Dominican Republic,Unknown,0,0,NA
+Dry Tortugas,Tropical Depression,8,2,123.3
+Dry Tortugas,Tropical Storm,16,3,109
+Dry Tortugas,Category 1,6,0,108.5
+Dry Tortugas,Category 2,6,3,58.2
+Dry Tortugas,Category 3,3,2,79.1
+Dry Tortugas,Category 4,3,0,157.1
+Dry Tortugas,Category 5,0,0,NA
+Dry Tortugas,Subtropical,1,0,145.3
+Dry Tortugas,Post-tropical,0,0,NA
+Dry Tortugas,Miscellaneous,6,0,125.3
+Dry Tortugas,Unknown,0,0,NA
+Florida Keys Lower,Tropical Depression,10,1,119.3
+Florida Keys Lower,Tropical Storm,16,3,104.2
+Florida Keys Lower,Category 1,5,2,90
+Florida Keys Lower,Category 2,3,1,84.8
+Florida Keys Lower,Category 3,2,0,152.2
+Florida Keys Lower,Category 4,2,1,67
+Florida Keys Lower,Category 5,0,0,NA
+Florida Keys Lower,Subtropical,0,0,NA
+Florida Keys Lower,Post-tropical,1,0,137.3
+Florida Keys Lower,Miscellaneous,5,0,176.1
+Florida Keys Lower,Unknown,0,0,NA
+Florida Keys Upper,Tropical Depression,12,4,113.8
+Florida Keys Upper,Tropical Storm,14,4,106.7
+Florida Keys Upper,Category 1,4,1,85.6
+Florida Keys Upper,Category 2,3,0,140.6
+Florida Keys Upper,Category 3,0,0,NA
+Florida Keys Upper,Category 4,1,0,128.9
+Florida Keys Upper,Category 5,1,1,44.5
+Florida Keys Upper,Subtropical,0,0,NA
+Florida Keys Upper,Post-tropical,1,0,93.9
+Florida Keys Upper,Miscellaneous,4,0,121.7
+Florida Keys Upper,Unknown,0,0,NA
+Jamaica,Tropical Depression,4,0,152
+Jamaica,Tropical Storm,9,3,97.7
+Jamaica,Category 1,3,0,119.8
+Jamaica,Category 2,0,0,NA
+Jamaica,Category 3,3,1,54.6
+Jamaica,Category 4,4,1,101.1
+Jamaica,Category 5,0,0,NA
+Jamaica,Subtropical,0,0,NA
+Jamaica,Post-tropical,0,0,NA
+Jamaica,Miscellaneous,5,2,85.1
+Jamaica,Unknown,0,0,NA
+Mexican Caribbean,Tropical Depression,12,1,121.5
+Mexican Caribbean,Tropical Storm,15,3,116.7
+Mexican Caribbean,Category 1,4,3,59.5
+Mexican Caribbean,Category 2,4,0,135.8
+Mexican Caribbean,Category 3,3,1,92.2
+Mexican Caribbean,Category 4,1,1,22.2
+Mexican Caribbean,Category 5,2,1,102.7
+Mexican Caribbean,Subtropical,1,0,167.1
+Mexican Caribbean,Post-tropical,0,0,NA
+Mexican Caribbean,Miscellaneous,6,0,123.6
+Mexican Caribbean,Unknown,0,0,NA
+Navassa,Tropical Depression,4,0,139.8
+Navassa,Tropical Storm,11,3,96.2
+Navassa,Category 1,4,1,139.8
+Navassa,Category 2,2,0,110
+Navassa,Category 3,1,0,94.4
+Navassa,Category 4,5,1,129.4
+Navassa,Category 5,0,0,NA
+Navassa,Subtropical,0,0,NA
+Navassa,Post-tropical,0,0,NA
+Navassa,Miscellaneous,4,0,114.5
+Navassa,Unknown,0,0,NA
+Puerto Rico,Tropical Depression,5,1,74.9
+Puerto Rico,Tropical Storm,14,2,104.2
+Puerto Rico,Category 1,6,2,103.3
+Puerto Rico,Category 2,2,1,91.9
+Puerto Rico,Category 3,3,0,127
+Puerto Rico,Category 4,0,0,NA
+Puerto Rico,Category 5,2,0,147.5
+Puerto Rico,Subtropical,1,1,35
+Puerto Rico,Post-tropical,0,0,NA
+Puerto Rico,Miscellaneous,5,0,103.8
+Puerto Rico,Unknown,0,0,NA
+St. Croix,Tropical Depression,9,1,109.3
+St. Croix,Tropical Storm,18,5,94.8
+St. Croix,Category 1,4,1,90.1
+St. Croix,Category 2,3,2,72.4
+St. Croix,Category 3,1,1,39.5
+St. Croix,Category 4,4,2,93.4
+St. Croix,Category 5,3,1,97.8
+St. Croix,Subtropical,1,0,78.6
+St. Croix,Post-tropical,0,0,NA
+St. Croix,Miscellaneous,5,0,112
+St. Croix,Unknown,0,0,NA
+US Virgin Islands,Tropical Depression,8,1,96.6
+US Virgin Islands,Tropical Storm,20,3,101.9
+US Virgin Islands,Category 1,4,1,83.1
+US Virgin Islands,Category 2,3,2,65.4
+US Virgin Islands,Category 3,1,1,45.7
+US Virgin Islands,Category 4,4,2,91.4
+US Virgin Islands,Category 5,3,1,102.3
+US Virgin Islands,Subtropical,1,0,66.7
+US Virgin Islands,Post-tropical,0,0,NA
+US Virgin Islands,Miscellaneous,5,0,121.1
+US Virgin Islands,Unknown,0,0,NA
+Virgin Gorda,Tropical Depression,11,1,124.8
+Virgin Gorda,Tropical Storm,21,3,96.2
+Virgin Gorda,Category 1,5,2,84.1
+Virgin Gorda,Category 2,3,0,80.6
+Virgin Gorda,Category 3,0,0,NA
+Virgin Gorda,Category 4,8,0,114.7
+Virgin Gorda,Category 5,2,1,62.2
+Virgin Gorda,Subtropical,1,1,33.5
+Virgin Gorda,Post-tropical,0,0,NA
+Virgin Gorda,Miscellaneous,3,0,147.2
+Virgin Gorda,Unknown,0,0,NA
