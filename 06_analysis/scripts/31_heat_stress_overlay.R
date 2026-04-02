@@ -243,16 +243,26 @@ query_dhw_rerddap <- function(lat, lon, year) {
 query_dhw_httr <- function(lat, lon, year) {
   if (!has_httr) return(NULL)
 
-  # Try the daily dataset first (NOAA_DHW), then monthly (NOAA_DHW_monthly)
-  dataset_ids <- c("NOAA_DHW", "NOAA_DHW_monthly")
+  # Try multiple ERDDAP endpoints and dataset IDs
+  # noaacrwdhwDaily on coastwatch.noaa.gov has the actual DHW variable (degree_heating_week)
+  # NOAA_DHW on coastwatch.pfeg.noaa.gov is a fallback
+  dataset_ids <- c("noaacrwdhwDaily", "NOAA_DHW")
 
   for (dataset_id in dataset_ids) {
     start_date <- sprintf("%d-06-01T00:00:00Z", year)
     end_date   <- sprintf("%d-12-01T00:00:00Z", year)
 
+    # Use correct server and variable name for each dataset
+    if (dataset_id == "noaacrwdhwDaily") {
+      base_url <- "https://coastwatch.noaa.gov/erddap/griddap"
+      var_name <- "degree_heating_week"
+    } else {
+      base_url <- "https://coastwatch.pfeg.noaa.gov/erddap/griddap"
+      var_name <- "CRW_DHW"
+    }
     url <- sprintf(
-      "https://coastwatch.pfeg.noaa.gov/erddap/griddap/%s.csv?CRW_DHW[(%s):(%s)][(%s):(%s)][(%s):(%s)]",
-      dataset_id, start_date, end_date, lat, lat, lon, lon
+      "%s/%s.csv?%s[(%s):(%s)][(%s):(%s)][(%s):(%s)]",
+      base_url, dataset_id, var_name, start_date, end_date, lat, lat, lon, lon
     )
 
     result <- tryCatch({
