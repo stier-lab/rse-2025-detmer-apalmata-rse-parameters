@@ -2,7 +2,6 @@ size_class,region,n,gap_status
 SC1,Curacao,4,CRITICAL GAP
 SC1,Dominican Republic,2,CRITICAL GAP
 SC1,Dry Tortugas,3,CRITICAL GAP
-SC1,Florida Keys,75,MINOR GAP
 SC1,Mexican Caribbean,9,CRITICAL GAP
 SC1,Navassa,0,NO DATA
 SC1,US Virgin Islands,1,CRITICAL GAP

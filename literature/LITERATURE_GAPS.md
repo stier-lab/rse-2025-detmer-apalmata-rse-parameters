@@ -2,7 +2,7 @@
 **Generated:** 2026-03-24 | **Sources searched:** PubMed, bioRxiv, Zotero library
 
 ## Current Library
-24 PDFs + summaries covering all 6 individual-level studies and most summary-level studies.
+24 PDFs + summaries covering all 7 individual-level studies and most summary-level studies.
 
 ---
 

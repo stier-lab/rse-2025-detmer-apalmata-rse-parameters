@@ -1,17 +1,17 @@
 metric,value
-Q statistic,412.85
-Q degrees of freedom,5
+Q statistic,459.40
+Q degrees of freedom,6
 Q p-value,0.0000
-tau² (between-study variance),0.7047
-tau (SD of true effects),0.8395
-I² (heterogeneity proportion),98.0%
-I² 95% CI lower,94.2%
+tau² (between-study variance),0.5170
+tau (SD of true effects),0.7191
+I² (heterogeneity proportion),98.5%
+I² 95% CI lower,96.2%
 I² 95% CI upper,99.9%
 I² interpretation,Considerable heterogeneity
-Pooled survival (random effects),80.1%
-95% CI lower,55.8%
-95% CI upper,92.8%
-Prediction interval lower,25.8%
-Prediction interval upper,97.9%
-Number of studies,6
-Total observations,5131
+Pooled survival (random effects),78.3%
+95% CI lower,59.7%
+95% CI upper,89.7%
+Prediction interval lower,33.4%
+Prediction interval upper,96.3%
+Number of studies,7
+Total observations,7346

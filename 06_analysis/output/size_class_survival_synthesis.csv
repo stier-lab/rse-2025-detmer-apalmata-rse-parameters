@@ -19,6 +19,11 @@ mendoza_quiroz_et_al_2023,SC1,Natural,9,9,1,Individual
 mendoza_quiroz_et_al_2023,SC2,Natural,22,22,1,Individual
 mendoza_quiroz_et_al_2023,SC3,Natural,17,17,1,Individual
 mendoza_quiroz_et_al_2023,SC4,Natural,4,4,1,Individual
+neely_et_al_2022,SC1,Natural,43,20,0.46511627906976744,Individual
+neely_et_al_2022,SC2,Natural,490,255,0.5204081632653061,Individual
+neely_et_al_2022,SC3,Natural,834,584,0.7002398081534772,Individual
+neely_et_al_2022,SC4,Natural,552,456,0.8260869565217391,Individual
+neely_et_al_2022,SC5,Natural,296,276,0.9324324324324325,Individual
 pausch_et_al_2018,SC1,Restoration,1,1,1,Individual
 pausch_et_al_2018,SC2,Restoration,847,492,0.5808736717827627,Individual
 pausch_et_al_2018,SC3,Restoration,120,63,0.525,Individual

@@ -25,7 +25,7 @@ literature/
 
 ## data_studies/ (34 papers)
 
-Core dataset papers (6 individual-level + ~10 summary-level studies) plus A. palmata biology.
+Core dataset papers (7 individual-level + ~10 summary-level studies) plus A. palmata biology.
 
 | File | Citation | Role |
 |------|----------|------|

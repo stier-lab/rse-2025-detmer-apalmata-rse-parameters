@@ -561,7 +561,7 @@ if (exists("lambda_mean")) {
 # Meta-analysis checks
 if (exists("i_squared")) {
   check(i_squared > 80, sprintf("I-squared > 80%% (got %.1f%%)", i_squared))
-  check(k_studies == 5, sprintf("k = 5 (got %.0f)", k_studies))
+  check(k_studies == 6, sprintf("k = 6 (got %.0f)", k_studies))
   check(pooled_surv > 0.5 && pooled_surv < 1.0,
         sprintf("Pooled survival in [0.5, 1.0] (got %.3f)", pooled_surv))
 }
