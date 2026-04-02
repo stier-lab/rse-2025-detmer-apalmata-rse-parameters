@@ -328,6 +328,7 @@ cat("═════════════════════════
 
 # Year × Region coverage
 year_region <- surv_data %>%
+  filter(!is.na(survey_yr)) %>%
   group_by(survey_yr, region) %>%
   summarise(n = n(), .groups = "drop") %>%
   complete(survey_yr = min(survey_yr):max(survey_yr), region, fill = list(n = 0))
@@ -364,7 +365,7 @@ cat("═════════════════════════
 #   3. Temporal deficit: how many years have data gaps
 
 all_regions <- unique(surv_data$region)
-all_years <- min(surv_data$survey_yr):max(surv_data$survey_yr)
+all_years <- min(surv_data$survey_yr, na.rm = TRUE):max(surv_data$survey_yr, na.rm = TRUE)
 n_all_regions <- length(all_regions)
 n_all_years <- length(all_years)
 
