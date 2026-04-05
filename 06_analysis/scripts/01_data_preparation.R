@@ -15,6 +15,7 @@
 # OUTPUTS:
 #   - 06_analysis/output/prepared_survival_data.rds
 #   - 06_analysis/output/prepared_growth_data.rds
+#   - 06_analysis/output/standardized_data_inventory.csv
 #   - 06_analysis/output/summary_survival_by_size.csv
 #   - 06_analysis/output/summary_growth_by_size.csv
 #   - 06_analysis/output/summary_survival_by_region.csv
@@ -81,6 +82,23 @@ if (file.exists("05_data/standardized")) {
 data_dir <- file.path(project_root, "05_data/standardized")
 output_dir <- file.path(project_root, "06_analysis/output")
 dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+# Validate canonical standardized inputs against the data registry
+registry <- read_data_registry(project_root)
+standardized_inventory <- validate_registry_inputs(
+  project_root = project_root,
+  registry = registry,
+  roles = c("canonical_input", "curated_support")
+)
+write_csv(
+  standardized_inventory,
+  file.path(output_dir, "standardized_data_inventory.csv")
+)
+
+cat("Validated standardized inputs against data registry.\n")
+cat(sprintf("  Registry entries: %d\n", nrow(registry)))
+cat(sprintf("  Inventory snapshot written: %s\n\n",
+            file.path("06_analysis/output", "standardized_data_inventory.csv")))
 
 # Initialize filtering audit trail
 filtering_audit <- data.frame(
@@ -294,7 +312,7 @@ cat("  NOTE: Kuffner uses >=50% tissue loss (more liberal than other studies)\n"
 if ("time_interval_yr" %in% names(surv_clean)) {
   surv_clean <- surv_clean %>%
     mutate(
-      sub_annual_interval = !is.na(time_interval_yr) & time_interval_yr < 0.8
+      sub_annual_interval = is_sub_annual(time_interval_yr)
     )
 
   n_sub <- sum(surv_clean$sub_annual_interval, na.rm = TRUE)
@@ -398,11 +416,8 @@ growth_clean <- growth_clean %>%
     # Use the same coalesced growth metric as RGR computation (growth_metric)
     # so the flag catches impossible values in the metric actually used downstream
     growth_for_check = coalesce(growth_live_cm2_yr, growth_cm2_yr),
-    # Flag biologically impossible growth (both directions)
-    impossible_growth = (growth_for_check < 0 & abs(growth_for_check) > size_for_class * 1.1) |
-                        (growth_for_check > 0 & growth_for_check > size_for_class * 3)
-    # Note: positive growth > 3x initial size in one year is biologically implausible
-    # for A. palmata (max ~doubling per year in optimal conditions)
+    # Flag biologically impossible growth using centralized function
+    impossible_growth = is_impossible_growth(growth_for_check, size_for_class)
   )
 
 n_impossible <- sum(growth_clean$impossible_growth, na.rm = TRUE)
@@ -415,28 +430,16 @@ cat("    (tissue loss exceeds initial colony size - likely measurement errors)\n
 # =============================================================================
 # DATA QUALITY NOTE (2025-01-21):
 # Navassa region has unusually high mean growth (826 cm²/yr vs ~50-100 expected)
-# driven by:
-#   - Long observation intervals (2.5-3 years vs ~1 year for other studies)
-#   - Limited data (n=94, only 2 survey years: 2009, 2012)
-#   - Some very large colonies with extreme growth rates
-#
-# The data appears LEGITIMATE (not errors) but has high variance (SD=2043).
-# The MEDIAN (220 cm²/yr) is more representative than the mean.
-#
-# This flag allows downstream scripts to:
-#   - Use stratified analyses for regional comparisons
-#   - Report median instead of mean for affected regions
-#   - Apply appropriate uncertainty quantification
-
-high_variance_regions <- c("Navassa")
+# ... [rest of comments unchanged] ...
 
 growth_clean <- growth_clean %>%
   mutate(
-    # Flag high-variance regions
-    high_variance_region = region %in% high_variance_regions
+    # Flag high-variance regions using centralized function
+    high_variance_region = is_high_variance_region(region)
   )
 
 n_high_var <- sum(growth_clean$high_variance_region, na.rm = TRUE)
+high_variance_regions <- sort(unique(growth_clean$region[growth_clean$high_variance_region]))
 cat(sprintf("\n  ⚠ FLAGGED %d records (%.1f%%) from high-variance regions (%s)\n",
             n_high_var, n_high_var / nrow(growth_clean) * 100,
             paste(high_variance_regions, collapse = ", ")))
@@ -617,7 +620,48 @@ if (length(missing_regions) > 0) {
 }
 
 # =============================================================================
-# 7. CREATE ANALYSIS-READY DATASETS
+# 7. INTEGRATE DISTURBANCE TIMELINE
+# =============================================================================
+
+cat("\nIntegrating disturbance timeline...\n")
+
+# Load new disturbance timeline
+timeline_file <- file.path(data_dir, "apal_disturbance_stressor_timeline.csv")
+if (file.exists(timeline_file)) {
+  timeline <- read_csv(timeline_file, show_col_types = FALSE)
+
+  surv_clean <- attach_disturbance_timeline(
+    surv_clean,
+    timeline,
+    region_col = "region",
+    year_col = "survey_yr",
+    interval_col = "time_interval_yr",
+    legacy_col = "disturbance"
+  )
+
+  growth_clean <- attach_disturbance_timeline(
+    growth_clean,
+    timeline,
+    region_col = "region",
+    year_col = "survey_yr",
+    interval_col = "time_interval_yr",
+    legacy_col = "disturbance"
+  )
+
+  cat(sprintf("  ✓ Timeline-linked survival rows: %d\n",
+              sum(surv_clean$timeline_event_count > 0, na.rm = TRUE)))
+  cat(sprintf("  ✓ Timeline-linked growth rows: %d\n",
+              sum(growth_clean$timeline_event_count > 0, na.rm = TRUE)))
+  cat(sprintf("  ✓ Baseline-exclusion survival rows: %d\n",
+              sum(surv_clean$exclude_from_baseline, na.rm = TRUE)))
+  cat(sprintf("  ✓ Baseline-eligible survival rows: %d\n",
+              sum(!surv_clean$exclude_from_baseline, na.rm = TRUE)))
+} else {
+  cat("  ⚠ Disturbance timeline file not found. Skipping integration.\n")
+}
+
+# =============================================================================
+# 8. CREATE ANALYSIS-READY DATASETS
 # =============================================================================
 
 cat("\n")

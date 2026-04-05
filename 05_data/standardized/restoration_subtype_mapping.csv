@@ -1,0 +1,6 @@
+study,restoration_subtype,subtype_label,rule,evidence,confidence
+NOAA_survey,natural_fragment,Naturally occurring fragments,NOAA natural survey fragments (fragment == 'Y'); not restoration outplants,Wild / naturally occurring fragments retained in the NOAA survey surface.,medium
+pausch_et_al_2018,nursery_outplant,Nursery outplants,Nursery-cultured fragments outplanted to reef habitat,Outplanted nursery-cultured fragments; size x genet and habitat x genet experiments.,high
+USGS_USVI_exp,outplanted_colony,Outplanted colonies,Tagged outplanted colonies tracked in the USGS USVI experiment,Tagged outplanted colonies; source material not described as nursery fragments in the metadata.,medium
+kuffner_et_al_2020,nursery_outplant_recemented,Nursery outplants after fragmentation / re-cementation,Nursery-raised fragments outplanted after fragmentation and re-cementation,Nursery-raised fragments outplanted spring 2018; survival after fragmentation and re-cementation.,high
+fundemar_fragments,nursery_outplant,Nursery outplants,Nursery fragments on PVC tables in a restoration nursery,Direct restoration nursery fragments shared by FUNDEMAR.,high

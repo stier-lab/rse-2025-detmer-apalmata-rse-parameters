@@ -11,16 +11,16 @@ This directory contains 4 R Markdown documents for data integration, analysis, a
 Processes raw data from multiple sources into standardized format. Documents all data cleaning decisions, size conversions, and quality flags.
 
 **Inputs:**
-- `original_data/*.csv`
-- `original_data/*.xlsx`
+- `05_data/original/*.csv`
+- `05_data/original/*.xlsx`
 
 **Outputs:**
-- `standardized_data/apal_surv_ind.csv`
-- `standardized_data/apal_surv_summ.csv`
-- `standardized_data/apal_growth_ind.csv`
-- `standardized_data/apal_growth_summ.csv`
-- `standardized_data/apal_fragmentation.csv`
-- `standardized_data/apal_surv_lab_short.csv`
+- `05_data/standardized/apal_surv_ind.csv`
+- `05_data/standardized/apal_surv_summ.csv`
+- `05_data/standardized/apal_growth_ind.csv`
+- `05_data/standardized/apal_growth_summ.csv`
+- `05_data/standardized/apal_fragmentation.csv`
+- `05_data/standardized/apal_surv_lab_short.csv`
 
 **Key sections:**
 1. Data source loading
@@ -39,11 +39,11 @@ Processes raw data from multiple sources into standardized format. Documents all
 Comprehensive analysis of survival and growth parameters including threshold detection, variance partitioning, and population matrix construction.
 
 **Inputs:**
-- `standardized_data/*.csv`
+- `05_data/standardized/*.csv`
 
 **Outputs:**
-- `analysis/output/*.csv`
-- `analysis/figures/`
+- `06_analysis/output/*.csv`
+- `06_analysis/figures/`
 - `parameter_lists/*.rds`
 
 **Key sections:**
@@ -64,8 +64,8 @@ Comprehensive analysis of survival and growth parameters including threshold det
 Step-by-step guide to the Lefkovitch matrix construction, eigenanalysis, and elasticity decomposition. Designed for collaborators who want to understand how λ and elasticity values are derived from the transition matrix.
 
 **Inputs:**
-- `analysis/output/transition_matrix.csv`
-- `analysis/output/elasticity_matrix.csv`
+- `06_analysis/output/transition_matrix.csv`
+- `06_analysis/output/elasticity_matrix.csv`
 
 **Key sections:**
 1. Matrix construction from size-class transition probabilities
@@ -101,15 +101,15 @@ rmarkdown::render("APAL_data_analysis.rmd")
 
 ### From Command Line
 ```bash
-Rscript -e "rmarkdown::render('analysis/rmarkdown/APAL_data_integration.rmd')"
-Rscript -e "rmarkdown::render('analysis/rmarkdown/APAL_data_analysis.rmd')"
+Rscript -e "rmarkdown::render('05_data/integration/APAL_data_integration.rmd')"
+Rscript -e "rmarkdown::render('05_data/integration/APAL_data_analysis.rmd')"
 ```
 
 ---
 
 ## Relationship to Scripts
 
-The R scripts in `analysis/scripts/` are modularized versions of the analyses in these RMarkdown documents:
+The R scripts in `06_analysis/scripts/` are modularized versions of the analyses in these RMarkdown documents:
 
 | RMarkdown Section | Corresponding Script |
 |-------------------|---------------------|

@@ -3,12 +3,13 @@
 ################################################################################
 #
 # PURPOSE:
-#   Execute the complete analysis pipeline in the correct order, from data
-#   preparation through publication figures and population modeling.
+#   Execute the maintained analysis pipeline in the correct order, from data
+#   preparation through manuscript figures, disturbance/restoration extensions,
+#   advanced dynamic models, and verification.
 #
 # USAGE:
 #   From project root:
-#     Rscript analysis/scripts/run_all.R
+#     Rscript 06_analysis/scripts/run_all.R
 #
 #   Or from analysis/scripts directory:
 #     Rscript run_all.R
@@ -18,15 +19,18 @@
 #   02-07  = Core analysis (survival, growth, variance, gaps, integration)
 #   08-12  = Robustness & supplementary (climate, power, CV, context, model selection)
 #   13-17  = Synthesis (matrix, meta-analysis, heterogeneity, sensitivity, parameters)
-#   18-23  = Manuscript figures (6 main + supplementary)
+#   18-23  = Manuscript figures and data-gap figure
 #   24-28  = Supplementary figures (S3-S14)
+#   29-40  = Context, disturbance, restoration, completeness, scenario extensions
+#   41-47  = Advanced dynamic model extensions
 #   23     = Verification
+#   48     = Pipeline refresh audit
 #
-#   01 → 02-07 → 08-12 → 13-17 → 18-23 + 24-28 → 23_verification
+#   00* → 01 → 02-07 → 08-12 → 13-17 → 18-23 + 24-28 → 29-40 → 41-47 → 23_verification → 48
 #
 # OUTPUTS:
-#   - All files in 06_analysis/output/
-#   - All figures in 06_analysis/figures/manuscript/ (PNG + PDF)
+#   - Generated files in 06_analysis/output/
+#   - Generated figures in 06_analysis/figures/
 #   - Pipeline log with timing information
 #
 # Author: Detmer & Stier Lab
@@ -69,13 +73,42 @@ original_wd <- getwd()
 setwd(project_root)
 cat(sprintf("Working directory: %s\n\n", getwd()))
 
+if (file.exists("06_analysis/scripts/utils/shared_utilities.R")) {
+  source("06_analysis/scripts/utils/shared_utilities.R")
+}
+
+dirs <- setup_output_dirs(getwd())
+run_id <- format(pipeline_start, "%Y%m%d_%H%M%S")
+context_df <- data.frame(
+  run_id = run_id,
+  pipeline_started_at = format(pipeline_start, "%Y-%m-%d %H:%M:%S"),
+  fail_fast = !tolower(Sys.getenv("APAL_PIPELINE_CONTINUE_ON_ERROR", "false")) %in% c("1", "true", "yes"),
+  stringsAsFactors = FALSE
+)
+write.csv(context_df, file.path(dirs$output, "pipeline_context_current.csv"), row.names = FALSE)
+write.csv(context_df, file.path(dirs$output, sprintf("pipeline_context_%s.csv", run_id)), row.names = FALSE)
+
+Sys.setenv(
+  APAL_PIPELINE_RUN_START = format(
+    as.POSIXct(format(pipeline_start, tz = "UTC", usetz = TRUE), tz = "UTC"),
+    "%Y-%m-%d %H:%M:%OS6",
+    tz = "UTC"
+  )
+)
+
 # =============================================================================
 # DEFINE PIPELINE SCRIPTS
 # =============================================================================
 
+standardization_scripts <- discover_standardization_scripts(getwd())
+standardization_descriptions <- if (length(standardization_scripts) > 0) {
+  paste("Standardize", vapply(standardization_scripts, label_script_name, character(1)), "data")
+} else {
+  character(0)
+}
+
 scripts <- c(
-  # 00: Data standardization (new sources)
-  "00_standardize_neely.R",
+  standardization_scripts,
   # 01: Data preparation
   "01_data_preparation.R",
   # 02-07: Core analysis
@@ -98,7 +131,7 @@ scripts <- c(
   "15_heterogeneity_analysis.R",
   "16_sensitivity_analysis.R",
   "17_update_parameter_lists.R",
-  # 18-22: Manuscript figures (6 main)
+  # 18-22: Manuscript figures and manuscript-candidate support figures
   "18_fig1_study_landscape.R",
   "19_fig2_demographic_rates.R",
   "20_fig_size_class_survival_synthesis.R",
@@ -106,7 +139,7 @@ scripts <- c(
   "20c_fig_regional_survival.R",
   "21_fig3_natural_vs_restoration.R",
   "22_fig6_population_model.R",
-  # 23: Data gaps (supplementary)
+  # 23: Data gaps figure
   "23_figS2_data_gaps.R",
   # 24-28: Supplementary figures (S3-S14)
   "24_supp_S3_S4.R",
@@ -114,17 +147,37 @@ scripts <- c(
   "26_supp_S8_S9.R",
   "27_supp_S10_S11.R",
   "28_supp_S12_S13_S14.R",
-  # 29: Natural vs restoration comparison
+  # 29-40: Context, disturbance, completeness, and scenario extensions
   "29_natural_vs_restoration.R",
-  # 30: Disturbance sensitivity
   "30_disturbance_sensitivity.R",
+  "31_heat_stress_overlay.R",
+  "31b_verify_dhw.R",
+  "32_disturbance_survival_analysis.R",
+  "33_hurricane_exposure.R",
+  "34_disturbance_summaries.R",
+  "35_curate_literature_scope.R",
+  "36_shrinkage_retrogression_summary.R",
+  "37_disturbance_size_interaction.R",
+  "38_study_window_disturbance_audit.R",
+  "39_restoration_subtype_sensitivity.R",
+  # 40: Heatwave scenarios (Manzello 2025)
+  "40_manzello_heatwave_scenarios.R",
+  # 41-47: Advanced dynamic model extensions
+  "41_multistate_transition_model.R",
+  "42_joint_longitudinal_survival_model.R",
+  "43_stochastic_ipm_disturbance_model.R",
+  "44_regime_switching_model.R",
+  "45_distributed_lag_disturbance_model.R",
+  "46_recurrent_event_frailty_model.R",
+  "47_spatiotemporal_hierarchical_model.R",
   # Verification
-  "23_verification.R"
+  "23_verification.R",
+  # Reporting refresh
+  "48_pipeline_refresh_audit.R"
 )
 
 script_descriptions <- c(
-  # 00: Data standardization
-  "Standardize Neely et al. 2022 FKNMS data",
+  standardization_descriptions,
   # 01: Data preparation
   "Data preparation and cleaning",
   # 02-07: Core analysis
@@ -147,28 +200,49 @@ script_descriptions <- c(
   "Heterogeneity analysis (I², Q-tests)",
   "Sensitivity analysis (LOSO, elasticity)",
   "Update parameter lists for API",
-  # 18-23: Manuscript figures (6 main) + supplementary
+  # 18-23: Manuscript figures and manuscript-candidate support figures
   "Figure 1: Study landscape with map",
   "Figure 2: Demographic rates (survival + RGR)",
-  "Figure 4: Size-class survival synthesis (k=15)",
-  "Figure 5: Expanded forest plot (k=16)",
+  "Manuscript-support size-class survival synthesis",
+  "Figure 3: Caribbean survival synthesis",
   "Figure S15: Regional survival variation",
-  "Figure 3: Natural vs restoration comparison",
-  "Figure 6: Population model & sensitivity",
-  # 23: Data gaps (supplementary)
+  "Figure S8: Shared-range natural vs restoration comparison",
+  "Figure 4: Population model & sensitivity",
+  # 23: Data gaps figure
   "Figure S2: Data gaps heatmap",
   # 24-28: Supplementary figures (S3-S14)
   "Supplementary S3-S4: Model diagnostics & selection",
   "Supplementary S5-S7: Thresholds & growth",
-  "Supplementary S8-S9: Forest plots & heterogeneity",
-  "Supplementary S10-S11: Context & climate",
-  "Supplementary S12-S14: Sensitivity & projections",
-  # 29: Natural vs restoration comparison
+  "Supplementary S8-S9: Heterogeneity and comparison layer",
+  "Supplementary S10-S11: Context and climate layer",
+  "Supplementary S12-S14: Sensitivity and projections",
+  # 29-40: Context, disturbance, completeness, and scenario extensions
   "Natural vs restoration (within-region + size-matched)",
-  # 30: Disturbance sensitivity
-  "Disturbance sensitivity analysis (Neely 2014 event)",
+  "Disturbance sensitivity analysis",
+  "Heat stress overlay",
+  "DHW/site-year verification",
+  "Disturbance survival analysis",
+  "Hurricane exposure summary",
+  "Disturbance catalogs and summary figures",
+  "Literature scope curation",
+  "Shrinkage and retrogression synthesis",
+  "Disturbance-by-size interaction analysis",
+  "Study-window disturbance audit",
+  "Restoration subtype sensitivity analysis",
+  # 40: Heatwave scenarios
+  "Manzello 2025 heatwave scenario projections",
+  # 41-47: Advanced dynamic model extensions
+  "Advanced multistate transition model",
+  "Advanced joint longitudinal-survival model",
+  "Advanced stochastic disturbance-driven IPM",
+  "Advanced regime-switching hidden-state model",
+  "Advanced distributed-lag disturbance model",
+  "Advanced recurrent-event frailty model",
+  "Advanced spatiotemporal hierarchical model",
   # Verification
-  "Pipeline verification"
+  "Pipeline verification",
+  # Reporting refresh
+  "Refresh pipeline manifests and generated reporting artifacts"
 )
 
 # =============================================================================
@@ -178,10 +252,13 @@ script_descriptions <- c(
 results <- data.frame(
   script = scripts,
   description = script_descriptions,
-  status = NA_character_,
+  status = rep("NOT_RUN", length(scripts)),
   duration_sec = NA_real_,
   stringsAsFactors = FALSE
 )
+
+fail_fast <- context_df$fail_fast[1]
+pipeline_failed <- FALSE
 
 for (i in seq_along(scripts)) {
   script_path <- file.path("06_analysis/scripts", scripts[i])
@@ -205,7 +282,15 @@ for (i in seq_along(scripts)) {
     cat(sprintf("\n✓ Completed in %.1f seconds\n\n", duration))
   } else {
     results$status[i] <- "FAILED"
+    pipeline_failed <- TRUE
     cat(sprintf("\n✗ FAILED after %.1f seconds (exit code %d)\n\n", duration, exit_code))
+    if (fail_fast) {
+      cat("Fail-fast mode enabled: stopping pipeline after first failure.\n\n")
+      if (i < length(scripts)) {
+        results$status[(i + 1):length(scripts)] <- "SKIPPED"
+      }
+      break
+    }
   }
 }
 
@@ -228,7 +313,12 @@ cat(sprintf("%-40s %-10s %10s\n", "Script", "Status", "Duration"))
 cat("─────────────────────────────────────────────────────────────────────────\n")
 
 for (i in seq_len(nrow(results))) {
-  status_symbol <- ifelse(results$status[i] == "SUCCESS", "✓", "✗")
+  status_symbol <- dplyr::case_when(
+    results$status[i] == "SUCCESS" ~ "✓",
+    results$status[i] == "FAILED" ~ "✗",
+    results$status[i] == "SKIPPED" ~ "•",
+    TRUE ~ "·"
+  )
   cat(sprintf("%-40s %s %-8s %8.1fs\n",
               results$description[i],
               status_symbol,
@@ -243,8 +333,16 @@ cat("─────────────────────────
 # Summary statistics
 n_success <- sum(results$status == "SUCCESS")
 n_failed <- sum(results$status == "FAILED")
+n_skipped <- sum(results$status == "SKIPPED")
+n_not_run <- sum(results$status == "NOT_RUN")
 
 cat(sprintf("\nResults: %d/%d scripts completed successfully\n", n_success, length(scripts)))
+if (n_skipped > 0) {
+  cat(sprintf("Skipped: %d script(s)\n", n_skipped))
+}
+if (n_not_run > 0) {
+  cat(sprintf("Not run: %d script(s)\n", n_not_run))
+}
 
 if (n_failed > 0) {
   cat("\nFAILED SCRIPTS:\n")
@@ -262,57 +360,28 @@ cat("\n")
 cat("OUTPUT VERIFICATION:\n")
 cat("─────────────────────────────────────────────────────────────────────────\n")
 
-# Check key outputs
-output_checks <- list(
-  "Prepared data" = c(
-    "06_analysis/output/prepared_survival_data.rds",
-    "06_analysis/output/prepared_growth_data.rds"
-  ),
-  "Threshold results" = c(
-    "06_analysis/output/survival_thresholds.csv",
-    "06_analysis/output/growth_thresholds.csv"
-  ),
-  "Model outputs" = c(
-    "06_analysis/output/survival_threshold_models.rds",
-    "06_analysis/output/growth_threshold_models.rds"
-  ),
-  "Gap analysis" = c(
-    "06_analysis/output/gap_prioritization.csv",
-    "06_analysis/output/certainty_by_size_region.csv"
-  ),
-  "Transition matrix" = c(
-    "06_analysis/output/transition_matrix.csv",
-    "06_analysis/output/population_parameters.csv"
-  ),
-  "Meta-analysis" = c(
-    "06_analysis/output/meta_analysis_results.csv",
-    "06_analysis/output/expanded_meta_analysis_results.csv"
-  ),
-  "Manuscript figures" = c(
-    "06_analysis/figures/manuscript/Fig1_study_landscape.png",
-    "06_analysis/figures/manuscript/Fig2_demographic_rates.png",
-    "06_analysis/figures/manuscript/Fig3_natural_vs_restoration.png",
-    "06_analysis/figures/manuscript/Fig4_size_class_survival.png",
-    "06_analysis/figures/manuscript/Fig5_expanded_forest_plot.png",
-    "06_analysis/figures/manuscript/Fig6_population_model.png"
-  ),
-  "Supplementary figures" = c(
-    "06_analysis/figures/supplementary/FigS1_size_distribution.png",
-    "06_analysis/figures/supplementary/FigS2_data_gaps.png",
-    "06_analysis/figures/supplementary/FigS3_model_diagnostics.png",
-    "06_analysis/figures/supplementary/FigS5_threshold_analysis.png",
-    "06_analysis/figures/supplementary/FigS8_forest_plots.png",
-    "06_analysis/figures/supplementary/FigS10_context_comparison.png",
-    "06_analysis/figures/supplementary/FigS12_sensitivity.png",
-    "06_analysis/figures/supplementary/FigS15_regional_survival.png"
-  )
-)
-
-for (category in names(output_checks)) {
-  files <- output_checks[[category]]
-  exists_count <- sum(file.exists(files))
-  status <- ifelse(exists_count == length(files), "✓", "⚠")
-  cat(sprintf("  %s %s: %d/%d files\n", status, category, exists_count, length(files)))
+artifact_status_file <- "06_analysis/output/canonical_artifact_status.csv"
+if (file.exists(artifact_status_file)) {
+  artifact_status <- read.csv(artifact_status_file, stringsAsFactors = FALSE)
+  categories <- split(artifact_status, artifact_status$category)
+  for (category in names(categories)) {
+    category_df <- categories[[category]]
+    exists_count <- sum(category_df$exists %in% TRUE, na.rm = TRUE)
+    generated_count <- sum(category_df$generated_this_run %in% TRUE, na.rm = TRUE)
+    status <- ifelse(exists_count == nrow(category_df), "✓", "⚠")
+    cat(sprintf("  %s %s: %d/%d files present, %d regenerated this run\n",
+                status, category, exists_count, nrow(category_df), generated_count))
+  }
+} else {
+  registry <- canonical_artifact_registry(getwd())
+  categories <- split(registry, registry$category)
+  for (category in names(categories)) {
+    category_df <- categories[[category]]
+    exists_count <- sum(file.exists(category_df$path))
+    status <- ifelse(exists_count == nrow(category_df), "✓", "⚠")
+    cat(sprintf("  %s %s: %d/%d files present\n",
+                status, category, exists_count, nrow(category_df)))
+  }
 }
 
 # =============================================================================
@@ -326,6 +395,7 @@ cat(sprintf("\nPipeline log saved: %s\n", log_file))
 
 # Restore working directory
 setwd(original_wd)
+Sys.unsetenv("APAL_PIPELINE_RUN_START")
 
 cat(sprintf("\nPipeline finished: %s\n", format(pipeline_end, "%Y-%m-%d %H:%M:%S")))
 cat(sprintf("Total runtime: %.1f minutes\n\n", total_duration))

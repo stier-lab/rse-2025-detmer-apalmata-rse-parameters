@@ -144,6 +144,15 @@ if ("population_type" %in% names(growth_data)) {
 } else {
   cat("  WARNING: No population_type or fragment column found. Using all growth data.\n")
 }
+
+# --- UNIFY GROWTH FILTERING (Critique Recommendation #1) ---
+# Filter out biologically impossible growth values flagged in prep
+if ("impossible_growth" %in% names(growth_data)) {
+  n_imp <- sum(growth_data$impossible_growth, na.rm = TRUE)
+  growth_data <- growth_data %>% filter(!impossible_growth)
+  cat(sprintf("  Filtered %d impossible growth records (loss > 110%% or gain > 300%%)\n", n_imp))
+}
+
 cat(sprintf("  Natural colony growth records: %s\n", scales::comma(nrow(growth_data))))
 # Restrict to near-annual intervals (0.5-1.5 yr) to avoid linear growth assumption bias
 n_long <- sum(growth_data$time_interval_yr > 1.5, na.rm = TRUE)

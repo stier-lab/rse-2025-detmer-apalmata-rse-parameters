@@ -1,0 +1,5 @@
+restoration_subtype,subtype_label,n_records,n_studies,n_regions,weighted_mean_growth_cm2_yr,weighted_mean_rgr,weighted_pct_positive,mean_of_study_means
+natural_fragment,Naturally occurring fragments,3466,1,3,-191.13837229607677,0.22920374396170398,64.07963069821119,182.4515129525305
+nursery_outplant,Nursery outplants,734,2,2,64.6717030999583,1.6428750273586494,93.8692098092643,69.3195508258457
+nursery_outplant_recemented,Nursery outplants after fragmentation / re-cementation,43,1,2,36.98383720930233,2.1599098386753477,95.34883720930233,34.26497532894737
+outplanted_colony,Outplanted colonies,30,1,1,100.69166666666666,1.860649909211893,100,100.69166666666666

@@ -1,0 +1,8 @@
+region_group,n_events,n_types,first_year,last_year,max_severity
+Florida,7,5,1992,2019,Catastrophic
+Caribbean-wide,6,3,1978,2025,Catastrophic
+USVI,3,3,2005,2022,Catastrophic
+Mexico,2,2,1997,2025,Major
+Belize,1,1,1961,1961,Catastrophic
+Cuba,1,1,2005,2021,Major
+Puerto Rico,1,1,2017,2017,Major

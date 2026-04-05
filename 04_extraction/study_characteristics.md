@@ -272,4 +272,4 @@ These entries demonstrate that the literature search was broad enough to capture
 
 *Document prepared: March 2026*
 *Ocean Recoveries Lab, UC Santa Barbara*
-*Sources: coral_parameters_lit_review.xlsx, Detmer_APAL_meta_analysis_notes.docx, Data_Methodology_Reference.md, PRISMA_Systematic_Review_Protocol.md, standardized_data/README.md, expanded_meta_analysis_study_effects.csv*
+*Sources: coral_parameters_lit_review.xlsx, `04_extraction/raine_working_notes/`, `04_extraction/extraction_protocol.md`, `01_protocol/systematic_review_protocol.md`, `05_data/standardized/README.md`, and `06_analysis/output/expanded_meta_analysis_study_effects.csv`.*

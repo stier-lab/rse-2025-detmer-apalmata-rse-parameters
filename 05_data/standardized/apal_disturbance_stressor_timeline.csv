@@ -1,0 +1,19 @@
+Event_Name,Event_Type,Region,Start_Year,End_Year,Duration,Intensity_Metric,Intensity_Value,Impact_Description,Source,Spatial_Scale,Analysis_Tier,Exclude_From_Baseline
+White-Band Disease Epizootic,disease,Caribbean-wide,1978,1984,Chronic,Population Loss,80-98%,Foundational collapse of acroporid stands,Aronson & Precht 2001 (Hydrobiologia); Gladfelter 1982 (Bull Mar Sci),caribbean-wide,chronic_regime,FALSE
+Hurricane Hattie,hurricane,Belize,1961,1961,Acute,Category,5,80% destruction of A. palmata; 10-yr algal shift,Stoddart 1963 (Atoll Res Bull),local,acute_event,TRUE
+Diadema Mass Mortality,disease,Caribbean-wide,1983,1984,Acute,Urchin Mortality,93-99%,Macroalgal phase shift due to loss of herbivory,Lessios et al. 1984 (Science),caribbean-wide,acute_event,TRUE
+Hurricane Andrew,hurricane,Florida Keys,1992,1992,Acute,Category,5,60% colony breakage; fragmentation driven recovery,Fong & Lirman 1995 (Mar Ecol); Lirman & Fong 1997 (J Coast Res),local,acute_event,TRUE
+Cuevones Grounding,vessel_grounding,Mexico,1997,1997,Acute,Area,504 m2,Coral cover 14% to 1%; no recruitment by 2016,Victoria-Salazar et al. 2023 (Marine Pollution Bulletin),local,acute_event,TRUE
+2005 Hurricane Season,hurricane,Florida Keys,2005,2005,Acute,Frequency,4 storms,Nearly 50% tissue loss primarily from breakage,Williams & Miller 2012 (Coral Reefs),local,acute_event,TRUE
+2005 Thermal Anomaly,bleaching,USVI/Florida,2005,2006,Chronic,DHW,8-12,Mass bleaching followed by severe disease outbreak,Eakin et al. 2010 (PLoS ONE); Miller et al. 2009 (Coral Reefs),regional,acute_event,TRUE
+Sargassum Brown Tides,sargassum,Caribbean-wide,2011,2025,Annual,Peak Biomass,37.5M tons,Leachate toxicity; larval spiral swimming; hypoxia (DO < 1mg/L),Antonio-Martinez 2020 (Sci Rep); van Tussenbroek 2017 (Mar Pollut Bull),caribbean-wide,chronic_pressure,FALSE
+2010 Cold-Water Event,cold_snap,Florida Keys,2010,2010,Acute,Min Temp,9.5 C,Unprecedented mass mortality of wild and outplants,Lirman et al. 2011 (PLoS ONE); Colella et al. 2012 (Coral Reefs),local,acute_event,TRUE
+3rd Global Bleaching,bleaching,Caribbean-wide,2014,2017,Chronic,DHW,12-15,Prolonged thermal stress; Neely monitoring mortality,Hughes et al. 2017 (Nature); Eakin et al. 2019 (Coral Reefs),caribbean-wide,chronic_regime,FALSE
+Hurricane Irma,hurricane,FL Keys/USVI,2017,2017,Acute,Category,5,Devastating physical damage; framework displacement,NOAA FKNMS 2017 (Post-Storm Assessment),regional,acute_event,TRUE
+M/V Noemi Grounding,vessel_grounding,Puerto Rico,2017,2017,Acute,Fragments,2000+,Physical destruction of wild thickets on Palomino Is,Goergen et al. 2025 (Restoration Ecology),local,acute_event,TRUE
+Playa Baracoa Pollution,pollution,Cuba,2005,2021,Chronic,Macroalgal Cover,87.1%,Untreated wastewater; 0.2 col/m2 density by 2021,Ramos et al. 2024 (PeerJ),local,chronic_pressure,FALSE
+SCTLD Outbreak (Framework),disease,Mexico,2018,2025,Chronic,CaCO3 Reduction,30%,Collapse of massive framework species; budget shift,Alvarez-Filip et al. 2022 (Comm Biol),regional,indirect_framework,FALSE
+2023 Marine Heatwave,bleaching,Caribbean-wide,2023,2023,Acute,DHW,25+,Functional extinction in Florida; 100% loss in MX,Birkart & Alvarez-Filip 2025 (iScience); Manzello et al. 2025 (Science),caribbean-wide,acute_event,TRUE
+Coastal Eutrophication,pollution,Florida (Middle Keys),1999,2019,Chronic,Chlorophyll-a,>1 mg/m3,Habitat suitability drop; chronic persistence failure,Banister et al. 2024 (PLoS ONE),local,chronic_pressure,FALSE
+Snail Predation Trap,predator,Florida Keys,2005,2010,Chronic,Tissue Loss,16 cm2/day,Coralliophila concentration on surviving fragments,Williams & Miller 2012 (Coral Reefs); Miller 2001 (Coral Reefs),local,biotic_pressure,FALSE
+Diadema 2nd Die-off,disease,USVI/Caribbean,2022,2022,Acute,Urchin Mortality,>50%/week,Recurrence of 1983 die-off; loss of algal control,Levitan et al. 2023 (PNAS),regional,acute_event,TRUE

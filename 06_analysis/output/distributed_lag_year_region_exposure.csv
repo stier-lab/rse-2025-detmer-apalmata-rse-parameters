@@ -1,0 +1,145 @@
+region_group,year,acute_exclusion_events,context_pressure_events,catastrophic_events,event_names
+Curacao,2001,1,1,0,White-Band Disease Epizootic; Diadema Mass Mortality
+Curacao,2002,0,0,0,
+Curacao,2003,0,0,0,
+Curacao,2004,0,0,0,
+Curacao,2005,0,0,0,
+Curacao,2006,0,0,0,
+Curacao,2007,0,0,0,
+Curacao,2008,0,0,0,
+Curacao,2009,0,0,0,
+Curacao,2010,0,0,0,
+Curacao,2011,0,1,0,Sargassum Brown Tides
+Curacao,2012,0,1,0,Sargassum Brown Tides
+Curacao,2013,0,1,0,Sargassum Brown Tides
+Curacao,2014,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Curacao,2015,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Curacao,2016,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Curacao,2017,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Curacao,2018,0,1,0,Sargassum Brown Tides
+Curacao,2019,0,1,0,Sargassum Brown Tides
+Curacao,2020,0,1,0,Sargassum Brown Tides
+Curacao,2021,0,1,0,Sargassum Brown Tides
+Curacao,2022,1,1,0,Sargassum Brown Tides; Diadema 2nd Die-off
+Curacao,2023,1,1,1,Sargassum Brown Tides; 2023 Marine Heatwave
+Curacao,2024,0,1,0,Sargassum Brown Tides
+Dominican Republic,2001,1,1,0,White-Band Disease Epizootic; Diadema Mass Mortality
+Dominican Republic,2002,0,0,0,
+Dominican Republic,2003,0,0,0,
+Dominican Republic,2004,0,0,0,
+Dominican Republic,2005,0,0,0,
+Dominican Republic,2006,0,0,0,
+Dominican Republic,2007,0,0,0,
+Dominican Republic,2008,0,0,0,
+Dominican Republic,2009,0,0,0,
+Dominican Republic,2010,0,0,0,
+Dominican Republic,2011,0,1,0,Sargassum Brown Tides
+Dominican Republic,2012,0,1,0,Sargassum Brown Tides
+Dominican Republic,2013,0,1,0,Sargassum Brown Tides
+Dominican Republic,2014,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Dominican Republic,2015,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Dominican Republic,2016,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Dominican Republic,2017,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Dominican Republic,2018,0,1,0,Sargassum Brown Tides
+Dominican Republic,2019,0,1,0,Sargassum Brown Tides
+Dominican Republic,2020,0,1,0,Sargassum Brown Tides
+Dominican Republic,2021,0,1,0,Sargassum Brown Tides
+Dominican Republic,2022,1,1,0,Sargassum Brown Tides; Diadema 2nd Die-off
+Dominican Republic,2023,1,1,1,Sargassum Brown Tides; 2023 Marine Heatwave
+Dominican Republic,2024,0,1,0,Sargassum Brown Tides
+Florida,2001,2,2,1,White-Band Disease Epizootic; Diadema Mass Mortality; Hurricane Andrew; Coastal Eutrophication
+Florida,2002,0,1,0,Coastal Eutrophication
+Florida,2003,0,1,0,Coastal Eutrophication
+Florida,2004,0,1,0,Coastal Eutrophication
+Florida,2005,2,2,0,2005 Hurricane Season; 2005 Thermal Anomaly; Coastal Eutrophication; Snail Predation Trap
+Florida,2006,1,2,0,2005 Thermal Anomaly; Coastal Eutrophication; Snail Predation Trap
+Florida,2007,0,2,0,Coastal Eutrophication; Snail Predation Trap
+Florida,2008,0,2,0,Coastal Eutrophication; Snail Predation Trap
+Florida,2009,0,2,0,Coastal Eutrophication; Snail Predation Trap
+Florida,2010,1,2,0,2010 Cold-Water Event; Coastal Eutrophication; Snail Predation Trap
+Florida,2011,0,2,0,Sargassum Brown Tides; Coastal Eutrophication
+Florida,2012,0,2,0,Sargassum Brown Tides; Coastal Eutrophication
+Florida,2013,0,2,0,Sargassum Brown Tides; Coastal Eutrophication
+Florida,2014,0,3,0,Sargassum Brown Tides; 3rd Global Bleaching; Coastal Eutrophication
+Florida,2015,0,3,0,Sargassum Brown Tides; 3rd Global Bleaching; Coastal Eutrophication
+Florida,2016,0,3,0,Sargassum Brown Tides; 3rd Global Bleaching; Coastal Eutrophication
+Florida,2017,1,3,0,Sargassum Brown Tides; 3rd Global Bleaching; Hurricane Irma; Coastal Eutrophication
+Florida,2018,0,2,0,Sargassum Brown Tides; Coastal Eutrophication
+Florida,2019,0,2,0,Sargassum Brown Tides; Coastal Eutrophication
+Florida,2020,0,1,0,Sargassum Brown Tides
+Florida,2021,0,1,0,Sargassum Brown Tides
+Florida,2022,1,1,0,Sargassum Brown Tides; Diadema 2nd Die-off
+Florida,2023,1,1,1,Sargassum Brown Tides; 2023 Marine Heatwave
+Florida,2024,0,1,0,Sargassum Brown Tides
+Mexican Caribbean,2001,2,1,1,White-Band Disease Epizootic; Diadema Mass Mortality; Cuevones Grounding
+Mexican Caribbean,2002,0,0,0,
+Mexican Caribbean,2003,0,0,0,
+Mexican Caribbean,2004,0,0,0,
+Mexican Caribbean,2005,0,0,0,
+Mexican Caribbean,2006,0,0,0,
+Mexican Caribbean,2007,0,0,0,
+Mexican Caribbean,2008,0,0,0,
+Mexican Caribbean,2009,0,0,0,
+Mexican Caribbean,2010,0,0,0,
+Mexican Caribbean,2011,0,1,0,Sargassum Brown Tides
+Mexican Caribbean,2012,0,1,0,Sargassum Brown Tides
+Mexican Caribbean,2013,0,1,0,Sargassum Brown Tides
+Mexican Caribbean,2014,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Mexican Caribbean,2015,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Mexican Caribbean,2016,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Mexican Caribbean,2017,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Mexican Caribbean,2018,0,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework)
+Mexican Caribbean,2019,0,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework)
+Mexican Caribbean,2020,0,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework)
+Mexican Caribbean,2021,0,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework)
+Mexican Caribbean,2022,1,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework); Diadema 2nd Die-off
+Mexican Caribbean,2023,1,2,1,Sargassum Brown Tides; SCTLD Outbreak (Framework); 2023 Marine Heatwave
+Mexican Caribbean,2024,0,2,0,Sargassum Brown Tides; SCTLD Outbreak (Framework)
+Navassa,2001,1,1,0,White-Band Disease Epizootic; Diadema Mass Mortality
+Navassa,2002,0,0,0,
+Navassa,2003,0,0,0,
+Navassa,2004,0,0,0,
+Navassa,2005,0,0,0,
+Navassa,2006,0,0,0,
+Navassa,2007,0,0,0,
+Navassa,2008,0,0,0,
+Navassa,2009,0,0,0,
+Navassa,2010,0,0,0,
+Navassa,2011,0,1,0,Sargassum Brown Tides
+Navassa,2012,0,1,0,Sargassum Brown Tides
+Navassa,2013,0,1,0,Sargassum Brown Tides
+Navassa,2014,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Navassa,2015,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Navassa,2016,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Navassa,2017,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+Navassa,2018,0,1,0,Sargassum Brown Tides
+Navassa,2019,0,1,0,Sargassum Brown Tides
+Navassa,2020,0,1,0,Sargassum Brown Tides
+Navassa,2021,0,1,0,Sargassum Brown Tides
+Navassa,2022,1,1,0,Sargassum Brown Tides; Diadema 2nd Die-off
+Navassa,2023,1,1,1,Sargassum Brown Tides; 2023 Marine Heatwave
+Navassa,2024,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2001,1,1,0,White-Band Disease Epizootic; Diadema Mass Mortality
+US Virgin Islands,2002,0,0,0,
+US Virgin Islands,2003,0,0,0,
+US Virgin Islands,2004,0,0,0,
+US Virgin Islands,2005,1,0,0,2005 Thermal Anomaly
+US Virgin Islands,2006,1,0,0,2005 Thermal Anomaly
+US Virgin Islands,2007,0,0,0,
+US Virgin Islands,2008,0,0,0,
+US Virgin Islands,2009,0,0,0,
+US Virgin Islands,2010,0,0,0,
+US Virgin Islands,2011,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2012,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2013,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2014,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+US Virgin Islands,2015,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+US Virgin Islands,2016,0,2,0,Sargassum Brown Tides; 3rd Global Bleaching
+US Virgin Islands,2017,1,2,0,Sargassum Brown Tides; 3rd Global Bleaching; Hurricane Irma
+US Virgin Islands,2018,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2019,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2020,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2021,0,1,0,Sargassum Brown Tides
+US Virgin Islands,2022,1,1,0,Sargassum Brown Tides; Diadema 2nd Die-off
+US Virgin Islands,2023,1,1,1,Sargassum Brown Tides; 2023 Marine Heatwave
+US Virgin Islands,2024,0,1,0,Sargassum Brown Tides

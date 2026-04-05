@@ -1,0 +1,7 @@
+metric,value
+survival_model_class,glmerMod
+transition_model_class,multinom
+AIC_survival_model,4612.96250741988
+AIC_transition_model,6482.54664484079
+reference_disturbance,none
+reference_geodomain,Florida

@@ -22,7 +22,7 @@
 
 **Citation:** Southeast Fisheries Science Center (2025). Elkhorn coral demographic monitoring from 2004-03-30 to 2024-08-15. NCEI Accession 0142175. https://www.fisheries.noaa.gov/inport/item/22436
 
-**Data source:** Public data repository (NOAA NCEI). Raw file: `original_data/NOAA_Tagged_Colony_Data.csv` with survey dates in `data_documentation/SurveyDates.csv`.
+**Data source:** Public data repository (NOAA NCEI). Raw file: `05_data/original/NOAA_Tagged_Colony_Data.csv` with survey dates in `05_data/original/NOAA_Dem_Survey_Dates.csv`.
 
 **Extractor:** Detmer (raw data processing via R scripts)
 
@@ -52,7 +52,7 @@
 
 **Citation:** Pausch RE, Williams DE, Miller MW (2018). Impacts of fragment genotype, habitat, and size on outplant survival of nursery-cultured restored coral. *Mar Ecol Prog Ser* 592:109-117. Data: NOAA InPort 26790. https://www.fisheries.noaa.gov/inport/item/26790
 
-**Data source:** Public data repository (NOAA InPort). Raw files: `original_data/Pausch_2018_Data_Table_Size.csv` and `Pausch_2018_Data_Table_Genet.csv`.
+**Data source:** Public data repository (NOAA InPort). Raw files: `05_data/original/Pausch_2018_Data_Table_Size.csv` and `05_data/original/Pausch_2018_Data_Table_Genet.csv`.
 
 **Extractor:** Detmer (raw data processing via R scripts)
 
@@ -81,7 +81,7 @@
 
 **Citation:** USGS (2021). Experimental growth data and time-series imagery for *A. palmata* and *Pseudodiploria strigosa* in USVI. https://cmgds.marine.usgs.gov/catalog/spcmsc/Coral_growth_VI_USA_metadata.faq.html
 
-**Data source:** Public data repository (USGS CMGDS). Raw file: `original_data/USGS_Palmata_growth_VI_USA.csv`.
+**Data source:** Public data repository (USGS CMGDS). Raw file: `05_data/original/USGS_Palmata_growth_VI_USA.csv`.
 
 **Extractor:** Detmer (raw data processing via R scripts)
 
@@ -111,7 +111,7 @@
 
 **Citation:** Kuffner IB, Lidz BH, Hudson JH, Anderson JS (2020). Injured and threatened *Acropora palmata*: survival after fragmentation and re-cementation. *Endang Species Res* 43:269-279. Data: https://coastal.er.usgs.gov/data-release/doi-P9KZEGXY/
 
-**Data source:** Public data repository (USGS Data Release). Raw file: `original_data/Kuffner_et_al_2020_*.csv`.
+**Data source:** Public data repository (USGS Data Release). Raw files: `05_data/original/Kuffner_et_al_2020_Palmata_growth_FL_USA.csv` and `05_data/original/Kuffner_et_al_2020_sizes.csv`.
 
 **Extractor:** Detmer (raw data processing via R scripts)
 
@@ -138,7 +138,7 @@
 
 ### Study 5: fundemar_fragments
 
-**Citation:** FUNDEMAR (unpublished). *A. palmata* fragment growth and survival data. Shared directly by Maria (FUNDEMAR, Dominican Republic). Raw file: `original_data/Crecimiento_Fragmentos_APAL.xlsx`.
+**Citation:** FUNDEMAR (unpublished). *A. palmata* fragment growth and survival data. Shared directly by Maria (FUNDEMAR, Dominican Republic). Raw file: `05_data/original/Fundemar_Crecimiento_Fragmentos_APAL.xlsx`.
 
 **Data source:** Direct data sharing from FUNDEMAR (Dominican Republic coral restoration NGO).
 
@@ -746,10 +746,10 @@ Within-study rows (multiple size classes, sites, treatments, or years) were aggr
 The PLO effect size computation requires integer counts (n_survived, n_died). The pipeline computes `n_survived = round(survival_rate x n_total)`, which introduces discretization error bounded by +/-1/(2n). Worst cases: williams_miller_2010 (n=18, +/-2.8 pp), vardi_2011_virgin_gorda (n=27, +/-1.9 pp). This is within confidence intervals for all studies.
 
 ### Size Standardization
-All sizes were converted to live planar tissue area (cm2) where possible. Studies reporting only linear dimensions (diameter, length) were converted using estimated width:length ratios calibrated from datasets with both measurements. Studies reporting volume (Rogers & Muller 2012) or lacking size data entirely had size set to NA. See `docs/Data_Methodology_Reference.md` Section 9 for full conversion rules.
+All sizes were converted to live planar tissue area (cm2) where possible. Studies reporting only linear dimensions (diameter, length) were converted using estimated width:length ratios calibrated from datasets with both measurements. Studies reporting volume (Rogers & Muller 2012) or lacking size data entirely had size set to NA. See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the extraction and standardization rules summarized for the maintained repo.
 
 ### AI Extraction Verification
-All four AI-extracted studies underwent independent verification by a separate AI audit agent that re-read each source PDF and compared every extracted number. Three of four studies required corrections (see individual audit status entries above). The Ramos et al. 2024 study was completely removed due to a fundamental conceptual error (interpreting partial tissue loss prevalence as whole-colony mortality). See `docs/Data_Methodology_Reference.md` Section 8 for the full audit log.
+All four AI-extracted studies underwent independent verification by a separate AI audit agent that re-read each source PDF and compared every extracted number. Three of four studies required corrections (see individual audit status entries above). The Ramos et al. 2024 study was completely removed due to a fundamental conceptual error (interpreting partial tissue loss prevalence as whole-colony mortality). See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the maintained audit summary.
 
 ---
 

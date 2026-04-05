@@ -1,0 +1,12 @@
+outcome,model,component,std_dev,variance
+survival,baseline,s(log_size)1,0.10110545806094454,0.010222313649713415
+survival,baseline,s(log_size)2,0.7481006309869731,0.5596545540831073
+survival,baseline,s(study),3.0032931047676232,9.01976947314475
+survival,spatiotemporal,s(log_size)1,0.07439375761896994,0.005534431172670048
+survival,spatiotemporal,s(log_size)2,0.7697908662054872,0.5925779776933943
+survival,spatiotemporal,s(survey_year_num)1,0.2348265708073214,0.05514351835712593
+survival,spatiotemporal,s(survey_year_num)2,0.5227037471391692,0.27321920727332855
+survival,spatiotemporal,"s(longitude,latitude)1",0.012663993599151692,1.6037673387935502e-4
+survival,spatiotemporal,"s(longitude,latitude)2",0.09695671591027938,0.009400604760106622
+survival,spatiotemporal,s(site_id),0.6757970683801794,0.45670167763124486
+survival,spatiotemporal,s(study),0.716151221154899,0.5128725715616531

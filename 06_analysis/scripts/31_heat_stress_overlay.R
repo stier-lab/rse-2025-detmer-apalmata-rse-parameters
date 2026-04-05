@@ -317,15 +317,31 @@ lookup_dhw_literature <- function(region, year) {
 
 # --- Main DHW query loop ---
 cat("Querying DHW for each site-year...\n")
-cat(sprintf("  Method priority: rerddap -> httr REST -> literature LUT -> NA\n"))
+cat(sprintf("  Method priority: cached lookup -> rerddap -> httr REST -> literature LUT -> NA\n"))
 cat(sprintf("  Rate limit: 0.5s between ERDDAP requests\n\n"))
 
-# Initialize result columns
-site_years_all$max_dhw       <- NA_real_
-site_years_all$dhw_source    <- NA_character_
-site_years_all$query_status  <- NA_character_
+# Reuse any existing site-year cache before querying external sources
+dhw_cache_file <- file.path(output_dir, "heat_stress_by_site_year.csv")
+if (file.exists(dhw_cache_file)) {
+  dhw_cache <- read_csv(dhw_cache_file, show_col_types = FALSE) %>%
+    dplyr::select(dplyr::any_of(c(
+      "lat_round", "lon_round", "survey_yr", "max_dhw", "dhw_source", "query_status"
+    ))) %>%
+    dplyr::distinct(lat_round, lon_round, survey_yr, .keep_all = TRUE)
+
+  site_years_all <- site_years_all %>%
+    dplyr::left_join(dhw_cache, by = c("lat_round", "lon_round", "survey_yr"))
+
+  cat(sprintf("  Loaded cache: %d site-years from existing heat_stress_by_site_year.csv\n\n",
+              nrow(dhw_cache)))
+} else {
+  site_years_all$max_dhw <- NA_real_
+  site_years_all$dhw_source <- NA_character_
+  site_years_all$query_status <- NA_character_
+}
 
 n_total   <- nrow(site_years_all)
+n_cached  <- sum(!is.na(site_years_all$query_status) | !is.na(site_years_all$dhw_source))
 n_erddap  <- 0
 n_httr    <- 0
 n_lut     <- 0
@@ -341,6 +357,13 @@ for (i in seq_len(n_total)) {
   # Progress reporting every 10 queries
   if (i %% 10 == 1 || i == n_total) {
     cat(sprintf("\r  Processing %d/%d (%.0f%%)...", i, n_total, i / n_total * 100))
+  }
+
+  # Reuse cached rows from earlier successful or explicit no-data runs
+  if ((!is.na(site_years_all$max_dhw[i]) && !is.na(site_years_all$dhw_source[i])) ||
+      (!is.na(site_years_all$query_status[i]) &&
+       site_years_all$query_status[i] %in% c("success", "literature_lut", "pre-1985 (CRW unavailable)", "no_data"))) {
+    next
   }
 
   # Pre-1985: CRW data unavailable
@@ -390,6 +413,7 @@ for (i in seq_len(n_total)) {
 cat("\n\n")
 
 cat("  Query results:\n")
+cat(sprintf("    Cached reuse:         %d site-years\n", n_cached))
 cat(sprintf("    ERDDAP (rerddap):    %d site-years\n", n_erddap))
 cat(sprintf("    ERDDAP (httr REST):  %d site-years\n", n_httr))
 cat(sprintf("    Literature LUT:      %d site-years\n", n_lut))

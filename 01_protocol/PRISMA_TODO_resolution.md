@@ -1,6 +1,6 @@
 # PRISMA TODO Resolution
 
-Cross-referencing all `[TODO]` items in `docs/PRISMA_Systematic_Review_Protocol.md` against Raine Detmer's original working notes (`docs/Detmer_APAL_meta_analysis_notes.docx`).
+Historical note cross-referencing earlier protocol `[TODO]` items against Raine Detmer's original working notes. This file is retained for auditability; the active protocol is [systematic_review_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/systematic_review_protocol.md).
 
 ---
 
@@ -109,7 +109,7 @@ Add a note after line 85 or in the Notes column:
 
 **Recommended replacement:**
 ```
-> **Note:** No formal extraction form was used prospectively. Data were extracted directly into standardized CSV files (`standardized_data/`) with all assumptions and caveats documented in per-study notes (`docs/Detmer_APAL_meta_analysis_notes.docx`). The template in §5.3 below reconstructs the extraction protocol retrospectively.
+> **Note:** No formal extraction form was used prospectively. Data were extracted directly into standardized CSV files (`05_data/standardized/`) with assumptions and caveats documented in per-study notes retained under `04_extraction/raine_working_notes/`. The template in §5.3 below reconstructs the extraction protocol retrospectively.
 ```
 
 ### Edit 5: Update the PRISMA deviations table (Line 412)

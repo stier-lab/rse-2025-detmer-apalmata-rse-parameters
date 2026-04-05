@@ -11,9 +11,17 @@
 
 ## 1. Objective
 
-To compile all published demographic data (survival, growth, fragmentation) for *Acropora palmata* across the Caribbean, stratified by colony size, for use in a size-structured population viability assessment (Lefkovitch matrix model).
+To compile all published demographic data (survival, growth, fragmentation) for *Acropora palmata* across the Caribbean, stratified by colony size, for use in a size-structured population viability assessment and a Caribbean-wide synthesis of how size structure, disturbance regime, and restoration context shape demographic performance.
 
 This is **not a classical systematic review** of treatment effects. It is a systematic data compilation — closer in spirit to an individual participant data (IPD) meta-analysis — where the goal is to recover vital rate parameters from every available source. The PRISMA framework is applied here to make the search and inclusion process reproducible and transparent, following PRISMA-EcoEvo principles for ecology and evolutionary biology (O'Dea et al. 2021, *Nature Ecology & Evolution* 5:1582--1589).
+
+The compiled evidence is intended to support five linked analytical products:
+
+1. Estimation of size-dependent survival, growth, shrinkage, and fragmentation rates.
+2. Detection of nonlinearities and thresholds in size-demography relationships.
+3. Construction of size-structured population models for evaluating viability and sensitivity.
+4. Integration of disturbance context through Caribbean time and space, treating disturbance as part of the demographic regime rather than removable noise.
+5. Evaluation of restoration relevance by comparing natural-colony and restoration-fragment demography and identifying where inference is transferable versus weakly supported.
 
 ---
 
@@ -109,7 +117,7 @@ Papers retrieved from the searches were screened by R. Detmer in two stages:
    - **Survival criterion:** The study needed to report the initial number and size of colonies/fragments and the number that survived approximately one year later (or proportion surviving over a defined interval amenable to annualization).
    - **Growth criterion:** The study recorded either initial and final sizes, or initial sizes and colony growth rate. Studies reporting only linear extension of branches were excluded.
 
-> **Source:** These search strings and screening procedures are documented in Raine Detmer's original working notes (`docs/Detmer_APAL_meta_analysis_notes.docx`).
+> **Source:** These search strings and screening procedures are documented in Raine Detmer's original working notes retained under `04_extraction/raine_working_notes/`.
 
 ### 3.2 Expanded Search (AI-assisted, March 2026)
 
@@ -225,7 +233,7 @@ Extraction was documented in two ways:
 
 1. **Per-study summary notes** (`literature/summaries/*.txt`): Free-text summaries of each paper's key findings, data availability, and relevance to the project. 17 summaries exist for evaluated studies.
 
-2. **Standardized CSV files** (`standardized_data/`): All extracted data stored in standardized column format with source attribution. AI-extracted rows tagged with `[AI_EXTRACTED]` in `study_notes` field and `data_tier = "Tier 2: AI-extracted summary"`.
+2. **Standardized CSV files** (`05_data/standardized/`): All extracted data stored in standardized column format with source attribution. AI-extracted rows tagged with `[AI_EXTRACTED]` in `study_notes` field and `data_tier = "Tier 2: AI-extracted summary"`.
 
 **Note on extraction forms:** A formal, pre-specified data extraction form was not used during the original extraction (Detmer, 2025). Instead, data were extracted directly into standardized CSV templates with consistent column structures, documented in `04_extraction/extraction_protocol.md`. Per-study extraction decisions, assumptions, and caveats are recorded in Detmer's working notes (`04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx`) and in per-study summary files. A retrospective extraction form template is provided in §5.3 below to document what was recorded for each study. AI-extracted rows are tagged with `[AI_EXTRACTED]` in the `study_notes` field and assigned `data_tier = "Tier 2: AI-extracted summary"`, with every value independently audited against the source PDF.
 
@@ -420,7 +428,7 @@ Both the original and expanded searches were conducted by single screeners (Detm
 
 ### 7.3 Data Extraction Reliability
 
-- **Hand-extracted data (Detmer):** No formal inter-rater reliability assessment. Values extracted by a domain expert with direct knowledge of the study organisms and monitoring programs. Detailed per-study extraction notes, including all assumptions and caveats, are documented in `docs/Detmer_APAL_meta_analysis_notes.docx` and `literature/summaries/*.txt`.
+- **Hand-extracted data (Detmer):** No formal inter-rater reliability assessment. Values extracted by a domain expert with direct knowledge of the study organisms and monitoring programs. Detailed per-study extraction notes, including all assumptions and caveats, are documented in `04_extraction/raine_working_notes/` and `literature/summaries/*.txt`.
 - **AI-extracted data:** Subject to figure-reading imprecision (±1–5%) and conceptual interpretation errors. Mitigated by independent audit that caught errors in 3 of 5 studies.
 - **No extraction form was used prospectively.** Values were extracted directly into standardized CSV format. A retrospective extraction form template is provided in §5.3.
 - **Figure-derived values:** Several studies required reading values from figures (e.g., Bruckner & Bruckner 2001 Fig. 3, Garrison & Ward 2008 Fig. 4b, Chamberland et al. 2015 Fig. 2, Roth et al. 2013 Fig. 5, Vardi 2011 Fig. 4-2, Ortiz Prosper 2005 Fig. 3.4). No digitization software was used; all values were visually estimated.
@@ -468,11 +476,11 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 All data and code for this systematic compilation are available at:
 
 - **Repository:** [github.com/stier-lab/Detmer-2025-coral-parameters](https://github.com/stier-lab/Detmer-2025-coral-parameters)
-- **Original data:** `original_data/` (14 raw source files, column definitions in `original_data/README.md`)
-- **Standardized data:** `standardized_data/` (column definitions in `standardized_data/README.md`)
-- **Audit trail:** AI-extracted data in `standardized_data/ai_extracted_*.csv`; audit log in `docs/Data_Methodology_Reference.md` §8
+- **Original data:** `05_data/original/` (14 raw source files, column definitions in `05_data/original/README.md`)
+- **Standardized data:** `05_data/standardized/` (column definitions in `05_data/standardized/README.md`)
+- **Audit trail:** AI-assisted extraction materials in `05_data/ai_extracted/`; extraction/audit notes in `04_extraction/extraction_protocol.md`
 - **Per-study summaries:** `literature/summaries/` (17 text files)
-- **This protocol:** `docs/PRISMA_Systematic_Review_Protocol.md`
+- **This protocol:** `01_protocol/systematic_review_protocol.md`
 
 ---
 

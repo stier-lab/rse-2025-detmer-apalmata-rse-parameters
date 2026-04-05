@@ -1,12 +1,19 @@
 # Analysis Scripts
 
-R analysis pipeline for *Acropora palmata* size-structured demographic parameter estimation. Synthesizes 25,000+ observations from 18+ studies of Elkhorn Coral across the Caribbean.
+R analysis pipeline for *Acropora palmata* size-structured demographic parameter estimation. This directory holds the maintained execution surface: standardization helpers, numbered analyses, manuscript figure builders, scenario extensions, advanced dynamic models, and verification utilities.
+
+For directory-level navigation, see [06_analysis/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/README.md).
+For the parent goal, paper goals, and current completeness roadmap, see [paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/paper_scope_and_analysis_roadmap.md).
+For the current core/supporting/exploratory labeling, see [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/analysis_inventory_labels.md).
+For the retained manuscript-facing figure/table set, see [final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
 
 ---
 
 ## Numbering Scheme
 
-Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipeline execution order:
+There are currently **54 top-level R scripts** in this directory. The numbered scripts define the main analytical surface; `00_*` helpers and `23_verification.R` sit around that numbered core.
+
+Scripts are numbered sequentially (01--47, with 14b, 20b, 20c, 31b variants) in pipeline execution order:
 
 | Range | Category | Description |
 |-------|----------|-------------|
@@ -14,9 +21,24 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 | **02--07** | Core analysis | Survival, growth, variance, gaps, integration |
 | **08--12** | Robustness & supplementary | Climate, power, cross-validation, context, model selection |
 | **13--17** | Synthesis | Matrix model, meta-analysis, heterogeneity, sensitivity, parameters |
-| **18--22** | Main figures | Publication-ready figures (Fig 1--6, Fig S1, S2, S15) |
+| **18--22** | Main figures & candidates | Publication-ready figures plus manuscript-candidate support figures |
 | **23** | Data gaps + verification | Fig S2 data gaps heatmap; end-to-end output checks |
 | **24--28** | Supplementary figures | Publication-ready supplementary figures (Fig S3--S14) |
+| **29--40** | Context + disturbance | Natural/restoration sensitivity, disturbance overlays, audit products, completeness extensions, and scenario layers |
+| **41--47** | Advanced dynamic models | Multistate, joint longitudinal-survival, stochastic IPM, regime-switching, distributed-lag, recurrent-event, and spatiotemporal extensions |
+
+## Canonical Entry Points
+
+- `run_all.R`
+  Full maintained pipeline orchestrator. This is the canonical rerun path after adding or updating standardized site data.
+- `01_data_preparation.R`
+  Builds the prepared panels used by almost every downstream script and validates the maintained standardized inputs against [data_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/standardized/data_registry.csv).
+- `19_fig2_demographic_rates.R`, `20b_fig_expanded_forest_plot.R`, `22_fig6_population_model.R`
+  Core manuscript-facing figure builders.
+- `34_disturbance_summaries.R`, `36_shrinkage_retrogression_summary.R`, `37_disturbance_size_interaction.R`, `38_study_window_disturbance_audit.R`, `39_restoration_subtype_sensitivity.R`
+  Completeness layer that supports the disturbance/restoration side of the paper.
+- `23_verification.R`, `48_pipeline_refresh_audit.R`
+  Canonical stats/assertion generation plus the final inventory/artifact refresh layer that updates machine-readable reporting outputs.
 
 ---
 
@@ -60,11 +82,11 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 │  Main Figures    │ │  Data Gaps +   │ │  Supp. Figures │
 │  18 Fig 1 + S1   │ │  Verification  │ │  24 S3-S4      │
 │  19 Fig 2        │ │  23 Fig S2     │ │  25 S5-S7      │
-│  20 Fig 4        │ │  23 verification│ │  26 S8-S9      │
-│  20b Fig 5       │ └────────────────┘ │  27 S10-S11    │
+│  20 support fig  │ │  23 verification│ │  26 S8-S9      │
+│  20b Fig 3       │ └────────────────┘ │  27 S10-S11    │
 │  20c Fig S15     │                    │  28 S12-S14    │
-│  21 Fig 3        │                    └────────────────┘
-│  22 Fig 6        │
+│  21 Fig S8       │                    └────────────────┘
+│  22 Fig 4        │
 └──────────────────┘
 ```
 
@@ -79,6 +101,8 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 | `01_data_preparation.R` | Load, clean, and standardize data from 18+ studies; assign size classes (SC1--SC5); create analysis-ready variables | `prepared_survival_data.rds`, `prepared_growth_data.rds` |
 
 ### 02--07 -- Core Analysis
+
+These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, and `04` are the size-threshold and curvature analysis surface; script `25` is the figure-production layer for those results.
 
 | Script | Description | Key Outputs |
 |--------|-------------|-------------|
@@ -105,7 +129,7 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 |--------|-------------|-------------|
 | `13_transition_matrix.R` | 5x5 Lefkovitch population projection matrix, eigenvalue analysis (lambda), elasticity analysis, bootstrap uncertainty | `transition_matrix.csv`, `elasticity_matrix.csv`, `population_parameters.csv` |
 | `14_meta_analysis.R` | Formal random-effects meta-analysis (k=5 studies), Knapp-Hartung adjustment, moderator analysis, subgroup analyses | `meta_analysis_results.csv`, `meta_analysis_study_effects.csv`, `meta_analysis_stratified.csv` |
-| `14b_expanded_meta_analysis.R` | Two-tier expanded meta-analysis (k=16 studies), individual + summary data, natural vs restoration moderator | `expanded_meta_analysis_results.csv`, `expanded_meta_analysis_study_effects.csv` |
+| `14b_expanded_meta_analysis.R` | Two-tier expanded meta-analysis (17 studies, 22 effects), individual + summary data, natural vs restoration moderator | `expanded_meta_analysis_results.csv`, `expanded_meta_analysis_study_effects.csv` |
 | `15_heterogeneity_analysis.R` | I-squared, Q-tests, heterogeneity source identification, between-study variance decomposition | `heterogeneity_analysis.csv` |
 | `16_sensitivity_analysis.R` | Leave-one-study-out sensitivity, elasticity perturbation, NOAA-dominance checks | `sensitivity_*.csv` |
 | `17_update_parameter_lists.R` | Serialize bootstrap parameter distributions to RDS format for the web platform API | `parameter_lists/*.rds` |
@@ -116,11 +140,11 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 |--------|-------------|-------------|
 | `18_fig1_study_landscape.R` | Figure 1: Study landscape (Caribbean map, 16 studies) + Fig S1 size dist | `figures/manuscript/Fig1_*` |
 | `19_fig2_demographic_rates.R` | Figure 2: Demographic rates — survival + RGR vs size | `figures/manuscript/Fig2_*` |
-| `20_fig_size_class_survival_synthesis.R` | Figure 4: Size-class survival synthesis (15 studies) | `figures/manuscript/Fig4_*` |
-| `20b_fig_expanded_forest_plot.R` | Figure 5: Expanded forest plot (k=16 meta-analysis) | `figures/manuscript/Fig5_*` |
+| `20_fig_size_class_survival_synthesis.R` | Standalone size-class survival synthesis figure used as manuscript-support output | `figures/manuscript/Fig4_size_class_survival.*` |
+| `20b_fig_expanded_forest_plot.R` | Figure 3: Caribbean-wide survival synthesis (forest + regional) | `figures/manuscript/Fig3_*` |
 | `20c_fig_regional_survival.R` | Figure S15: Regional survival variation | `figures/supplementary/FigS15_*` |
-| `21_fig3_natural_vs_restoration.R` | Figure 3: Natural vs restoration comparison | `figures/manuscript/Fig3_*` |
-| `22_fig6_population_model.R` | Figure 6: Population model — elasticity, bootstrap lambda, LOSO | `figures/manuscript/Fig6_*` |
+| `21_fig3_natural_vs_restoration.R` | Figure S8: Shared-range natural vs restoration comparison | `figures/supplementary/FigS8_*` |
+| `22_fig6_population_model.R` | Figure 4: Population model — elasticity, bootstrap lambda, LOSO | `figures/manuscript/Fig4_population_model.*` |
 | `23_figS2_data_gaps.R` | Figure S2: Data gaps heatmap | `figures/supplementary/FigS2_*` |
 | `24_supp_S3_S4.R` | Figure S3: Survival coefficients; Figure S4: Growth coefficients | `figures/supplementary/FigS3_*`, `FigS4_*` |
 | `25_supp_S5_S6_S7_thresholds_growth.R` | Figure S5--S7: Threshold detection, growth diagnostics | `figures/supplementary/FigS5_*`, `FigS6_*`, `FigS7_*` |
@@ -128,7 +152,39 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 | `27_supp_S10_S11.R` | Figure S10--S11: Model selection comparison | `figures/supplementary/FigS10_*`, `FigS11_*` |
 | `28_supp_S12_S13_S14.R` | Figure S12--S14: Diagnostics, residuals, additional robustness | `figures/supplementary/FigS12_*`, `FigS13_*`, `FigS14_*` |
 
-### 23 & Utilities -- Verification & Shared Code
+### 29--40 -- Context, Disturbance, Completeness, and Heatwave Extensions
+
+| Script | Description | Key Outputs |
+|--------|-------------|-------------|
+| `29_natural_vs_restoration.R` | Expanded natural vs restoration comparison outside the main figure script surface | `natural_vs_restoration_*.csv` |
+| `30_disturbance_sensitivity.R` | Disturbance sensitivity analysis using baseline-exclusion vs chronic-context distinctions | `disturbance_sensitivity_summary.csv`, `disturbance_interval_comparison.csv` |
+| `31_heat_stress_overlay.R` | Heat stress overlay against demographic intervals | `heat_stress_*.csv` |
+| `31b_verify_dhw.R` | Verification utilities for DHW inputs and site-year joins | `dhw_verification_*.csv` |
+| `32_disturbance_survival_analysis.R` | Disturbance regime overlays and survival analyses | `disturbance_survival_glmm.csv`, disturbance timeline figures |
+| `33_hurricane_exposure.R` | Hurricane exposure summaries by region and category | `hurricane_exposure_*.csv` |
+| `34_disturbance_summaries.R` | Publication-quality disturbance catalogs, summary tables, and summary figures | `disturbance_event_catalog.csv`, `disturbance_summary_by_*.csv` |
+| `35_curate_literature_scope.R` | Scope-screen life-history and disturbance evidence tables into analysis-ready subsets | `*_analysis.csv` literature tables |
+| `36_shrinkage_retrogression_summary.R` | Standalone synthesis of shrinkage frequency, tissue loss, and retrogression probabilities by size class and study | `shrinkage_retrogression_*.csv`, `retrogression_probability_by_size_class.csv`, `FigS16_shrinkage_retrogression_summary.*` |
+| `37_disturbance_size_interaction.R` | Disturbance × size interaction analysis for survival and positive growth | `disturbance_size_*.csv`, `FigS17_disturbance_size_interaction.*` |
+| `38_study_window_disturbance_audit.R` | Rebuild and audit study-window overlaps with the curated disturbance timeline | `study_window_disturbance_*.csv`, `TableS2_study_window_disturbance_audit.md` |
+| `39_restoration_subtype_sensitivity.R` | Reclassify broad restoration fragments into defensible subtypes and summarize subtype-specific demography | `restoration_subtype_*.csv`, `FigS19_restoration_subtype_sensitivity.*` |
+| `40_manzello_heatwave_scenarios.R` | Layer catastrophic heatwave mortality thresholds onto the chronic demographic regime via scenario projections | `manzello_dose_response.csv`, `heatwave_scenario_*.csv`, `FigS15_heatwave_scenarios.*` |
+
+### 41--47 -- Advanced Dynamic Model Extensions
+
+These scripts push beyond the main GLMM + matrix-model surface. They are best treated as advanced extensions until they are fully folded into the manuscript claim structure.
+
+| Script | Description | Key Outputs |
+|--------|-------------|-------------|
+| `41_multistate_transition_model.R` | Interval-adjusted multistate size-class transition model with explicit death state and retrogression summaries | `multistate_*.csv` |
+| `42_joint_longitudinal_survival_model.R` | Two-stage joint approximation linking live-size trajectory to interval mortality hazard | `joint_longitudinal_*.csv`, `joint_longitudinal_risk_curve.png` |
+| `43_stochastic_ipm_disturbance_model.R` | Disturbance-conditioned stochastic IPM / kernel viability projection layer | `stochastic_ipm_*.csv`, `stochastic_ipm_projection_trajectories.*` |
+| `44_regime_switching_model.R` | Hidden-state regime classification of annual survival-condition deviations | `regime_switching_*.csv`, `regime_switching_year_states.*` |
+| `45_distributed_lag_disturbance_model.R` | Distributed-lag disturbance models for survival, positive growth, and RGR | `distributed_lag_*.csv`, `distributed_lag_coefficients.*` |
+| `46_recurrent_event_frailty_model.R` | Colony-history recurrent-event shrinkage and terminal mortality frailty models | `recurrent_event_*.csv` |
+| `47_spatiotemporal_hierarchical_model.R` | Spatiotemporal hierarchical GAMM layer over site coordinates and site-year structure | `spatiotemporal_*.csv`, `spatiotemporal_hierarchical_summary.*` |
+
+### Utilities -- Verification & Shared Code
 
 | Script | Description |
 |--------|-------------|
@@ -143,26 +199,51 @@ Scripts are numbered sequentially (01--28, with 14b, 20b, 20c variants) in pipel
 
 ---
 
+## Nonlinearity Workflow
+
+If you specifically want the nonlinear size-dependence analyses, the canonical sequence is:
+
+1. `01_data_preparation.R`
+2. `02_survival_thresholds.R`
+3. `03_growth_thresholds.R`
+4. `04_growth_rate_comparison.R`
+5. `25_supp_S5_S6_S7_thresholds_growth.R`
+
+These scripts produce the threshold estimates, derivative diagnostics, allometric comparisons, and the manuscript-ready figure set for that analytical thread.
+
+---
+
 ## Running the Pipeline
 
 ### Full pipeline (~45--60 minutes)
 
 ```bash
-cd analysis/scripts
+cd 06_analysis/scripts
 Rscript run_all.R
 ```
+
+### Automatic Refresh Surface
+
+When `run_all.R` completes successfully, the maintained pipeline is expected to refresh not just model outputs and figures, but also the reporting surface used to keep manuscript-facing numbers in sync:
+
+- [canonical_statistics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_statistics.csv)
+- [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
+- [standardized_data_inventory.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/standardized_data_inventory.csv)
+- [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
+- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
+- [canonical_statistics.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/canonical_statistics.md)
 
 ### Individual scripts
 
 From the project root:
 ```bash
-Rscript analysis/scripts/01_data_preparation.R
-Rscript analysis/scripts/02_survival_thresholds.R
+Rscript 06_analysis/scripts/01_data_preparation.R
+Rscript 06_analysis/scripts/02_survival_thresholds.R
 ```
 
 From the scripts directory:
 ```bash
-cd analysis/scripts
+cd 06_analysis/scripts
 Rscript 01_data_preparation.R
 Rscript 02_survival_thresholds.R
 ```
@@ -176,13 +257,23 @@ if (file.exists("standardized_data")) {
 }
 ```
 
+### Adding a New Site
+
+The maintained pattern is:
+
+1. put raw source files in `05_data/original/`
+2. standardize them in a `00_standardize_<site>.R` helper
+3. append or rebuild the canonical tables under `05_data/standardized/`
+4. update [data_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/standardized/data_registry.csv) if the maintained schema changes
+5. rerun `run_all.R`
+
 ---
 
 ## Output Directories
 
 ```
-analysis/
-├── output/                         # 168+ CSV/RDS result files
+06_analysis/
+├── output/                         # 286 generated CSV/RDS result files
 │   ├── prepared_*.rds              # Analysis-ready data (from 01)
 │   ├── survival_*.csv              # Survival analysis (from 02)
 │   ├── growth_*.csv                # Growth analysis (from 03, 04)
@@ -196,19 +287,18 @@ analysis/
 │   └── model_selection_*.csv       # Model comparison (from 12)
 │
 ├── figures/
-│   ├── manuscript/                 # Main text figures (from 18--22)
-│   │   ├── Fig1_*.png/.pdf         # PNG (300 DPI) + PDF (vector)
-│   │   ├── Fig2_*.png/.pdf         # All at 170mm width
-│   │   ├── Fig3_*.png/.pdf
-│   │   ├── Fig4_*.png/.pdf
-│   │   ├── Fig5_*.png/.pdf
-│   │   └── Fig6_*.png/.pdf
+│   ├── manuscript/                 # Canonical main-text figures + support variants
+│   │   ├── Fig1_*.png/.pdf         # Main text
+│   │   ├── Fig2_*.png/.pdf         # Main text
+│   │   ├── Fig3_*.png/.pdf         # Main text
+│   │   ├── Fig4_*.png/.pdf         # Main text
+│   │   └── support-only variants   # e.g. Fig4_size_class_survival.*, Fig5_*, Fig6_*
 │   │
-│   └── supplementary/              # Supplementary figures (from 18, 20c, 23--28)
+│   └── supplementary/              # Canonical supplement + support-only variants
 │       ├── FigS1_*.png/.pdf        # Size distribution (from 18)
 │       ├── FigS2_*.png/.pdf        # Data gaps heatmap (from 23)
-│       ├── FigS3--S14_*.png/.pdf   # Diagnostics & robustness (from 24--28)
-│       ├── FigS15_*.png/.pdf       # Regional survival (from 20c)
+│       ├── FigS3--S15_*.png/.pdf   # Diagnostics, robustness, and regional survival
+│       ├── FigS16--S19_*.png/.pdf  # Shrinkage, disturbance, and restoration completeness figures
 │       ├── exploratory/
 │       ├── diagnostics/
 │       └── meta_analysis/
@@ -222,11 +312,11 @@ parameter_lists/                    # RDS files consumed by the web platform API
 
 | Metric | Value |
 |--------|-------|
-| Population growth rate (lambda) | 0.986 (P(decline) = 87.3%) |
-| Most critical parameter | SC5 stasis (54.8% of total elasticity) |
-| Between-study heterogeneity | I-squared = 97.8% |
+| Population growth rate (lambda) | 0.967 (P(decline) = 86.0%) |
+| Most critical parameter | SC5 stasis (57.4% of matrix-cell elasticity) |
+| Between-study heterogeneity | I-squared = 97.2% |
 | NOAA data share | 78% of observations |
-| Total observations | 25,000+ from 18+ studies |
+| Total observations | 14,160 individual observations plus summary effects from 17 studies |
 
 ---
 

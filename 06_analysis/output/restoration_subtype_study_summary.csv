@@ -1,0 +1,9 @@
+restoration_subtype,subtype_label,study,region,n,mean_survival,mean_size_cm2,baseline_excluded
+natural_fragment,Naturally occurring fragments,NOAA_survey,Curacao,856,0.8457943925233646,5766.048107476635,0
+natural_fragment,Naturally occurring fragments,NOAA_survey,Florida Keys,3010,0.8764119601328899,4112.422831505464,1058
+natural_fragment,Naturally occurring fragments,NOAA_survey,Navassa,102,0.9215686274509804,6128.772254901961,0
+nursery_outplant,Nursery outplants,fundemar_fragments,Dominican Republic,44,0.8636363636363636,20.10218181818182,44
+nursery_outplant,Nursery outplants,pausch_et_al_2018,Florida Keys,968,0.5743801652892566,63.78127846790891,720
+nursery_outplant_recemented,Nursery outplants after fragmentation / re-cementation,kuffner_et_al_2020,Dry Tortugas,24,1,20.333333333333332,0
+nursery_outplant_recemented,Nursery outplants after fragmentation / re-cementation,kuffner_et_al_2020,Florida Keys,29,0.6551724137931034,15.306034482758621,0
+outplanted_colony,Outplanted colonies,USGS_USVI_exp,US Virgin Islands,46,0.6521739130434782,59.47391304347828,16

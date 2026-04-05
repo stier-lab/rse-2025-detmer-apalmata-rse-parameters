@@ -1,0 +1,22 @@
+disturbance_state,prior_shrink_bin,population_type,n_intervals,deaths,death_rate
+No curated disturbance,0,Natural colony,229,35,0.15283842794759825
+No curated disturbance,1,Natural colony,96,26,0.2708333333333333
+No curated disturbance,2,Natural colony,23,5,0.21739130434782608
+No curated disturbance,3+,Natural colony,5,0,0
+Context-only pressure,0,Natural colony,2435,561,0.23039014373716632
+Context-only pressure,1,Natural colony,1071,187,0.1746031746031746
+Context-only pressure,2,Natural colony,476,75,0.15756302521008403
+Context-only pressure,3+,Natural colony,586,73,0.12457337883959044
+Acute baseline-exclusion,0,Natural colony,630,96,0.1523809523809524
+Acute baseline-exclusion,1,Natural colony,206,28,0.13592233009708737
+Acute baseline-exclusion,2,Natural colony,122,18,0.14754098360655737
+Acute baseline-exclusion,3+,Natural colony,262,32,0.12213740458015267
+No curated disturbance,0,Restoration fragment,12,0,0
+No curated disturbance,1,Restoration fragment,1,0,0
+No curated disturbance,2,Restoration fragment,2,0,0
+No curated disturbance,3+,Restoration fragment,1,0,0
+Context-only pressure,0,Restoration fragment,383,142,0.370757180156658
+Context-only pressure,1,Restoration fragment,10,0,0
+Context-only pressure,2,Restoration fragment,2,0,0
+Context-only pressure,3+,Restoration fragment,1,0,0
+Acute baseline-exclusion,0,Restoration fragment,793,302,0.38083228247162676

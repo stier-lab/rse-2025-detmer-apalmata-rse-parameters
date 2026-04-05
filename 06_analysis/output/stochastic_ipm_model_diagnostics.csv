@@ -1,0 +1,3 @@
+model,formula,n,aic,deviance_explained
+survival_gam,"survived ~ regime_class + s(log_size, k = 7) + s(log_size, by = regime_class,      k = 5)",5508,4698.133880808233,0.10884186088603216
+growth_gam,"delta_log_size ~ regime_class + s(log_size, k = 7) + s(log_size,      by = regime_class, k = 5)",4508,15749.916052718581,0.04739430511230257

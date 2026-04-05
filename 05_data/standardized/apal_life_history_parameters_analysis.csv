@@ -1,0 +1,41 @@
+Parameter,Sub_Category,Value,Unit,Region,Study,Context,analysis_include,relevance_class,scope_note
+maturity_threshold,size_live_cm2,4000,cm2,Caribbean-wide,Vardi 2011,90% probability of gamete production (SC5),TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+fecundity_reduction,partial_mortality,20,percent,Mexico,Pinon-Gonzalez 2018,Reduction in egg volume for colonies with lesions,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+fecundity_gonadal_index,oocyte_density,63.6,oocytes/cm2,Mexico,Mendoza-Quiroz 2023,Observed in 8yr old restoration outplants,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+fecundity_oocyte_count,per_polyp,5.61,oocytes,Mexico,Mendoza-Quiroz 2023,Mean oocytes per polyp in mature colonies,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+calcification_rate,skeletal_accretion,7.9,mg/cm2/day,Florida (DRTO),Kuffner 2020,Optimal growth site in Dry Tortugas,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+calcification_rate,skeletal_accretion,4.2,mg/cm2/day,Florida (Upper Keys),Kuffner 2020,Slower growth at nearshore sites,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+carbon_fixation,gross_fixation,84,mg_C/cm2/day,Florida,Lirman 2000a,Lower bound of wild colony metabolic rate,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+carbon_fixation,gross_fixation,109,mg_C/cm2/day,Florida,Lirman 2000a,Upper bound of wild colony metabolic rate,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+settlement_success,thermal_baseline,62,percent,Puerto Rico,Randall 2009,At optimal 28C temperature,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+settlement_success,thermal_stress,37,percent,Puerto Rico,Randall 2009,At 31.5C heat stress (40% reduction),TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+recruit_survival,nursery_ex_situ,0.5,percent,Curacao,Chamberland 2015,Long-term survival if kept in lab,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+recruit_survival,reef_outplant,3.4,percent,Curacao,Chamberland 2015,Long-term survival if outplanted at 2 weeks,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+post_settlement_mortality,6_month,86,percent,Curacao,Chamberland 2015,Natural mortality bottleneck for new recruits,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+lesion_recovery,small_lesion,7.3,mm/month,Florida,Lirman 2000b,Healing rate for lesions < 5cm2,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+lesion_recovery,medium_lesion,4.9,mm/month,Florida,Lirman 2000b,Healing rate for lesions 5-10cm2,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+lesion_recovery,large_lesion,4.3,mm/month,Florida,Lirman 2000b,Healing rate for lesions 10-20cm2,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+lesion_recovery,critical_threshold,20,cm2,Florida,Lirman 2000b,Size above which lesions rarely recover,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+disease_prevalence,WPx_small,0,percent,Mesoamerican Reef,Rodriguez-Martinez 2014,Prevalence in colonies < 5cm,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+disease_prevalence,WPx_large,48,percent,Mesoamerican Reef,Rodriguez-Martinez 2014,Prevalence in colonies > 75cm,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+bleaching_threshold,S_fitti,31.2,Celsius,Florida,Pausch 2018,Thermal threshold for native symbiont association,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+snail_predation_rate,tissue_loss,16,cm2/day,Florida,Williams 2012,Maximum consumption per Coralliophila snail,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+snail_predation_impact,background_loss,27,percent,Florida,Williams 2012,Impact of < 2 snails per colony on total tissue loss,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+algal_competition_cost,growth_reduction,50,percent,BVI,Forrester 2011,Reduction in fragment growth due to Dictyota,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+grazing_requirement,algal_control,42,percent,Caribbean,Mumby 2007,Minimum reef surface grazed per 6mo to prevent shift,TRUE,indirect_habitat_context,Indirect Caribbean habitat-process context retained for analysis support.
+fragment_sterility,duration,4,years,Florida,Lirman 2000a,Time fragments remain sterile post-disturbance,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+fragment_cementation,9_month,72,percent,Florida,Fong 1995,Proportion of storm fragments stabilized to reef,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+fragment_tissue_loss,1_year,61.7,percent,Puerto Rico,Ortiz-Prosper 2005,Average tissue loss on surviving fragments,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+growth_rate_linear,restoration,7.3,cm/year,Cuba,Ramos-Romero 2025,Maximum observed outplant linear extension,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+growth_rate_linear,restoration,-1.5,cm/year,Cuba,Ramos-Romero 2025,Minimum (negative) growth in high-flow zones,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+reproductive_fertilization,wild_gametes,95,percent,Mexico,Mendoza-Quiroz 2023,F1 sperm x Wild eggs,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+reproductive_fertilization,sibling_gametes,15,percent,Mexico,Mendoza-Quiroz 2023,F1 sperm x F1 sibling eggs,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+microbiome_stability,threshold,31,Celsius,Florida,Rosales 2024,Temp at which core Sphingomonadaceae are lost,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+frag_survival_1yr,Butler_Bay,35,percent,USVI (St. Croix),Rogers 1982,Post-Hurricane David survival (high energy),TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+frag_survival_1yr,Buck_Island,66,percent,USVI (St. Croix),Rogers 1982,Post-Hurricane David survival (moderate energy),TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+physical_disturbance,vessel_grounding,93,percent,Mexico,Victoria-Salazar 2023,Reduction in A. palmata cover (14% to 1%) over 504m2,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+water_quality_threshold,chlorophyll_a,1,mg/m3,Florida,Banister 2024,Level above which A. palmata occurrence drops significantly,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+water_quality_threshold,total_nitrogen,0.16,ppm,Florida,Banister 2024,Level above which A. palmata occurrence drops significantly,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.
+reef_budget_reduction,indirect_SCTLD,30,percent,Mesoamerican Reef,Alvarez-Filip 2022,Loss of community CaCO3 production (4.6 to 3.27 kg/m2/yr),TRUE,indirect_habitat_context,Indirect Caribbean habitat-process context retained for analysis support.
+recruitment_inhibition,macroalgae,100,percent,Caribbean,Alvarez-Filip 2022,Macroalgal takeover of dead framework prevents recruitment,TRUE,indirect_habitat_context,Indirect Caribbean habitat-process context retained for analysis support.
+predation_feedback,post_storm,high,categorical,Florida,Vardi 2011,Snails concentrate on surviving fragments impeding recovery,TRUE,direct_apal,Direct Caribbean A. palmata life-history evidence retained for analysis.

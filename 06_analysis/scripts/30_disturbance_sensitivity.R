@@ -4,12 +4,13 @@
 # Sensitivity Analysis: Effect of Disturbance Events on Survival Estimates
 ################################################################################
 #
-# PURPOSE: Assess how disturbance events (disease, storms) influence survival
-#   estimates and meta-analytic results. Tests four scenarios:
+# PURPOSE: Assess how disturbance events influence survival estimates and
+#   meta-analytic results. Tests five scenarios:
 #     1. All data (primary/baseline)
 #     2. Excluding Neely disease intervals (disease_2014 + aftermath)
 #     3. Excluding NOAA storm intervals
-#     4. Excluding ALL flagged disturbance (Neely disease + aftermath + NOAA storm)
+#     4. Excluding baseline-exclusion disturbance events
+#     5. Excluding all timeline-linked context (stress test only)
 #
 #   The `disturbance` column flags affected intervals:
 #     - "disease_2014": Neely TP4->TP5 interval (~53% survival vs ~85-90% normal)
@@ -55,7 +56,7 @@ library(mgcv)
 set.seed(42)
 
 print_header("30: DISTURBANCE SENSITIVITY ANALYSIS")
-cat("  Assessing impact of Neely et al. 2022 disease event on survival estimates\n\n")
+cat("  Assessing impact of acute disturbance exclusions versus chronic context on survival estimates\n\n")
 
 # Paths
 dirs <- setup_output_dirs()
@@ -85,31 +86,55 @@ if (!"population_type" %in% names(surv_data)) {
     )
 }
 
-# Flag disturbance intervals
+# Flag disturbance intervals using timeline-aware regime
 surv_data <- surv_data %>%
   mutate(
+    # Old flags for backward compatibility/reference
     is_disease_2014 = !is.na(disturbance) & disturbance %in% c("disease_2014", "disease_2014_aftermath"),
     is_storm = !is.na(disturbance) & disturbance == "storm",
-    is_any_disturbance = !is.na(disturbance) & disturbance %in% c("disease_2014", "disease_2014_aftermath", "storm"),
+    
+    # Timeline integration from 01_data_preparation.R
+    disturbance_regime = coalesce(disturbance_regime, "none"),
+    timeline_event_count = if_else(is.na(timeline_event_count), 0L, timeline_event_count),
+    timeline_analysis_tiers = coalesce(timeline_analysis_tiers, "none"),
+    exclude_from_baseline = coalesce(exclude_from_baseline, FALSE),
+    is_timeline_disturbance = timeline_event_count > 0,
+    is_baseline_exclusion = exclude_from_baseline | is_disease_2014 | is_storm,
+    primary_exposure = case_when(
+      is_disease_2014 | is_storm ~ coalesce(disturbance, "legacy_flag"),
+      disturbance_regime != "none" ~ disturbance_regime,
+      TRUE ~ "none"
+    ),
     disturbance_label = case_when(
-      disturbance == "disease_2014" ~ "Disease 2014 (TP4-TP5)",
-      disturbance == "disease_2014_aftermath" ~ "Aftermath (TP5-TP6)",
-      disturbance == "storm" ~ "Storm",
+      is_baseline_exclusion ~ paste0("Baseline exclusion (", primary_exposure, ")"),
+      is_timeline_disturbance ~ paste0("Context regime (", primary_exposure, ")"),
       TRUE ~ "Non-disturbance"
     )
   )
+
+# Define scenarios for analysis
+surv_no_baseline_exclusion <- surv_data %>% dplyr::filter(!is_baseline_exclusion)
+surv_no_any_regime <- surv_data %>%
+  dplyr::filter(!is_timeline_disturbance, !is_disease_2014, !is_storm)
+
+cat(sprintf("  Baseline-exclusion disturbance intervals flagged: %d\n", sum(surv_data$is_baseline_exclusion, na.rm = TRUE)))
+cat(sprintf("  Timeline-linked intervals: %d\n", sum(surv_data$is_timeline_disturbance, na.rm = TRUE)))
+cat(sprintf("  Baseline-eligible records: %d\n", sum(!surv_data$is_baseline_exclusion, na.rm = TRUE)))
+cat(sprintf("  Stress-test context-free records: %d\n", nrow(surv_no_any_regime)))
 
 neely_data <- surv_data %>% dplyr::filter(study == "neely_et_al_2022")
 n_disease <- sum(surv_data$is_disease_2014)
 n_neely_disease <- sum(neely_data$is_disease_2014)
 n_storm <- sum(surv_data$is_storm)
-n_any_disturbance <- sum(surv_data$is_any_disturbance)
+n_any_disturbance <- sum(surv_data$is_timeline_disturbance)
+n_baseline_exclusion <- sum(surv_data$is_baseline_exclusion)
 
 cat(sprintf("  Disease-flagged intervals (total): %d\n", n_disease))
 cat(sprintf("  Disease-flagged intervals (Neely): %d\n", n_neely_disease))
 cat(sprintf("  Non-disturbance intervals (Neely): %d\n", sum(!neely_data$is_disease_2014)))
 cat(sprintf("  Storm-flagged intervals (NOAA): %d\n", n_storm))
-cat(sprintf("  All flagged disturbance intervals: %d\n", n_any_disturbance))
+cat(sprintf("  All timeline-linked disturbance intervals: %d\n", n_any_disturbance))
+cat(sprintf("  Baseline-exclusion disturbance intervals: %d\n", n_baseline_exclusion))
 
 # Storm survival summary
 noaa_data <- surv_data %>% dplyr::filter(study == "NOAA_survey")
@@ -330,9 +355,17 @@ meta_no_disease <- run_tier1_meta(surv_no_disease, "Excl. disease 2014")
 surv_no_storm <- surv_data %>% dplyr::filter(!is_storm)
 meta_no_storm <- run_tier1_meta(surv_no_storm, "Excl. NOAA storm")
 
-# Run EXCLUDING ALL flagged disturbance (Neely disease + aftermath + NOAA storm)
-surv_no_any_disturbance <- surv_data %>% dplyr::filter(!is_any_disturbance)
-meta_no_any_disturbance <- run_tier1_meta(surv_no_any_disturbance, "Excl. all disturbance")
+# Run EXCLUDING baseline-exclusion events only
+meta_no_baseline_exclusion <- run_tier1_meta(
+  surv_no_baseline_exclusion,
+  "Excl. baseline-exclusion events"
+)
+
+# Run EXCLUDING ALL timeline-linked context (stress test only)
+meta_no_any_disturbance <- run_tier1_meta(
+  surv_no_any_regime,
+  "Excl. all timeline-linked context"
+)
 
 # ==============================================================================
 # SECTION 5: COMPILE SENSITIVITY SUMMARY
@@ -398,10 +431,29 @@ if (!is.null(meta_no_storm)) {
   )
 }
 
+if (!is.null(meta_no_baseline_exclusion)) {
+  neely_no_baseline_exclusion <- neely_data %>% dplyr::filter(!is_baseline_exclusion)
+  sensitivity_rows[["no_baseline_exclusion"]] <- data.frame(
+    scenario = "Excluding baseline-exclusion events",
+    k = meta_no_baseline_exclusion$k,
+    n_total = meta_no_baseline_exclusion$n_total,
+    pooled_survival = round(meta_no_baseline_exclusion$pooled_surv, 4),
+    ci_lower = round(meta_no_baseline_exclusion$pooled_lower, 4),
+    ci_upper = round(meta_no_baseline_exclusion$pooled_upper, 4),
+    I2 = round(meta_no_baseline_exclusion$I2, 1),
+    tau2 = round(meta_no_baseline_exclusion$tau2, 4),
+    pi_lower = round(meta_no_baseline_exclusion$pi_lower, 4),
+    pi_upper = round(meta_no_baseline_exclusion$pi_upper, 4),
+    neely_survival = round(mean(neely_no_baseline_exclusion$survived), 4),
+    neely_n = nrow(neely_no_baseline_exclusion),
+    stringsAsFactors = FALSE
+  )
+}
+
 if (!is.null(meta_no_any_disturbance)) {
   neely_no_disease <- neely_data %>% dplyr::filter(!is_disease_2014)
   sensitivity_rows[["no_any_disturbance"]] <- data.frame(
-    scenario = "Excluding all flagged disturbance",
+    scenario = "Excluding all timeline-linked context",
     k = meta_no_any_disturbance$k,
     n_total = meta_no_any_disturbance$n_total,
     pooled_survival = round(meta_no_any_disturbance$pooled_surv, 4),
@@ -465,12 +517,12 @@ surv_natural <- surv_data %>%
   dplyr::filter(!is.na(size_cm2), !is.na(survived)) %>%
   mutate(log_size = log(size_cm2))
 
-surv_natural_no_disease <- surv_natural %>% dplyr::filter(!is_disease_2014)
-surv_natural_no_any <- surv_natural %>% dplyr::filter(!is_any_disturbance)
+surv_natural_no_disease <- surv_natural %>% dplyr::filter(!is_baseline_exclusion)
+surv_natural_no_any <- surv_natural %>% dplyr::filter(!is_timeline_disturbance, !is_disease_2014, !is_storm)
 
 cat(sprintf("  Natural colony records (all): %d\n", nrow(surv_natural)))
-cat(sprintf("  Natural colony records (excl. disease): %d\n", nrow(surv_natural_no_disease)))
-cat(sprintf("  Natural colony records (excl. all disturbance): %d\n", nrow(surv_natural_no_any)))
+cat(sprintf("  Natural colony records (excl. baseline-exclusion events): %d\n", nrow(surv_natural_no_disease)))
+cat(sprintf("  Natural colony records (excl. all timeline context): %d\n", nrow(surv_natural_no_any)))
 
 # Fit GAMs
 gam_full <- gam(survived ~ s(log_size, k = 4),
@@ -482,9 +534,9 @@ gam_no_any <- gam(survived ~ s(log_size, k = 4),
 
 cat(sprintf("  GAM (all data) R2 = %.3f, deviance explained = %.1f%%\n",
             summary(gam_full)$r.sq, summary(gam_full)$dev.expl * 100))
-cat(sprintf("  GAM (excl. disease) R2 = %.3f, deviance explained = %.1f%%\n",
+cat(sprintf("  GAM (excl. baseline-exclusion events) R2 = %.3f, deviance explained = %.1f%%\n",
             summary(gam_no_disease)$r.sq, summary(gam_no_disease)$dev.expl * 100))
-cat(sprintf("  GAM (excl. all disturbance) R2 = %.3f, deviance explained = %.1f%%\n",
+cat(sprintf("  GAM (excl. all timeline context) R2 = %.3f, deviance explained = %.1f%%\n",
             summary(gam_no_any)$r.sq, summary(gam_no_any)$dev.expl * 100))
 
 # Generate predictions over shared size range
@@ -511,7 +563,7 @@ pred_excl <- pred_grid %>%
     fit = plogis(link_excl$fit),
     lower = plogis(link_excl$fit - 1.96 * link_excl$se.fit),
     upper = plogis(link_excl$fit + 1.96 * link_excl$se.fit),
-    scenario = "Excluding disease 2014"
+    scenario = "Excluding baseline-exclusion events"
   )
 
 # Excluding ALL flagged disturbance predictions
@@ -522,7 +574,7 @@ pred_no_any <- pred_grid %>%
     fit = plogis(link_no_any$fit),
     lower = plogis(link_no_any$fit - 1.96 * link_no_any$se.fit),
     upper = plogis(link_no_any$fit + 1.96 * link_no_any$se.fit),
-    scenario = "Excluding all disturbance"
+    scenario = "Excluding all timeline context"
   )
 
 pred_combined <- bind_rows(pred_full, pred_excl, pred_no_any)
@@ -537,7 +589,9 @@ print_subheader("Section 7: Creating Figure")
 # Panel a: Forest plot comparing study effects with/without Neely 2014 disease
 # --------------------------------------------------------------------------
 
-if (!is.null(meta_full) && !is.null(meta_no_disease)) {
+figure_saved <- FALSE
+
+if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
 
   # Build forest data for both scenarios
   build_forest_df <- function(meta_result, scenario_label) {
@@ -553,27 +607,27 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
   }
 
   forest_full <- build_forest_df(meta_full, "All data")
-  forest_excl <- build_forest_df(meta_no_disease, "Excl. disease 2014")
+  forest_excl <- build_forest_df(meta_no_baseline_exclusion, "Excl. baseline-exclusion events")
 
   # Combine into a single plot-ready data frame
   # Use study as the y-axis, dodged by scenario
   all_studies <- union(forest_full$study, forest_excl$study)
 
   forest_combined <- bind_rows(forest_full, forest_excl) %>%
-    mutate(
-      study_label = paste0(study, " (", region, ")"),
-      study_label = factor(study_label,
+      mutate(
+        study_label = paste0(study, " (", region, ")"),
+        study_label = factor(study_label,
                            levels = rev(sort(unique(study_label)))),
-      scenario = factor(scenario, levels = c("All data", "Excl. disease 2014"))
+      scenario = factor(scenario, levels = c("All data", "Excl. baseline-exclusion events"))
     )
 
   # Pooled estimates as summary rows
   pooled_df <- data.frame(
-    scenario = factor(c("All data", "Excl. disease 2014"),
-                      levels = c("All data", "Excl. disease 2014")),
-    pooled_surv = c(meta_full$pooled_surv, meta_no_disease$pooled_surv),
-    pooled_lower = c(meta_full$pooled_lower, meta_no_disease$pooled_lower),
-    pooled_upper = c(meta_full$pooled_upper, meta_no_disease$pooled_upper)
+    scenario = factor(c("All data", "Excl. baseline-exclusion events"),
+                      levels = c("All data", "Excl. baseline-exclusion events")),
+    pooled_surv = c(meta_full$pooled_surv, meta_no_baseline_exclusion$pooled_surv),
+    pooled_lower = c(meta_full$pooled_lower, meta_no_baseline_exclusion$pooled_lower),
+    pooled_upper = c(meta_full$pooled_upper, meta_no_baseline_exclusion$pooled_upper)
   )
 
   p_forest <- ggplot(forest_combined,
@@ -607,7 +661,7 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
       expand = c(0.02, 0)
     ) +
     scale_color_manual(
-      values = c("All data" = pal$surv_dark, "Excl. disease 2014" = pal$accent),
+      values = c("All data" = pal$surv_dark, "Excl. baseline-exclusion events" = pal$accent),
       name = NULL
     ) +
     scale_size_continuous(range = c(2, 6), guide = "none") +
@@ -642,7 +696,7 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
   }
 
   bins_full <- make_bins(surv_natural, "All data")
-  bins_excl <- make_bins(surv_natural_no_disease, "Excluding disease 2014")
+  bins_excl <- make_bins(surv_natural_no_disease, "Excluding baseline-exclusion events")
   bins_combined <- bind_rows(bins_full, bins_excl)
 
   p_gam <- ggplot() +
@@ -678,11 +732,11 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
       labels = scales::percent_format(accuracy = 1)
     ) +
     scale_color_manual(
-      values = c("All data" = pal$surv_dark, "Excluding disease 2014" = pal$accent),
+      values = c("All data" = pal$surv_dark, "Excluding baseline-exclusion events" = pal$accent, "Excluding all timeline context" = pal$slate_mid),
       name = NULL
     ) +
     scale_fill_manual(
-      values = c("All data" = pal$surv_dark, "Excluding disease 2014" = pal$accent),
+      values = c("All data" = pal$surv_dark, "Excluding baseline-exclusion events" = pal$accent, "Excluding all timeline context" = pal$slate_mid),
       name = NULL
     ) +
     scale_size_continuous(range = c(1, 4), guide = "none") +
@@ -719,9 +773,10 @@ if (!is.null(meta_full) && !is.null(meta_no_disease)) {
          bg = "white", device = pdf_device)
 
   print_success(sprintf("Saved: FigSXX_disturbance_sensitivity.png/pdf (%d x %d mm)", 174, 200))
+  figure_saved <- TRUE
 
 } else {
-  print_warn("Could not create figure — one or both meta-analyses failed")
+  print_warn("Could not create figure — baseline-exclusion comparison did not yield two meta-analytic scenarios")
 }
 
 # ==============================================================================
@@ -774,44 +829,36 @@ if (requireNamespace("lme4", quietly = TRUE)) {
 print_header("DISTURBANCE SENSITIVITY ANALYSIS COMPLETE")
 
 cat("  Key findings:\n")
-if (!is.null(meta_full) && !is.null(meta_no_disease)) {
-  delta_pooled <- (meta_no_disease$pooled_surv - meta_full$pooled_surv) * 100
-  cat(sprintf("  - Excluding disease intervals shifts pooled survival by %+.1f pp\n",
-              delta_pooled))
-  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. disease: %.1f%%\n",
-              meta_full$pooled_surv * 100, meta_no_disease$pooled_surv * 100))
-  cat(sprintf("  - I2 change: %.1f%% -> %.1f%%\n", meta_full$I2, meta_no_disease$I2))
-}
-if (!is.null(meta_full) && !is.null(meta_no_storm)) {
-  delta_storm <- (meta_no_storm$pooled_surv - meta_full$pooled_surv) * 100
-  cat(sprintf("  - Excluding NOAA storm intervals shifts pooled survival by %+.1f pp\n",
-              delta_storm))
-  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. storm: %.1f%%\n",
-              meta_full$pooled_surv * 100, meta_no_storm$pooled_surv * 100))
-}
 if (!is.null(meta_full) && !is.null(meta_no_any_disturbance)) {
   delta_all <- (meta_no_any_disturbance$pooled_surv - meta_full$pooled_surv) * 100
-  cat(sprintf("  - Excluding ALL flagged disturbance shifts pooled survival by %+.1f pp\n",
+  cat(sprintf("  - Excluding all timeline-linked context shifts pooled survival by %+.1f pp\n",
               delta_all))
-  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. all disturbance: %.1f%%\n",
+  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. all timeline context: %.1f%%\n",
               meta_full$pooled_surv * 100, meta_no_any_disturbance$pooled_surv * 100))
-  cat(sprintf("  - I2 change (all disturbance): %.1f%% -> %.1f%%\n",
-              meta_full$I2, meta_no_any_disturbance$I2))
+}
+if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
+  delta_baseline <- (meta_no_baseline_exclusion$pooled_surv - meta_full$pooled_surv) * 100
+  cat(sprintf("  - Excluding baseline-exclusion events shifts pooled survival by %+.1f pp\n",
+              delta_baseline))
+  cat(sprintf("  - Full data pooled: %.1f%% vs Excl. baseline-exclusion: %.1f%%\n",
+              meta_full$pooled_surv * 100, meta_no_baseline_exclusion$pooled_surv * 100))
+  cat(sprintf("  - I2 change: %.1f%% -> %.1f%%\n", meta_full$I2, meta_no_baseline_exclusion$I2))
 }
 cat(sprintf("  - Neely all intervals: %.1f%% survival (n=%d)\n",
             mean(neely_data$survived) * 100, nrow(neely_data)))
-cat(sprintf("  - Neely non-disturbance: %.1f%% survival (n=%d)\n",
-            mean(neely_data$survived[!neely_data$is_disease_2014]) * 100,
-            sum(!neely_data$is_disease_2014)))
-cat(sprintf("  - Disease 2014 intervals: %.1f%% survival (n=%d)\n",
-            mean(neely_data$survived[neely_data$disturbance == "disease_2014" & !is.na(neely_data$disturbance)]) * 100,
-            sum(neely_data$disturbance == "disease_2014", na.rm = TRUE)))
-cat(sprintf("  - NOAA storm intervals: %.1f%% survival (n=%d)\n",
-            mean(surv_data$survived[surv_data$is_storm]) * 100,
-            sum(surv_data$is_storm)))
+cat(sprintf("  - Neely baseline-eligible intervals: %.1f%% survival (n=%d)\n",
+            mean(neely_data$survived[!neely_data$is_baseline_exclusion]) * 100,
+            sum(!neely_data$is_baseline_exclusion)))
+cat(sprintf("  - Baseline-exclusion intervals (total): %.1f%% survival (n=%d)\n",
+            mean(surv_data$survived[surv_data$is_baseline_exclusion]) * 100,
+            sum(surv_data$is_baseline_exclusion)))
 
 cat("\n  Outputs saved to 06_analysis/output/:\n")
 cat("    - disturbance_sensitivity_summary.csv\n")
 cat("    - disturbance_interval_comparison.csv\n")
-cat("  Figure saved to 06_analysis/figures/supplementary/:\n")
-cat("    - FigSXX_disturbance_sensitivity.png/pdf\n\n")
+if (figure_saved) {
+  cat("  Figure saved to 06_analysis/figures/supplementary/:\n")
+  cat("    - FigSXX_disturbance_sensitivity.png/pdf\n\n")
+} else {
+  cat("  Figure not regenerated because the comparison meta-analysis was unavailable.\n\n")
+}

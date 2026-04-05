@@ -30,6 +30,47 @@ if (file.exists("05_data/standardized")) {
 
 output_dir <- file.path(project_root, "06_analysis/output")
 
+canonical_stats <- data.frame(
+  section = character(),
+  metric = character(),
+  value = numeric(),
+  display_value = character(),
+  source_file = character(),
+  note = character(),
+  stringsAsFactors = FALSE
+)
+
+add_stat <- function(section, metric, value,
+                     display_value = as.character(value),
+                     source_file = NA_character_,
+                     note = NA_character_) {
+  canonical_stats <<- rbind(
+    canonical_stats,
+    data.frame(
+      section = section,
+      metric = metric,
+      value = as.numeric(value),
+      display_value = as.character(display_value),
+      source_file = source_file,
+      note = note,
+      stringsAsFactors = FALSE
+    )
+  )
+}
+
+assertion_checks <- data.frame(
+  check = character(),
+  passed = logical(),
+  details = character(),
+  stringsAsFactors = FALSE
+)
+reporting_generated_dir <- file.path(project_root, "07_reporting/generated")
+dir.create(reporting_generated_dir, recursive = TRUE, showWarnings = FALSE)
+
+if (file.exists(file.path(project_root, "06_analysis/scripts/utils/shared_utilities.R"))) {
+  source(file.path(project_root, "06_analysis/scripts/utils/shared_utilities.R"))
+}
+
 # ==============================================================================
 # SURVIVAL ANALYSIS
 # ==============================================================================
@@ -53,6 +94,10 @@ n_surv <- nrow(surv_nat)
 n_studies <- n_distinct(surv_nat$study)
 
 cat(sprintf("Sample Size: n = %d observations from %d studies\n\n", n_surv, n_studies))
+add_stat("survival", "n_observations_natural", n_surv, sprintf("%d", n_surv),
+         "06_analysis/output/prepared_survival_data.rds")
+add_stat("survival", "n_studies_natural", n_studies, sprintf("%d", n_studies),
+         "06_analysis/output/prepared_survival_data.rds")
 
 # Fit logistic regression
 glm_surv <- glm(survived ~ log_size, data = surv_nat, family = binomial)
@@ -92,6 +137,17 @@ cat("           in predicted probabilities between survived=1 and survived=0)\n\
 # P-value
 p_val <- summary(glm_surv)$coefficients[2, 4]
 cat(sprintf("  P-value: %s\n\n", ifelse(p_val < 0.001, "p < 0.001", sprintf("p = %.4f", p_val))))
+add_stat("survival", "odds_ratio_log_size", or_val, sprintf("%.3f", or_val),
+         "06_analysis/output/prepared_survival_data.rds")
+add_stat("survival", "odds_ratio_ci_lower", or_ci[1], sprintf("%.3f", or_ci[1]),
+         "06_analysis/output/prepared_survival_data.rds")
+add_stat("survival", "odds_ratio_ci_upper", or_ci[2], sprintf("%.3f", or_ci[2]),
+         "06_analysis/output/prepared_survival_data.rds")
+add_stat("survival", "tjur_r2_pct", tjur_d * 100, sprintf("%.1f%%", tjur_d * 100),
+         "06_analysis/output/prepared_survival_data.rds")
+add_stat("survival", "glm_p_value", p_val,
+         ifelse(p_val < 0.001, "p < 0.001", sprintf("p = %.4f", p_val)),
+         "06_analysis/output/prepared_survival_data.rds")
 
 # GAM fit
 suppressPackageStartupMessages(library(mgcv))
@@ -100,6 +156,8 @@ gam_surv <- gam(survived ~ s(log_size, k = 4), data = surv_nat,
                 family = binomial, method = "REML")
 gam_dev <- summary(gam_surv)$dev.expl * 100
 gam_edf <- sum(summary(gam_surv)$edf)
+add_stat("survival", "gam_deviance_explained_pct", gam_dev, sprintf("%.1f%%", gam_dev),
+         "06_analysis/output/prepared_survival_data.rds")
 
 cat("GAM Fit: survived ~ s(log_size, k=4)\n")
 cat(sprintf("  Deviance Explained: %.1f%%\n", gam_dev))
@@ -146,8 +204,10 @@ if (file.exists(growth_summary_file)) {
   if (length(agr_r2) > 0 && length(rgr_r2) > 0) {
     improvement <- rgr_r2 / agr_r2
 
-    cat(sprintf("Sample Size: n = %d growth observations\n\n",
-                growth_summary$n_observations[1]))
+    if ("n_observations" %in% names(growth_summary)) {
+      cat(sprintf("Sample Size: n = %d growth observations\n\n",
+                  growth_summary$n_observations[1]))
+    }
 
     cat("R-squared Values (size ~ log_size relationship):\n")
     cat(sprintf("  Absolute Growth Rate (AGR): %.4f (%.1f%%)\n", agr_r2, agr_r2 * 100))
@@ -162,7 +222,16 @@ if (file.exists(growth_summary_file)) {
     if (length(rgr_threshold) > 0) {
       cat(sprintf("  RGR Threshold: %.1f cm² (where growth pattern changes most)\n\n",
                   rgr_threshold))
+      add_stat("growth", "rgr_threshold_cm2", rgr_threshold[1], sprintf("%.1f cm²", rgr_threshold[1]),
+               "06_analysis/output/growth_rate_summary.csv")
     }
+
+    add_stat("growth", "agr_r2_pct", agr_r2 * 100, sprintf("%.1f%%", agr_r2 * 100),
+             "06_analysis/output/growth_rate_summary.csv")
+    add_stat("growth", "rgr_r2_pct", rgr_r2 * 100, sprintf("%.1f%%", rgr_r2 * 100),
+             "06_analysis/output/growth_rate_summary.csv")
+    add_stat("growth", "rgr_vs_agr_improvement_x", improvement, sprintf("%.0fx", improvement),
+             "06_analysis/output/growth_rate_summary.csv")
   } else {
     cat("  ⚠ Warning: AGR/RGR metrics not found in growth_rate_summary.csv\n\n")
   }
@@ -248,6 +317,17 @@ if (file.exists(lambda_file)) {
   cat(sprintf("  Time to 50%% population: %.1f years (at mean rate)\n\n",
               log(0.5) / log(lambda_mean)))
 
+  add_stat("population", "lambda_mean", lambda_mean, sprintf("%.4f", lambda_mean),
+           "06_analysis/output/lambda_bootstrap_samples.rds")
+  add_stat("population", "lambda_ci_lower", lambda_ci[1], sprintf("%.3f", lambda_ci[1]),
+           "06_analysis/output/lambda_bootstrap_samples.rds")
+  add_stat("population", "lambda_ci_upper", lambda_ci[2], sprintf("%.3f", lambda_ci[2]),
+           "06_analysis/output/lambda_bootstrap_samples.rds")
+  add_stat("population", "p_decline_pct", p_decline, sprintf("%.1f%%", p_decline),
+           "06_analysis/output/lambda_bootstrap_samples.rds")
+  add_stat("population", "annual_decline_pct", annual_decline, sprintf("%.2f%%", annual_decline),
+           "06_analysis/output/lambda_bootstrap_samples.rds")
+
 } else {
   cat("  ⚠ Warning: lambda_bootstrap_samples.rds not found\n")
   cat("             Run 13_transition_matrix.R first\n\n")
@@ -287,6 +367,10 @@ if (file.exists(elast_file)) {
   }
 
   cat("\n")
+  add_stat("population", "max_elasticity_pct", max_elast$elast[1] * 100,
+           sprintf("%.1f%%", max_elast$elast[1] * 100),
+           "06_analysis/output/elasticity_matrix.csv",
+           sprintf("%s -> %s", max_elast$from[1], max_elast$to[1]))
 }
 
 # ==============================================================================
@@ -297,17 +381,19 @@ cat("═════════════════════════
 cat("META-ANALYSIS (Study-Level Heterogeneity)\n")
 cat("═══════════════════════════════════════════════════════════════════════\n\n")
 
-meta_file <- file.path(output_dir, "meta_analysis_results.csv")
+meta_file <- file.path(output_dir, "expanded_meta_analysis_results.csv")
 
 if (file.exists(meta_file)) {
   meta_results <- read_csv(meta_file, show_col_types = FALSE)
 
-  cat("Source: 06_analysis/output/meta_analysis_results.csv\n\n")
+  cat("Source: 06_analysis/output/expanded_meta_analysis_results.csv\n\n")
 
   # Extract key statistics
-  get_meta_stat <- function(stat_name) {
+  get_meta_stat <- function(stat_name, numeric = TRUE) {
     val <- meta_results$value[meta_results$statistic == stat_name]
-    if (length(val) > 0) val[1] else NA
+    if (length(val) == 0) return(NA)
+    if (!numeric) return(val[1])
+    suppressWarnings(as.numeric(val[1]))
   }
 
   k_studies <- get_meta_stat("Number of studies (k)")
@@ -317,14 +403,17 @@ if (file.exists(meta_file)) {
   ci_upper <- get_meta_stat("95% CI upper")
   pi_lower <- get_meta_stat("95% PI lower")
   pi_upper <- get_meta_stat("95% PI upper")
-  i_squared <- get_meta_stat("I² (%)")
-  i2_ci_lower <- get_meta_stat("I² 95% CI lower")
-  i2_ci_upper <- get_meta_stat("I² 95% CI upper")
-  tau2 <- get_meta_stat("tau² (between-study variance)")
+  i_squared <- get_meta_stat("I^2 (%) [independent model]")
+  i2_ci_lower <- get_meta_stat("I^2 CI lower")
+  i2_ci_upper <- get_meta_stat("I^2 CI upper")
+  tau2 <- get_meta_stat("tau^2 (total)")
   cochran_q <- get_meta_stat("Cochran's Q")
   q_pval <- get_meta_stat("Q p-value")
 
-  cat(sprintf("Studies Included: k = %.0f (n = %.0f observations)\n\n", k_studies, n_obs))
+  n_effects <- get_meta_stat("Number of effects")
+
+  cat(sprintf("Studies Included: k = %.0f studies, %.0f effects (n = %.0f observations)\n\n",
+              k_studies, n_effects, n_obs))
 
   cat("Random Effects Model:\n")
   cat(sprintf("  Pooled Survival: %.1f%%\n", pooled_surv * 100))
@@ -337,22 +426,46 @@ if (file.exists(meta_file)) {
   cat("           Prediction interval shows expected range for NEW study\n\n")
 
   cat("Heterogeneity Assessment:\n")
-  cat(sprintf("  I² = %.1f%% (95%% CI: %.1f%% - %.1f%%)\n", i_squared, i2_ci_lower, i2_ci_upper))
-  cat(sprintf("  τ² = %.4f (between-study variance)\n", tau2))
+  if (!is.na(i_squared)) {
+    cat(sprintf("  I² = %.1f%% (95%% CI: %.1f%% - %.1f%%)\n", i_squared, i2_ci_lower, i2_ci_upper))
+  }
+  if (!is.na(tau2)) {
+    cat(sprintf("  τ² = %.4f (total heterogeneity)\n", tau2))
+  }
   cat(sprintf("  Cochran's Q = %.2f (p %s)\n\n",
               cochran_q, ifelse(q_pval < 0.001, "< 0.001", sprintf("= %.4f", q_pval))))
 
+  add_stat("meta_analysis", "k_studies", k_studies, sprintf("%.0f", k_studies),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "n_effects", n_effects, sprintf("%.0f", n_effects),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "n_observations", n_obs, sprintf("%.0f", n_obs),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "pooled_survival_pct", pooled_surv * 100, sprintf("%.1f%%", pooled_surv * 100),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "pooled_ci_lower_pct", ci_lower * 100, sprintf("%.1f%%", ci_lower * 100),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "pooled_ci_upper_pct", ci_upper * 100, sprintf("%.1f%%", ci_upper * 100),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "prediction_interval_lower_pct", pi_lower * 100, sprintf("%.1f%%", pi_lower * 100),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "prediction_interval_upper_pct", pi_upper * 100, sprintf("%.1f%%", pi_upper * 100),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "i_squared_pct", i_squared, sprintf("%.1f%%", i_squared),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+  add_stat("meta_analysis", "tau_squared", tau2, sprintf("%.4f", tau2),
+           "06_analysis/output/expanded_meta_analysis_results.csv")
+
   cat("  Interpretation:\n")
-  if (i_squared > 75) {
+  if (!is.na(i_squared) && i_squared > 75) {
     cat("    I² > 75%: CONSIDERABLE heterogeneity\n")
     cat("    Pooled estimate may not be generalizable across contexts\n")
     cat("    Stratified analysis by study/region is strongly recommended\n\n")
-  } else if (i_squared > 50) {
+  } else if (!is.na(i_squared) && i_squared > 50) {
     cat("    I² > 50%: MODERATE heterogeneity\n")
     cat("    Explore sources of variation (moderator analysis)\n\n")
   } else {
-    cat("    I² < 50%: LOW heterogeneity\n")
-    cat("    Pooled estimate is reasonably robust\n\n")
+    cat("    I² < 50% or unavailable: pooled estimate should still be read cautiously\n\n")
   }
 
 } else {
@@ -390,6 +503,9 @@ if (file.exists(threshold_file)) {
   cat(sprintf("  Functional form: %s\n", func_form))
   cat(sprintf("  Recommended definition: %s\n", rec_def))
   cat(sprintf("  Recommended threshold: %.1f cm² (log = %.2f)\n\n", rec_cm2, rec_log))
+  add_stat("thresholds", "survival_threshold_cm2", rec_cm2, sprintf("%.1f cm²", rec_cm2),
+           "06_analysis/output/survival_thresholds.csv",
+           sprintf("definition=%s; form=%s", rec_def, func_form))
 
   # All 4 definitions
   cat("  All threshold definitions:\n")
@@ -451,6 +567,9 @@ if (file.exists(growth_thresh_file)) {
     rc <- growth_thresh$recommended_threshold_cm2[i]
     cat(sprintf("  %s: gate=%s, form=%s, def=%s, threshold=%.0f cm²\n",
                 resp, gp, ff, rd, rc))
+    add_stat("thresholds", paste0(resp, "_threshold_cm2"), rc, sprintf("%.0f cm²", rc),
+             "06_analysis/output/growth_thresholds.csv",
+             sprintf("gate=%s; form=%s; definition=%s", gp, ff, rd))
   }
   cat("\n")
 }
@@ -521,6 +640,76 @@ if (exists("i_squared")) {
 cat("\n")
 
 # ==============================================================================
+# ADDITIONAL MANUSCRIPT-FACING CONTEXT STATS
+# ==============================================================================
+
+disturbance_file <- file.path(output_dir, "disturbance_sensitivity_summary.csv")
+if (file.exists(disturbance_file)) {
+  disturbance_summary <- read_csv(disturbance_file, show_col_types = FALSE)
+  baseline_row <- disturbance_summary %>%
+    filter(scenario == "Excluding baseline-exclusion events")
+  if (nrow(baseline_row) > 0) {
+    add_stat(
+      "disturbance", "baseline_exclusion_pooled_survival_pct",
+      baseline_row$pooled_survival[1] * 100,
+      sprintf("%.1f%%", baseline_row$pooled_survival[1] * 100),
+      "06_analysis/output/disturbance_sensitivity_summary.csv",
+      "Pooled survival after excluding baseline-exclusion intervals"
+    )
+  }
+}
+
+shrinkage_file <- file.path(output_dir, "shrinkage_retrogression_subset_summary.csv")
+if (file.exists(shrinkage_file)) {
+  shrinkage_summary <- read_csv(shrinkage_file, show_col_types = FALSE)
+  matrix_row <- shrinkage_summary %>% filter(analysis_subset == "matrix_compatible")
+  if (nrow(matrix_row) > 0) {
+    add_stat(
+      "shrinkage", "matrix_compatible_shrinkage_pct",
+      matrix_row$shrinkage_frequency_pct[1],
+      sprintf("%.1f%%", matrix_row$shrinkage_frequency_pct[1]),
+      "06_analysis/output/shrinkage_retrogression_subset_summary.csv",
+      "Shrinkage frequency in matrix-compatible subset"
+    )
+  }
+}
+
+restore_file <- file.path(output_dir, "restoration_subtype_survival_summary.csv")
+if (file.exists(restore_file)) {
+  restore_summary <- read_csv(restore_file, show_col_types = FALSE)
+  for (i in seq_len(nrow(restore_summary))) {
+    add_stat(
+      "restoration", paste0("survival_", restore_summary$restoration_subtype[i]),
+      restore_summary$weighted_survival[i] * 100,
+      sprintf("%.1f%%", restore_summary$weighted_survival[i] * 100),
+      "06_analysis/output/restoration_subtype_survival_summary.csv",
+      sprintf("n=%s", restore_summary$n_records[i])
+    )
+  }
+}
+
+audit_file <- file.path(output_dir, "study_window_disturbance_summary_overall.csv")
+if (file.exists(audit_file)) {
+  audit_summary <- read_csv(audit_file, show_col_types = FALSE)
+  if (nrow(audit_summary) > 0) {
+    add_stat(
+      "disturbance", "study_window_intervals",
+      audit_summary$n_intervals[1],
+      sprintf("%s", audit_summary$n_intervals[1]),
+      "06_analysis/output/study_window_disturbance_summary_overall.csv",
+      "Study-window disturbance audit interval count"
+    )
+    add_stat(
+      "disturbance", "study_window_pct_any_overlap",
+      audit_summary$pct_with_any_overlap[1],
+      sprintf("%.1f%%", audit_summary$pct_with_any_overlap[1]),
+      "06_analysis/output/study_window_disturbance_summary_overall.csv",
+      "Intervals with any disturbance overlap"
+    )
+  }
+}
+
+# ==============================================================================
 # ASSERTION CHECKS
 # ==============================================================================
 
@@ -533,9 +722,15 @@ n_failures <- 0
 check <- function(condition, message) {
   if (isTRUE(condition)) {
     cat(sprintf("  PASS: %s\n", message))
+    assertion_checks <<- rbind(assertion_checks, data.frame(
+      check = message, passed = TRUE, details = "PASS", stringsAsFactors = FALSE
+    ))
   } else {
     cat(sprintf("  FAIL: %s\n", message))
     n_failures <<- n_failures + 1
+    assertion_checks <<- rbind(assertion_checks, data.frame(
+      check = message, passed = FALSE, details = "FAIL", stringsAsFactors = FALSE
+    ))
   }
 }
 
@@ -561,7 +756,7 @@ if (exists("lambda_mean")) {
 # Meta-analysis checks
 if (exists("i_squared")) {
   check(i_squared > 80, sprintf("I-squared > 80%% (got %.1f%%)", i_squared))
-  check(k_studies == 6, sprintf("k = 6 (got %.0f)", k_studies))
+  check(k_studies == 17, sprintf("k = 17 (got %.0f)", k_studies))
   check(pooled_surv > 0.5 && pooled_surv < 1.0,
         sprintf("Pooled survival in [0.5, 1.0] (got %.3f)", pooled_surv))
 }
@@ -583,3 +778,10 @@ if (n_failures > 0) {
 cat("═══════════════════════════════════════════════════════════════════════\n\n")
 
 cat("See 06_analysis/figures/DATA_INTEGRATION_REPORT.md for full audit details.\n\n")
+
+write_csv(canonical_stats, file.path(output_dir, "canonical_statistics.csv"))
+write_csv(assertion_checks, file.path(output_dir, "pipeline_assertion_checks.csv"))
+
+cat("Saved machine-readable verification artifacts:\n")
+cat("  - 06_analysis/output/canonical_statistics.csv\n")
+cat("  - 06_analysis/output/pipeline_assertion_checks.csv\n\n")

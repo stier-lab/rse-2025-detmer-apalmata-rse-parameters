@@ -24,6 +24,7 @@ These apply to **every** analysis change:
 - **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are mostly NOAA + Neely. The expanded meta (k=17, 22 effects) has 10 natural + 12 restoration effects; difference not significant (p=0.153).
 - **Neely 2014 disturbance event** — Neely et al. 2022 includes a catastrophic mortality event (53% surv in 2014 vs 88% in non-disturbance intervals). Disturbance intervals are flagged; sensitivity analysis shows excluding them shifts pooled survival by +2.7 pp.
 - **Fragmentation data from one study** (Vardi 2011, 13 rows). Cannot be improved without new data.
+- **All Florida vital rates are pre-2023 collapse.** Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida after the 2023 heatwave (97.8-100% mortality at 16-20 DHW). Our transition matrix describes the chronic demographic regime that operated before this event. Heatwave scenario analysis (Script 40) layers Manzello's dose-response onto the population model.
 - Any new binomial GLMM needs an **overdispersion check** (`sum(pearson_resid^2) / rdf`).
 - Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment) for independent models; three-level `rma.mv()` is the primary model. Moderator analyses are exploratory at k=17 (22 effects).
 - **Size measurement varies across studies**: L x W x %live (NOAA, Pausch), photo tracing (USGS, Kuffner), diameter^2 (Mendoza-Quiroz). Pooled analyses assume comparability.
@@ -50,6 +51,7 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 | Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=16/21 effects), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
 | Supp Figures | 20, 20c, 21, 23-28 | FigS1-S16 |
+| Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS15) |
 | Verification | 23_verification | Pipeline integrity checks |
 | Orchestrator | run_all | Runs everything in sequence |
 
@@ -110,6 +112,9 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=17 (22 effects) meta-analysis summary |
 | `06_analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
 | `06_analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |
+| `06_analysis/output/manzello_dose_response.csv` | Script 40 | Manzello 2025 dose-response curve (DHW vs mortality) |
+| `06_analysis/output/heatwave_scenario_summary.csv` | Script 40 | Effective lambda and quasi-extinction by scenario |
+| `06_analysis/output/heatwave_scenario_projections.csv` | Script 40 | Full 50-year projection trajectories by scenario |
 
 ---
 

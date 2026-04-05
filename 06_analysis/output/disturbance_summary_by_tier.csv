@@ -1,0 +1,6 @@
+analysis_tier,baseline_role,n_events
+Acute event,Exclude from baseline,11
+Chronic pressure,Context only,3
+Chronic regime,Context only,2
+Biotic pressure,Context only,1
+Indirect framework,Context only,1

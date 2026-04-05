@@ -113,7 +113,7 @@ All searches used the base query: `("Acropora palmata" OR "elkhorn coral")`
 
 ## New Candidate Papers
 
-The following papers were identified as potentially meeting the inclusion criteria (longitudinal tracking of individually identified *A. palmata* colonies/fragments with survival data, sample size, and time interval). Each is evaluated against the study's eligibility criteria from `PRISMA_Systematic_Review_Protocol.md` Section 2.
+The following papers were identified as potentially meeting the inclusion criteria (longitudinal tracking of individually identified *A. palmata* colonies/fragments with survival data, sample size, and time interval). Each is evaluated against the study's eligibility criteria from [systematic_review_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/systematic_review_protocol.md) Section 2.
 
 ### Candidate 1: Manzello et al. 2025
 

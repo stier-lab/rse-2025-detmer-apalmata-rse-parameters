@@ -9,7 +9,7 @@
 # Both panels: natural colonies only, shared log10 x-axis (1-15,000 cm²),
 #   GAM (k=4, REML), 25-bin overlays, rug marks / scatter cloud.
 #
-# OUTPUT: 06_analysis/figures/manuscript/Fig2_vital_rates.{png,pdf}
+# OUTPUT: 06_analysis/figures/manuscript/Fig2_demographic_rates.{png,pdf}
 #         174 x 220 mm (double-column, vertical stack), 300 DPI
 #
 # Author: Detmer & Stier Lab
@@ -424,7 +424,7 @@ fig2 <- (fig2a / fig2b / fig2c) +
   plot_layout(heights = c(1, 1, 1.2), guides = "collect") &
   theme(legend.position = "bottom")
 
-save_manuscript_fig(fig2, "Fig2_vital_rates", width_mm = 174, height_mm = 220)
+save_manuscript_fig(fig2, "Fig2_demographic_rates", width_mm = 174, height_mm = 220)
 
 cat(sprintf("\n  Survival: R² = %.1f%% (n = %s)\n", surv_r2 * 100, comma(nrow(surv_nat))))
 cat(sprintf("  RGR: R² = %.1f%% (n = %s)\n", rgr_r2 * 100, comma(nrow(growth_rgr))))

@@ -1,0 +1,2 @@
+n_intervals,n_studies,n_zero_overlap,n_one_overlap,n_multi_overlap,n_local_metadata_only,n_timeline_overlay,n_both_sources,n_baseline_exclusion,pct_with_any_overlap
+1072,7,53,74,945,12,904,115,297,95.1

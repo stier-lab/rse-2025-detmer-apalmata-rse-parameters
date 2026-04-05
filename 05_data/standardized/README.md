@@ -2,17 +2,70 @@
 
 This directory contains cleaned, harmonized datasets derived from the original data sources. All data have been standardized to common units, column names, and size measurements following the protocols described in `APAL_data_integration.rmd`.
 
+Use this README to distinguish the canonical demographic datasets from supporting literature-curation and disturbance-reference tables.
+
 ## Overview
 
 | File | Records | Description |
 |------|---------|-------------|
-| `apal_surv_ind.csv` | 5,213 | Individual-level survival data |
-| `apal_surv_summ.csv` | 320 | Summary survival data (no individual sizes) |
+| `apal_surv_ind.csv` | 7,842 | Individual-level survival data |
+| `apal_surv_summ.csv` | 332 | Summary survival data (no individual sizes) |
 | `apal_surv_lab_short.csv` | 6 | Short-term lab settler survival |
-| `apal_growth_ind.csv` | 4,344 | Individual-level growth data |
+| `apal_growth_ind.csv` | 6,318 | Individual-level growth data |
 | `apal_growth_summ.csv` | 15 | Summary growth data |
 | `apal_fragmentation.csv` | 13 | Fragmentation rates from matrix models |
 | `apal_fragmentation_summ.csv` | 9 | Fragmentation rate summaries |
+| `apal_disturbance_stressor_timeline.csv` | 18 | Curated disturbance/stressor timeline used for exposure overlays and sensitivity summaries |
+| `caribbean_disturbance_events.csv` | 93 | Legacy Caribbean disturbance event table retained for provenance and comparison |
+| `ibtracs_storm_exposure.csv` | 295 | Storm exposure support table derived from IBTrACS joins |
+| `literature_disturbance_evidence.csv` | 41 | Literature-derived disturbance evidence table with scope metadata |
+| `literature_disturbance_evidence_analysis.csv` | 37 | Analysis-ready subset of disturbance evidence (`analysis_include == TRUE`) |
+| `apal_life_history_parameters.csv` | 42 | Literature-derived life-history parameter table with scope metadata |
+| `apal_life_history_parameters_analysis.csv` | 40 | Analysis-ready subset of life-history parameters (`analysis_include == TRUE`) |
+| `restoration_subtype_mapping.csv` | 5 | Study-level mapping used to decompose the broad restoration-fragment category into defensible subtypes |
+
+## Canonical Analysis Tables
+
+The core demographic analyses primarily use:
+
+- `apal_surv_ind.csv`
+- `apal_surv_summ.csv`
+- `apal_growth_ind.csv`
+- `apal_growth_summ.csv`
+- `apal_fragmentation.csv`
+- `apal_disturbance_stressor_timeline.csv`
+- `literature_disturbance_evidence_analysis.csv`
+- `apal_life_history_parameters_analysis.csv`
+- `restoration_subtype_mapping.csv`
+
+The remaining files in this directory are support tables, provenance tables, or integration intermediates that remain useful for auditability.
+
+## Registry and Validation
+
+[data_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/standardized/data_registry.csv) is the machine-readable contract for the maintained standardized surface. It records:
+
+- which tables are canonical analysis inputs versus curated/generated support tables
+- required columns for each maintained table
+- key columns used for duplicate detection
+- the study / region / year columns used in the standardized inventory snapshot
+
+`01_data_preparation.R` validates the canonical and curated-support inputs against this registry before the rest of the analysis proceeds. If a new site table or schema change is introduced, update the registry first.
+
+## Rerun Contract
+
+After any standardized data update, the canonical rerun path is:
+
+```bash
+Rscript 06_analysis/scripts/run_all.R
+```
+
+The refresh layer will rebuild:
+
+- [standardized_data_inventory.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/standardized_data_inventory.csv)
+- [canonical_statistics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_statistics.csv)
+- [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
+- [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
+- generated markdown under [07_reporting/generated](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/README.md)
 
 ---
 
@@ -346,7 +399,7 @@ Studies: lirman_2000, fong_lirman_1995, highsmith_et_al_1980, rogers_muller_2012
 
 ### Audit status
 
-All AI-extracted data was independently verified by audit agents that read each source PDF and compared every value. Findings and corrections documented in `docs/Data_Methodology_Reference.md` Section 8.
+All AI-extracted data was independently verified by audit agents that read each source PDF and compared every value. Findings and corrections are summarized in [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
 
 ---
 
@@ -378,15 +431,15 @@ The standardization process is documented in `APAL_data_integration.rmd` and inc
 library(readr)
 
 # Individual-level data (Tier 1)
-surv_ind <- read_csv("standardized_data/apal_surv_ind.csv")
-growth_ind <- read_csv("standardized_data/apal_growth_ind.csv")
+surv_ind <- read_csv("05_data/standardized/apal_surv_ind.csv")
+growth_ind <- read_csv("05_data/standardized/apal_growth_ind.csv")
 
 # Summary-level data (Tier 2, including AI-extracted rows 321+)
-surv_summ <- read_csv("standardized_data/apal_surv_summ.csv")
+surv_summ <- read_csv("05_data/standardized/apal_surv_summ.csv")
 
 # AI-extracted audit trail (not used directly in pipeline)
-ai_surv <- read_csv("standardized_data/ai_extracted_survival.csv")
-ai_frag <- read_csv("standardized_data/ai_extracted_fragmentation.csv")
+ai_surv <- read_csv("05_data/ai_extracted/ai_extracted_survival.csv")
+ai_frag <- read_csv("05_data/ai_extracted/ai_extracted_fragmentation.csv")
 ```
 
 ### Distinguishing hand-extracted vs AI-extracted data
@@ -406,7 +459,7 @@ ai_extracted <- surv_summ %>% filter(grepl("AI_EXTRACTED", study_notes))
 2. **Fragment vs. colony**: Size classes SC1-SC2 are predominantly fragments; SC4-SC5 are predominantly intact colonies
 3. **Simpson's Paradox**: Apparent survival differences by size may be confounded by fragment status
 4. **Negative growth**: Present in NOAA data; may indicate tissue loss or measurement uncertainty
-5. **AI-extracted data**: Clearly tagged and audited, but should be treated with appropriate caution. See audit log in `docs/Data_Methodology_Reference.md`.
+5. **AI-extracted data**: Clearly tagged and audited, but should be treated with appropriate caution. See [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
 
 ---
 

@@ -1,0 +1,38 @@
+Paper_Title,Region,Year,Event_Type,Event_Name,Severity,Reported_Mortality_Impact,analysis_include,relevance_class,scope_note
+Alvarez-Filip 2009,Caribbean-wide,1970s,disease,White-band disease,catastrophic,~90% mortality of shallow-water structure,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Alvarez-Filip 2009,Caribbean-wide,1983-1984,disease,Diadema antillarum mass mortality,catastrophic,Loss of bioerosion source leading to algal dominance,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Alvarez-Filip 2009,Caribbean-wide,1998,bleaching,1998 ENSO Bleaching,catastrophic,Precipitated resumption of structural loss; severe coral mortality,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Alvarez-Filip 2022,Mesoamerican Reef,2014-2018,disease,SCTLD,catastrophic,94% to <10% mortality among 21 species; >50% loss for maze and brain corals,TRUE,indirect_habitat_context,Indirect reef-framework context relevant to A. palmata habitat and recruitment.
+Aronson 2001,Belize,1961,hurricane,Hurricane Hattie,major,Destroyed acroporids on many reefs,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Aronson 2001,Jamaica,1980,hurricane,Hurricane Allen,catastrophic,Massive mortality and subsequent degradation,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Aronson 2001,Jamaica,1988,hurricane,Hurricane Gilbert,major,Further damage following Allen,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Aronson 2001,Caribbean-wide,1980s,disease,White-band disease,catastrophic,Nearly eliminated acroporids over wide areas,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Banister 2024,Florida Keys,2023,bleaching,2023 Summer Heatwave,catastrophic,Extensive coral mortality when SST > 32C,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Birkart 2025,Greater Caribbean,2023,bleaching,2023 Global Heatwave,catastrophic,100% A. palmata mortality in Puerto Morelos; 77% loss of genotypes in Florida,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Chamberland 2015,Caribbean-wide,1970s,disease,White-band disease,catastrophic,>95% decline of A. palmata,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Croquer 2016,Los Roques,2010,bleaching,2010 Bleaching Event,major,Extensive mortality and reduction in abundance of A. palmata,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Fong 1995,Florida Reef Tract,1992,hurricane,Hurricane Andrew,major,>60% of A. palmata colonies broken; rapid wound healing,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Gardner 2003,Mesoamerican Reef,1998,compound,1998 ENSO Bleaching & Hurricane Mitch,major,Severe reef degradation,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Highsmith 1980,Belize Barrier Reef,1978,hurricane,Hurricane Greta,major,Extensive breakage; 39% live fragment survival,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Hughes 1994,Jamaica,1980,hurricane,Hurricane Allen,catastrophic,Smashed shallow branching species; initiated phase shift,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Kuffner 2020,Florida Keys,2018,bleaching,July 2018 Heat Spike,minor,3 corals observed pale,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Kuffner 2020,Florida Keys,2019,predator,Snail Predation,minor,Snails observed feeding on 2 experimental colonies,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Lessios 2016,Western Atlantic,1983-1984,disease,Diadema antillarum mass mortality,catastrophic,93-100% mortality of urchins,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Levitan 2023,US Virgin Islands,2022,disease,2022 Diadema mass mortality,catastrophic,>50% mortality of urchins within a week,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Lirman 2000a,Florida Reef Tract,1994,hurricane,Tropical Storm Gordon,major,Significant fragmentation and dislodgment,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Manzello 2025,Florida Keys,2023,bleaching,2023 Marine Heatwave,catastrophic,97.8% to 100% mortality in Keys/Tortugas; functional extinction,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Mendoza-Quiroz 2023,Caribbean-wide,1980s,disease,White-band disease,catastrophic,>95% decline in A. palmata abundance,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Muller 2025b,Florida Keys,2010,cold_snap,2010 Cold-water event,catastrophic,Unprecedented benthic mortality,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Muller 2025b,Florida Keys,2014-2015,bleaching,2014-2015 Bleaching event,major,Mass mortality of Florida Acropora spp.,TRUE,genus_level_context,Florida Acropora spp. context retained; not species-exclusive to A. palmata.
+Mumby 2007,Jamaica,1983,disease,Diadema antillarum mass mortality,catastrophic,Urchins decimated; negative trajectory to algal dominance,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Ortiz-Prosper 2005,Puerto Rico,1998,hurricane,Hurricane Georges,major,Extensive fragmentation and local dispersion,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Ortiz-Prosper 2005,Puerto Rico,2001,disease,Patchy Necrosis,moderate,11% mortality of coral fragments,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Ramos 2024,Cuba,2008,hurricane,Hurricanes Gustav and Ike,moderate,Decrease in A. palmata density,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Ramos 2024,Cuba,2017-2018,hurricane,TS Irma TS Alberto Hurricane Michael,moderate,Second decrease in A. palmata density,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Roth 2013,US Virgin Islands,2005,bleaching,2005 Thermal Anomaly,major,Increased fragmentation rates in A. palmata,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Vardi 2012,Florida Keys,2005,hurricane,2005 Hurricane Season,catastrophic,Extensive damage; drastically lowered survivorship,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Ware 2020,Florida Keys,1965,hurricane,Hurricane Betsy,minor,Damage not noticeable after two years,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Weil 2020,Caribbean-wide,1980s,disease,White-band disease,catastrophic,Wiped out >90% of acroporids,TRUE,historical_acroporid_context,Caribbean acroporid context retained as historical disturbance evidence.
+Williams 2012,Florida Keys,2005,hurricane,2005 Hurricane Season,catastrophic,Nearly 50% tissue loss primarily from breakage,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Williams 2012,Florida Keys,2004-2010,disease,White disease complex,major,36% of non-hurricane tissue loss,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.
+Williams 2012,Florida Keys,2004-2010,predator,Coralliophila abbreviata,moderate,27% of non-hurricane tissue loss,TRUE,direct_apal,Direct Caribbean A. palmata evidence retained for analysis.

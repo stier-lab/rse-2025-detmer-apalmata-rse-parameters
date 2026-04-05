@@ -2,7 +2,7 @@
 
 ## 1. Literature Search and Study Selection
 
-> **Full systematic review protocol:** See [`PRISMA_Systematic_Review_Protocol.md`](PRISMA_Systematic_Review_Protocol.md) for the complete PRISMA-style documentation including eligibility criteria, search strategy, screening process, data extraction variables, flow diagram, and risk of bias assessment. Items marked `[TODO]` in that document require input from Raine Detmer's original search records.
+> **Full systematic review protocol:** See [systematic_review_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/systematic_review_protocol.md) for the active PRISMA-style documentation including eligibility criteria, search strategy, screening process, data extraction variables, flow diagram, and risk of bias assessment. Historical gap-resolution notes live in [PRISMA_TODO_resolution.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/PRISMA_TODO_resolution.md).
 
 ### 1.1 Original Search (Detmer, 2025)
 
@@ -11,13 +11,13 @@ The initial literature compilation was conducted by R. Detmer (Jun–Dec 2025) a
 **Search strategy:** Studies were identified through:
 
 1. **Data repository mining:** NOAA NCEI, NOAA InPort, USGS CMGDS, USGS ScienceBase
-2. **Bibliographic database search:** Google Scholar, using 5 structured search strings combining `("Acropora palmata" OR "elkhorn coral")` with terms targeting survival, growth, recruitment, restoration, and long-term monitoring (full strings in [`PRISMA_Systematic_Review_Protocol.md` §3.1](PRISMA_Systematic_Review_Protocol.md#31-original-search-detmer-junedecember-2025))
+2. **Bibliographic database search:** Google Scholar, using 5 structured search strings combining `("Acropora palmata" OR "elkhorn coral")` with terms targeting survival, growth, recruitment, restoration, and long-term monitoring (full strings in [systematic_review_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/systematic_review_protocol.md))
 3. **Citation chaining:** Forward and backward citations from Vardi 2011, Williams & Miller 2012, Lirman 2003
 4. **Direct data sharing:** FUNDEMAR (Dominican Republic) provided nursery fragment data
 
-The search was tracked in `coral_parameters_lit_review.gsheet` (Google Drive). Detailed per-study extraction notes, including all assumptions, size conversions, and caveats for each dataset, are in `docs/Detmer_APAL_meta_analysis_notes.docx`.
+The search was tracked in `coral_parameters_lit_review.gsheet` (Google Drive). Detailed per-study extraction notes, including assumptions, size conversions, and caveats for each dataset, are retained under `04_extraction/raine_working_notes/`.
 
-**Reproducibility note:** Exact database-specific query dates and hit counts per search string were not formally recorded. These are flagged as `[TODO]` items in the PRISMA protocol.
+**Reproducibility note:** Exact database-specific query dates and hit counts per search string were not formally recorded. Those historical gaps are summarized in [PRISMA_TODO_resolution.md](/Users/adrianstier/Detmer-2025-coral-parameters/01_protocol/PRISMA_TODO_resolution.md).
 
 **52 unique studies were evaluated** across three parameter categories (38 survival, 28 growth, 5 reproduction, with overlap), yielding:
 - 7 studies with individual-level raw data (Tier 1)
@@ -271,24 +271,23 @@ For Kaplan-Meier survival estimates, `time_interval_yr` is the **full monitoring
 ## 11. File Inventory
 
 ### Curated by Detmer (hand-extracted):
-- `standardized_data/apal_surv_ind.csv` — 5,213 individual survival records
-- `standardized_data/apal_growth_ind.csv` — 4,344 individual growth records
-- `standardized_data/apal_surv_summ.csv` — 320 summary survival rows (rows 1–320)
-- `standardized_data/apal_growth_summ.csv` — 15 summary growth rows
-- `standardized_data/apal_fragmentation.csv` — 13 fragmentation rows (Vardi 2011)
+- `05_data/standardized/apal_surv_ind.csv` — 7,842 individual survival records in the current standardized table
+- `05_data/standardized/apal_growth_ind.csv` — 6,318 individual growth records in the current standardized table
+- `05_data/standardized/apal_surv_summ.csv` — 332 summary survival rows
+- `05_data/standardized/apal_growth_summ.csv` — 15 summary growth rows
+- `05_data/standardized/apal_fragmentation.csv` — 13 fragmentation rows (Vardi 2011)
 
 ### Added by AI extraction (March 2026):
-- `standardized_data/apal_surv_summ.csv` rows 321–330 — 10 new summary survival rows tagged [AI_EXTRACTED]
-- `standardized_data/ai_extracted_survival.csv` — 73 detailed extraction rows from 7 studies (audit trail)
-- `standardized_data/ai_extracted_fragmentation.csv` — 66 detailed extraction rows from 4 studies (audit trail)
+- `05_data/standardized/apal_surv_summ.csv` rows 321–330 — 10 new summary survival rows tagged [AI_EXTRACTED]
+- `05_data/ai_extracted/` — AI-assisted extraction audit trail
 
 ### Processing:
-- `analysis/rmarkdown/APAL_data_integration.rmd` — Original data standardization pipeline
-- `analysis/scripts/14b_expanded_meta_analysis.R` — Meta-analysis with 14 Tier 2 processing blocks
+- `05_data/integration/APAL_data_integration.rmd` — Original data standardization pipeline
+- `06_analysis/scripts/14b_expanded_meta_analysis.R` — Meta-analysis with expanded Tier 2 processing blocks
 
 ### Search and extraction documentation:
-- `docs/PRISMA_Systematic_Review_Protocol.md` — Full PRISMA-style systematic review protocol with search strings, screening process, flow diagram, and risk of bias assessment
-- `docs/Detmer_APAL_meta_analysis_notes.docx` — Raine Detmer's original working notes with per-study extraction decisions, assumptions, and caveats (primary source record)
+- `01_protocol/systematic_review_protocol.md` — Full PRISMA-style systematic review protocol with search strings, screening process, flow diagram, and risk of bias assessment
+- `04_extraction/raine_working_notes/` — Raine Detmer's original working notes and supporting materials with per-study extraction decisions, assumptions, and caveats
 - `literature/summaries/*.txt` — 17 per-study summary files documenting key findings and extraction notes
 
 ---

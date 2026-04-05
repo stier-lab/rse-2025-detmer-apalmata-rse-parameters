@@ -1,0 +1,17 @@
+from_regime,to_regime,transition_prob
+baseline_exclusion,baseline_exclusion,0.4375
+baseline_exclusion,catastrophic,0.0625
+baseline_exclusion,context_only,0.4375
+baseline_exclusion,none,0.0625
+catastrophic,baseline_exclusion,0.16666666666666666
+catastrophic,catastrophic,0.16666666666666666
+catastrophic,context_only,0.5
+catastrophic,none,0.16666666666666666
+context_only,baseline_exclusion,0.2692307692307692
+context_only,catastrophic,0.11538461538461539
+context_only,context_only,0.5769230769230769
+context_only,none,0.038461538461538464
+none,baseline_exclusion,0.25
+none,catastrophic,0.25
+none,context_only,0.25
+none,none,0.25

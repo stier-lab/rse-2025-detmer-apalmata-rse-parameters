@@ -1,0 +1,10 @@
+from_state,to_state,transition_prob,from_label,to_label
+1,1,0.5282940156278793,catastrophic,catastrophic
+1,2,0.47170598437211064,catastrophic,post_disturbance
+1,3,1.0136692325740513e-14,catastrophic,background
+2,1,0.48691084285802355,post_disturbance,catastrophic
+2,2,0.17104325664431924,post_disturbance,post_disturbance
+2,3,0.34204590049765726,post_disturbance,background
+3,1,0.5003269738656996,background,catastrophic
+3,2,3.5824494028707485e-55,background,post_disturbance
+3,3,0.4996730261343004,background,background

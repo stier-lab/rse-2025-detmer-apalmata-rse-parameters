@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Disturbance, shrinkage, and restoration in Acropora palmata</title>
+  <desc id="desc">A conceptual flow diagram showing disturbance leading to shrinkage and retrogression, then size redistribution, viability consequences, and restoration implications. The first three links are supported by current analyses; the latter two are interpretive synthesis.</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #fbfaf7; }
+      .panel { fill: #ffffff; stroke: #243746; stroke-width: 3; rx: 22; ry: 22; }
+      .support { fill: #eef5fb; stroke: #2b5d7e; stroke-width: 3; rx: 18; ry: 18; }
+      .synthesis { fill: #f3efe7; stroke: #8a6b3f; stroke-width: 3; rx: 18; ry: 18; stroke-dasharray: 10 8; }
+      .arrow { stroke: #243746; stroke-width: 8; fill: none; marker-end: url(#arrowhead); }
+      .arrow-light { stroke: #7f8c98; stroke-width: 5; fill: none; marker-end: url(#arrowheadLight); stroke-dasharray: 10 10; }
+      .title { font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 700; fill: #18232d; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 24px; font-weight: 700; fill: #18232d; }
+      .text { font-family: Arial, Helvetica, sans-serif; font-size: 21px; fill: #243746; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #55626d; }
+      .foot { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #5f5f58; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#243746"/>
+    </marker>
+    <marker id="arrowheadLight" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#7f8c98"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="900"/>
+
+  <text class="title" x="800" y="70" text-anchor="middle">Disturbance, shrinkage, and restoration in <tspan font-style="italic">Acropora palmata</tspan></text>
+
+  <!-- Main flow -->
+  <rect class="support" x="80" y="170" width="250" height="180"/>
+  <text class="label" x="205" y="215" text-anchor="middle">Disturbance regime</text>
+  <text class="text" x="205" y="255" text-anchor="middle">
+    <tspan x="205" dy="0">Hurricanes</tspan>
+    <tspan x="205" dy="28">Disease</tspan>
+    <tspan x="205" dy="28">Heatwaves, cold, chronic stress</tspan>
+  </text>
+
+  <path class="arrow" d="M330 260 L430 260"/>
+
+  <rect class="support" x="430" y="170" width="280" height="180"/>
+  <text class="label" x="570" y="215" text-anchor="middle">Shrinkage / retrogression</text>
+  <text class="text" x="570" y="255" text-anchor="middle">
+    <tspan x="570" dy="0">Partial mortality and size loss</tspan>
+    <tspan x="570" dy="28">Backward size-class transitions</tspan>
+    <tspan x="570" dy="28">Observed in current syntheses</tspan>
+  </text>
+
+  <path class="arrow" d="M710 260 L810 260"/>
+
+  <rect class="support" x="810" y="170" width="270" height="180"/>
+  <text class="label" x="945" y="215" text-anchor="middle">Size redistribution</text>
+  <text class="text" x="945" y="255" text-anchor="middle">
+    <tspan x="945" dy="0">More colonies in smaller classes</tspan>
+    <tspan x="945" dy="28">Less persistence in exposed windows</tspan>
+    <tspan x="945" dy="28">Population structure shifts</tspan>
+  </text>
+
+  <path class="arrow" d="M1080 260 L1180 260"/>
+
+  <rect class="synthesis" x="1180" y="170" width="340" height="180"/>
+  <text class="label" x="1350" y="215" text-anchor="middle">Viability consequences</text>
+  <text class="text" x="1350" y="255" text-anchor="middle">
+    <tspan x="1350" dy="0">Changes in lambda and decline risk</tspan>
+    <tspan x="1350" dy="28">Large-adult persistence remains critical</tspan>
+    <tspan x="1350" dy="28">Recovery depends on size balance</tspan>
+  </text>
+
+  <!-- Bottom synthesis line -->
+  <rect class="synthesis" x="120" y="500" width="1360" height="220"/>
+  <text class="label" x="800" y="545" text-anchor="middle">Restoration implications</text>
+  <text class="text" x="800" y="585" text-anchor="middle">
+    <tspan x="800" dy="0">Restoration is not one category:</tspan>
+    <tspan x="800" dy="28">nursery outplants, re-cemented outplants,</tspan>
+    <tspan x="800" dy="28">outplanted colonies, and natural fragments differ</tspan>
+    <tspan x="800" dy="34">Disturbance history and size class should inform restoration evaluation</tspan>
+    <tspan x="800" dy="28">Use the disturbance-size-shrinkage chain to guide choices</tspan>
+  </text>
+
+  <!-- Connectors -->
+  <path class="arrow-light" d="M945 350 L945 470"/>
+  <path class="arrow-light" d="M1350 350 L1350 470"/>
+  <path class="arrow-light" d="M570 350 L570 470"/>
+
+  <!-- Evidence / synthesis key -->
+  <rect x="110" y="760" width="1380" height="86" fill="#fffdf8" stroke="#d4c8ae" stroke-width="2" rx="16" ry="16"/>
+  <text class="small" x="150" y="792">Observed support:</text>
+  <text class="foot" x="290" y="792">disturbance timing and overlap, size-dependent vital rates, shrinkage / retrogression frequencies, subtype-specific restoration patterns</text>
+  <text class="small" x="150" y="821">Interpretive linkage:</text>
+  <text class="foot" x="320" y="821">how those observed patterns combine into viability consequences and restoration implications</text>
+</svg>

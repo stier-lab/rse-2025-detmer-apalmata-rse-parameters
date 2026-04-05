@@ -1,0 +1,3 @@
+dataset,n_rows,n_studies,n_regions,interval_min,interval_median,interval_max
+survival_panel,5508,3,3,0.517808219178082,1.01369863013699,1.4948665297741273
+alive_transition_panel,4388,3,3,0.5366187542778919,1.01369863013699,1.4948665297741273

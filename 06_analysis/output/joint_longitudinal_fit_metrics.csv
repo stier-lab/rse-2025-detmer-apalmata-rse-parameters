@@ -1,0 +1,9 @@
+metric,value
+n_intervals,7267
+n_colonies,2899
+n_studies,6
+event_rate,0.216733177377185
+brier_score,0.131240748332709
+auc,0.816229294247566
+longitudinal_random_structure,random_intercept_only
+hazard_engine,glmmTMB

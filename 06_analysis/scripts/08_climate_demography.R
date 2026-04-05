@@ -303,54 +303,7 @@ if (nrow(yearly_survival) >= 5) {
 }
 
 # =============================================================================
-# 3. DEGREE HEATING WEEKS (DHW) INTEGRATION
-# =============================================================================
-
-print_subheader("DHW/SST Integration")
-
-dhw_file <- file.path(project_root, "05_data/original", "noaa_dhw_caribbean.csv")
-
-if (file.exists(dhw_file)) {
-  cat("  Loading NOAA Coral Reef Watch DHW data...\n")
-  dhw_data <- read_csv(dhw_file, show_col_types = FALSE)
-
-  surv_with_dhw <- surv_data %>%
-    left_join(dhw_data, by = c("region", "survey_yr" = "year"))
-
-  n_matched <- sum(!is.na(surv_with_dhw$dhw_max))
-  cat(sprintf("  Matched %d/%d records (%.1f%%) with DHW data\n",
-              n_matched, nrow(surv_with_dhw), n_matched / nrow(surv_with_dhw) * 100))
-
-  if (n_matched > 100) {
-    dhw_model <- tryCatch({
-      glmer(survived ~ log_size + dhw_max + (1|study),
-            data = surv_with_dhw %>% filter(!is.na(dhw_max)),
-            family = binomial)
-    }, error = function(e) {
-      cat(sprintf("  DHW GLMM failed: %s\n", e$message))
-      NULL
-    })
-
-    if (!is.null(dhw_model)) {
-      cat("  DHW model results:\n")
-      print(summary(dhw_model)$coefficients)
-
-      dhw_results <- as.data.frame(summary(dhw_model)$coefficients)
-      dhw_results$term <- rownames(dhw_results)
-      write_csv(dhw_results, file.path(output_dir, "climate_dhw_model.csv"))
-      cat("  Saved: climate_dhw_model.csv\n")
-    }
-  }
-} else {
-  cat("  DHW data not available at: ", dhw_file, "\n")
-  cat("  To enable DHW integration:\n")
-  cat("    1. Download from https://coralreefwatch.noaa.gov/product/vs/data.php\n")
-  cat("    2. Format as CSV with columns: region, year, dhw_max, sst_mean\n")
-  cat("    3. Save to: 05_data/original/noaa_dhw_caribbean.csv\n")
-}
-
-# =============================================================================
-# 4. TEMPORAL CONFOUNDING TEST
+# 3. TEMPORAL CONFOUNDING TEST
 # =============================================================================
 
 print_subheader("Temporal Confounding Test")

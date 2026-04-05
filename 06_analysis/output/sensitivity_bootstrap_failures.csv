@@ -1,5 +1,5 @@
 metric,value
-total_failures,72
-survival_failures,72
+total_failures,61
+survival_failures,61
 growth_failures,0
-missing_SC5,72
+missing_SC5,61
