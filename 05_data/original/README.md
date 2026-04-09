@@ -1,5 +1,9 @@
 # Original Data Sources
 
+<!-- READ-ONLY: All .csv and .xlsx files in this directory are chmod 444.
+     Do NOT modify raw data. If corrections are needed, apply them in
+     06_analysis/scripts/01_data_preparation.R and document the change. -->
+
 This directory contains raw data files from published studies and monitoring programs used to parameterize the *Acropora palmata* (Elkhorn Coral) demographic model.
 
 ## Overview

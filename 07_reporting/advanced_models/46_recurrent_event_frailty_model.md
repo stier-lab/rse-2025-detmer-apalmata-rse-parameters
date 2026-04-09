@@ -36,7 +36,7 @@ Outcome:
 
 Form:
 
-- `coxph(Surv(start, stop, shrink_event) ~ log_size + disturbance_state + prior_shrink_events + population_type + frailty(colony_uid) + strata(study))`
+- `coxph(Surv(start, stop, shrink_event) ~ log_size + disturbance_state + prior_shrink_events + prior_shrink_events:log_time_mid + population_type + frailty(colony_uid) + strata(study))`
 
 ### Model B: Terminal Mortality Hazard with Dynamic Shrinkage History
 
@@ -46,27 +46,37 @@ Outcome:
 
 Form:
 
-- `coxph(Surv(start, stop, death_event) ~ log_size + disturbance_state + prior_shrink_events + recent_shrink_lag1 + prior_any_shrink + frailty(colony_uid) + strata(study))`
+- `coxph(Surv(start, stop, death_event) ~ log_size + disturbance_state + prior_shrink_events + prior_shrink_events:log_time_mid + recent_shrink_lag1 + prior_any_shrink + frailty(colony_uid) + strata(study))`
 
 Both models converged with frailty (no fallback required), see [recurrent_event_model_fit.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_model_fit.csv).
+
+PH-screening output is now also exported in [recurrent_event_ph_diagnostics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_ph_diagnostics.csv).
+The current frailty fits treat the main PH stress point as a modeled time-varying effect: `prior_shrink_events` is paired with `prior_shrink_events:log_time_mid`, and the diagnostics file now records `time_varying_prior_shrink_modeled` rather than pretending that a global `cox.zph` summary is the main interpretive object for these transformed frailty fits.
 
 ## Key Results
 
 ### Recurrent Shrinkage (from [recurrent_event_shrinkage_model.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_shrinkage_model.csv))
 
-- Larger size slightly increased recurrent shrinkage hazard (`HR = 1.043`, `p = 0.0053`).
-- Higher prior shrinkage count reduced additional shrinkage hazard (`HR = 0.724`, `p < 1e-28`), consistent with event-history depletion/selection.
-- Restoration fragments had higher recurrent shrinkage hazard than natural colonies (`HR = 2.053`, `p = 6.9e-05`).
+- Larger size slightly increased recurrent shrinkage hazard (`HR = 1.038`, `p = 0.0013`).
+- The shrinkage-history effect is now explicitly time-varying: the main `prior_shrink_events` term is positive early in follow-up (`HR = 1.296`, `p = 7.7e-05`), while `prior_shrink_events:log_time_mid` is negative (`HR = 0.861`, `p = 8.0e-06`), consistent with attenuation through time rather than a single PH-stable coefficient.
+- Restoration fragments had higher recurrent shrinkage hazard than natural colonies (`HR = 1.966`, `p = 2.3e-05`).
 - Disturbance-state contrasts were not significant after accounting for study strata and colony frailty.
 
 ### Terminal Mortality with Dynamic Shrinkage History (from [recurrent_event_mortality_model.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_mortality_model.csv))
 
 - Larger size was strongly protective (`HR = 0.707`, `p < 1e-100`).
-- Recent shrinkage in the immediately preceding interval increased mortality hazard (`HR = 1.654`, `p = 1.45e-05`).
-- Prior shrinkage history terms (`prior_shrink_events`, `prior_any_shrink`) were associated with lower hazard conditional on surviving to later intervals, consistent with survivor selection.
+- Recent shrinkage in the immediately preceding interval increased mortality hazard (`HR = 1.563`, `p = 2.0e-04`).
+- `prior_shrink_events` is now modeled as a time-varying history term: the main effect is weak near zero time (`HR = 1.167`, `p = 0.374`), while the interaction with `log_time_mid` is negative (`HR = 0.845`, `p = 0.0367`), implying a declining hazard contribution through follow-up.
+- `prior_any_shrink` remained protective conditional on survival to later intervals (`HR = 0.335`, `p = 5.1e-12`), consistent with survivor selection among previously stressed colonies.
 - Disturbance-state coefficients were negative in this within-study, frailty-adjusted specification; interpret as conditional contrasts after dynamic covariates, not as causal protection from disturbance.
 
 Dynamic empirical risk profiles are in [recurrent_event_dynamic_risk_profiles.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_dynamic_risk_profiles.csv).
+
+## Diagnostics note
+
+- `recurrent_event_ph_diagnostics.csv` now records `time_varying_prior_shrink_modeled` for both outcomes.
+- The relevant review question is no longer “did `prior_shrink_events` fail a PH screen?” but “does the fitted log-time interaction materially change interpretation?”
+- These models remain useful as structured hazard summaries, but the shrinkage-history terms should still be treated as support analysis rather than final causal dynamics.
 
 ## Output Inventory
 
@@ -75,6 +85,7 @@ Dynamic empirical risk profiles are in [recurrent_event_dynamic_risk_profiles.cs
 - [recurrent_event_shrinkage_model.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_shrinkage_model.csv)
 - [recurrent_event_mortality_model.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_mortality_model.csv)
 - [recurrent_event_model_fit.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_model_fit.csv)
+- [recurrent_event_ph_diagnostics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_ph_diagnostics.csv)
 - [recurrent_event_dynamic_risk_profiles.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_dynamic_risk_profiles.csv)
 - [recurrent_event_frailty_estimates.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recurrent_event_frailty_estimates.csv)
 
@@ -90,4 +101,5 @@ Dynamic empirical risk profiles are in [recurrent_event_dynamic_risk_profiles.cs
 - Disturbance exposure is interval-level and largely reconstructed from timeline overlays; event timing precision can be improved with site-specific environmental covariates.
 - Growth is not observed for every survival interval; shrinkage-history covariates are therefore partially observed.
 - Estimated frailty effects are not directly mappable to colony metadata in the current `coxph` frailty object export; the output file is retained as schema for future extraction refinement.
+- The current implementation already uses a time-varying shrink-history effect, but recurrent shrinkage remains sensitive to how that history term is parameterized; if this layer is promoted beyond support analysis, a fuller recurrent-event framework would still be preferable.
 - A full joint model (shared random effects between recurrent shrinkage intensity and terminal death hazard) would be a stronger next step than separate Cox models.

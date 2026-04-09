@@ -1,0 +1,3 @@
+outcome,model_variant,ph_summary_status,ph_summary_note,global_chisq,global_df,global_p_value,worst_term,worst_term_p_value
+recurrent_shrinkage,frailty_time_varying,time_varying_prior_shrink_modeled,prior_shrink_events is modeled with an explicit log-time interaction; standard cox.zph summaries are not interpreted for this transformed fit.,NA,NA,NA,prior_shrink_events:log_time_mid,8.234573169106178e-6
+terminal_mortality,frailty_time_varying,time_varying_prior_shrink_modeled,prior_shrink_events is modeled with an explicit log-time interaction; standard cox.zph summaries are not interpreted for this transformed fit.,NA,NA,NA,prior_shrink_events:log_time_mid,0.03665861530275665

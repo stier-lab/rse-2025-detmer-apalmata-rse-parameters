@@ -151,9 +151,9 @@ retrogression is not negligible. A dedicated shrinkage synthesis indicates that
 39.4% of matrix-compatible growth records involve tissue loss, and observed
 retrogression probabilities are 15.2% in SC2, 16.8% in SC3, 17.2% in SC4, and
 9.1% in SC5. Large-adult persistence remains the dominant viability lever:
-SC5-to-SC5 stasis accounts for 57.4% of matrix-cell elasticity, and aggregated
-SC5 survival elasticity is 58.8%. The current deterministic `lambda` is 0.967,
-with a bootstrap 95% interval of 0.828-1.059 and an 86.0% bootstrap
+SC5-to-SC5 stasis accounts for 58.6% of matrix-cell elasticity, and aggregated
+SC5 survival elasticity is 58.6%. The current deterministic `lambda` is 0.888,
+with a bootstrap 95% interval of 0.740-0.959 and a 99.9% bootstrap
 probability of decline. Leave-one-study-out sensitivity spans `lambda` =
 0.882-0.993, showing that the viability estimate remains conditional on a small
 set of natural-colony transition datasets.
@@ -339,6 +339,186 @@ differences among intervention types.
 
 
 ================================================================================
+SUPPLEMENTARY FIGURE S3
+================================================================================
+
+LEGEND:
+Fig. S3 Model diagnostics for Acropora palmata vital rate models. (a) Fitted
+values versus Pearson residuals for the survival GAM (binomial family, REML
+smoothness selection). (b) Fitted values versus residuals for the growth
+linear model, with a LOWESS smoother overlaid. Both panels are used to
+evaluate model assumptions and identify potential nonlinearity or
+heteroscedasticity in the fitted relationships.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S4
+================================================================================
+
+LEGEND:
+Fig. S4 Model selection for Acropora palmata survival and growth models.
+(a) Delta-AICc values for candidate survival models including generalized
+linear models (GLMs) and generalized linear mixed models (GLMMs).
+(b) Delta-AICc values for candidate growth models including linear models
+(LMs) and linear mixed models (LMMs). Lower delta-AICc indicates better
+relative fit; the best-supported model in each panel has delta-AICc = 0.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S5
+================================================================================
+
+LEGEND:
+Fig. S5 Threshold detection results for Acropora palmata vital rates.
+(a) Survival nonlinearity gate showing the GAM fit versus the GLM fit with
+the delta-AICc diagnostic for supported nonlinearity. (b) Probability of
+positive growth as a function of colony size (log10 cm2), with the fitted
+GAM and detected threshold. (c) Second derivative profile of the relative
+growth rate (RGR) GAM, used to identify the inflection point where the rate
+of change in RGR is steepest. Dashed vertical lines mark recommended
+thresholds in each panel.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S6
+================================================================================
+
+LEGEND:
+Fig. S6 Comparison of absolute and relative growth metrics for Acropora
+palmata. (a) Absolute growth rate (AGR, cm2 yr-1) as a function of colony
+size with GAM fit and R2. (b) Relative growth rate (RGR, yr-1) as a function
+of colony size with GAM fit and R2. (c) Probability of positive growth (%)
+as a function of colony size with GAM fit (binomial family) and deviance
+explained. (d) Heteroscedasticity comparison showing standard deviation of
+AGR and RGR across size bins on a log scale, illustrating the strong
+size-dependence of AGR variance relative to RGR.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S7
+================================================================================
+
+LEGEND:
+Fig. S7 Allometric scaling of colony growth in Acropora palmata.
+(a) Overall log-log relationship between initial and final colony size, with
+fitted regression slope and R2; the dashed identity line indicates isometric
+growth. (b) Study-specific allometric slopes with 95% confidence intervals,
+ordered by slope magnitude; the solid vertical line marks the overall pooled
+slope and the dashed line marks isometric growth (slope = 1). (c) Log-log
+initial versus final size separated by population type (natural vs.
+restoration), with fitted regression lines. (d) Colony size ranges by study,
+showing the median (point), interquartile range (thick bar), and full range
+(thin line) on a log10 scale; point size is proportional to sample size.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S9
+================================================================================
+
+LEGEND:
+Fig. S9 Heterogeneity decomposition for the Acropora palmata survival
+meta-analysis. (a) I2 gauge showing the observed I2 value and 95% confidence
+interval against reference categories (low, moderate, substantial,
+considerable). (b) Variance decomposition into between-study (tau2) and
+within-study components, expressed as percentage of total variance.
+(c) Comparison of the 95% confidence interval (CI) and 95% prediction
+interval (PI) for pooled survival, illustrating the difference between
+estimation uncertainty and prediction uncertainty. (d) Meta-regression
+moderator effects on log-odds survival, with point estimates and 95%
+confidence intervals; filled points indicate statistically significant
+moderators (p < 0.05).
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S10
+================================================================================
+
+LEGEND:
+Fig. S10 Study context comparison for Acropora palmata survival.
+(a) Overall annual survival probability by study context (field, nursery in
+situ, laboratory) with 95% confidence intervals. (b) Survival by context
+crossed with size class (SC1-SC5), showing context-specific survival patterns
+across the ontogenetic size range. (c) Pairwise effect sizes (Cohen's h) for
+context comparisons, with dashed horizontal lines at |h| = 0.2 (small) and
+dotted lines at |h| = 0.8 (large); significance stars are based on
+adjusted p-values.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S11
+================================================================================
+
+LEGEND:
+Fig. S11 Climate and disturbance effects on Acropora palmata survival.
+(a) Temporal trend in annual survival probability across monitoring years,
+with yearly estimates (point size proportional to sample size), 95%
+confidence intervals, and a GLMM trend line. (b) Survival by disturbance
+category, showing sample sizes (n) and number of contributing studies (k)
+within each bar. (c) Coefficient of variation (CV) of annual survival by
+size class, summarizing climate vulnerability across the ontogenetic size
+range; the dashed line shows the overall mean CV. (d) Regional temporal
+variability in survival (CV), ordered by magnitude, with the number of years
+contributing to each estimate.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S12
+================================================================================
+
+LEGEND:
+Fig. S12 Sensitivity analysis for the Acropora palmata population model.
+(a) Multi-dimensional robustness dashboard showing population growth rate
+(lambda) under different analytical assumptions: leave-one-study-out
+exclusions, alternative size-class boundary definitions, and data filtering
+criteria. The dashed vertical line marks the baseline lambda and the solid
+line marks the stable-population threshold (lambda = 1). (b) Bootstrap
+95% confidence intervals for survival probability by size class, with the
+dashed line indicating overall mean survival.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S13
+================================================================================
+
+LEGEND:
+Fig. S13 Cross-validation of survival models for Acropora palmata.
+(a) Leave-one-study-out (LOSO) Brier scores for each study, ordered by
+predictive accuracy; point size is proportional to test-set sample size and
+the dashed line marks the poor-prediction threshold (Brier = 0.25).
+(b) Model comparison via 5-fold cross-validation, showing mean Brier score
+with standard deviation error bars for each candidate model. Lower Brier
+scores indicate better predictive performance.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S14
+================================================================================
+
+LEGEND:
+Fig. S14 Population projections for Acropora palmata under the estimated
+transition matrix. (a) Deterministic 20-year population trajectory showing
+the contribution of each size class (SC1-SC5) as stacked areas, starting
+from an illustrative initial population structure. (b) Stochastic projections
+with parametric uncertainty: the dark ribbon shows the 80% prediction
+interval, the light ribbon shows the 95% confidence interval, and the dashed
+line shows the deterministic trajectory. The dotted red line marks the
+quasi-extinction threshold at 10% of initial population size.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S20
+================================================================================
+
+LEGEND:
+Fig. S20 Annual survival time series for natural Acropora palmata colonies.
+(a) Mean annual survival with Wilson 95% confidence intervals for each
+monitoring year, with major disturbance events overlaid as vertical bands.
+Only years with a minimum of 20 monitored colonies are shown.
+(b) Number of colonies monitored per year, providing sample size context for
+the survival estimates in panel a.
+
+
+================================================================================
 METHODOLOGICAL LIMITATIONS
 ================================================================================
 
@@ -368,7 +548,7 @@ construction to reduce bias from linear-growth assumptions over long gaps.
 POPULATION MATRIX COMPOSITION:
 The transition matrix is built from the natural-colony subset and remains
 Florida heavy, especially for large adults. SC5 stasis is still the dominant
-elasticity component (57.4% of matrix-cell elasticity), but the resulting
+elasticity component (58.6% of matrix-cell elasticity), but the resulting
 `lambda` estimate is conditional on the available study mix and not a
 Caribbean-wide universal growth rate.
 

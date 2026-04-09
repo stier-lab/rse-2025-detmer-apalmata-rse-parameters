@@ -27,6 +27,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(purrr)
+library(mgcv)
 
 # Source shared utilities for constants and helper functions
 if (file.exists("utils/shared_utilities.R")) {
@@ -73,12 +74,38 @@ cat(sprintf("  Survival data: %d observations, %d studies, %d regions\n",
             length(unique(survival_data$study)),
             length(unique(survival_data$region))))
 
+survival_threshold_log <- log(100)
+survival_gam_k <- 10
+growth_gam_k <- 10
+
+survival_threshold_file <- file.path(output_dir, "survival_thresholds.csv")
+if (file.exists(survival_threshold_file)) {
+  survival_threshold_tbl <- read.csv(survival_threshold_file, stringsAsFactors = FALSE)
+  if (nrow(survival_threshold_tbl) > 0) {
+    if ("recommended_threshold_log" %in% names(survival_threshold_tbl) &&
+        !is.na(survival_threshold_tbl$recommended_threshold_log[1])) {
+      survival_threshold_log <- survival_threshold_tbl$recommended_threshold_log[1]
+    }
+    if ("best_gam_k" %in% names(survival_threshold_tbl) &&
+        !is.na(survival_threshold_tbl$best_gam_k[1])) {
+      survival_gam_k <- as.integer(survival_threshold_tbl$best_gam_k[1])
+    }
+  }
+}
+
+cat(sprintf("  Using survival threshold %.0f cm2 and GAM k = %d for CV target models\n",
+            exp(survival_threshold_log), survival_gam_k))
+
 # =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
 #' Calculate performance metrics for binary classification
 calc_metrics <- function(actual, predicted_prob, threshold = 0.5) {
+  n_positive <- sum(actual == 1, na.rm = TRUE)
+  n_negative <- sum(actual == 0, na.rm = TRUE)
+  single_class_holdout <- length(unique(actual[!is.na(actual)])) < 2
+
   # Brier score (lower is better)
   brier <- mean((predicted_prob - actual)^2, na.rm = TRUE)
 
@@ -112,15 +139,39 @@ calc_metrics <- function(actual, predicted_prob, threshold = 0.5) {
 
   sensitivity <- if ((tp + fn) > 0) tp / (tp + fn) else NA
   specificity <- if ((tn + fp) > 0) tn / (tn + fp) else NA
+  balanced_accuracy <- if (!is.na(sensitivity) && !is.na(specificity)) {
+    mean(c(sensitivity, specificity))
+  } else {
+    NA_real_
+  }
+
+  pr_auc <- NA_real_
+  if (length(unique(actual[!is.na(actual)])) == 2 && any(actual == 1, na.rm = TRUE)) {
+    ord <- order(predicted_prob, decreasing = TRUE)
+    actual_ord <- actual[ord]
+    tp_curve <- cumsum(actual_ord == 1)
+    fp_curve <- cumsum(actual_ord == 0)
+    recall <- tp_curve / sum(actual_ord == 1)
+    precision <- tp_curve / pmax(tp_curve + fp_curve, 1)
+    recall <- c(0, recall)
+    precision <- c(1, precision)
+    pr_auc <- sum(diff(recall) * (head(precision, -1) + tail(precision, -1)) / 2, na.rm = TRUE)
+  }
 
   data.frame(
     brier_score = brier,
     log_loss = logloss,
     auc = auc,
+    pr_auc = pr_auc,
+    auc_defined = !is.na(auc),
     accuracy = accuracy,
     sensitivity = sensitivity,
     specificity = specificity,
-    n_test = length(actual)
+    balanced_accuracy = balanced_accuracy,
+    n_test = length(actual),
+    n_positive_test = n_positive,
+    n_negative_test = n_negative,
+    single_class_holdout = single_class_holdout
   )
 }
 
@@ -151,26 +202,42 @@ calc_calibration <- function(predicted, observed, n_bins = 10) {
 
 #' Fit survival model and predict (GLMM with GLM fallback)
 fit_and_predict <- function(train_data, test_data) {
+  train_data <- train_data %>%
+    mutate(above_threshold = pmax(0, log_size - survival_threshold_log))
+  test_data <- test_data %>%
+    mutate(above_threshold = pmax(0, log_size - survival_threshold_log))
+
   tryCatch({
-    # Try GLMM first (matches manuscript model) — requires >= 2 studies in training data
+    # Prefer the manuscript-aligned GAM with study random effect when the fold supports it.
     if (length(unique(train_data$study)) >= 2) {
-      model <- lme4::glmer(survived ~ log_size + (1|study),
-                           data = train_data, family = binomial)
-      # Population-level prediction (no study random effect for new/held-out study)
-      predictions <- predict(model, newdata = test_data, re.form = NA, type = "response")
+      model <- mgcv::gam(
+        survived ~ s(log_size, k = survival_gam_k) + s(study, bs = "re"),
+        data = train_data,
+        family = binomial,
+        method = "REML",
+        select = TRUE
+      )
+      test_aligned <- test_data %>%
+        mutate(
+          study = factor(as.character(train_data$study[1]), levels = levels(train_data$study))
+        )
+      predictions <- predict(model, newdata = test_aligned, exclude = "s(study)", type = "response")
+      return(list(predictions = as.numeric(predictions), model_label = sprintf("GAM(k=%d)+study_RE", survival_gam_k)))
     } else {
-      # Single study in training fold: fall back to GLM
-      model <- glm(survived ~ log_size, data = train_data, family = binomial)
+      model <- glm(survived ~ log_size + above_threshold, data = train_data, family = binomial)
       predictions <- predict(model, newdata = test_data, type = "response")
+      return(list(predictions = as.numeric(predictions), model_label = "Threshold GLM"))
     }
-    predictions
   }, error = function(e) {
-    # Fallback: try GLM if GLMM fails (convergence issues)
     tryCatch({
-      model <- glm(survived ~ log_size, data = train_data, family = binomial)
-      predict(model, newdata = test_data, type = "response")
+      model <- glm(survived ~ log_size + above_threshold, data = train_data, family = binomial)
+      predictions <- predict(model, newdata = test_data, type = "response")
+      list(predictions = as.numeric(predictions), model_label = "Threshold GLM")
     }, error = function(e2) {
-      rep(mean(train_data$survived, na.rm = TRUE), nrow(test_data))
+      list(
+        predictions = rep(mean(train_data$survived, na.rm = TRUE), nrow(test_data)),
+        model_label = "Mean fallback"
+      )
     })
   })
 }
@@ -189,6 +256,7 @@ loso_results <- map_dfr(studies, function(holdout_study) {
   if (nrow(test) < 5) {
     return(data.frame(
       cv_method = "LOSO",
+      target_model = NA_character_,
       fold = holdout_study,
       n_train = nrow(train),
       n_test = nrow(test),
@@ -203,12 +271,14 @@ loso_results <- map_dfr(studies, function(holdout_study) {
     ))
   }
 
-  predictions <- fit_and_predict(train, test)
+  fit_obj <- fit_and_predict(train, test)
+  predictions <- fit_obj$predictions
   metrics <- calc_metrics(test$survived, predictions)
   cal <- calc_calibration(predictions, test$survived)
 
   data.frame(
     cv_method = "LOSO",
+    target_model = fit_obj$model_label,
     fold = holdout_study,
     n_train = nrow(train),
     metrics,
@@ -252,6 +322,7 @@ loro_results <- map_dfr(regions, function(holdout_region) {
   if (nrow(test) < 5 || nrow(train) < 20) {
     return(data.frame(
       cv_method = "LORO",
+      target_model = NA_character_,
       fold = holdout_region,
       n_train = nrow(train),
       n_test = nrow(test),
@@ -266,12 +337,14 @@ loro_results <- map_dfr(regions, function(holdout_region) {
     ))
   }
 
-  predictions <- fit_and_predict(train, test)
+  fit_obj <- fit_and_predict(train, test)
+  predictions <- fit_obj$predictions
   metrics <- calc_metrics(test$survived, predictions)
   cal <- calc_calibration(predictions, test$survived)
 
   data.frame(
     cv_method = "LORO",
+    target_model = fit_obj$model_label,
     fold = holdout_region,
     n_train = nrow(train),
     metrics,
@@ -318,12 +391,14 @@ kfold_results <- map_dfr(1:k, function(fold_num) {
   train <- survival_data %>% filter(fold != fold_num)
   test <- survival_data %>% filter(fold == fold_num)
 
-  predictions <- fit_and_predict(train, test)
+  fit_obj <- fit_and_predict(train, test)
+  predictions <- fit_obj$predictions
   metrics <- calc_metrics(test$survived, predictions)
   cal <- calc_calibration(predictions, test$survived)
 
   data.frame(
     cv_method = "K-fold",
+    target_model = fit_obj$model_label,
     fold = as.character(fold_num),
     n_train = nrow(train),
     metrics,
@@ -360,6 +435,7 @@ temporal_results <- map_dfr(names(year_splits), function(split_name) {
   if (nrow(test) < 10 || nrow(train) < 50) {
     return(data.frame(
       cv_method = "Temporal",
+      target_model = NA_character_,
       fold = split_name,
       n_train = nrow(train),
       n_test = nrow(test),
@@ -374,12 +450,14 @@ temporal_results <- map_dfr(names(year_splits), function(split_name) {
     ))
   }
 
-  predictions <- fit_and_predict(train, test)
+  fit_obj <- fit_and_predict(train, test)
+  predictions <- fit_obj$predictions
   metrics <- calc_metrics(test$survived, predictions)
   cal <- calc_calibration(predictions, test$survived)
 
   data.frame(
     cv_method = "Temporal",
+    target_model = fit_obj$model_label,
     fold = split_name,
     n_train = nrow(train),
     metrics,
@@ -415,6 +493,7 @@ stratified_results <- map_dfr(size_classes, function(holdout_class) {
   if (nrow(test) < 10) {
     return(data.frame(
       cv_method = "LOSCO",
+      target_model = NA_character_,
       fold = holdout_class,
       n_train = nrow(train),
       n_test = nrow(test),
@@ -429,12 +508,14 @@ stratified_results <- map_dfr(size_classes, function(holdout_class) {
     ))
   }
 
-  predictions <- fit_and_predict(train, test)
+  fit_obj <- fit_and_predict(train, test)
+  predictions <- fit_obj$predictions
   metrics <- calc_metrics(test$survived, predictions)
   cal <- calc_calibration(predictions, test$survived)
 
   data.frame(
     cv_method = "LOSCO",
+    target_model = fit_obj$model_label,
     fold = holdout_class,
     n_train = nrow(train),
     metrics,
@@ -457,36 +538,96 @@ for (i in 1:nrow(stratified_results)) {
 
 cat("\n6. Model Comparison via Cross-Validation...\n")
 
-# Compare different model specifications
-models <- list(
-  "Null (intercept only)" = function(d) glm(survived ~ 1, data = d, family = binomial),
-  "Linear (log size)" = function(d) glm(survived ~ log_size, data = d, family = binomial),
-  "Size class (categorical)" = function(d) glm(survived ~ size_class, data = d, family = binomial)
+fit_survival_candidate <- function(model_name, train, test) {
+  train <- train %>% mutate(above_threshold = pmax(0, log_size - survival_threshold_log))
+  test <- test %>% mutate(above_threshold = pmax(0, log_size - survival_threshold_log))
+
+  if (identical(model_name, "Null (intercept only)")) {
+    model <- glm(survived ~ 1, data = train, family = binomial)
+    return(as.numeric(predict(model, newdata = test, type = "response")))
+  }
+
+  if (identical(model_name, "Linear (log size)")) {
+    model <- glm(survived ~ log_size, data = train, family = binomial)
+    return(as.numeric(predict(model, newdata = test, type = "response")))
+  }
+
+  if (identical(model_name, "Threshold hinge")) {
+    model <- glm(survived ~ log_size + above_threshold, data = train, family = binomial)
+    return(as.numeric(predict(model, newdata = test, type = "response")))
+  }
+
+  if (identical(model_name, "Size class (categorical)")) {
+    model <- glm(survived ~ size_class, data = train, family = binomial)
+    return(as.numeric(predict(model, newdata = test, type = "response")))
+  }
+
+  if (identical(model_name, sprintf("GAM smooth (k=%d)", survival_gam_k))) {
+    if (length(unique(train$study)) >= 2) {
+      model <- mgcv::gam(
+        survived ~ s(log_size, k = survival_gam_k) + s(study, bs = "re"),
+        data = train,
+        family = binomial,
+        method = "REML",
+        select = TRUE
+      )
+      test_aligned <- test %>%
+        mutate(study = factor(as.character(train$study[1]), levels = levels(train$study)))
+      return(as.numeric(predict(model, newdata = test_aligned, exclude = "s(study)", type = "response")))
+    }
+
+    model <- mgcv::gam(
+      survived ~ s(log_size, k = survival_gam_k),
+      data = train,
+      family = binomial,
+      method = "REML",
+      select = TRUE
+    )
+    return(as.numeric(predict(model, newdata = test, type = "response")))
+  }
+
+  stop(sprintf("Unknown survival candidate model: %s", model_name))
+}
+
+candidate_models <- c(
+  "Null (intercept only)",
+  "Linear (log size)",
+  "Threshold hinge",
+  "Size class (categorical)",
+  sprintf("GAM smooth (k=%d)", survival_gam_k)
 )
 
-# Use k-fold CV to compare models
-model_comparison <- map_dfr(names(models), function(model_name) {
-  model_fn <- models[[model_name]]
-
-  fold_metrics <- map_dfr(1:k, function(fold_num) {
+model_comparison <- map_dfr(candidate_models, function(model_name) {
+  map_dfr(1:k, function(fold_num) {
     train <- survival_data %>% filter(fold != fold_num)
     test <- survival_data %>% filter(fold == fold_num)
 
     tryCatch({
-      model <- model_fn(train)
-      predictions <- predict(model, newdata = test, type = "response")
+      predictions <- fit_survival_candidate(model_name, train, test)
       metrics <- calc_metrics(test$survived, predictions)
-      metrics$model = model_name
-      metrics$fold = fold_num
+      metrics$model <- model_name
+      metrics$fold <- fold_num
       metrics
     }, error = function(e) {
-      data.frame(model = model_name, fold = fold_num,
-                 brier_score = NA, log_loss = NA, auc = NA,
-                 accuracy = NA, sensitivity = NA, specificity = NA, n_test = NA)
+      data.frame(
+        model = model_name,
+        fold = fold_num,
+        brier_score = NA,
+        log_loss = NA,
+        auc = NA,
+        pr_auc = NA,
+        auc_defined = NA,
+        accuracy = NA,
+        sensitivity = NA,
+        specificity = NA,
+        balanced_accuracy = NA,
+        n_test = NA,
+        n_positive_test = NA,
+        n_negative_test = NA,
+        single_class_holdout = NA
+      )
     })
   })
-
-  fold_metrics
 })
 
 model_summary <- model_comparison %>%
@@ -495,8 +636,10 @@ model_summary <- model_comparison %>%
     mean_brier = mean(brier_score, na.rm = TRUE),
     sd_brier = sd(brier_score, na.rm = TRUE),
     mean_auc = mean(auc, na.rm = TRUE),
+    mean_pr_auc = mean(pr_auc, na.rm = TRUE),
     sd_auc = sd(auc, na.rm = TRUE),
     mean_accuracy = mean(accuracy, na.rm = TRUE),
+    mean_balanced_accuracy = mean(balanced_accuracy, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   arrange(mean_brier)
@@ -536,6 +679,7 @@ if (!is.null(growth_data) && nrow(growth_data) > 0 && "study" %in% names(growth_
   cat(sprintf("Growth LOSO-CV across %d studies\n", length(growth_studies)))
 
   growth_cv_results <- data.frame()
+  growth_model_comparison <- data.frame()
 
   for (study_name in growth_studies) {
     train <- growth_data[growth_data$study != study_name, ]
@@ -543,16 +687,43 @@ if (!is.null(growth_data) && nrow(growth_data) > 0 && "study" %in% names(growth_
 
     if (nrow(test) < 5 || nrow(train) < 20) next
 
-    # Fit model on training data
-    growth_model <- tryCatch(
-      lm(growth_cm2_yr ~ log(pmax(size_cm2, 1)), data = train),
+    target_fit <- tryCatch(
+      mgcv::gam(growth_cm2_yr ~ s(log_size, k = growth_gam_k),
+                data = train, method = "REML", select = TRUE),
       error = function(e) NULL
     )
 
-    if (!is.null(growth_model)) {
-      preds <- predict(growth_model, newdata = test)
+    if (!is.null(target_fit)) {
+      preds <- predict(target_fit, newdata = test)
       metrics <- calc_growth_metrics(preds, test$growth_cm2_yr)
       growth_cv_results <- rbind(growth_cv_results, data.frame(
+        excluded_study = study_name,
+        target_model = sprintf("GAM smooth (k=%d)", growth_gam_k),
+        n_test = metrics$n,
+        rmse = metrics$rmse,
+        mae = metrics$mae,
+        r_squared = metrics$r_squared
+      ))
+    }
+
+    growth_candidates <- list(
+      function(d) lm(growth_cm2_yr ~ log_size, data = d),
+      function(d) lm(growth_cm2_yr ~ log_size + I(log_size^2), data = d),
+      function(d) mgcv::gam(growth_cm2_yr ~ s(log_size, k = growth_gam_k), data = d, method = "REML", select = TRUE)
+    )
+    names(growth_candidates) <- c(
+      "Linear AGR",
+      "Quadratic AGR",
+      sprintf("GAM AGR (k=%d)", growth_gam_k)
+    )
+
+    for (model_name in names(growth_candidates)) {
+      fit <- tryCatch(growth_candidates[[model_name]](train), error = function(e) NULL)
+      if (is.null(fit)) next
+      preds <- predict(fit, newdata = test)
+      metrics <- calc_growth_metrics(preds, test$growth_cm2_yr)
+      growth_model_comparison <- rbind(growth_model_comparison, data.frame(
+        model = model_name,
         excluded_study = study_name,
         n_test = metrics$n,
         rmse = metrics$rmse,
@@ -587,6 +758,24 @@ if (!is.null(growth_data) && nrow(growth_data) > 0 && "study" %in% names(growth_
   } else {
     cat("  No valid growth CV folds (insufficient data per study).\n")
   }
+
+  if (nrow(growth_model_comparison) > 0) {
+    growth_model_summary <- growth_model_comparison %>%
+      group_by(model) %>%
+      summarise(
+        mean_rmse = mean(rmse, na.rm = TRUE),
+        mean_mae = mean(mae, na.rm = TRUE),
+        mean_r_squared = mean(r_squared, na.rm = TRUE),
+        .groups = "drop"
+      ) %>%
+      arrange(mean_rmse)
+
+    write.csv(growth_model_comparison, file.path(output_dir, "cv_growth_model_comparison.csv"),
+              row.names = FALSE)
+    cat("  Saved: cv_growth_model_comparison.csv\n")
+    cat("\nGrowth candidate model comparison:\n")
+    print(growth_model_summary, digits = 3)
+  }
 } else {
   cat("  Growth data not available or missing study column.\n")
 }
@@ -606,16 +795,18 @@ all_cv_results <- bind_rows(
 )
 
 cv_performance_summary <- all_cv_results %>%
-  group_by(cv_method) %>%
+  group_by(cv_method, target_model) %>%
   summarise(
     n_folds = n(),
     mean_brier = mean(brier_score, na.rm = TRUE),
     sd_brier = sd(brier_score, na.rm = TRUE),
     mean_auc = mean(auc, na.rm = TRUE),
+    mean_pr_auc = mean(pr_auc, na.rm = TRUE),
     sd_auc = sd(auc, na.rm = TRUE),
     mean_accuracy = mean(accuracy, na.rm = TRUE),
     mean_sensitivity = mean(sensitivity, na.rm = TRUE),
     mean_specificity = mean(specificity, na.rm = TRUE),
+    mean_balanced_accuracy = mean(balanced_accuracy, na.rm = TRUE),
     mean_ece = mean(ece, na.rm = TRUE),
     mean_mce = mean(mce, na.rm = TRUE),
     # FIX: Add sample-size-weighted means to CV summary (critique audit 2026-03-29)
@@ -625,6 +816,9 @@ cv_performance_summary <- all_cv_results %>%
     weighted_mean_auc = if (all(is.na(n_test) | is.na(auc))) NA_real_
                         else weighted.mean(auc[!is.na(auc)],
                                            n_test[!is.na(auc)]),
+    n_single_class_holdouts = sum(single_class_holdout, na.rm = TRUE),
+    auc_defined_fraction = if (all(is.na(auc_defined))) NA_real_
+                           else mean(auc_defined, na.rm = TRUE),
     total_n_test = sum(n_test, na.rm = TRUE),
     .groups = "drop"
   ) %>%
@@ -632,6 +826,12 @@ cv_performance_summary <- all_cv_results %>%
 
 cat("\n  Performance summary by CV method:\n")
 print(cv_performance_summary)
+if (any(cv_performance_summary$n_single_class_holdouts > 0, na.rm = TRUE)) {
+  cat("\n  One-class holdouts detected in these CV schemes:\n")
+  print(cv_performance_summary %>%
+          filter(n_single_class_holdouts > 0) %>%
+          select(cv_method, n_single_class_holdouts, auc_defined_fraction))
+}
 
 # =============================================================================
 # CALIBRATION SUMMARY

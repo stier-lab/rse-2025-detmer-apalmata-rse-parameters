@@ -24,6 +24,7 @@
 # INPUTS:
 #   - 06_analysis/output/prepared_survival_data.rds
 #   - 05_data/standardized/caribbean_disturbance_events.csv
+#   - 06_analysis/output/heat_stress_by_site_year_verified.csv (preferred if present)
 #   - 06_analysis/output/heat_stress_by_site_year.csv
 #
 # OUTPUTS:
@@ -81,13 +82,41 @@ print_info(sprintf("Disturbance database: %d events across %d regions",
                     nrow(disturbance_db), dplyr::n_distinct(disturbance_db$region)))
 
 # --- DHW data (satellite-derived, site-year resolution) ---
-dhw_file <- file.path(dirs$output, "heat_stress_by_site_year.csv")
-if (file.exists(dhw_file)) {
+dhw_candidates <- c(
+  file.path(dirs$output, "heat_stress_by_site_year_verified.csv"),
+  file.path(dirs$output, "heat_stress_by_site_year.csv")
+)
+dhw_file <- dhw_candidates[file.exists(dhw_candidates)][1]
+
+dominant_nonmissing <- function(x) {
+  x <- x[!is.na(x) & nzchar(as.character(x))]
+  if (length(x) == 0) return(NA_character_)
+  names(sort(table(x), decreasing = TRUE))[1]
+}
+
+classify_dhw_support <- function(n_rows, n_studies, n_regions, n_study_years) {
+  if (!is.finite(n_rows) || n_rows <= 0) return("none")
+  if (!is.finite(n_studies) || !is.finite(n_regions) || !is.finite(n_study_years)) {
+    return("sparse")
+  }
+  if (n_studies < 3 || n_regions < 3 || n_study_years < 12) return("sparse")
+  if (n_rows >= 500 && n_studies >= 5 && n_regions >= 5 && n_study_years >= 20) {
+    return("moderate")
+  }
+  if (n_rows >= 100) return("limited")
+  "sparse"
+}
+
+if (length(dhw_file) == 1 && !is.na(dhw_file)) {
   dhw_data <- readr::read_csv(dhw_file, show_col_types = FALSE)
-  print_info(sprintf("DHW data: %d site-year records", nrow(dhw_data)))
+  dhw_file_name <- basename(dhw_file)
+  has_query_status <- "query_status" %in% names(dhw_data)
+  has_dhw_source <- "dhw_source" %in% names(dhw_data)
+  print_info(sprintf("DHW data (%s): %d site-year records", dhw_file_name, nrow(dhw_data)))
 } else {
   print_warn("DHW file not found. DHW analysis will be skipped.")
   dhw_data <- NULL
+  dhw_file_name <- NA_character_
 }
 
 # ==============================================================================
@@ -159,10 +188,13 @@ surv_merged <- surv_data %>%
 # Aggregate to study-region-year level (mean across spatial points).
 if (!is.null(dhw_data)) {
   dhw_by_study_region_yr <- dhw_data %>%
-    dplyr::filter(!is.na(max_dhw)) %>%
     dplyr::group_by(study, region, survey_yr) %>%
     dplyr::summarise(
-      max_dhw = max(max_dhw, na.rm = TRUE),
+      max_dhw = if (all(is.na(max_dhw))) NA_real_ else max(max_dhw, na.rm = TRUE),
+      n_site_rows = dplyr::n(),
+      n_nonmissing_dhw = sum(!is.na(max_dhw)),
+      dominant_query_status = if (has_query_status) dominant_nonmissing(query_status) else NA_character_,
+      dominant_dhw_source = if (has_dhw_source) dominant_nonmissing(dhw_source) else NA_character_,
       .groups = "drop"
     )
 
@@ -173,12 +205,71 @@ if (!is.null(dhw_data)) {
     )
 
   n_dhw_matched <- sum(!is.na(surv_merged$max_dhw))
+  dhw_supported_studies <- dplyr::n_distinct(surv_merged$study[!is.na(surv_merged$max_dhw)])
+  dhw_supported_regions <- dplyr::n_distinct(surv_merged$region[!is.na(surv_merged$max_dhw)])
+  dhw_supported_study_years <- dplyr::n_distinct(
+    surv_merged %>%
+      dplyr::filter(!is.na(max_dhw)) %>%
+      dplyr::select(study, region, survey_yr)
+  )
+  dhw_support_label <- classify_dhw_support(
+    n_dhw_matched,
+    dhw_supported_studies,
+    dhw_supported_regions,
+    dhw_supported_study_years
+  )
   print_info(sprintf("DHW matched: %d / %d records (%.1f%%)",
                       n_dhw_matched, nrow(surv_merged),
                       n_dhw_matched / nrow(surv_merged) * 100))
+
+  dhw_coverage <- tibble::tibble(
+    dhw_file = dhw_file_name,
+    n_site_year_rows = nrow(dhw_data),
+    n_nonmissing_site_year_rows = sum(!is.na(dhw_data$max_dhw)),
+    n_study_region_year_rows = nrow(dhw_by_study_region_yr),
+    n_study_region_year_nonmissing = sum(!is.na(dhw_by_study_region_yr$max_dhw)),
+    n_survival_rows = nrow(surv_merged),
+    n_survival_rows_with_dhw = n_dhw_matched,
+    pct_survival_rows_with_dhw = n_dhw_matched / nrow(surv_merged) * 100,
+    n_studies_with_dhw = dhw_supported_studies,
+    n_regions_with_dhw = dhw_supported_regions,
+    n_unique_study_years_with_dhw = dhw_supported_study_years,
+    n_query_error_rows = if ("query_status" %in% names(dhw_data)) sum(dhw_data$query_status == "error", na.rm = TRUE) else NA_integer_,
+    n_no_data_rows = if ("query_status" %in% names(dhw_data)) sum(dhw_data$query_status == "no_data", na.rm = TRUE) else NA_integer_,
+    inference_support = dhw_support_label,
+    caveat = sprintf(
+      "DHW overlay preferred from verified file when present, but current support is often literature-LUT backed and is supported here by %d studies, %d regions, and %d study-years.",
+      dhw_supported_studies,
+      dhw_supported_regions,
+      dhw_supported_study_years
+    )
+  )
 } else {
   surv_merged$max_dhw <- NA_real_
+  dhw_coverage <- tibble::tibble(
+    dhw_file = NA_character_,
+    n_site_year_rows = 0L,
+    n_nonmissing_site_year_rows = 0L,
+    n_study_region_year_rows = 0L,
+    n_study_region_year_nonmissing = 0L,
+    n_survival_rows = nrow(surv_merged),
+    n_survival_rows_with_dhw = 0L,
+    pct_survival_rows_with_dhw = 0,
+    n_studies_with_dhw = 0L,
+    n_regions_with_dhw = 0L,
+    n_unique_study_years_with_dhw = 0L,
+    n_query_error_rows = NA_integer_,
+    n_no_data_rows = NA_integer_,
+    inference_support = "none",
+    caveat = "No DHW file available."
+  )
 }
+
+readr::write_csv(
+  dhw_coverage,
+  file.path(dirs$output, "disturbance_dhw_coverage.csv")
+)
+print_success("Saved disturbance_dhw_coverage.csv")
 
 # --- Report merge diagnostics ---
 n_with_disturbance <- sum(surv_merged$n_disturbance_events > 0)
@@ -245,7 +336,14 @@ disturbance_labels <- c(
 build_timeline_panel <- function(study_name, study_label, annual_data, events_data) {
 
   study_annual <- annual_data %>%
-    dplyr::filter(study == study_name)
+    dplyr::filter(study == study_name) %>%
+    dplyr::filter(
+      is.finite(survey_yr),
+      is.finite(survival_rate),
+      is.finite(ci_lower),
+      is.finite(ci_upper),
+      is.finite(n)
+    )
 
   if (nrow(study_annual) == 0) {
     return(ggplot2::ggplot() + ggplot2::theme_void() +
@@ -257,7 +355,16 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
 
   # Filter events to the study's time range
   panel_events <- events_data %>%
-    dplyr::filter(year >= yr_range[1], year <= yr_range[2])
+    dplyr::filter(year >= yr_range[1], year <= yr_range[2]) %>%
+    dplyr::mutate(
+      event_type = dplyr::if_else(
+        event_type %in% names(disturbance_colors),
+        event_type,
+        "other"
+      ),
+      event_type = factor(event_type, levels = names(disturbance_colors))
+    ) %>%
+    dplyr::filter(is.finite(year))
 
   # Assign y-position for event bars at the bottom of the panel
   # Stack events within the same year
@@ -269,6 +376,12 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
       dplyr::mutate(
         event_y = -0.02 - (event_rank - 1) * 0.035
       )
+  }
+
+  y_lower_limit <- if (nrow(panel_events) > 0) {
+    min(-0.25, min(panel_events$event_y, na.rm = TRUE) - 0.03)
+  } else {
+    -0.25
   }
 
   p <- ggplot2::ggplot() +
@@ -324,7 +437,7 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
       limits = c(yr_range[1] - 0.5, yr_range[2] + 0.5)
     ) +
     ggplot2::scale_y_continuous(
-      limits = c(-0.25, 1.05),
+      limits = c(y_lower_limit, 1.05),
       breaks = seq(0, 1, by = 0.2),
       labels = scales::number_format(accuracy = 0.1)
     ) +
@@ -392,15 +505,13 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
       limits = c(yr_range[1] - 0.5, yr_range[2] + 0.5)
     ) +
     ggplot2::scale_y_continuous(
-      limits = c(-0.25, 1.05),
+      limits = c(y_lower_limit, 1.05),
       breaks = seq(0, 1, by = 0.2),
       labels = scales::number_format(accuracy = 0.1)
     ) +
     ggplot2::labs(x = "Year", y = "Annual survival") +
     theme_manuscript(base_size = 9) +
-    ggplot2::theme(
-      legend.position = "none"
-    )
+    ggplot2::theme()
 
   return(p)
 }
@@ -420,7 +531,10 @@ p_neely <- build_timeline_panel(
 # Create a dummy plot for extracting the legend
 legend_data <- data.frame(
   x = rep(1, 4), y = rep(1, 4),
-  event_type = c("hurricane", "bleaching", "disease", "cold_snap")
+  event_type = factor(
+    c("hurricane", "bleaching", "disease", "cold_snap"),
+    levels = names(disturbance_colors)
+  )
 )
 
 p_legend <- ggplot2::ggplot(legend_data, ggplot2::aes(x = x, y = y, color = event_type)) +
@@ -428,7 +542,8 @@ p_legend <- ggplot2::ggplot(legend_data, ggplot2::aes(x = x, y = y, color = even
   ggplot2::scale_color_manual(
     values = disturbance_colors[c("hurricane", "bleaching", "disease", "cold_snap")],
     labels = disturbance_labels[c("hurricane", "bleaching", "disease", "cold_snap")],
-    name = "Disturbance type"
+    name = "Disturbance type",
+    drop = FALSE
   ) +
   ggplot2::theme(legend.position = "bottom")
 
@@ -541,19 +656,31 @@ if (nrow(ts_dhw) >= 50) {
   coef_dhw$term <- rownames(coef_dhw)
   coef_dhw <- coef_dhw %>%
     dplyr::mutate(
+      `Pr(>|z|)` = if (identical(dhw_coverage$inference_support[1], "sparse")) NA_real_ else `Pr(>|z|)`,
       odds_ratio    = exp(Estimate),
       or_ci_lower   = exp(Estimate - 1.96 * `Std. Error`),
       or_ci_upper   = exp(Estimate + 1.96 * `Std. Error`),
       model         = "DHW",
-      overdispersion_ratio = od_dhw$ratio
+      overdispersion_ratio = od_dhw$ratio,
+      dhw_file = dhw_coverage$dhw_file[1],
+      dhw_support = dhw_coverage$inference_support[1],
+      dhw_rows = dhw_coverage$n_survival_rows_with_dhw[1],
+      inference_note = ifelse(
+        identical(dhw_coverage$inference_support[1], "sparse"),
+        "Descriptive only: DHW support too thin for inferential interpretation.",
+        "Inferential summary."
+      )
     )
 
   cat("\n  Odds ratios (DHW model):\n")
-  cat(sprintf("    DHW: OR = %.3f (95%% CI: %.3f - %.3f), p = %.4f\n",
-              coef_dhw$odds_ratio[coef_dhw$term == "max_dhw"],
-              coef_dhw$or_ci_lower[coef_dhw$term == "max_dhw"],
-              coef_dhw$or_ci_upper[coef_dhw$term == "max_dhw"],
-              coef_dhw$`Pr(>|z|)`[coef_dhw$term == "max_dhw"]))
+  dhw_p_display <- coef_dhw$`Pr(>|z|)`[coef_dhw$term == "max_dhw"]
+  cat(sprintf(
+    "    DHW: OR = %.3f (95%% CI: %.3f - %.3f), p = %s\n",
+    coef_dhw$odds_ratio[coef_dhw$term == "max_dhw"],
+    coef_dhw$or_ci_lower[coef_dhw$term == "max_dhw"],
+    coef_dhw$or_ci_upper[coef_dhw$term == "max_dhw"],
+    ifelse(is.na(dhw_p_display), "NA (descriptive only; sparse support)", sprintf("%.4f", dhw_p_display))
+  ))
 
   dhw_or <- coef_dhw$odds_ratio[coef_dhw$term == "max_dhw"]
   if (dhw_or < 1) {
@@ -793,7 +920,8 @@ print_subheader("Saving outputs")
 if (!is.null(coef_dhw) || !is.null(coef_sev)) {
   glmm_results <- dplyr::bind_rows(coef_dhw, coef_sev) %>%
     dplyr::select(model, term, Estimate, `Std. Error`, `z value`, `Pr(>|z|)`,
-                  odds_ratio, or_ci_lower, or_ci_upper, overdispersion_ratio)
+                  odds_ratio, or_ci_lower, or_ci_upper, overdispersion_ratio,
+                  dhw_file, dhw_support, dhw_rows, inference_note)
 
   readr::write_csv(
     glmm_results,
@@ -827,9 +955,11 @@ cat(sprintf("    %.1f%% of records exposed to >= 1 disturbance event\n",
 if (!is.null(coef_dhw)) {
   dhw_row <- coef_dhw %>% dplyr::filter(term == "max_dhw")
   cat(sprintf("\n  DHW effect (GLMM):\n"))
-  cat(sprintf("    OR = %.3f (95%% CI: %.3f - %.3f), p = %.4f\n",
-              dhw_row$odds_ratio, dhw_row$or_ci_lower, dhw_row$or_ci_upper,
-              dhw_row$`Pr(>|z|)`))
+  cat(sprintf(
+    "    OR = %.3f (95%% CI: %.3f - %.3f), p = %s\n",
+    dhw_row$odds_ratio, dhw_row$or_ci_lower, dhw_row$or_ci_upper,
+    ifelse(is.na(dhw_row$`Pr(>|z|)`), "NA (descriptive only; sparse support)", sprintf("%.4f", dhw_row$`Pr(>|z|)`))
+  ))
 }
 
 if (!is.null(coef_sev)) {
@@ -847,12 +977,17 @@ cat(sprintf("    FL Keys major event return interval: ~%.1f years\n", return_int
 
 cat("\n  Outputs:\n")
 cat("    - 06_analysis/output/disturbance_survival_glmm.csv\n")
+cat("    - 06_analysis/output/disturbance_dhw_coverage.csv\n")
 cat("    - 06_analysis/output/disturbance_frequency.csv\n")
 cat("    - 06_analysis/figures/supplementary/FigSXX_disturbance_timeline.png (+.pdf)\n")
 
 cat("\n  CAVEATS:\n")
 cat("    - Disturbance database is literature-compiled, not exhaustive\n")
-cat("    - DHW data are satellite-derived at ~25km resolution\n")
+cat(sprintf("    - DHW support: %s (%d matched survival rows from %s)\n",
+            dhw_coverage$inference_support[1],
+            dhw_coverage$n_survival_rows_with_dhw[1],
+            ifelse(is.na(dhw_coverage$dhw_file[1]), "no file", dhw_coverage$dhw_file[1])))
+cat("    - DHW data are satellite-derived at ~25km resolution and often literature-LUT backed\n")
 cat("    - survey_yr = interval START; disturbances may span multi-year intervals\n")
 cat("    - NOAA dominates the time series (78%% of data); interpret with caution\n")
 cat("    - Neely overlap (2010-2015) provides partial independent validation\n\n")

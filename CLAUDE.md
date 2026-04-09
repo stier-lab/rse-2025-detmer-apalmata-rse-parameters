@@ -28,7 +28,10 @@ These apply to **every** analysis change:
 - Any new binomial GLMM needs an **overdispersion check** (`sum(pearson_resid^2) / rdf`).
 - Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment) for independent models; three-level `rma.mv()` is the primary model. Moderator analyses are exploratory at k=17 (22 effects).
 - **Size measurement varies across studies**: L x W x %live (NOAA, Pausch), photo tracing (USGS, Kuffner), diameter^2 (Mendoza-Quiroz). Pooled analyses assume comparability.
-- **Mortality definitions vary**: NOAA = no tissue/skeleton gone; Kuffner = >=50% tissue loss; others = no live tissue at interval end.
+- **Mortality definitions are heterogeneous and not harmonized.** NOAA = no tissue AND skeleton gone (conservative); Kuffner = >=50% tissue loss (aggressive); others = no live tissue. No sensitivity analysis stratifying by mortality definition has been run. This is a known limitation.
+- **Annualization assumes constant hazard** (`S_annual = S_observed^(1/t)`). This is the standard approach but does not account for seasonal mortality peaks (hurricane season, summer bleaching). No sensitivity to alternative annualization methods has been tested.
+- **No formal publication bias assessment** (funnel plot, Egger's test) has been conducted. With k=22 effects, asymmetry tests are at the boundary of usefulness but should be included before submission.
+- **Size class boundaries (0/10/100/900/4000 cm^2) follow Vardi 2011** without formal optimization for this dataset. No comparison to alternative discretizations or an IPM has been conducted.
 
 ---
 
@@ -45,10 +48,10 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 
 | Phase | Scripts | What they do |
 |-------|---------|-------------|
-| Data Prep | 01 | Load, clean, standardize, assign size classes |
+| Data Prep | 01 | Load, clean, standardize, assign size classes; build `prepared_survival_cells.rds` (individual + summary, cell-level weighted) |
 | Core | 02-07 | Survival/growth thresholds, growth rates, variance, data gaps |
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
-| Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=16/21 effects), sensitivity |
+| Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=17/22 effects), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
 | Supp Figures | 20, 20c, 21, 23-28 | FigS1-S16 |
 | Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS15) |
@@ -107,8 +110,9 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 
 | File | Producer | What |
 |------|----------|------|
+| `06_analysis/output/prepared_survival_cells.rds` | Script 01 | Cell-level survival (individual + summary, sample-size weighted) |
 | `06_analysis/output/transition_matrix.csv` | Script 13 | 5x5 Lefkovitch projection matrix |
-| `06_analysis/output/lambda_bootstrap_samples.rds` | Script 16 | 2000 bootstrap lambda values (1519 valid) |
+| `06_analysis/output/lambda_bootstrap_samples.rds` | Script 13 | 2000 bootstrap lambda values |
 | `06_analysis/output/expanded_meta_analysis_results.csv` | Script 14b | k=17 (22 effects) meta-analysis summary |
 | `06_analysis/output/expanded_meta_analysis_study_effects.csv` | Script 14b | Per-study survival estimates |
 | `06_analysis/output/size_class_survival_synthesis.csv` | Script 20 | SC1-SC5 survival by study |
@@ -122,7 +126,7 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 
 | Study | Type | Region | n | Key Issue |
 |-------|------|--------|---|-----------|
-| NOAA_survey | Natural | FL, Curacao, Navassa | 4,031 | Largest dataset; large colonies |
+| NOAA_survey | Natural | FL, Curacao, Navassa | ~4,000 | Largest dataset; large colonies; n varies by filtering stage |
 | neely_et_al_2022 | Natural | FL Keys | 878 | 2014 disease catastrophe (53% surv); disturbance-flagged |
 | pausch_et_al_2018 | Restoration | Florida | 966 | Fragment experiments |
 | USGS_USVI_exp | Restoration | USVI | 46 | Outplanted 2019 |
@@ -130,7 +134,7 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | mendoza_quiroz_et_al_2023 | Natural | Mexico | 52 | Some sizes from diameter only |
 | fundemar_fragments | Restoration | Dominican Rep. | 43 | Nursery fragments |
 
-10 additional studies contribute summary-level data only (17 unique studies, 22 study-level effects in expanded meta; NOAA, Vardi, and Garrison each split into sub-effects).
+10 additional studies contribute summary-level data only (17 unique studies, 22 study-level effects in expanded meta; NOAA, Vardi, and Garrison each split into sub-effects). Summary-level survival data is integrated into the transition matrix (script 13) and parameter lists (script 17) via `prepared_survival_cells.rds` — a cell-level dataset that combines individual and summary data with sample-size weighting. See `04_extraction/data_integration_issues.md` and `04_extraction/data_flow_diagram.md` for details.
 
 ---
 
@@ -210,4 +214,6 @@ Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
 | `04_extraction/study_characteristics.md` | Per-study characteristics table |
 | `04_extraction/risk_of_bias.md` | Risk of bias assessment |
 | `04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx` | Raine's original working notes: per-study extraction decisions and assumptions |
+| `04_extraction/data_integration_issues.md` | Individual vs. summary data integration: issues, resolution, comparison |
+| `04_extraction/data_flow_diagram.md` | Mermaid diagram of the full data pipeline (individual + summary survival) |
 | `07_reporting/figure_legends.txt` | Figure legends, methods, results text |

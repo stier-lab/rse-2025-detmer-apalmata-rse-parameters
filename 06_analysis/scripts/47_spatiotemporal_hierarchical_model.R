@@ -27,6 +27,8 @@
 #   - 06_analysis/output/spatiotemporal_growth_model_comparison.csv
 #   - 06_analysis/output/spatiotemporal_survival_variance_components.csv
 #   - 06_analysis/output/spatiotemporal_growth_variance_components.csv
+#   - 06_analysis/output/spatiotemporal_survival_kcheck.csv
+#   - 06_analysis/output/spatiotemporal_growth_kcheck.csv
 #   - 06_analysis/output/spatiotemporal_year_predictions.csv
 #   - 06_analysis/output/spatiotemporal_site_summary.csv
 #   - 06_analysis/output/spatiotemporal_site_year_summary.csv
@@ -163,8 +165,297 @@ extract_vcomp <- function(model, outcome, model_label) {
     )
 }
 
+extract_k_checks <- function(model, outcome, model_label) {
+  kc <- tryCatch(mgcv::k.check(model), error = function(e) NULL)
+  if (is.null(kc)) {
+    return(tibble::tibble(
+      outcome = outcome,
+      model = model_label,
+      smooth = NA_character_,
+      k_index = NA_real_,
+      k_prime = NA_real_,
+      edf = NA_real_,
+      p_value = NA_real_
+    ))
+  }
+
+  kc_df <- as.data.frame(kc)
+  kc_df$smooth <- rownames(kc_df)
+  rownames(kc_df) <- NULL
+
+  pick_col <- function(df, candidates) {
+    found <- candidates[candidates %in% names(df)]
+    if (length(found) == 0) return(rep(NA_real_, nrow(df)))
+    df[[found[1]]]
+  }
+
+  tibble::tibble(
+    outcome = outcome,
+    model = model_label,
+    smooth = kc_df$smooth,
+    k_index = pick_col(kc_df, c("k.index", "k-index", "k_index")),
+    k_prime = pick_col(kc_df, c("k.prime", "k.", "k_prime")),
+    edf = pick_col(kc_df, c("edf", "edf.")),
+    p_value = pick_col(kc_df, c("p.value", "p-value", "p_value"))
+  )
+}
+
+calc_binary_metrics <- function(actual, predicted_prob) {
+  predicted_prob <- pmin(pmax(predicted_prob, 1e-6), 1 - 1e-6)
+  pred_class <- as.integer(predicted_prob >= 0.5)
+  tp <- sum(pred_class == 1 & actual == 1, na.rm = TRUE)
+  fp <- sum(pred_class == 1 & actual == 0, na.rm = TRUE)
+  fn <- sum(pred_class == 0 & actual == 1, na.rm = TRUE)
+  tn <- sum(pred_class == 0 & actual == 0, na.rm = TRUE)
+
+  auc <- NA_real_
+  if (length(unique(actual[!is.na(actual)])) == 2) {
+    pred_1 <- predicted_prob[actual == 1]
+    pred_0 <- predicted_prob[actual == 0]
+    if (length(pred_1) > 0 && length(pred_0) > 0) {
+      auc <- mean(outer(pred_1, pred_0, ">")) + 0.5 * mean(outer(pred_1, pred_0, "=="))
+    }
+  }
+
+  tibble::tibble(
+    brier_score = mean((predicted_prob - actual)^2, na.rm = TRUE),
+    log_loss = -mean(actual * log(predicted_prob) + (1 - actual) * log(1 - predicted_prob), na.rm = TRUE),
+    auc = auc,
+    accuracy = mean(pred_class == actual, na.rm = TRUE),
+    sensitivity = if ((tp + fn) > 0) tp / (tp + fn) else NA_real_,
+    specificity = if ((tn + fp) > 0) tn / (tn + fp) else NA_real_
+  )
+}
+
+haversine_km <- function(lat1, lon1, lat2, lon2) {
+  to_rad <- pi / 180
+  dlat <- (lat2 - lat1) * to_rad
+  dlon <- (lon2 - lon1) * to_rad
+  a <- sin(dlat / 2)^2 +
+    cos(lat1 * to_rad) * cos(lat2 * to_rad) * sin(dlon / 2)^2
+  6371 * 2 * atan2(sqrt(a), sqrt(pmax(0, 1 - a)))
+}
+
+align_factor_to_levels <- function(values, levels_target, fallback_level) {
+  values_chr <- as.character(values)
+  if (length(levels_target) == 0) {
+    return(factor(values_chr))
+  }
+  values_chr[is.na(values_chr) | !values_chr %in% levels_target] <- fallback_level
+  factor(values_chr, levels = levels_target)
+}
+
+prepare_region_holdout_newdata <- function(test_data, train_data) {
+  ref_row <- train_data %>% slice(1)
+  out <- test_data
+
+  if ("study" %in% names(train_data)) {
+    out$study <- factor(as.character(ref_row$study[[1]]), levels = levels(train_data$study))
+  }
+  if ("site_id" %in% names(train_data)) {
+    out$site_id <- factor(as.character(ref_row$site_id[[1]]), levels = levels(train_data$site_id))
+  }
+  if ("survey_year_factor" %in% names(train_data) && "survey_year_factor" %in% names(out)) {
+    year_levels <- levels(train_data$survey_year_factor)
+    fallback_year <- as.character(ref_row$survey_year_factor[[1]])
+    out$survey_year_factor <- align_factor_to_levels(out$survey_year_factor, year_levels, fallback_year)
+  }
+  if ("population_type" %in% names(train_data) && "population_type" %in% names(out)) {
+    out$population_type <- align_factor_to_levels(
+      out$population_type,
+      levels(train_data$population_type),
+      as.character(ref_row$population_type[[1]])
+    )
+  }
+  if ("disturbance_state" %in% names(train_data) && "disturbance_state" %in% names(out)) {
+    out$disturbance_state <- align_factor_to_levels(
+      out$disturbance_state,
+      levels(train_data$disturbance_state),
+      as.character(ref_row$disturbance_state[[1]])
+    )
+  }
+
+  out
+}
+
+extract_spatial_residual_check <- function(model, data, outcome, model_label) {
+  model_data <- tryCatch(as_tibble(model$model), error = function(e) NULL)
+  pearson_resid <- tryCatch(residuals(model, type = "pearson"), error = function(e) NULL)
+  if (is.null(model_data) ||
+      !"site_id" %in% names(model_data) ||
+      !"latitude" %in% names(model_data) ||
+      !"longitude" %in% names(model_data) ||
+      is.null(pearson_resid) ||
+      length(pearson_resid) != nrow(model_data)) {
+    return(tibble::tibble(
+      outcome = outcome,
+      model = model_label,
+      n_sites = NA_integer_,
+      mean_abs_site_residual = NA_real_,
+      mean_nearest_neighbor_km = NA_real_,
+      nearest_neighbor_residual_correlation = NA_real_,
+      moran_like_inverse_distance = NA_real_
+    ))
+  }
+
+  site_resid <- model_data %>%
+    mutate(pearson_residual = pearson_resid) %>%
+    group_by(site_id, latitude, longitude) %>%
+    summarise(
+      mean_residual = mean(pearson_residual, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    filter(!is.na(latitude), !is.na(longitude))
+
+  if (nrow(site_resid) < 3) {
+    return(tibble::tibble(
+      outcome = outcome,
+      model = model_label,
+      n_sites = nrow(site_resid),
+      mean_abs_site_residual = mean(abs(site_resid$mean_residual), na.rm = TRUE),
+      mean_nearest_neighbor_km = NA_real_,
+      nearest_neighbor_residual_correlation = NA_real_,
+      moran_like_inverse_distance = NA_real_
+    ))
+  }
+
+  dist_mat <- outer(
+    seq_len(nrow(site_resid)),
+    seq_len(nrow(site_resid)),
+    Vectorize(function(i, j) {
+      haversine_km(
+        site_resid$latitude[i],
+        site_resid$longitude[i],
+        site_resid$latitude[j],
+        site_resid$longitude[j]
+      )
+    })
+  )
+  diag(dist_mat) <- Inf
+  nearest_idx <- apply(dist_mat, 1, which.min)
+  nearest_dist <- dist_mat[cbind(seq_len(nrow(site_resid)), nearest_idx)]
+  nearest_resid <- site_resid$mean_residual[nearest_idx]
+
+  inv_dist <- 1 / dist_mat
+  inv_dist[!is.finite(inv_dist)] <- 0
+  diag(inv_dist) <- 0
+  centered_resid <- site_resid$mean_residual - mean(site_resid$mean_residual, na.rm = TRUE)
+  denom <- sum(centered_resid^2, na.rm = TRUE)
+  moran_like <- if (denom > 0 && sum(inv_dist) > 0) {
+    (nrow(site_resid) / sum(inv_dist)) *
+      sum(inv_dist * tcrossprod(centered_resid), na.rm = TRUE) / denom
+  } else {
+    NA_real_
+  }
+
+  tibble::tibble(
+    outcome = outcome,
+    model = model_label,
+    n_sites = nrow(site_resid),
+    mean_abs_site_residual = mean(abs(site_resid$mean_residual), na.rm = TRUE),
+    mean_nearest_neighbor_km = mean(nearest_dist, na.rm = TRUE),
+    nearest_neighbor_residual_correlation = suppressWarnings(cor(site_resid$mean_residual, nearest_resid, use = "complete.obs")),
+    moran_like_inverse_distance = moran_like
+  )
+}
+
+run_region_blocked_cv <- function(data, response_col, outcome_label, pred_exclude) {
+  regions <- sort(unique(as.character(data$region)))
+
+  purrr::map_dfr(regions, function(holdout_region) {
+    train <- data %>% filter(region != holdout_region) %>% droplevels()
+    test <- data %>% filter(region == holdout_region)
+
+    if (nrow(train) < 200 || nrow(test) < 25) {
+      return(tibble::tibble(
+        outcome = outcome_label,
+        holdout_region = holdout_region,
+        n_train = nrow(train),
+        n_test = nrow(test),
+        brier_score = NA_real_,
+        log_loss = NA_real_,
+        auc = NA_real_,
+        accuracy = NA_real_,
+        sensitivity = NA_real_,
+        specificity = NA_real_
+      ))
+    }
+
+    fit <- fit_gam_safe(
+      build_formula(response_col, train, spatiotemporal = TRUE),
+      data = train,
+      family = binomial(),
+      model_name = paste0(outcome_label, "_region_holdout_", gsub("[^A-Za-z0-9]+", "_", holdout_region))
+    )
+
+    if (is.null(fit)) {
+      return(tibble::tibble(
+        outcome = outcome_label,
+        holdout_region = holdout_region,
+        n_train = nrow(train),
+        n_test = nrow(test),
+        brier_score = NA_real_,
+        log_loss = NA_real_,
+        auc = NA_real_,
+        accuracy = NA_real_,
+        sensitivity = NA_real_,
+        specificity = NA_real_
+      ))
+    }
+
+    newdata <- prepare_region_holdout_newdata(test, as_tibble(fit$model))
+    preds <- tryCatch(
+      predict(fit, newdata = newdata, type = "response", exclude = pred_exclude),
+      error = function(e) rep(mean(train[[response_col]], na.rm = TRUE), nrow(newdata))
+    )
+
+    bind_cols(
+      tibble::tibble(
+        outcome = outcome_label,
+        holdout_region = holdout_region,
+        n_train = nrow(train),
+        n_test = nrow(test)
+      ),
+      calc_binary_metrics(test[[response_col]], as.numeric(preds))
+    )
+  })
+}
+
 predict_ci <- function(model, newdata, type = c("response", "link"), exclude = NULL) {
   type <- match.arg(type)
+  if (!is.null(model$model)) {
+    factor_cols <- intersect(
+      c("survey_year_factor", "study", "site_id", "population_type", "disturbance_state"),
+      intersect(names(newdata), names(model$model))
+    )
+
+    for (col in factor_cols) {
+      model_levels <- levels(model$model[[col]])
+      if (length(model_levels) == 0) {
+        next
+      }
+
+      new_vals <- as.character(newdata[[col]])
+      if (identical(col, "survey_year_factor")) {
+        unmatched <- !is.na(new_vals) & !new_vals %in% model_levels
+        if (any(unmatched)) {
+          model_years <- suppressWarnings(as.numeric(model_levels))
+          for (idx in which(unmatched)) {
+            year_num <- suppressWarnings(as.numeric(new_vals[idx]))
+            if (is.finite(year_num) && any(is.finite(model_years))) {
+              new_vals[idx] <- model_levels[which.min(abs(model_years - year_num))]
+            } else {
+              new_vals[idx] <- model_levels[1]
+            }
+          }
+        }
+      } else {
+        new_vals[is.na(new_vals) | !new_vals %in% model_levels] <- model_levels[1]
+      }
+      newdata[[col]] <- factor(new_vals, levels = model_levels)
+    }
+  }
+
   pr <- predict(model, newdata = newdata, type = type, se.fit = TRUE, exclude = exclude)
   fit_vals <- as.numeric(pr$fit)
   se_vals <- as.numeric(pr$se.fit)
@@ -212,9 +503,12 @@ build_formula <- function(outcome, data, spatiotemporal = FALSE) {
   }
 
   if (spatiotemporal) {
+    if (identical(outcome, "survived")) {
+      terms <- c(terms, "s(survey_year_num, k = 10)")
+    }
     terms <- c(
       terms,
-      "s(survey_year_num, k = 7)",
+      "s(survey_year_factor, bs = \"re\")",
       "s(longitude, latitude, k = 20)",
       "s(site_id, bs = \"re\")"
     )
@@ -247,6 +541,7 @@ if (!"population_type" %in% names(growth_data)) {
 surv_panel <- surv_data %>%
   mutate(
     survey_year_num = as.numeric(survey_yr),
+    survey_year_factor = factor(survey_yr),
     site_id = factor(interaction(region, location, plot, drop = TRUE, lex.order = TRUE)),
     site_year = factor(interaction(site_id, survey_yr, drop = TRUE, lex.order = TRUE)),
     study = factor(study),
@@ -268,6 +563,7 @@ surv_panel <- surv_data %>%
 growth_panel <- growth_data %>%
   mutate(
     survey_year_num = as.numeric(survey_yr),
+    survey_year_factor = factor(survey_yr),
     site_id = factor(interaction(region, location, plot, drop = TRUE, lex.order = TRUE)),
     site_year = factor(interaction(site_id, survey_yr, drop = TRUE, lex.order = TRUE)),
     study = factor(study),
@@ -370,9 +666,32 @@ growth_vcomp <- bind_rows(
   extract_vcomp(growth_base, "positive_growth", "baseline"),
   extract_vcomp(growth_spacetime, "positive_growth", "spatiotemporal")
 )
+surv_kcheck <- bind_rows(
+  extract_k_checks(surv_base, "survival", "baseline"),
+  extract_k_checks(surv_spacetime, "survival", "spatiotemporal")
+)
+growth_kcheck <- bind_rows(
+  extract_k_checks(growth_base, "positive_growth", "baseline"),
+  extract_k_checks(growth_spacetime, "positive_growth", "spatiotemporal")
+)
 
 write_csv(surv_vcomp, file.path(output_dir, "spatiotemporal_survival_variance_components.csv"))
 write_csv(growth_vcomp, file.path(output_dir, "spatiotemporal_growth_variance_components.csv"))
+write_csv(surv_kcheck, file.path(output_dir, "spatiotemporal_survival_kcheck.csv"))
+write_csv(growth_kcheck, file.path(output_dir, "spatiotemporal_growth_kcheck.csv"))
+
+spatial_residual_checks <- bind_rows(
+  extract_spatial_residual_check(surv_spacetime, surv_panel, "survival", "spatiotemporal"),
+  extract_spatial_residual_check(growth_spacetime, growth_panel, "positive_growth", "spatiotemporal")
+)
+
+region_blocked_cv <- bind_rows(
+  run_region_blocked_cv(surv_panel, "survived", "survival", pred_exclude = c("s(study)", "s(site_id)")),
+  run_region_blocked_cv(growth_panel, "positive_growth", "positive_growth", pred_exclude = c("s(study)", "s(site_id)"))
+)
+
+write_csv(spatial_residual_checks, file.path(output_dir, "spatiotemporal_spatial_residual_check.csv"))
+write_csv(region_blocked_cv, file.path(output_dir, "spatiotemporal_region_blocked_cv.csv"))
 
 print_subheader("Building spatiotemporal summaries")
 
@@ -417,6 +736,8 @@ write_csv(site_summary, file.path(output_dir, "spatiotemporal_site_summary.csv")
 print_subheader("Generating prediction surfaces")
 
 pred_exclude <- c("s(study)", "s(site_id)")
+surv_reference_year <- sort(unique(surv_panel$survey_year_num))[which.min(abs(sort(unique(surv_panel$survey_year_num)) - stats::median(surv_panel$survey_year_num, na.rm = TRUE)))]
+growth_reference_year <- sort(unique(growth_panel$survey_year_num))[which.min(abs(sort(unique(growth_panel$survey_year_num)) - stats::median(growth_panel$survey_year_num, na.rm = TRUE)))]
 
 ref_surv <- surv_panel %>%
   slice(1) %>%
@@ -432,8 +753,11 @@ ref_surv <- surv_panel %>%
   )
 
 year_pred <- tibble::tibble(
-  survey_year_num = seq(min(surv_panel$survey_year_num), max(surv_panel$survey_year_num))
+  survey_year_num = sort(unique(surv_panel$survey_year_num))
 ) %>%
+  mutate(
+    survey_year_factor = factor(as.character(survey_year_num), levels = levels(surv_panel$survey_year_factor))
+  ) %>%
   tidyr::crossing(ref_surv)
 
 surv_year_predictions <- predict_ci(
@@ -460,8 +784,11 @@ ref_growth <- growth_panel %>%
 growth_year_predictions <- predict_ci(
   growth_spacetime,
   newdata = tibble::tibble(
-    survey_year_num = seq(min(growth_panel$survey_year_num), max(growth_panel$survey_year_num))
+    survey_year_num = sort(unique(growth_panel$survey_year_num))
   ) %>%
+    mutate(
+      survey_year_factor = factor(as.character(survey_year_num), levels = levels(growth_panel$survey_year_factor))
+    ) %>%
     tidyr::crossing(ref_growth),
   type = "link",
   exclude = pred_exclude
@@ -475,39 +802,83 @@ spatial_pred <- site_summary %>%
   select(region, location, plot, site_id, latitude, longitude) %>%
   distinct() %>%
   mutate(
-    survey_year_num = median(surv_panel$survey_year_num, na.rm = TRUE),
-    study = factor(as.character(ref_surv$study), levels = levels(surv_panel$study)),
-    site_id = factor(as.character(ref_surv$site_id), levels = levels(surv_panel$site_id)),
-    site_year = factor(as.character(ref_surv$site_year), levels = levels(surv_panel$site_year)),
+    survey_year_num = surv_reference_year,
+    survey_year_factor = factor(as.character(surv_reference_year), levels = levels(surv_panel$survey_year_factor)),
+    pred_study = factor(as.character(ref_surv$study), levels = levels(surv_panel$study)),
+    pred_site_id = factor(as.character(ref_surv$site_id), levels = levels(surv_panel$site_id)),
+    pred_site_year = factor(as.character(ref_surv$site_year), levels = levels(surv_panel$site_year)),
     log_size = median(surv_panel$log_size, na.rm = TRUE),
     population_type = factor("Natural colony", levels = levels(surv_panel$population_type)),
     disturbance_state = factor("No curated disturbance", levels = disturbance_state_levels)
   )
 
-spatial_predictions <- bind_rows(
-  predict_ci(
-    surv_spacetime,
-    newdata = spatial_pred,
-    type = "link",
-    exclude = pred_exclude
-  ) %>%
-    mutate(outcome = "survival"),
-  predict_ci(
-    growth_spacetime,
-    newdata = spatial_pred %>%
-      transmute(
-        region, location, plot, latitude, longitude,
-        survey_year_num = median(growth_panel$survey_year_num, na.rm = TRUE),
-        study = factor(as.character(ref_growth$study), levels = levels(growth_panel$study)),
-        site_id = factor(as.character(ref_growth$site_id), levels = levels(growth_panel$site_id)),
-        log_size = median(growth_panel$log_size, na.rm = TRUE),
-        disturbance_state = factor("No curated disturbance", levels = disturbance_state_levels)
-      ),
-    type = "link",
-    exclude = pred_exclude
-  ) %>%
-    mutate(outcome = "positive_growth")
+surv_spatial_newdata <- spatial_pred %>%
+  mutate(
+    study = pred_study,
+    site_id = pred_site_id,
+    site_year = pred_site_year
+  )
+
+growth_spatial_newdata <- spatial_pred %>%
+  transmute(
+    region,
+    location,
+    plot,
+    site_id,
+    latitude,
+    longitude,
+    survey_year_num = growth_reference_year,
+    survey_year_factor = factor(as.character(growth_reference_year), levels = levels(growth_panel$survey_year_factor)),
+    study = factor(as.character(ref_growth$study), levels = levels(growth_panel$study)),
+    site_id_pred = factor(as.character(ref_growth$site_id), levels = levels(growth_panel$site_id)),
+    log_size = median(growth_panel$log_size, na.rm = TRUE),
+    disturbance_state = factor("No curated disturbance", levels = disturbance_state_levels)
+  )
+
+survival_spatial_predictions <- predict_ci(
+  surv_spacetime,
+  newdata = surv_spatial_newdata,
+  type = "link",
+  exclude = pred_exclude
 ) %>%
+  mutate(outcome = "survival") %>%
+  select(outcome, fit, lwr, upr)
+
+growth_spatial_predictions <- predict_ci(
+  growth_spacetime,
+  newdata = growth_spatial_newdata %>%
+    mutate(
+      study = study,
+      site_id = site_id_pred
+    ),
+  type = "link",
+  exclude = pred_exclude
+) %>%
+  mutate(outcome = "positive_growth") %>%
+  select(outcome, fit, lwr, upr)
+
+spatial_predictions <- bind_rows(
+  bind_cols(
+    spatial_pred %>% select(region, location, plot, site_id, latitude, longitude),
+    survival_spatial_predictions
+  ),
+  bind_cols(
+    spatial_pred %>% select(region, location, plot, site_id, latitude, longitude),
+    growth_spatial_predictions
+  )
+) %>%
+  mutate(
+    site_id = as.character(site_id),
+    site_id = if_else(
+      is.na(site_id) | site_id == "NA" | site_id == "",
+      if_else(
+        is.na(plot) | plot == "",
+        paste(region, location, sep = "."),
+        paste(region, location, plot, sep = ".")
+      ),
+      site_id
+    )
+  ) %>%
   select(outcome, region, location, plot, site_id, latitude, longitude, fit, lwr, upr)
 
 write_csv(year_predictions, file.path(output_dir, "spatiotemporal_year_predictions.csv"))
@@ -522,7 +893,7 @@ p_year <- ggplot(year_predictions, aes(survey_year_num, fit)) +
   scale_x_continuous(breaks = pretty_breaks(6)) +
   scale_y_continuous(labels = percent_format(accuracy = 1)) +
   labs(
-    title = "Temporal smooths from the spatiotemporal demographic models",
+    title = "Temporal components from the spatiotemporal demographic models",
     x = "Survey year",
     y = "Predicted probability"
   ) +
@@ -574,9 +945,13 @@ cat("  - spatiotemporal_survival_model_comparison.csv\n")
 cat("  - spatiotemporal_growth_model_comparison.csv\n")
 cat("  - spatiotemporal_survival_variance_components.csv\n")
 cat("  - spatiotemporal_growth_variance_components.csv\n")
+cat("  - spatiotemporal_survival_kcheck.csv\n")
+cat("  - spatiotemporal_growth_kcheck.csv\n")
 cat("  - spatiotemporal_year_predictions.csv\n")
 cat("  - spatiotemporal_site_summary.csv\n")
 cat("  - spatiotemporal_site_year_summary.csv\n")
 cat("  - spatiotemporal_spatial_predictions.csv\n")
+cat("  - spatiotemporal_spatial_residual_check.csv\n")
+cat("  - spatiotemporal_region_blocked_cv.csv\n")
 cat("  - spatiotemporal_data_coverage.csv\n")
 cat("  - figures/supplementary/spatiotemporal_hierarchical_summary.png/.pdf\n")

@@ -29,6 +29,7 @@
 #   - 06_analysis/output/multistate_retrogression_metrics.csv
 #   - 06_analysis/output/multistate_observed_alive_transition_counts.csv
 #   - 06_analysis/output/multistate_observed_death_by_state.csv
+#   - 06_analysis/output/multistate_model_diagnostics.csv
 ################################################################################
 
 suppressPackageStartupMessages({
@@ -485,12 +486,46 @@ write_csv(obs_death, file.path(output_dir, "multistate_observed_death_by_state.c
 # ------------------------------------------------------------------------------
 # Basic diagnostics table
 # ------------------------------------------------------------------------------
+surv_overdisp_ratio <- if (inherits(surv_fit, "glmerMod")) {
+  tryCatch(overdisp_test(surv_fit)$ratio, error = function(e) NA_real_)
+} else {
+  NA_real_
+}
+surv_overdispersed <- if (inherits(surv_fit, "glmerMod")) {
+  tryCatch(overdisp_test(surv_fit)$overdispersed, error = function(e) NA)
+} else {
+  NA
+}
+surv_singular <- tryCatch(lme4::isSingular(surv_fit, tol = 1e-4), error = function(e) NA)
+surv_conv_msg <- tryCatch({
+  msgs <- surv_fit@optinfo$conv$lme4$messages
+  if (length(msgs) == 0) NA_character_ else paste(unique(unlist(msgs)), collapse = "; ")
+}, error = function(e) NA_character_)
+
+trans_loglik <- tryCatch(as.numeric(logLik(trans_fit)), error = function(e) NA_real_)
+trans_aic <- tryCatch(AIC(trans_fit), error = function(e) NA_real_)
+trans_bic <- tryCatch(BIC(trans_fit), error = function(e) NA_real_)
+trans_npar <- length(coef(trans_fit))
+trans_conv <- tryCatch(trans_fit$convergence, error = function(e) NA_integer_)
+trans_niter <- tryCatch(paste(trans_fit$niter, collapse = ", "), error = function(e) NA_character_)
+
 diag_tbl <- data.frame(
   metric = c(
     "survival_model_class",
     "transition_model_class",
     "AIC_survival_model",
     "AIC_transition_model",
+    "BIC_survival_model",
+    "BIC_transition_model",
+    "logLik_survival_model",
+    "logLik_transition_model",
+    "transition_model_n_params",
+    "survival_overdispersion_ratio",
+    "survival_overdispersed",
+    "survival_singular_fit",
+    "survival_convergence_message",
+    "transition_model_convergence_code",
+    "transition_model_iterations",
     "reference_disturbance",
     "reference_geodomain"
   ),
@@ -498,7 +533,18 @@ diag_tbl <- data.frame(
     class(surv_fit)[1],
     class(trans_fit)[1],
     as.character(AIC(surv_fit)),
-    as.character(AIC(trans_fit)),
+    as.character(trans_aic),
+    as.character(BIC(surv_fit)),
+    as.character(trans_bic),
+    as.character(tryCatch(as.numeric(logLik(surv_fit)), error = function(e) NA_real_)),
+    as.character(trans_loglik),
+    as.character(trans_npar),
+    as.character(surv_overdisp_ratio),
+    as.character(surv_overdispersed),
+    as.character(surv_singular),
+    surv_conv_msg,
+    as.character(trans_conv),
+    trans_niter,
     ref_dist,
     ref_geo
   )
@@ -516,6 +562,7 @@ cat("  - multistate_transition_matrix_annual_wide.csv\n")
 cat("  - multistate_retrogression_metrics.csv\n")
 cat("  - multistate_observed_alive_transition_counts.csv\n")
 cat("  - multistate_observed_death_by_state.csv\n")
-cat("  - multistate_model_diagnostics.csv\n\n")
+cat("  - multistate_model_diagnostics.csv\n")
+cat("\n")
 
 cat("41_multistate_transition_model.R completed.\n")

@@ -3,9 +3,12 @@
 # FIGURE 4: POPULATION VIABILITY ASSESSMENT (4-panel: (a | b) / (c | d))
 # =============================================================================
 # Panel a: 5x5 transition matrix heatmap
-# Panel b: Elasticity bar chart (stasis, growth, retrogression, fragmentation)
+# Panel b: Elasticity bar chart (stasis, growth, retrogression) with
+# fragmentation shown as a non-additive overlay
 # Panel c: Bootstrap lambda distribution (bicolor histogram)
 # Panel d: Leave-one-study-out lambda sensitivity (horizontal point plot)
+#
+# NOTE: Script filename retains historical "fig6" label; actual output is Fig4_population_model.
 #
 # OUTPUT: 06_analysis/figures/manuscript/Fig4_population_model.{png,pdf}
 #         174 x 180 mm (double-column), 300 DPI
@@ -30,6 +33,11 @@ pal <- MANUSCRIPT_PALETTE
 project_root <- get_project_root()
 output_dir <- file.path(project_root, "06_analysis/output")
 
+require_output <- function(path) {
+  if (!file.exists(path)) stop("Required file not found: ", path)
+  path
+}
+
 cat("\n")
 cat("================================================================\n")
 cat("  FIGURE 4: Population Viability Assessment (a|b / c|d)\n")
@@ -40,7 +48,7 @@ cat("================================================================\n\n")
 # =============================================================================
 
 det_lambda <- 0.9856  # fallback
-pop_params_file <- file.path(output_dir, "population_parameters.csv")
+pop_params_file <- require_output(file.path(output_dir, "population_parameters.csv"))
 if (file.exists(pop_params_file)) {
   pop_params <- read_csv(pop_params_file, show_col_types = FALSE)
   det_row <- pop_params %>% filter(parameter == "lambda")
@@ -48,17 +56,26 @@ if (file.exists(pop_params_file)) {
 }
 cat(sprintf("  Deterministic lambda: %.4f\n", det_lambda))
 
+leverage_file <- require_output(file.path(output_dir, "transition_matrix_source_leverage.csv"))
+leverage_data <- read_csv(leverage_file, show_col_types = FALSE)
+sc5_noaa_share <- leverage_data %>%
+  filter(component == "SC5_survival", study == "NOAA_survey") %>%
+  pull(share_pct)
+frag_vardi_share <- leverage_data %>%
+  filter(component == "fragmentation", study == "vardi_2011") %>%
+  pull(share_pct)
+sc5_noaa_share <- if (length(sc5_noaa_share) == 1) sc5_noaa_share else NA_real_
+frag_vardi_share <- if (length(frag_vardi_share) == 1) frag_vardi_share else NA_real_
+cat(sprintf("  Matrix leverage: SC5 survival %.1f%% NOAA; fragmentation %.1f%% Vardi\n",
+            sc5_noaa_share, frag_vardi_share))
+
 # =============================================================================
 # PANEL A: TRANSITION MATRIX HEATMAP
 # =============================================================================
 
 cat("Panel a: Transition matrix heatmap...\n")
 
-tmat_file <- file.path(output_dir, "transition_matrix.csv")
-if (!file.exists(tmat_file)) {
-  stop("Required file not found: ", tmat_file)
-}
-
+tmat_file <- require_output(file.path(output_dir, "transition_matrix.csv"))
 tmat <- read.csv(tmat_file, row.names = 1) %>% as.matrix()
 cat(sprintf("  Transition matrix loaded (%dx%d)\n", nrow(tmat), ncol(tmat)))
 
@@ -106,13 +123,8 @@ cat("  Panel a complete.\n")
 cat("Panel b: Elasticity decomposition...\n")
 
 # Load elasticity matrix and vital rate elasticity
-elast_matrix_file <- file.path(output_dir, "elasticity_matrix.csv")
+elast_matrix_file <- require_output(file.path(output_dir, "elasticity_matrix.csv"))
 vital_rate_file   <- file.path(output_dir, "vital_rate_elasticity.csv")
-
-if (!file.exists(elast_matrix_file)) {
-  stop("Required file not found: ", elast_matrix_file)
-}
-
 elast_mat <- read.csv(elast_matrix_file, row.names = 1) %>% as.matrix()
 cat(sprintf("  Elasticity matrix loaded (%dx%d)\n", nrow(elast_mat), ncol(elast_mat)))
 
@@ -180,15 +192,28 @@ vr_colors <- c(
 sc5_stasis <- elast_decomp %>%
   filter(size_class == "SC5", vital_rate == "Stasis") %>%
   pull(elasticity)
-# Matrix elasticities sum to 1.0 by definition; fragmentation is added from
-# vital_rate_elasticity.csv for visual display but should not inflate the denominator
+# Matrix elasticities sum to 1.0 by definition. Fragmentation is shown as an
+# overlay because it is a sub-decomposition of shrinkage/retrogression, not a
+# fourth additive component.
 total_elast <- 1.0
 sc5_pct <- sc5_stasis / total_elast * 100
 
 cat(sprintf("  SC5 stasis elasticity: %.3f (%.1f%% of total)\n", sc5_stasis, sc5_pct))
 
-fig4b <- ggplot(elast_decomp, aes(x = size_class, y = elasticity, fill = vital_rate)) +
+elast_core <- elast_decomp %>%
+  filter(vital_rate != "Fragmentation")
+frag_overlay <- elast_decomp %>%
+  filter(vital_rate == "Fragmentation")
+
+fig4b <- ggplot(elast_core, aes(x = size_class, y = elasticity, fill = vital_rate)) +
   geom_col(width = 0.7, color = "white", linewidth = 0.2) +
+  geom_point(
+    data = frag_overlay,
+    aes(x = size_class, y = elasticity, color = vital_rate),
+    inherit.aes = FALSE,
+    size = 2.6,
+    stroke = 0.4
+  ) +
   # SC5 stasis annotation arrow
   annotate("segment",
            x = 4.6, xend = 4.85,
@@ -200,6 +225,8 @@ fig4b <- ggplot(elast_decomp, aes(x = size_class, y = elasticity, fill = vital_r
            label = sprintf("SC5 stasis\n%.1f%%", sc5_pct),
            hjust = 1, size = 2.5, color = "grey30", lineheight = 0.9) +
   scale_fill_manual(values = vr_colors, name = "Vital rate") +
+  scale_color_manual(values = vr_colors["Fragmentation"], name = "Fragmentation",
+                     guide = "none") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(
     x = "Size class",
@@ -226,12 +253,7 @@ cat("  Panel b complete.\n")
 
 cat("Panel c: Bootstrap lambda distribution...\n")
 
-boot_rds_file <- file.path(output_dir, "lambda_bootstrap_samples.rds")
-
-if (!file.exists(boot_rds_file)) {
-  stop("Required file not found: ", boot_rds_file)
-}
-
+boot_rds_file <- require_output(file.path(output_dir, "lambda_bootstrap_samples.rds"))
 boot_obj <- readRDS(boot_rds_file)
 
 # Handle various formats
@@ -281,8 +303,9 @@ fig4c <- ggplot(boot_df, aes(x = lambda, fill = status)) +
     name = NULL
   ) +
   annotate("label", x = min(boot_vals) + 0.01, y = Inf,
-           label = sprintf("\u03BB = %.3f (NOAA-conditional)\n95%% CI: [%.3f, %.3f]\nP(decline) = %.1f%%\n%s of %s valid",
+           label = sprintf("\u03BB = %.3f\n95%% CI: [%.3f, %.3f]\nP(decline) = %.1f%%\nSC5 support %.1f%% NOAA\n%s of %s valid",
                            det_lambda, ci_95[1], ci_95[2], p_decline * 100,
+                           sc5_noaa_share,
                            comma(length(boot_vals)), comma(n_boot_total)),
            vjust = 1.2, hjust = 0, size = 2.3,
            fill = alpha("white", 0.9), color = pal$slate_dark,
@@ -312,12 +335,7 @@ cat("  Panel c complete.\n")
 
 cat("Panel d: LOSO lambda sensitivity...\n")
 
-loso_file <- file.path(output_dir, "sensitivity_lambda_loo.csv")
-
-if (!file.exists(loso_file)) {
-  stop("Required file not found: ", loso_file)
-}
-
+loso_file <- require_output(file.path(output_dir, "sensitivity_lambda_loo.csv"))
 loso_data <- read_csv(loso_file, show_col_types = FALSE)
 
 # Clean study names
@@ -343,8 +361,8 @@ if (length(noaa_lambda) == 0) noaa_lambda <- NA_real_
 # Build NOAA annotation conditionally
 noaa_annotation <- if (!is.na(noaa_lambda)) {
   annotate("label", x = 0.69, y = 1.7,
-           label = sprintf("NOAA = 78%% of data\n\u03BB drops %.3f \u2192 %.3f\nEstimate is NOAA-conditional",
-                           det_lambda, noaa_lambda),
+           label = sprintf("SC5 survival = %.1f%% NOAA\n\u03BB drops %.3f \u2192 %.3f\nFragmentation = %.0f%% Vardi",
+                           sc5_noaa_share, det_lambda, noaa_lambda, frag_vardi_share),
            size = 2.1, color = pal$accent, fontface = "italic",
            hjust = 0, vjust = 0, fill = alpha("white", 0.85), linewidth = 0)
 } else {

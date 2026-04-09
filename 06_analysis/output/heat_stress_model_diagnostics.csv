@@ -1,0 +1,4 @@
+component,analysis_mode,n_obs,n_studies,n_regions,n_study_years,estimate,p_value,aic,bic,log_likelihood,overdispersion_ratio,overdispersed,inference_support,note
+support_summary,descriptive_only,2021,3,2,11,NA,NA,NA,NA,NA,NA,NA,sparse,"Verified DHW cache is preferred when present, but current support is often literature-LUT backed and is supported here by 3 studies, 2 regions, and 11 study-years."
+dhw_glmm,descriptive_only,2018,3,2,11,-0.08628766831924514,NA,1981.1431744992813,2003.5826233029354,-986.5715872496406,0.9982616626250954,FALSE,sparse,DHW GLMM retained as descriptive screening only because independent support is sparse.
+study_level_correlation,descriptive_only,11,3,2,11,0.09282766528153119,NA,NA,NA,NA,NA,NA,sparse,Study-level DHW-survival correlation; treat as descriptive when support is sparse.

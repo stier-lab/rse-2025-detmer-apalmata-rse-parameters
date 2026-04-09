@@ -1,0 +1,3 @@
+approach,n_boot_total,n_valid,n_invalid,n_imputed_iterations,pct_iterations_imputed,lambda_mean,lambda_median,lambda_ci_lower,lambda_ci_upper,p_decline,change_vs_impute_pp
+impute_missing_survival_classes,2000,2000,0,43,2.15,0.8814578888890825,0.8851968593702984,0.7397736488808008,0.9592819948237122,0.999,0
+discard_missing_survival_classes,2000,1957,43,43,2.15,0.8798382639372923,0.8845938123571333,0.7393895871727153,0.9538037240088943,0.9994890137966275,-0.1619624951790244

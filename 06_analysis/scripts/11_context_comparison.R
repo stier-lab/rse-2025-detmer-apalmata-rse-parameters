@@ -565,6 +565,32 @@ if (nrow(overlap_data) > 50 && n_distinct(overlap_data$context) >= 2) {
     NULL
   })
 
+  if (!is.null(glmm_result)) {
+    overlap_conv_messages <- tryCatch(unlist(glmm_result@optinfo$conv$lme4$messages),
+                                      error = function(e) character())
+    overlap_conv_messages <- as.character(overlap_conv_messages)
+    overlap_conv_messages <- overlap_conv_messages[nzchar(overlap_conv_messages)]
+
+    overlap_glmm_diag <- data.frame(
+      model = "context_overlap_zone_glmm",
+      n_obs = nrow(overlap_data),
+      n_studies = n_distinct(overlap_data$study),
+      n_contexts = n_distinct(overlap_data$context),
+      dispersion_ratio = overdispersion_ratio,
+      overdispersed = overdispersion_ratio > 1.5,
+      is_singular = tryCatch(lme4::isSingular(glmm_result, tol = 1e-4),
+                             error = function(e) NA),
+      convergence_ok = length(overlap_conv_messages) == 0,
+      optimizer_messages = if (length(overlap_conv_messages) == 0) NA_character_
+                           else paste(unique(overlap_conv_messages), collapse = " | "),
+      stringsAsFactors = FALSE
+    )
+    write.csv(overlap_glmm_diag,
+              file.path(output_dir, "context_overlap_zone_glmm_diagnostics.csv"),
+              row.names = FALSE)
+    cat("  Saved: context_overlap_zone_glmm_diagnostics.csv\n")
+  }
+
   # Save overlap zone summary
   write.csv(overlap_context_table, file.path(output_dir, "context_overlap_zone_summary.csv"), row.names = FALSE)
   cat("  Saved: context_overlap_zone_summary.csv\n")

@@ -20,6 +20,7 @@ This directory holds the manuscript-facing documentation surface for the project
 | [claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md) | Links manuscript claims to scripts, outputs, and figures |
 | [consistency_audit.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/consistency_audit.md) | Cross-check notes for key values and labels |
 | [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/analysis_inventory_labels.md) | Core vs supporting vs exploratory labeling |
+| [model_audit/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/model_audit/README.md) | Script-by-script statistical QA and diagnostics audit |
 
 ## Generated Reporting Surface
 

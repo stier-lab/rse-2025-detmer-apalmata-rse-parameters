@@ -3,5 +3,16 @@ survival_model_class,glmerMod
 transition_model_class,multinom
 AIC_survival_model,4612.96250741988
 AIC_transition_model,6482.54664484079
+BIC_survival_model,4665.87416229867
+BIC_transition_model,6686.91876712543
+logLik_survival_model,-2298.48125370994
+logLik_transition_model,-3209.2733224204
+transition_model_n_params,32
+survival_overdispersion_ratio,1.01086283540219
+survival_overdispersed,FALSE
+survival_singular_fit,FALSE
+survival_convergence_message,NA
+transition_model_convergence_code,0
+transition_model_iterations,
 reference_disturbance,none
 reference_geodomain,Florida

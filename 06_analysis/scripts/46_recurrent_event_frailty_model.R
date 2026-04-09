@@ -20,6 +20,7 @@
 #   - 06_analysis/output/recurrent_event_shrinkage_model.csv
 #   - 06_analysis/output/recurrent_event_mortality_model.csv
 #   - 06_analysis/output/recurrent_event_model_fit.csv
+#   - 06_analysis/output/recurrent_event_ph_diagnostics.csv
 #   - 06_analysis/output/recurrent_event_dynamic_risk_profiles.csv
 #   - 06_analysis/output/recurrent_event_frailty_estimates.csv (if available)
 #
@@ -115,6 +116,8 @@ extract_cox_table <- function(model, outcome, model_variant) {
 
 extract_fit_metrics <- function(model, outcome, model_variant) {
   s <- summary(model)
+  coef_terms <- names(stats::coef(model))
+  time_varying_prior_shrink <- any(grepl("prior_shrink_events:log_time_mid|log_time_mid:prior_shrink_events", coef_terms))
 
   concordance <- NA_real_
   concordance_se <- NA_real_
@@ -143,11 +146,86 @@ extract_fit_metrics <- function(model, outcome, model_variant) {
     concordance_se = concordance_se,
     log_likelihood = tryCatch(as.numeric(logLik(model)), error = function(e) NA_real_),
     aic = tryCatch(AIC(model), error = function(e) NA_real_),
-    frailty_theta = frailty_theta
+    frailty_theta = frailty_theta,
+    time_varying_prior_shrink = time_varying_prior_shrink
+  )
+}
+
+extract_ph_diagnostics <- function(model, outcome, model_variant) {
+  coef_table <- extract_cox_table(model, outcome, model_variant)
+  time_varying_term <- coef_table %>%
+    filter(grepl("prior_shrink_events:log_time_mid|log_time_mid:prior_shrink_events", term))
+
+  if (nrow(time_varying_term) == 1) {
+    return(tibble(
+      outcome = outcome,
+      model_variant = model_variant,
+      ph_summary_status = "time_varying_prior_shrink_modeled",
+      ph_summary_note = "prior_shrink_events is modeled with an explicit log-time interaction; standard cox.zph summaries are not interpreted for this transformed fit.",
+      global_chisq = NA_real_,
+      global_df = NA_real_,
+      global_p_value = NA_real_,
+      worst_term = time_varying_term$term[1],
+      worst_term_p_value = time_varying_term$p_value[1]
+    ))
+  }
+
+  ph <- tryCatch(cox.zph(model), error = function(e) NULL)
+  if (is.null(ph)) {
+    return(tibble(
+      outcome = outcome,
+      model_variant = model_variant,
+      ph_summary_status = "unavailable",
+      ph_summary_note = "cox.zph() could not be computed for this fit.",
+      global_chisq = NA_real_,
+      global_df = NA_real_,
+      global_p_value = NA_real_,
+      worst_term = NA_character_,
+      worst_term_p_value = NA_real_
+    ))
+  }
+
+  ph_tbl <- as.data.frame(ph$table)
+  ph_tbl$term <- rownames(ph_tbl)
+  rownames(ph_tbl) <- NULL
+
+  global_row <- ph_tbl %>% filter(term == "GLOBAL")
+  term_rows <- ph_tbl %>% filter(term != "GLOBAL")
+  worst_term <- if (nrow(term_rows) > 0) term_rows$term[which.min(term_rows$`p`)] else NA_character_
+  worst_p <- if (nrow(term_rows) > 0) min(term_rows$`p`, na.rm = TRUE) else NA_real_
+  frailty_global_suppressed <- identical(model_variant, "frailty")
+
+  tibble(
+    outcome = outcome,
+    model_variant = model_variant,
+    ph_summary_status = if (frailty_global_suppressed) {
+      "global_suppressed_for_frailty"
+    } else if (nrow(global_row) == 1) {
+      "global_reported"
+    } else {
+      "global_missing"
+    },
+    ph_summary_note = if (frailty_global_suppressed) {
+      "Global cox.zph summary suppressed for frailty fit; term-level diagnostics retained."
+    } else if (nrow(global_row) == 1) {
+      "Global cox.zph summary reported for non-frailty fit."
+    } else {
+      "Global cox.zph summary not available."
+    },
+    global_chisq = if (frailty_global_suppressed) NA_real_ else if (nrow(global_row) == 1) global_row$chisq else NA_real_,
+    global_df = if (frailty_global_suppressed) NA_real_ else if (nrow(global_row) == 1) global_row$df else NA_real_,
+    global_p_value = if (frailty_global_suppressed) NA_real_ else if (nrow(global_row) == 1) global_row$p else NA_real_,
+    worst_term = worst_term,
+    worst_term_p_value = worst_p
   )
 }
 
 fit_with_fallback <- function(primary_formula, fallback_formula, data, label) {
+  primary_formula_text <- paste(deparse(primary_formula), collapse = " ")
+  time_varying_modeled <- grepl("prior_shrink_events:log_time_mid|log_time_mid:prior_shrink_events", primary_formula_text)
+  primary_variant <- if (time_varying_modeled) "frailty_time_varying" else "frailty"
+  fallback_variant <- if (time_varying_modeled) "cluster_robust_time_varying" else "cluster_robust"
+
   primary <- tryCatch(
     coxph(
       primary_formula,
@@ -160,7 +238,7 @@ fit_with_fallback <- function(primary_formula, fallback_formula, data, label) {
   )
 
   if (!inherits(primary, "error")) {
-    return(list(model = primary, variant = "frailty", error_message = NA_character_))
+    return(list(model = primary, variant = primary_variant, error_message = NA_character_))
   }
 
   cat(sprintf("  Frailty fit failed for %s; falling back to cluster-robust Cox model\n", label))
@@ -171,7 +249,7 @@ fit_with_fallback <- function(primary_formula, fallback_formula, data, label) {
     control = coxph.control(iter.max = 100),
     model = TRUE, x = TRUE, y = TRUE
   )
-  list(model = fallback, variant = "cluster_robust", error_message = as.character(primary$message))
+  list(model = fallback, variant = fallback_variant, error_message = as.character(primary$message))
 }
 
 print_subheader("Building recurrent-event panel")
@@ -229,7 +307,8 @@ panel <- surv_data %>%
       cumsum(if_else(growth_metric < 0, abs(growth_metric), 0, missing = 0)),
       default = 0
     ),
-    log_size = log(pmax(size_for_class, 1))
+    log_size = log(pmax(size_for_class, 1)),
+    log_time_mid = log(pmax((interval_start + interval_end) / 2, 1))
   ) %>%
   ungroup() %>%
   filter(keep_row)
@@ -265,7 +344,7 @@ write_csv(colony_history, file.path(output_dir, "recurrent_event_colony_history.
 print_success("Saved recurrent_event_panel_summary.csv")
 print_success("Saved recurrent_event_colony_history.csv")
 
-print_subheader("Fitting recurrent shrinkage frailty model")
+print_subheader("Fitting recurrent shrinkage frailty model with time-varying shrink history")
 
 shrink_panel <- panel %>%
   filter(
@@ -282,13 +361,15 @@ if (sum(shrink_panel$shrink_event_filled, na.rm = TRUE) < 20) {
 
 shrink_formula_frailty <- as.formula(
   "Surv(interval_start, interval_end, shrink_event_filled) ~
-   log_size + disturbance_state + prior_shrink_events + population_type +
+   log_size + disturbance_state + prior_shrink_events +
+   prior_shrink_events:log_time_mid + population_type +
    frailty(colony_uid, distribution = 'gamma') + strata(study)"
 )
 
 shrink_formula_cluster <- as.formula(
   "Surv(interval_start, interval_end, shrink_event_filled) ~
-   log_size + disturbance_state + prior_shrink_events + population_type +
+   log_size + disturbance_state + prior_shrink_events +
+   prior_shrink_events:log_time_mid + population_type +
    cluster(colony_uid) + strata(study)"
 )
 
@@ -316,6 +397,7 @@ if (sum(mortality_panel$death_event, na.rm = TRUE) < 20) {
 mortality_formula_frailty <- as.formula(
   "Surv(interval_start, interval_end, death_event) ~
    log_size + disturbance_state + prior_shrink_events +
+   prior_shrink_events:log_time_mid +
    recent_shrink_lag1 + prior_any_shrink +
    frailty(colony_uid, distribution = 'gamma') + strata(study)"
 )
@@ -323,6 +405,7 @@ mortality_formula_frailty <- as.formula(
 mortality_formula_cluster <- as.formula(
   "Surv(interval_start, interval_end, death_event) ~
    log_size + disturbance_state + prior_shrink_events +
+   prior_shrink_events:log_time_mid +
    recent_shrink_lag1 + prior_any_shrink +
    cluster(colony_uid) + strata(study)"
 )
@@ -352,9 +435,15 @@ fit_table <- bind_rows(
 write_csv(shrink_table, file.path(output_dir, "recurrent_event_shrinkage_model.csv"))
 write_csv(mortality_table, file.path(output_dir, "recurrent_event_mortality_model.csv"))
 write_csv(fit_table, file.path(output_dir, "recurrent_event_model_fit.csv"))
+ph_table <- bind_rows(
+  extract_ph_diagnostics(shrink_fit$model, "recurrent_shrinkage", shrink_fit$variant),
+  extract_ph_diagnostics(mortality_fit$model, "terminal_mortality", mortality_fit$variant)
+)
+write_csv(ph_table, file.path(output_dir, "recurrent_event_ph_diagnostics.csv"))
 print_success("Saved recurrent_event_shrinkage_model.csv")
 print_success("Saved recurrent_event_mortality_model.csv")
 print_success("Saved recurrent_event_model_fit.csv")
+print_success("Saved recurrent_event_ph_diagnostics.csv")
 
 print_subheader("Summarizing dynamic risk profiles")
 
@@ -440,4 +529,5 @@ cat(sprintf("  Recurrent shrinkage rows: %d | events: %d | variant: %s\n",
 cat(sprintf("  Mortality rows: %d | deaths: %d | variant: %s\n",
             nrow(mortality_panel), sum(mortality_panel$death_event, na.rm = TRUE), mortality_fit$variant))
 
+cat("  - recurrent_event_ph_diagnostics.csv\n")
 cat("\nDone.\n")

@@ -18,6 +18,12 @@
 #   4. Compute pooled means (study-level, sqrt(n)-weighted) with 95% CI
 #      via logit-scale normal approximation
 #
+# NOTE: This is a support/working figure, NOT manuscript Fig 4. The output
+# filename "Fig4_size_class_survival" is a historical artifact that predates
+# the current figure numbering. Manuscript Fig 4 is the population model
+# produced by 22_fig6_population_model.R. This figure's content (size-class
+# survival synthesis) was absorbed into Fig 2 panel c (script 19).
+#
 # OUTPUT:
 #   06_analysis/figures/manuscript/Fig4_size_class_survival.{png,pdf}
 #   06_analysis/output/size_class_survival_synthesis.csv

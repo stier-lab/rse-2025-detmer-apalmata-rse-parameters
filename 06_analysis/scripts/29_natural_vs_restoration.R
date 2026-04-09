@@ -31,6 +31,7 @@
 #
 # OUTPUTS:
 #   CSVs: natural_vs_restoration_*.csv (4 files)
+#         natural_vs_restoration_model_diagnostics.csv
 #   Figure: FigSXX_natural_vs_restoration_comparison.{png,pdf}
 #
 # Author: Detmer & Stier Lab
@@ -320,7 +321,7 @@ print(within_region_df %>%
 
 print_header("SECTION 2: Size-Matched Individual-Level Comparison (Florida Keys)")
 
-cat("This is the STRONGEST test: same region, individual-level data, size-controlled.\n")
+cat("This is the closest like-for-like comparison available: same region, individual-level data, size-controlled.\n")
 cat("Natural: NOAA_survey (Florida Keys subset)\n")
 cat("Restoration: pausch_et_al_2018\n\n")
 
@@ -408,8 +409,9 @@ cat("\n--- Size-Matched Models (addressing singular fit) ---\n")
 # With only 2 studies, (1|study) collapses to zero variance because
 # population_type is perfectly confounded with study identity. Three approaches:
 #
-# A) Fixed-effect GLM with cluster-robust SEs (PRIMARY — most honest)
-#    Reports the observed difference with SEs that account for clustering
+# A) Fixed-effect GLM with cluster-robust SEs (DESCRIPTIVE ONLY here)
+#    With only two studies, cluster-robust inference is not defensible.
+#    We keep the model for effect-size description and plotting.
 # B) GLMM (1|study) — kept for comparison, will likely give singular fit
 # C) Study as fixed effect — explicitly models study differences
 #
@@ -420,9 +422,15 @@ cat("\n--- Size-Matched Models (addressing singular fit) ---\n")
 n_studies_fl <- n_distinct(fl_matched$study)
 cat(sprintf("  Number of studies: %d\n", n_studies_fl))
 cat("  Population_type is perfectly confounded with study identity.\n")
-cat("  Using fixed-effect GLM with cluster-robust SEs as primary approach.\n\n")
+few_cluster_inference_invalid <- n_studies_fl < 10
+if (few_cluster_inference_invalid) {
+  cat("  FEW-CLUSTER WARNING: cluster-robust inference is not valid with only 2 studies.\n")
+  cat("  Treating the Florida Keys size-matched model as descriptive only.\n\n")
+} else {
+  cat("  Using fixed-effect GLM with cluster-robust SEs as primary approach.\n\n")
+}
 
-# --- Approach A: GLM + cluster-robust SEs (PRIMARY) ---
+# --- Approach A: descriptive GLM with cluster-robust output retained for reference ---
 cat("  Approach A: GLM with cluster-robust standard errors\n")
 glm_interact <- glm(survived ~ population_type * log_size,
                      family = binomial, data = fl_matched)
@@ -438,10 +446,15 @@ if (requireNamespace("sandwich", quietly = TRUE) && requireNamespace("lmtest", q
   robust_interact <- coeftest(glm_interact, vcov = vcovCL(glm_interact, cluster = fl_matched$study))
   robust_main <- coeftest(glm_main, vcov = vcovCL(glm_main, cluster = fl_matched$study))
 
-  cat("  Cluster-robust interaction model:\n")
-  print(robust_interact)
-  cat("\n  Cluster-robust main-effects model:\n")
-  print(robust_main)
+  if (few_cluster_inference_invalid) {
+    cat("  Skipping printed cluster-robust coefficient tables: only two study clusters are available,\n")
+    cat("  so those inferential summaries are not stable enough to show as if they were valid.\n")
+  } else {
+    cat("  Cluster-robust interaction model:\n")
+    print(robust_interact)
+    cat("\n  Cluster-robust main-effects model:\n")
+    print(robust_main)
+  }
 
   has_robust <- TRUE
 } else {
@@ -461,7 +474,7 @@ glmm_interact <- tryCatch({
   if (isSingular(m)) {
     cat("  SINGULAR FIT CONFIRMED: random effect variance = 0.\n")
     cat("  This confirms population_type is aliased with study.\n")
-    cat("  GLM with cluster-robust SEs (Approach A) is the appropriate model.\n")
+    cat("  Retaining the GLM as a descriptive effect-size summary only.\n")
   }
   m
 }, error = function(e) {
@@ -508,19 +521,27 @@ if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) {
   cat(sprintf("  GLMM (singular): ratio = %.3f\n", od_glmm$ratio))
 }
 
-# --- Extract results from PRIMARY model (GLM + cluster-robust SEs) ---
-cat("\n--- Primary Model Summary (GLM + cluster-robust SEs) ---\n")
+# --- Extract results from PRIMARY model (descriptive GLM) ---
+cat("\n--- Size-Matched Model Summary (descriptive GLM) ---\n")
 print(summary(glm_interact))
 
-# Extract fixed effects as odds ratios
-# Use cluster-robust SEs if available, otherwise naive SEs
+# Extract fixed effects as odds ratios.
+# With only two study clusters, retain robust SEs for reference printing only
+# and use naive SEs for descriptive confidence intervals while suppressing
+# inferential p-values.
 fe <- coef(glm_interact)
-if (has_robust) {
+if (has_robust && !few_cluster_inference_invalid) {
   se_fe <- robust_interact[, "Std. Error"]
   p_vals <- robust_interact[, "Pr(>|z|)"]
+  se_type_label <- "cluster-robust"
 } else {
   se_fe <- sqrt(diag(vcov(glm_interact)))
-  p_vals <- 2 * pnorm(abs(fe / se_fe), lower.tail = FALSE)
+  p_vals <- rep(NA_real_, length(fe))
+  se_type_label <- if (few_cluster_inference_invalid) {
+    "descriptive-naive-few-clusters"
+  } else {
+    "naive"
+  }
 }
 or_table <- data.frame(
   term = names(fe),
@@ -531,11 +552,17 @@ or_table <- data.frame(
   or_upper = exp(fe + 1.96 * se_fe),
   z = fe / se_fe,
   p = p_vals,
-  se_type = ifelse(has_robust, "cluster-robust", "naive")
+  se_type = se_type_label,
+  inferential_use = ifelse(few_cluster_inference_invalid, "descriptive_only", "inferential"),
+  inference_note = ifelse(
+    few_cluster_inference_invalid,
+    "Two studies only; cluster-robust and naive p-values are not used for inference.",
+    "Primary inferential model."
+  )
 )
 rownames(or_table) <- NULL
 
-cat("\nOdds Ratios (GLM + cluster-robust SEs):\n")
+cat("\nOdds Ratios (descriptive GLM summary):\n")
 print(or_table)
 
 # Compare with GLMM if available
@@ -566,13 +593,18 @@ newdata_pred$size_cm2 <- exp(newdata_pred$log_size)
 # Save size-matched results
 size_matched_results <- or_table %>%
   mutate(
-    analysis = "Florida Keys size-matched GLM (cluster-robust SEs)",
+    analysis = ifelse(
+      few_cluster_inference_invalid,
+      "Florida Keys size-matched GLM (descriptive only; 2 studies)",
+      "Florida Keys size-matched GLM"
+    ),
     n_total = nrow(fl_matched),
     n_natural = sum(fl_matched$population_type == "Natural colony"),
     n_restoration = sum(fl_matched$population_type == "Restoration fragment"),
     size_overlap_min_cm2 = overlap_min,
     size_overlap_max_cm2 = overlap_max,
-    model_class = class(glmm_interact)[1]
+    model_class = class(glm_interact)[1],
+    inference_valid = !few_cluster_inference_invalid
   )
 
 
@@ -653,8 +685,10 @@ for (sc in viable_sc) {
   }
 
   # Overdispersion check
-  if (inherits(sc_model, "glmerMod")) {
+if (inherits(sc_model, "glmerMod")) {
     od_sc <- overdisp_test(sc_model)
+    od_ratio_sc <- od_sc$ratio
+    overdispersed_sc <- od_sc$overdispersed
     cat(sprintf("  Overdispersion: ratio=%.3f, overdispersed=%s\n",
                 od_sc$ratio, od_sc$overdispersed))
     fe_sc <- fixef(sc_model)
@@ -662,8 +696,9 @@ for (sc in viable_sc) {
   } else {
     pear_r <- residuals(sc_model, type = "pearson")
     od_ratio_sc <- sum(pear_r^2) / (length(pear_r) - length(coef(sc_model)))
+    overdispersed_sc <- od_ratio_sc > 1.5
     cat(sprintf("  Overdispersion (GLM): ratio=%.3f, overdispersed=%s\n",
-                od_ratio_sc, od_ratio_sc > 1.5))
+                od_ratio_sc, overdispersed_sc))
     fe_sc <- coef(sc_model)
     se_sc <- sqrt(diag(vcov(sc_model)))
   }
@@ -701,6 +736,11 @@ for (sc in viable_sc) {
     p_value = as.numeric(p_sc),
     n_studies = n_studies_sc,
     model_type = class(sc_model)[1],
+    aic = tryCatch(AIC(sc_model), error = function(e) NA_real_),
+    bic = tryCatch(BIC(sc_model), error = function(e) NA_real_),
+    overdispersion_ratio = as.numeric(od_ratio_sc),
+    overdispersed = as.logical(overdispersed_sc),
+    singular_fit = ifelse(inherits(sc_model, "glmerMod"), isSingular(sc_model), NA),
     stringsAsFactors = FALSE
   )
 }
@@ -785,8 +825,9 @@ forest_a_data$label <- factor(
 # Build panel (a)
 p_a <- ggplot(forest_a_data, aes(x = or, y = label)) +
   geom_vline(xintercept = 1, linetype = "dashed", color = "grey50", linewidth = 0.5) +
-  geom_errorbarh(aes(xmin = or_lower, xmax = or_upper),
-                 height = 0.2, linewidth = 0.6, color = "grey30") +
+  geom_errorbar(aes(xmin = or_lower, xmax = or_upper),
+                width = 0.2, linewidth = 0.6, color = "grey30",
+                orientation = "y") +
   geom_point(aes(size = ifelse(region == "Overall", 5, 3),
                  shape = ifelse(region == "Overall", "diamond", "circle")),
              color = pal$surv_dark, fill = pal$surv_mid) +
@@ -825,8 +866,9 @@ sc_plot_data$label <- factor(sc_plot_data$label, levels = rev(sc_plot_data$label
 
 p_b <- ggplot(sc_plot_data, aes(x = or, y = label)) +
   geom_vline(xintercept = 1, linetype = "dashed", color = "grey50", linewidth = 0.5) +
-  geom_errorbarh(aes(xmin = or_lower_plot, xmax = or_upper_plot),
-                 height = 0.2, linewidth = 0.6, color = "grey30") +
+  geom_errorbar(aes(xmin = or_lower_plot, xmax = or_upper_plot),
+                width = 0.2, linewidth = 0.6, color = "grey30",
+                orientation = "y") +
   geom_point(size = 3, color = pal$grow_dark, fill = pal$grow_mid, shape = 21) +
   scale_x_log10(
     breaks = c(0.1, 0.25, 0.5, 1, 2, 4, 10),
@@ -882,7 +924,127 @@ write_csv(sc_results_df,
           file.path(output_dir, "natural_vs_restoration_by_size_class.csv"))
 cat("  Saved: natural_vs_restoration_by_size_class.csv\n")
 
-# 5d. Summary table for manuscript text
+# 5d. Model diagnostics table for audit/review
+extract_model_diag <- function(model, label, overdispersion_ratio = NA_real_,
+                               overdispersed = NA, singular_fit = NA,
+                               note = NA_character_) {
+  family_name <- tryCatch(family(model)$family, error = function(e) NA_character_)
+  data.frame(
+    model = label,
+    model_class = class(model)[1],
+    family = family_name,
+    nobs = tryCatch(as.numeric(nobs(model)), error = function(e) NA_real_),
+    df_residual = tryCatch(as.numeric(df.residual(model)), error = function(e) NA_real_),
+    logLik = tryCatch(as.numeric(logLik(model)), error = function(e) NA_real_),
+    AIC = tryCatch(as.numeric(AIC(model)), error = function(e) NA_real_),
+    BIC = tryCatch(as.numeric(BIC(model)), error = function(e) NA_real_),
+    overdispersion_ratio = overdispersion_ratio,
+    overdispersed = overdispersed,
+    singular_fit = singular_fit,
+    note = note,
+    stringsAsFactors = FALSE
+  )
+}
+
+within_region_diag <- if (!is.null(rma_within)) {
+  data.frame(
+    model = "within_region_meta_analysis",
+    model_class = class(rma_within)[1],
+    family = "random-effects meta-analysis",
+    nobs = nrow(region_lor),
+    df_residual = NA_real_,
+    logLik = tryCatch(as.numeric(logLik(rma_within)), error = function(e) NA_real_),
+    AIC = tryCatch(as.numeric(AIC(rma_within)), error = function(e) NA_real_),
+    BIC = tryCatch(as.numeric(BIC(rma_within)), error = function(e) NA_real_),
+    overdispersion_ratio = NA_real_,
+    overdispersed = NA,
+    singular_fit = NA,
+    note = sprintf("OR = %.2f, p = %.4f", exp(as.numeric(rma_within$beta)), as.numeric(rma_within$pval)),
+    stringsAsFactors = FALSE
+  )
+} else {
+  data.frame(
+    model = "within_region_meta_analysis",
+    model_class = "not_fit",
+    family = "random-effects meta-analysis",
+    nobs = nrow(region_lor),
+    df_residual = NA_real_,
+    logLik = NA_real_,
+    AIC = NA_real_,
+    BIC = NA_real_,
+    overdispersion_ratio = NA_real_,
+    overdispersed = NA,
+    singular_fit = NA,
+    note = "Overall within-region meta-analysis not fit",
+    stringsAsFactors = FALSE
+  )
+}
+
+model_diagnostics <- bind_rows(
+  within_region_diag,
+  extract_model_diag(
+    glm_interact,
+    "florida_keys_glm_interaction",
+    overdispersion_ratio = od_ratio,
+    overdispersed = od_ratio > 1.5,
+    singular_fit = NA,
+    note = ifelse(
+      few_cluster_inference_invalid,
+      "Descriptive only: two studies, perfect study/population confounding, no valid small-cluster inference",
+      ifelse(has_robust, "Primary model with cluster-robust SEs", "Primary model with naive SEs")
+    )
+  ),
+  extract_model_diag(
+    glm_main,
+    "florida_keys_glm_main_effects",
+    overdispersion_ratio = od_ratio_m,
+    overdispersed = od_ratio_m > 1.5,
+    singular_fit = NA,
+    note = "Comparator without interaction term"
+  ),
+  extract_model_diag(
+    glm_study_fe,
+    "florida_keys_glm_study_fixed_effects",
+    note = "Study fixed-effects comparator for perfect confounding check"
+  ),
+  extract_model_diag(
+    glmm_interact,
+    "florida_keys_glmm_interaction",
+    overdispersion_ratio = if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) od_glmm$ratio else NA_real_,
+    overdispersed = if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) od_glmm$overdispersed else NA,
+    singular_fit = if (!is.null(glmm_interact) && inherits(glmm_interact, "glmerMod")) isSingular(glmm_interact) else NA,
+    note = "Comparison model; expected singular fit because study and population type are aliased"
+  ),
+  extract_model_diag(
+    glmm_main,
+    "florida_keys_glmm_main_effects",
+    singular_fit = if (!is.null(glmm_main) && inherits(glmm_main, "glmerMod")) isSingular(glmm_main) else NA,
+    note = "Main-effects random-intercept comparator"
+  ),
+  sc_results_df %>%
+    transmute(
+      model = paste0("size_class_", size_class),
+      model_class = model_type,
+      family = "binomial",
+      nobs = nat_n + rest_n,
+      df_residual = NA_real_,
+      logLik = NA_real_,
+      AIC = aic,
+      BIC = bic,
+      overdispersion_ratio = overdispersion_ratio,
+      overdispersed = overdispersed,
+      singular_fit = singular_fit,
+      note = sprintf("OR = %.2f, p = %.4f, studies = %d", or, p_value, n_studies)
+    )
+)
+
+write_csv(
+  model_diagnostics,
+  file.path(output_dir, "natural_vs_restoration_model_diagnostics.csv")
+)
+cat("  Saved: natural_vs_restoration_model_diagnostics.csv\n")
+
+# 5e. Summary table for manuscript text
 # One-row summary with key numbers for easy reference
 summary_row <- data.frame(
   # Overall within-region meta-analysis
@@ -891,7 +1053,7 @@ summary_row <- data.frame(
   overall_or_upper = ifelse(!is.null(rma_within), exp(as.numeric(rma_within$ci.ub)), NA_real_),
   overall_p = ifelse(!is.null(rma_within), as.numeric(rma_within$pval), NA_real_),
   n_regions_compared = length(paired_regions),
-  # Florida Keys comparison (strongest test)
+  # Florida Keys comparison (descriptive, size-matched)
   fl_nat_surv = mean(fl_matched$survived[fl_matched$population_type == "Natural colony"]),
   fl_rest_surv = mean(fl_matched$survived[fl_matched$population_type == "Restoration fragment"]),
   fl_n_natural = sum(fl_matched$population_type == "Natural colony"),
@@ -908,7 +1070,7 @@ summary_row <- data.frame(
   # Interpretive flags
   note = paste0(
     "Natural vs restoration is confounded with study identity. ",
-    "FL Keys comparison is strongest (individual-level, size-controlled). ",
+    "FL Keys comparison is individual-level and size-controlled but descriptive only because there are only two studies. ",
     "Overall meta (k=18) shows p=0.405 (not significant)."
   ),
   stringsAsFactors = FALSE

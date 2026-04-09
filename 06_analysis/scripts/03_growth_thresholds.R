@@ -808,6 +808,27 @@ if (has_lme4) {
     n_par <- length(fixef(model_pos_glmm)) + sum(sapply(VarCorr(model_pos_glmm), function(x) prod(dim(x))))
     overdisp_ratio <- sum(pearson_resid^2) / (length(pearson_resid) - n_par)
     cat(sprintf("  Overdispersion ratio: %.3f %s\n", overdisp_ratio, if(overdisp_ratio > 1.5) "(WARNING)" else "(OK)"))
+
+    pos_conv_messages <- tryCatch(unlist(model_pos_glmm@optinfo$conv$lme4$messages),
+                                  error = function(e) character())
+    pos_conv_messages <- as.character(pos_conv_messages)
+    pos_conv_messages <- pos_conv_messages[nzchar(pos_conv_messages)]
+
+    pos_glmm_diag <- tibble(
+      model = "positive_growth_glmm",
+      n_obs = nrow(growth_data),
+      n_params = n_par,
+      aic = AIC(model_pos_glmm),
+      dispersion_ratio = overdisp_ratio,
+      overdispersed = overdisp_ratio > 1.5,
+      is_singular = tryCatch(lme4::isSingular(model_pos_glmm, tol = 1e-4),
+                             error = function(e) NA),
+      convergence_ok = length(pos_conv_messages) == 0,
+      optimizer_messages = if (length(pos_conv_messages) == 0) NA_character_
+                           else paste(unique(pos_conv_messages), collapse = " | ")
+    )
+    write_csv(pos_glmm_diag, file.path(output_dir, "growth_positive_glmm_diagnostics.csv"))
+    cat("  Saved: growth_positive_glmm_diagnostics.csv\n")
   }
 }
 

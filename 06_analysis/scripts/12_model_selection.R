@@ -28,6 +28,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(lme4)
+library(readr)
 
 # Source shared utilities for constants and helper functions
 if (file.exists("utils/shared_utilities.R")) {
@@ -111,6 +112,53 @@ growth_data <- growth_data %>%
 cat(sprintf("  Survival data: %d observations\n", nrow(survival_data)))
 cat(sprintf("  Growth data: %d observations\n", nrow(growth_data)))
 
+workflow_alignment <- bind_rows(
+  {
+    surv_thresh_file <- file.path(output_dir, "survival_thresholds.csv")
+    if (!file.exists(surv_thresh_file)) {
+      tibble()
+    } else {
+      readr::read_csv(surv_thresh_file, show_col_types = FALSE) %>%
+        transmute(
+          response = "survival",
+          workflow = "threshold_gam_workflow",
+          candidate = "Survival GAM threshold workflow",
+          canonical_for_manuscript = TRUE,
+          recommended_threshold_cm2 = recommended_threshold_cm2,
+          functional_form = functional_form,
+          gate_passed = gate_passed,
+          supporting_model = best_model,
+          gam_k = best_gam_k,
+          gam_aic = gam_aic,
+          baseline_glm_aic = glm_aic,
+          note = interpretation
+        )
+    }
+  },
+  {
+    growth_thresh_file <- file.path(output_dir, "growth_thresholds.csv")
+    if (!file.exists(growth_thresh_file)) {
+      tibble()
+    } else {
+      readr::read_csv(growth_thresh_file, show_col_types = FALSE) %>%
+        transmute(
+          response = response,
+          workflow = "threshold_gam_workflow",
+          candidate = paste("Growth threshold workflow:", response),
+          canonical_for_manuscript = TRUE,
+          recommended_threshold_cm2 = recommended_threshold_cm2,
+          functional_form = functional_form,
+          gate_passed = gate_passed,
+          supporting_model = gate_best_mod,
+          gam_k = NA_real_,
+          gam_aic = NA_real_,
+          baseline_glm_aic = NA_real_,
+          note = paste0("definition=", recommended_definition, "; magnitude=", round(magnitude_relative_pct, 2), "%")
+        )
+    }
+  }
+)
+
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
@@ -126,10 +174,23 @@ get_model_stats <- function(model, model_name, model_type = "glm") {
     aic <- AIC(model)
     bic <- BIC(model)
 
+    is_singular <- NA
+    convergence_ok <- NA
+    optimizer_messages <- NA_character_
+
     # Handle mixed-effects models (lme4)
     if (inherits(model, "merMod")) {
       k <- length(fixef(model)) + length(getME(model, "theta"))  # fixed + RE params
       deviance_val <- deviance(model)
+      conv_messages <- tryCatch(unlist(model@optinfo$conv$lme4$messages),
+                                error = function(e) character())
+      conv_messages <- as.character(conv_messages)
+      conv_messages <- conv_messages[nzchar(conv_messages)]
+      is_singular <- tryCatch(lme4::isSingular(model, tol = 1e-4),
+                              error = function(e) NA)
+      convergence_ok <- length(conv_messages) == 0
+      optimizer_messages <- if (length(conv_messages) == 0) NA_character_
+                            else paste(unique(conv_messages), collapse = " | ")
       # Marginal R² (fixed effects only) for GLMMs
       pseudo_r2 <- tryCatch({
         var_f <- var(predict(model, re.form = NA))  # fixed effects variance
@@ -144,6 +205,11 @@ get_model_stats <- function(model, model_name, model_type = "glm") {
     } else {
       k <- length(coef(model))  # Number of parameters
       deviance_val <- if (model_type == "lm") sum(residuals(model)^2) else deviance(model)
+      if (inherits(model, "glm")) {
+        convergence_ok <- isTRUE(model$converged)
+      } else if (inherits(model, "lm")) {
+        convergence_ok <- TRUE
+      }
 
       # Calculate pseudo R² for GLM
       if (model_type == "glm" && family(model)$family == "binomial") {
@@ -165,13 +231,18 @@ get_model_stats <- function(model, model_name, model_type = "glm") {
       deviance = deviance_val,
       aic = aic,
       bic = bic,
-      pseudo_r2 = pseudo_r2
+      pseudo_r2 = pseudo_r2,
+      is_singular = is_singular,
+      convergence_ok = convergence_ok,
+      optimizer_messages = optimizer_messages
     )
   }, error = function(e) {
     data.frame(
       model = model_name,
       n_obs = NA, n_params = NA, log_lik = NA,
-      deviance = NA, aic = NA, bic = NA, pseudo_r2 = NA
+      deviance = NA, aic = NA, bic = NA, pseudo_r2 = NA,
+      is_singular = NA, convergence_ok = NA,
+      optimizer_messages = NA_character_
     )
   })
 }
@@ -361,7 +432,9 @@ survival_stats <- bind_rows(lapply(names(survival_models), function(name) {
 # Separate GLM and GLMM for AIC comparison (AIC not comparable across classes)
 survival_stats <- survival_stats %>%
   mutate(
-    model_class = ifelse(grepl("^S_ME", model), "GLMM", "GLM")
+    model_class = ifelse(grepl("^S_ME", model), "GLMM", "GLM"),
+    analysis_scope = "classical_baseline_reference",
+    canonical_for_manuscript = FALSE
   ) %>%
   group_by(model_class) %>%
   mutate(
@@ -452,7 +525,9 @@ growth_stats <- bind_rows(lapply(names(growth_models), function(name) {
 # Separate LM and LMM for AIC comparison (AIC not comparable across classes)
 growth_stats <- growth_stats %>%
   mutate(
-    model_class = ifelse(grepl("^G_ME", model), "LMM", "LM")
+    model_class = ifelse(grepl("^G_ME", model), "LMM", "LM"),
+    analysis_scope = "classical_baseline_reference",
+    canonical_for_manuscript = FALSE
   ) %>%
   group_by(model_class) %>%
   mutate(
@@ -519,12 +594,12 @@ publication_summary <- data.frame(
   Response = c("Annual Survival", "Annual Survival", "Annual Survival",
                "Annual Growth", "Annual Growth", "Annual Growth"),
   Model = c(
-    "Null (intercept only)",
-    "Linear (log size)",
-    "Threshold (100 cm²)",
-    "Null (intercept only)",
-    "Linear (log size)",
-    "Categorical (5 classes)"
+    "Baseline null (intercept only)",
+    "Baseline linear (log size)",
+    "Baseline threshold hinge",
+    "Baseline null (intercept only)",
+    "Baseline linear (log size)",
+    "Baseline categorical (5 classes)"
   ),
   df = c(
     survival_stats$n_params[survival_stats$model == "S1_null"],
@@ -549,7 +624,9 @@ publication_summary <- publication_summary %>%
   group_by(Response) %>%
   mutate(
     Delta_AIC = AIC - min(AIC),
-    Best = ifelse(Delta_AIC == 0, "✓", "")
+    Best = ifelse(Delta_AIC == 0, "✓", ""),
+    analysis_scope = "classical_baseline_reference",
+    canonical_for_manuscript = FALSE
   ) %>%
   ungroup()
 
@@ -633,6 +710,12 @@ cat("  ✓ Saved: model_coefficients.csv\n")
 write.csv(publication_summary, file.path(output_dir, "model_summary_table.csv"),
           row.names = FALSE)
 cat("  ✓ Saved: model_summary_table.csv\n")
+
+if (nrow(workflow_alignment) > 0) {
+  write.csv(workflow_alignment, file.path(output_dir, "model_selection_workflow_alignment.csv"),
+            row.names = FALSE)
+  cat("  ✓ Saved: model_selection_workflow_alignment.csv\n")
+}
 
 # Best model coefficients
 best_coefs <- bind_rows(
@@ -775,11 +858,14 @@ cat("─────────────────────────
 cat("  • ΔAIC < 2: Substantial support (models essentially equivalent)\n")
 cat("  • ΔAIC 2-10: Some support (model less likely but possible)\n")
 cat("  • ΔAIC > 10: No support (model should be rejected)\n")
+cat("  • This script now serves as a classical-baseline reference table.\n")
+cat("  • Manuscript-aligned threshold/GAM workflow is summarized separately when available.\n")
 
 cat("\nOutputs:\n")
 cat("  - model_selection_survival.csv (survival model comparison)\n")
 cat("  - model_selection_growth.csv (growth model comparison)\n")
 cat("  - model_coefficients.csv (all model coefficients)\n")
 cat("  - model_summary_table.csv (publication summary)\n")
+cat("  - model_selection_workflow_alignment.csv (manuscript-aligned threshold/GAM summary)\n")
 cat("  - best_model_coefficients.csv (best model details)\n")
 cat("  - model_selection_*.png (visualizations)\n")

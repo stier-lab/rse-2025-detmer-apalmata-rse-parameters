@@ -1,0 +1,4 @@
+study,n_records,component,total_records,share_pct
+NOAA_survey,1180,SC5_survival,1418,83.21579689703808
+neely_et_al_2022,238,SC5_survival,1418,16.784203102961918
+vardi_2011,13,fragmentation,13,100

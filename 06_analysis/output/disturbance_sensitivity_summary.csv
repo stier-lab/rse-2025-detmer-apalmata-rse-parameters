@@ -1,8 +1,8 @@
-scenario,k,n_total,pooled_survival,ci_lower,ci_upper,I2,tau2,pi_lower,pi_upper,neely_survival,neely_n
-All data (including disease 2014),6,7294,0.7591,0.6095,0.8642,98.4,0.41,0.3448,0.9497,0.7183,2215
-Excluding disease 2014 intervals,6,6280,0.7858,0.638,0.8842,98,0.4566,0.3577,0.9603,0.8501,1201
-Excluding NOAA storm intervals,6,6734,0.7593,0.6094,0.8644,98.3,0.4115,0.3443,0.9499,0.7183,2215
-Excluding baseline-exclusion events,5,4157,0.7556,0.4927,0.9077,98.3,0.8279,0.1611,0.9803,0.8616,1026
-Neely: disease_2014 intervals only,NA,639,0.5321,NA,NA,NA,NA,NA,NA,NA,NA
-Neely: aftermath intervals only,NA,375,0.6133,NA,NA,NA,NA,NA,NA,NA,NA
-NOAA: storm intervals only,NA,560,0.8679,NA,NA,NA,NA,NA,NA,NA,NA
+scenario,k,n_total,pooled_survival,ci_lower,ci_upper,I2,tau2,pi_lower,pi_upper,neely_survival,neely_n,analysis_status,interpretation,delta_vs_all_data_pp
+All data (including disease 2014),6,7294,0.7591,0.6095,0.8642,98.4,0.41,0.3448,0.9497,0.7183,2215,meta_sensitivity_fit,"Scenario yields a sensitivity meta-analysis fit; interpret as robustness context, not as a replacement primary analysis.",0
+Excluding disease 2014 intervals,6,6280,0.7858,0.638,0.8842,98,0.4566,0.3577,0.9603,0.8501,1201,meta_sensitivity_fit,"Scenario yields a sensitivity meta-analysis fit; interpret as robustness context, not as a replacement primary analysis.",2.6670078236131545
+Excluding NOAA storm intervals,6,6734,0.7593,0.6094,0.8644,98.3,0.4115,0.3443,0.9499,0.7183,2215,meta_sensitivity_fit,"Scenario yields a sensitivity meta-analysis fit; interpret as robustness context, not as a replacement primary analysis.",0.014935657197401309
+Excluding baseline-exclusion events,5,4157,0.7556,0.4927,0.9077,98.3,0.8279,0.1611,0.9803,0.8616,1026,meta_sensitivity_fit,"Scenario yields a sensitivity meta-analysis fit; interpret as robustness context, not as a replacement primary analysis.",-0.35619749167947745
+Neely: disease_2014 intervals only,NA,639,0.5321,NA,NA,NA,NA,NA,NA,NA,NA,descriptive_only_interval_subset,Single-study disturbance subset; descriptive interval summary only.,NA
+Neely: aftermath intervals only,NA,375,0.6133,NA,NA,NA,NA,NA,NA,NA,NA,descriptive_only_interval_subset,Single-study disturbance subset; descriptive interval summary only.,NA
+NOAA: storm intervals only,NA,560,0.8679,NA,NA,NA,NA,NA,NA,NA,NA,descriptive_only_interval_subset,Single-study storm subset; descriptive interval summary only.,NA

@@ -21,10 +21,10 @@
 #   RGB color
 #
 # INPUTS:
-#   - 06_analysis/output/meta_analysis_study_effects.csv
-#   - 06_analysis/output/meta_analysis_results.csv
-#   - 06_analysis/output/meta_analysis_stratified.csv
-#   - 06_analysis/output/meta_analysis_moderators.csv
+#   - 06_analysis/output/expanded_meta_analysis_study_effects.csv
+#   - 06_analysis/output/expanded_meta_analysis_results.csv
+#   - 06_analysis/output/expanded_meta_analysis_stratified.csv
+#   - 06_analysis/output/expanded_meta_analysis_moderators.csv
 #
 # OUTPUTS:
 #   - 06_analysis/figures/supplementary/FigS8_forest_plots.png  (+ .pdf)
@@ -60,14 +60,27 @@ print_header("26: SUPPLEMENTARY FIGURES S8 & S9 (META-ANALYSIS)")
 
 print_subheader("Loading pre-computed meta-analysis outputs")
 
-study_effects <- read_csv(file.path(dirs$output, "expanded_meta_analysis_study_effects.csv"),
-                          show_col_types = FALSE)
-meta_results  <- read_csv(file.path(dirs$output, "expanded_meta_analysis_results.csv"),
-                          show_col_types = FALSE)
-meta_strat    <- read_csv(file.path(dirs$output, "expanded_meta_analysis_stratified.csv"),
-                          show_col_types = FALSE)
-moderator_df  <- read_csv(file.path(dirs$output, "meta_analysis_moderators.csv"),
-                          show_col_types = FALSE)
+require_output <- function(path) {
+  if (!file.exists(path)) stop("Required file not found: ", path)
+  path
+}
+
+study_effects <- read_csv(
+  require_output(file.path(dirs$output, "expanded_meta_analysis_study_effects.csv")),
+  show_col_types = FALSE
+)
+meta_results <- read_csv(
+  require_output(file.path(dirs$output, "expanded_meta_analysis_results.csv")),
+  show_col_types = FALSE
+)
+meta_strat <- read_csv(
+  require_output(file.path(dirs$output, "expanded_meta_analysis_stratified.csv")),
+  show_col_types = FALSE
+)
+moderator_df <- read_csv(
+  require_output(file.path(dirs$output, "expanded_meta_analysis_moderators.csv")),
+  show_col_types = FALSE
+)
 
 # Extract key statistics from meta_results
 get_meta_val <- function(stat) {

@@ -180,7 +180,10 @@ Because multiple studies from the same monitoring programs exist, the following 
 | kuffner_et_al_2020 | USGS Data Release | 106 | FL Keys | field | `Kuffner_et_al_2020_*.csv` |
 | USGS_USVI_exp | USGS CMGDS | 92 | USVI | field | `USGS_Palmata_growth_VI_USA.csv` |
 | fundemar_fragments | Fundemar (shared) | 156 | Dominican Republic | nursery_in | `Fundemar_*.xlsx` |
-| mendoza_quiroz_2023 | PeerJ 15813 | 45 | Mexican Caribbean | nursery_in/field | `MendozaQuiroz2023Data.xlsx` |
+| mendoza_quiroz_2023 | PeerJ 15813 | 52 | Mexican Caribbean | nursery_in/field | `MendozaQuiroz2023Data.xlsx` |
+| neely_et_al_2022 | Direct sharing (Apr 2026) | 878 | FL Keys | field | `neely_apal_data.csv` |
+
+**Note on sample sizes:** The n column shows colony-intervals after quality filtering (matching the values used in analysis). Raw CSV row counts may be higher before removing missing sizes, sub-annual intervals, or duplicate colony-years.
 
 ---
 
@@ -208,6 +211,7 @@ All AI-extracted data tagged with `[AI_EXTRACTED]` in study_notes and `data_tier
 |-------|--------|------|---|----------------|--------|-------------|
 | rogers_muller_2012 | USVI | Natural | 69 | 94.2% | Paper text: 44/69 survived 7yr | Size in volume (cm³) not area; set to NA |
 | ramos_romero_et_al_2025 | Cuba | Restoration | 200 | 70.5% | Table 2 KM survival | Time intervals corrected to full monitoring duration (not last KM event) |
+| rogers_et_al_1982 | USVI | Natural | 173 | ~48% | Table 5 | Storm-damaged branches (Hurricanes David/Frederic 1979); annualized from 11-month interval |
 
 ### Excluded after audit, IRR review, or overlap audit:
 
@@ -250,7 +254,7 @@ size_live_cm2 = Length × Width × (%Live / 100)
 |-----------------|------------|
 | L × W × %live (NOAA, Pausch) | Direct |
 | Photo tracing (Kuffner, USGS) | Direct planar area |
-| Diameter only (Mendoza-Quiroz) | π × (d/2)² (circular assumption) |
+| Diameter only (Mendoza-Quiroz nursery/Cuevones) | d² × W:L ratio (W:L estimated from Picudas reef data with both L and W measurements) |
 | Volume cm³ (Rogers & Muller 2012) | Set to NA; survival data used without size |
 | Linear extension cm/yr (Gladfelter) | Not convertible; excluded from pipeline |
 
@@ -292,6 +296,21 @@ For Kaplan-Meier survival estimates, `time_interval_yr` is the **full monitoring
 
 ---
 
+---
+
+## Related Files
+
+- [extraction_details.md](extraction_details.md) -- Per-study verification table with audit status
+- [study_characteristics.md](study_characteristics.md) -- PRISMA-style study characteristics table
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [risk_of_bias.md](risk_of_bias.md) -- Newcastle-Ottawa bias assessment per study
+- [disturbance_handling_decision.md](disturbance_handling_decision.md) -- Disturbance classification and inclusion rules
+- [neely_2022_data_integration.md](neely_2022_data_integration.md) -- Neely et al. 2022 integration notes
+- `raine_working_notes/` -- Original per-study extraction decisions
+
+---
+
 *Document prepared by: Raine Detmer & Adrian Stier, with AI-assisted data extraction*
 *Ocean Recoveries Lab, UC Santa Barbara*
-*Original: December 2025 | Updated: March 2026*
+*Original: December 2025 | Updated: April 2026 (added Neely, Rogers 1982, sample size note, fragmentation split rule)*

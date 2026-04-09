@@ -1,0 +1,4 @@
+recruitment_scenario,annual_recruits_per_mature_colony,settlement_success,post_settlement_survival,maturity_threshold_cm2,calibration_basis
+zero,0,0,0,4000,No recruitment term; survival+growth only baseline
+conservative,0.0010360000000000002,0.37,0.14,4000,Scenario-scaled direct recruitment under thermal-stress settlement conditions
+optimistic,0.00434,0.62,0.14,4000,Scenario-scaled direct recruitment under baseline settlement conditions

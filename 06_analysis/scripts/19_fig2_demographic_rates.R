@@ -33,6 +33,21 @@ pal <- MANUSCRIPT_PALETTE
 project_root <- get_project_root()
 output_dir <- file.path(project_root, "06_analysis/output")
 
+require_output <- function(path) {
+  if (!file.exists(path)) stop("Required file not found: ", path)
+  path
+}
+
+survival_models <- readRDS(require_output(file.path(output_dir, "survival_threshold_models.rds")))
+growth_models <- readRDS(require_output(file.path(output_dir, "growth_threshold_models.rds")))
+
+if (!inherits(survival_models$gam_model, "gam")) {
+  stop("survival_threshold_models.rds is missing canonical gam_model")
+}
+if (!inherits(growth_models$model_gam_rgr, "gam")) {
+  stop("growth_threshold_models.rds is missing canonical model_gam_rgr")
+}
+
 cat("\n")
 cat("================================================================\n")
 cat("  FIGURE 2: Size-Dependent Vital Rates (a|b|c)\n")
@@ -44,7 +59,7 @@ cat("================================================================\n\n")
 
 cat("Panel a: Survival probability...\n")
 
-surv_all <- readRDS(file.path(output_dir, "prepared_survival_data.rds"))
+surv_all <- readRDS(require_output(file.path(output_dir, "prepared_survival_data.rds")))
 
 # Harmonize population type column
 if (!"population_type" %in% names(surv_all) && "source_type" %in% names(surv_all)) {
@@ -66,24 +81,20 @@ surv_nat <- surv_nat %>%
 
 cat(sprintf("  Natural survival records: %s\n", comma(nrow(surv_nat))))
 
-# Fit GAM
-surv_gam <- gam(survived ~ s(log_size, k = 4),
-                data = surv_nat, family = binomial, method = "REML")
+surv_gam <- survival_models$gam_model
 surv_r2 <- summary(surv_gam)$r.sq
 cat(sprintf("  Survival GAM R² = %.1f%%\n", surv_r2 * 100))
 
-# Predictions
-surv_pred <- data.frame(
-  log_size = seq(log(1), log(15000), length.out = 500)
-)
-surv_link <- predict(surv_gam, newdata = surv_pred, type = "link", se.fit = TRUE)
-surv_pred <- surv_pred %>%
-  mutate(
-    size_cm2  = exp(log_size),
-    fit       = plogis(surv_link$fit),
-    ci_lower  = plogis(surv_link$fit - 1.96 * surv_link$se.fit),
-    ci_upper  = plogis(surv_link$fit + 1.96 * surv_link$se.fit)
-  )
+surv_pred <- survival_models$prediction_grid %>%
+  as_tibble() %>%
+  transmute(
+    log_size = log_size,
+    size_cm2 = size_cm2,
+    fit = gam,
+    ci_lower = gam_lower,
+    ci_upper = gam_upper
+  ) %>%
+  filter(size_cm2 >= 1, size_cm2 <= 15000)
 
 # Binned proportions
 surv_binned <- surv_nat %>%
@@ -158,7 +169,7 @@ cat("  Panel a complete.\n")
 
 cat("Panel b: Relative growth rate...\n")
 
-growth_data <- readRDS(file.path(output_dir, "prepared_growth_data.rds"))
+growth_data <- readRDS(require_output(file.path(output_dir, "prepared_growth_data.rds")))
 
 # Filter to natural corals
 if ("population_type" %in% names(growth_data)) {
@@ -192,21 +203,20 @@ growth_rgr <- growth_clean %>%
 
 cat(sprintf("  Natural growth records: %s\n", comma(nrow(growth_rgr))))
 
-# Fit GAM
-rgr_gam <- gam(rgr ~ s(log_size, k = 4),
-               data = growth_rgr, method = "REML")
+rgr_gam <- growth_models$model_gam_rgr
 rgr_r2 <- summary(rgr_gam)$r.sq
 cat(sprintf("  RGR GAM R² = %.1f%%\n", rgr_r2 * 100))
 
-# Predictions
-rgr_pred <- data.frame(
-  log_size = seq(min(growth_rgr$log_size), max(growth_rgr$log_size), length.out = 300)
-)
-rgr_pred$size_cm2 <- exp(rgr_pred$log_size)
-rgr_se <- predict(rgr_gam, newdata = rgr_pred, se.fit = TRUE)
-rgr_pred$fit      <- rgr_se$fit
-rgr_pred$ci_lower <- rgr_se$fit - 1.96 * rgr_se$se.fit
-rgr_pred$ci_upper <- rgr_se$fit + 1.96 * rgr_se$se.fit
+rgr_pred <- growth_models$prediction_grid %>%
+  as_tibble() %>%
+  transmute(log_size = log_size, size_cm2 = size_cm2, fit = gam_rgr) %>%
+  filter(size_cm2 >= 1, size_cm2 <= 15000)
+rgr_se <- predict(rgr_gam, newdata = rgr_pred %>% select(log_size), se.fit = TRUE)
+rgr_pred <- rgr_pred %>%
+  mutate(
+    ci_lower = fit - 1.96 * rgr_se$se.fit,
+    ci_upper = fit + 1.96 * rgr_se$se.fit
+  )
 
 # Binned medians
 rgr_binned <- growth_rgr %>%
@@ -224,25 +234,21 @@ rgr_binned <- growth_rgr %>%
 rgr_y_lower <- max(-1.5, quantile(growth_rgr$rgr, 0.005, na.rm = TRUE))
 rgr_y_upper <- min(3.5, quantile(growth_rgr$rgr, 0.995, na.rm = TRUE))
 
-# Load RGR threshold (Detmer et al. 2025)
-thresh_file <- file.path(output_dir, "growth_thresholds.csv")
 thresh_cm2 <- NA
-if (file.exists(thresh_file)) {
-  thresh_data <- read.csv(thresh_file)
-  rgr_row <- thresh_data[thresh_data$response == "relative_growth_rate", ]
-  if (nrow(rgr_row) == 1 && isTRUE(rgr_row$gate_passed)) {
-    # Use recommended_threshold_cm2 if available; fall back to cluster_boot_ci_lower
-    thresh_cm2 <- rgr_row$recommended_threshold_cm2
-    ci_lo_cm2  <- rgr_row$cluster_boot_ci_lower
-    ci_hi_cm2  <- rgr_row$cluster_boot_ci_upper
-    if (is.na(thresh_cm2) && !is.na(ci_lo_cm2)) {
-      thresh_cm2 <- ci_lo_cm2
-      cat(sprintf("  RGR threshold (from CI lower): %.1f cm² (95%% CI: %.1f-%.1f)\n",
-                  thresh_cm2, ci_lo_cm2, ci_hi_cm2))
-    } else {
-      cat(sprintf("  RGR threshold: %.1f cm² (95%% CI: %.1f-%.1f)\n",
-                  thresh_cm2, ci_lo_cm2, ci_hi_cm2))
-    }
+rgr_row <- growth_models$thresholds %>%
+  as_tibble() %>%
+  filter(response == "relative_growth_rate")
+if (nrow(rgr_row) == 1 && isTRUE(rgr_row$gate_passed[[1]])) {
+  thresh_cm2 <- rgr_row$recommended_threshold_cm2[[1]]
+  ci_lo_cm2  <- rgr_row$cluster_boot_ci_lower[[1]]
+  ci_hi_cm2  <- rgr_row$cluster_boot_ci_upper[[1]]
+  if (is.na(thresh_cm2) && !is.na(ci_lo_cm2)) {
+    thresh_cm2 <- ci_lo_cm2
+    cat(sprintf("  RGR threshold (from CI lower): %.1f cm² (95%% CI: %.1f-%.1f)\n",
+                thresh_cm2, ci_lo_cm2, ci_hi_cm2))
+  } else {
+    cat(sprintf("  RGR threshold: %.1f cm² (95%% CI: %.1f-%.1f)\n",
+                thresh_cm2, ci_lo_cm2, ci_hi_cm2))
   }
 }
 

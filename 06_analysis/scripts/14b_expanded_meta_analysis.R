@@ -878,6 +878,122 @@ if (!is.null(rma_3level)) {
   primary_model_label <- "Standard rma() (fallback)"
 }
 
+fit_primary_meta_model <- function(dat) {
+  tryCatch(
+    metafor::rma.mv(
+      yi = log_odds,
+      V = var_log_odds,
+      random = ~1 | study_id / study,
+      data = dat,
+      method = "REML",
+      test = "t"
+    ),
+    error = function(e) NULL
+  )
+}
+
+fit_clustered_moderator_model <- function(dat, mods_formula) {
+  null_fit_mv <- fit_primary_meta_model(dat)
+  null_fit_rma <- if (is.null(null_fit_mv)) {
+    tryCatch(
+      metafor::rma(
+        yi = dat$log_odds,
+        vi = dat$var_log_odds,
+        method = "REML",
+        test = "knha"
+      ),
+      error = function(e) NULL
+    )
+  } else {
+    NULL
+  }
+
+  fit_mv <- tryCatch(
+    metafor::rma.mv(
+      yi = log_odds,
+      V = var_log_odds,
+      mods = mods_formula,
+      random = ~1 | study_id / study,
+      data = dat,
+      method = "REML",
+      test = "t"
+    ),
+    error = function(e) NULL
+  )
+
+  fit_rma <- if (is.null(fit_mv)) {
+    tryCatch(
+      metafor::rma(
+        yi = log_odds,
+        vi = var_log_odds,
+        mods = mods_formula,
+        data = dat,
+        method = "REML",
+        test = "knha"
+      ),
+      error = function(e) NULL
+    )
+  } else {
+    NULL
+  }
+
+  fit <- if (!is.null(fit_mv)) fit_mv else fit_rma
+  if (is.null(fit)) return(NULL)
+
+  model_type <- if (!is.null(fit_mv)) "three_level_rma.mv" else "standard_rma"
+  null_tau2_total <- if (!is.null(null_fit_mv)) {
+    sum(null_fit_mv$sigma2, na.rm = TRUE)
+  } else if (!is.null(null_fit_rma)) {
+    null_fit_rma$tau2
+  } else {
+    NA_real_
+  }
+  model_tau2_total <- if (!is.null(fit_mv)) {
+    sum(fit_mv$sigma2, na.rm = TRUE)
+  } else {
+    fit_rma$tau2
+  }
+
+  coef_tbl <- data.frame(
+    term = rownames(fit$beta),
+    coefficient = as.numeric(fit$beta),
+    se = fit$se,
+    stat = if (!is.null(fit$tval)) fit$tval else fit$zval,
+    p_value = fit$pval,
+    ci_lower = fit$ci.lb,
+    ci_upper = fit$ci.ub,
+    stringsAsFactors = FALSE
+  )
+  if (all(is.na(coef_tbl$term)) || is.null(coef_tbl$term)) {
+    coef_tbl$term <- paste0("beta", seq_len(nrow(coef_tbl)))
+  }
+
+  non_intercept_terms <- setdiff(coef_tbl$term, c("intrcpt", "(Intercept)"))
+  primary_row <- if (length(non_intercept_terms) >= 1) {
+    coef_tbl %>% dplyr::filter(term == non_intercept_terms[1]) %>% dplyr::slice(1)
+  } else {
+    coef_tbl %>% dplyr::slice(1)
+  }
+
+  list(
+    fit = fit,
+    model_type = model_type,
+    coef_table = coef_tbl,
+    primary_row = primary_row,
+    qm = if (!is.null(fit$QM)) fit$QM else NA_real_,
+    qmp = if (!is.null(fit$QMp)) fit$QMp else NA_real_,
+    null_tau2_total = null_tau2_total,
+    model_tau2_total = model_tau2_total,
+    R2_pct = if (!is.na(null_tau2_total) && null_tau2_total > 0) {
+      max(0, (null_tau2_total - model_tau2_total) / null_tau2_total * 100)
+    } else {
+      NA_real_
+    },
+    k_effects = nrow(dat),
+    k_parent_studies = dplyr::n_distinct(dat$study_id)
+  )
+}
+
 cat(sprintf("PRIMARY MODEL: %s\n", primary_model_label))
 cat(sprintf("  k = %d studies contributing %d effects\n", k_studies, k_expanded))
 cat(sprintf("  Total observations: %d\n", sum(combined_es$n_total)))
@@ -942,6 +1058,128 @@ tau_estimator_comparison <- data.frame(
 write_csv(tau_estimator_comparison,
           file.path(output_dir, "expanded_meta_tau_estimator_comparison.csv"))
 cat("  Saved: expanded_meta_tau_estimator_comparison.csv\n")
+
+# --- PRIMARY-MODEL JACKKNIFE: Leave one parent study out ---
+cat("\n--- PRIMARY-MODEL JACKKNIFE (leave one parent study out) ---\n")
+parent_studies <- combined_es %>%
+  group_by(study_id) %>%
+  summarise(
+    study = dplyr::first(study),
+    .groups = "drop"
+  ) %>%
+  arrange(study_id)
+
+jackknife_primary <- lapply(seq_len(nrow(parent_studies)), function(i) {
+  dropped_id <- parent_studies$study_id[i]
+  dropped_label <- parent_studies$study[i]
+  dat_i <- combined_es %>% filter(study_id != dropped_id)
+
+  fit_i <- fit_primary_meta_model(dat_i)
+  model_type_i <- "three_level_rma.mv"
+
+  if (!is.null(fit_i)) {
+    pred_i <- tryCatch(predict(fit_i), error = function(e) NULL)
+    pooled_i <- plogis(as.numeric(fit_i$b))
+    ci_lb_i <- plogis(fit_i$ci.lb)
+    ci_ub_i <- plogis(fit_i$ci.ub)
+    pi_lb_i <- if (!is.null(pred_i)) plogis(pred_i$pi.lb) else NA_real_
+    pi_ub_i <- if (!is.null(pred_i)) plogis(pred_i$pi.ub) else NA_real_
+    sigma_between_i <- if (length(fit_i$sigma2) >= 1) fit_i$sigma2[1] else NA_real_
+    sigma_within_i <- if (length(fit_i$sigma2) >= 2) fit_i$sigma2[2] else NA_real_
+    tau2_total_i <- sum(fit_i$sigma2, na.rm = TRUE)
+  } else {
+    fit_i <- tryCatch(
+      metafor::rma(
+        yi = dat_i$log_odds,
+        vi = dat_i$var_log_odds,
+        method = "REML",
+        test = "knha"
+      ),
+      error = function(e) NULL
+    )
+    model_type_i <- "independent_rma_fallback"
+    if (is.null(fit_i)) {
+      return(data.frame(
+        excluded_study_id = dropped_id,
+        excluded_study = dropped_label,
+        k_effects_remaining = nrow(dat_i),
+        k_parent_studies_remaining = n_distinct(dat_i$study_id),
+        pooled_survival = NA_real_,
+        ci_lower = NA_real_,
+        ci_upper = NA_real_,
+        pi_lower = NA_real_,
+        pi_upper = NA_real_,
+        sigma2_between = NA_real_,
+        sigma2_within = NA_real_,
+        tau2_total = NA_real_,
+        change_pp = NA_real_,
+        model_type = "fit_failed",
+        stringsAsFactors = FALSE
+      ))
+    }
+    pred_i <- tryCatch(predict(fit_i), error = function(e) NULL)
+    pooled_i <- plogis(as.numeric(fit_i$beta))
+    ci_lb_i <- plogis(fit_i$ci.lb)
+    ci_ub_i <- plogis(fit_i$ci.ub)
+    pi_lb_i <- if (!is.null(pred_i)) plogis(pred_i$pi.lb) else NA_real_
+    pi_ub_i <- if (!is.null(pred_i)) plogis(pred_i$pi.ub) else NA_real_
+    sigma_between_i <- fit_i$tau2
+    sigma_within_i <- 0
+    tau2_total_i <- fit_i$tau2
+  }
+
+  data.frame(
+    excluded_study_id = dropped_id,
+    excluded_study = dropped_label,
+    k_effects_remaining = nrow(dat_i),
+    k_parent_studies_remaining = n_distinct(dat_i$study_id),
+    pooled_survival = pooled_i,
+    ci_lower = ci_lb_i,
+    ci_upper = ci_ub_i,
+    pi_lower = pi_lb_i,
+    pi_upper = pi_ub_i,
+    sigma2_between = sigma_between_i,
+    sigma2_within = sigma_within_i,
+    tau2_total = tau2_total_i,
+    change_pp = (pooled_i - pooled_surv) * 100,
+    model_type = model_type_i,
+    stringsAsFactors = FALSE
+  )
+})
+
+jackknife_primary_df <- bind_rows(jackknife_primary) %>%
+  mutate(
+    influential_parent_study = abs(change_pp) > 2
+  ) %>%
+  arrange(desc(abs(change_pp)))
+
+write_csv(
+  jackknife_primary_df,
+  file.path(output_dir, "expanded_meta_primary_jackknife.csv")
+)
+cat("  Saved: expanded_meta_primary_jackknife.csv\n")
+
+primary_diag <- data.frame(
+  model = primary_model_label,
+  k_effects = k_expanded,
+  k_parent_studies = k_studies,
+  pooled_survival = pooled_surv,
+  ci_lower = pooled_surv_lower,
+  ci_upper = pooled_surv_upper,
+  pi_lower = pi_lower,
+  pi_upper = pi_upper,
+  sigma2_between = ifelse(is.null(rma_3level), NA_real_, tau_sq_between),
+  sigma2_within = ifelse(is.null(rma_3level), NA_real_, tau_sq_within),
+  tau2_total = tau_sq,
+  max_abs_parent_study_change_pp = max(abs(jackknife_primary_df$change_pp), na.rm = TRUE),
+  n_influential_parent_studies = sum(jackknife_primary_df$influential_parent_study, na.rm = TRUE),
+  stringsAsFactors = FALSE
+)
+write_csv(
+  primary_diag,
+  file.path(output_dir, "expanded_meta_primary_model_diagnostics.csv")
+)
+cat("  Saved: expanded_meta_primary_model_diagnostics.csv\n")
 
 # --- PUBLICATION BIAS: Egger's Test ---
 cat("\n--- PUBLICATION BIAS ---\n")
@@ -1074,6 +1312,7 @@ if (k_expanded < 10) {
 }
 
 moderators <- list()
+moderator_diagnostics <- list()
 
 # 5a. Population type (natural vs restoration) -- THE KEY MODERATOR
 # Now with multiple natural colony studies
@@ -1082,136 +1321,186 @@ k_restoration <- sum(combined_es$population_type == "Restoration fragment")
 cat(sprintf("  5a. Population type: k_natural=%d, k_restoration=%d\n",
             k_natural, k_restoration))
 
-meta_reg_pop <- rma(
-  yi = log_odds, vi = var_log_odds,
-  mods = ~population_type,
-  data = combined_es,
-  method = "REML", test = "knha"
-)
+meta_reg_pop <- fit_clustered_moderator_model(combined_es, ~ population_type)
 
-moderators$population_type <- data.frame(
-  moderator = "Population type (natural vs restoration)",
-  coefficient = meta_reg_pop$beta[2],
-  se = meta_reg_pop$se[2],
-  ci_lower = meta_reg_pop$ci.lb[2],
-  ci_upper = meta_reg_pop$ci.ub[2],
-  t_value = meta_reg_pop$zval[2],
-  p_value = meta_reg_pop$pval[2],
-  R2_pct = max(0, meta_reg_pop$R2),
-  k = k_expanded,
-  k_per_level = paste0("natural=", k_natural, ", restoration=", k_restoration),
-  defensible = (min(k_natural, k_restoration) >= 3)
-)
+if (!is.null(meta_reg_pop)) {
+  pop_row <- meta_reg_pop$primary_row
+  moderators$population_type <- data.frame(
+    moderator = "Population type (natural vs restoration)",
+    model_type = meta_reg_pop$model_type,
+    coefficient = pop_row$coefficient,
+    se = pop_row$se,
+    ci_lower = pop_row$ci_lower,
+    ci_upper = pop_row$ci_upper,
+    t_value = pop_row$stat,
+    p_value = pop_row$p_value,
+    R2_pct = meta_reg_pop$R2_pct,
+    k = meta_reg_pop$k_effects,
+    k_parent_studies = meta_reg_pop$k_parent_studies,
+    k_per_level = paste0("natural=", k_natural, ", restoration=", k_restoration),
+    defensible = (min(k_natural, k_restoration) >= 3)
+  )
+  moderator_diagnostics$population_type <- data.frame(
+    moderator = "Population type (natural vs restoration)",
+    model_type = meta_reg_pop$model_type,
+    k_effects = meta_reg_pop$k_effects,
+    k_parent_studies = meta_reg_pop$k_parent_studies,
+    null_tau2_total = meta_reg_pop$null_tau2_total,
+    model_tau2_total = meta_reg_pop$model_tau2_total,
+    R2_pct = meta_reg_pop$R2_pct,
+    qm = meta_reg_pop$qm,
+    qmp = meta_reg_pop$qmp
+  )
 
-cat(sprintf("    Coefficient: %.3f (SE=%.3f), p=%.4f\n",
-            meta_reg_pop$beta[2], meta_reg_pop$se[2], meta_reg_pop$pval[2]))
-cat(sprintf("    R^2 = %.1f%%\n", max(0, meta_reg_pop$R2)))
-cat(sprintf("    Interpretation: Natural colonies have %s survival than restoration fragments\n",
-            ifelse(meta_reg_pop$beta[2] > 0, "higher", "lower")))
+  cat(sprintf("    Model: %s\n", meta_reg_pop$model_type))
+  cat(sprintf("    Coefficient: %.3f (SE=%.3f), p=%.4f\n",
+              pop_row$coefficient, pop_row$se, pop_row$p_value))
+  cat(sprintf("    Pseudo-R^2 = %.1f%%\n", meta_reg_pop$R2_pct))
+  cat(sprintf("    Interpretation: Restoration fragments have %s survival than natural colonies\n",
+              ifelse(pop_row$coefficient > 0, "higher", "lower")))
+} else {
+  cat("    Population-type moderator fit failed.\n")
+}
 
 # 5b. Mean colony size
 size_available <- combined_es %>% filter(!is.na(mean_size_cm2))
 if (nrow(size_available) >= 5) {
   cat(sprintf("\n  5b. Colony size: %d studies with size data\n", nrow(size_available)))
 
-  meta_reg_size <- rma(
-    yi = log_odds, vi = var_log_odds,
-    mods = ~log(mean_size_cm2),
-    data = size_available,
-    method = "REML", test = "knha"
-  )
+  meta_reg_size <- fit_clustered_moderator_model(size_available, ~ log(mean_size_cm2))
 
-  moderators$colony_size <- data.frame(
-    moderator = "Log colony size (cm^2)",
-    coefficient = meta_reg_size$beta[2],
-    se = meta_reg_size$se[2],
-    ci_lower = meta_reg_size$ci.lb[2],
-    ci_upper = meta_reg_size$ci.ub[2],
-    t_value = meta_reg_size$zval[2],
-    p_value = meta_reg_size$pval[2],
-    R2_pct = max(0, meta_reg_size$R2),
-    k = nrow(size_available),
-    k_per_level = NA_character_,
-    defensible = (nrow(size_available) >= 10)
-  )
+  if (!is.null(meta_reg_size)) {
+    size_row <- meta_reg_size$primary_row
+    moderators$colony_size <- data.frame(
+      moderator = "Log colony size (cm^2)",
+      model_type = meta_reg_size$model_type,
+      coefficient = size_row$coefficient,
+      se = size_row$se,
+      ci_lower = size_row$ci_lower,
+      ci_upper = size_row$ci_upper,
+      t_value = size_row$stat,
+      p_value = size_row$p_value,
+      R2_pct = meta_reg_size$R2_pct,
+      k = meta_reg_size$k_effects,
+      k_parent_studies = meta_reg_size$k_parent_studies,
+      k_per_level = NA_character_,
+      defensible = (meta_reg_size$k_effects >= 10)
+    )
+    moderator_diagnostics$colony_size <- data.frame(
+      moderator = "Log colony size (cm^2)",
+      model_type = meta_reg_size$model_type,
+      k_effects = meta_reg_size$k_effects,
+      k_parent_studies = meta_reg_size$k_parent_studies,
+      null_tau2_total = meta_reg_size$null_tau2_total,
+      model_tau2_total = meta_reg_size$model_tau2_total,
+      R2_pct = meta_reg_size$R2_pct,
+      qm = meta_reg_size$qm,
+      qmp = meta_reg_size$qmp
+    )
 
-  cat(sprintf("    Coefficient: %.3f (SE=%.3f), p=%.4f, R^2=%.1f%%\n",
-              meta_reg_size$beta[2], meta_reg_size$se[2],
-              meta_reg_size$pval[2], max(0, meta_reg_size$R2)))
+    cat(sprintf("    Model: %s\n", meta_reg_size$model_type))
+    cat(sprintf("    Coefficient: %.3f (SE=%.3f), p=%.4f, pseudo-R^2=%.1f%%\n",
+                size_row$coefficient, size_row$se,
+                size_row$p_value, meta_reg_size$R2_pct))
+  }
 }
 
 # 5c. Study year
 cat(sprintf("\n  5c. Study year\n"))
-meta_reg_year <- rma(
-  yi = log_odds, vi = var_log_odds,
-  mods = ~survey_yr,
-  data = combined_es,
-  method = "REML", test = "knha"
-)
+meta_reg_year <- fit_clustered_moderator_model(combined_es, ~ I(survey_yr - mean(survey_yr, na.rm = TRUE)))
 
-moderators$study_year <- data.frame(
-  moderator = "Study year",
-  coefficient = meta_reg_year$beta[2],
-  se = meta_reg_year$se[2],
-  ci_lower = meta_reg_year$ci.lb[2],
-  ci_upper = meta_reg_year$ci.ub[2],
-  t_value = meta_reg_year$zval[2],
-  p_value = meta_reg_year$pval[2],
-  R2_pct = max(0, meta_reg_year$R2),
-  k = k_expanded,
-  k_per_level = NA_character_,
-  defensible = (k_expanded >= 10)
-)
+if (!is.null(meta_reg_year)) {
+  year_row <- meta_reg_year$primary_row
+  moderators$study_year <- data.frame(
+    moderator = "Study year",
+    model_type = meta_reg_year$model_type,
+    coefficient = year_row$coefficient,
+    se = year_row$se,
+    ci_lower = year_row$ci_lower,
+    ci_upper = year_row$ci_upper,
+    t_value = year_row$stat,
+    p_value = year_row$p_value,
+    R2_pct = meta_reg_year$R2_pct,
+    k = meta_reg_year$k_effects,
+    k_parent_studies = meta_reg_year$k_parent_studies,
+    k_per_level = NA_character_,
+    defensible = (meta_reg_year$k_effects >= 10)
+  )
+  moderator_diagnostics$study_year <- data.frame(
+    moderator = "Study year",
+    model_type = meta_reg_year$model_type,
+    k_effects = meta_reg_year$k_effects,
+    k_parent_studies = meta_reg_year$k_parent_studies,
+    null_tau2_total = meta_reg_year$null_tau2_total,
+    model_tau2_total = meta_reg_year$model_tau2_total,
+    R2_pct = meta_reg_year$R2_pct,
+    qm = meta_reg_year$qm,
+    qmp = meta_reg_year$qmp
+  )
 
-cat(sprintf("    Coefficient: %.4f (SE=%.4f), p=%.4f, R^2=%.1f%%\n",
-            meta_reg_year$beta[2], meta_reg_year$se[2],
-            meta_reg_year$pval[2], max(0, meta_reg_year$R2)))
+  cat(sprintf("    Model: %s\n", meta_reg_year$model_type))
+  cat(sprintf("    Coefficient: %.4f (SE=%.4f), p=%.4f, pseudo-R^2=%.1f%%\n",
+              year_row$coefficient, year_row$se,
+              year_row$p_value, meta_reg_year$R2_pct))
+}
 
 # 5d. Region as moderator (categorical)
 n_regions <- n_distinct(combined_es$region)
 cat(sprintf("\n  5d. Region: %d regions\n", n_regions))
 if (n_regions >= 3) {
-  meta_reg_region <- tryCatch(
-    rma(
-      yi = log_odds, vi = var_log_odds,
-      mods = ~factor(region),
-      data = combined_es,
-      method = "REML", test = "knha"
-    ),
-    error = function(e) {
-      cat(sprintf("    Region meta-regression failed: %s\n", e$message))
-      NULL
-    }
-  )
+  meta_reg_region <- fit_clustered_moderator_model(combined_es, ~ factor(region))
 
   if (!is.null(meta_reg_region)) {
     moderators$region <- data.frame(
       moderator = "Region (categorical)",
+      model_type = meta_reg_region$model_type,
       coefficient = NA_real_,  # Multiple coefficients
       se = NA_real_,
       ci_lower = NA_real_,
       ci_upper = NA_real_,
       t_value = NA_real_,
-      p_value = meta_reg_region$QMp,  # Omnibus test p-value
-      R2_pct = max(0, meta_reg_region$R2),
-      k = k_expanded,
+      p_value = meta_reg_region$qmp,  # Omnibus test p-value
+      R2_pct = meta_reg_region$R2_pct,
+      k = meta_reg_region$k_effects,
+      k_parent_studies = meta_reg_region$k_parent_studies,
       k_per_level = paste(sort(unique(combined_es$region)), collapse = "; "),
       defensible = FALSE  # Need k>=10 per region level
     )
+    moderator_diagnostics$region <- data.frame(
+      moderator = "Region (categorical)",
+      model_type = meta_reg_region$model_type,
+      k_effects = meta_reg_region$k_effects,
+      k_parent_studies = meta_reg_region$k_parent_studies,
+      null_tau2_total = meta_reg_region$null_tau2_total,
+      model_tau2_total = meta_reg_region$model_tau2_total,
+      R2_pct = meta_reg_region$R2_pct,
+      qm = meta_reg_region$qm,
+      qmp = meta_reg_region$qmp
+    )
 
-    cat(sprintf("    Omnibus test: F=%.2f, p=%.4f, R^2=%.1f%%\n",
-                meta_reg_region$QM / (n_regions - 1),
-                meta_reg_region$QMp, max(0, meta_reg_region$R2)))
+    cat(sprintf("    Model: %s\n", meta_reg_region$model_type))
+    cat(sprintf("    Omnibus test: F=%.2f, p=%.4f, pseudo-R^2=%.1f%%\n",
+                meta_reg_region$qm / (n_regions - 1),
+                meta_reg_region$qmp, meta_reg_region$R2_pct))
+  } else {
+    cat("    Region meta-regression failed.\n")
   }
 }
 
 moderator_df <- bind_rows(moderators)
+moderator_diagnostics_df <- bind_rows(moderator_diagnostics)
+
+write_csv(moderator_df, file.path(output_dir, "expanded_meta_moderators.csv"))
+write_csv(moderator_diagnostics_df, file.path(output_dir, "expanded_meta_moderator_diagnostics.csv"))
+cat("  Saved: expanded_meta_moderators.csv\n")
+cat("  Saved: expanded_meta_moderator_diagnostics.csv\n")
 
 cat("\n  --- Moderator Summary ---\n")
 moderator_df %>%
   as.data.frame() %>%
-  select(moderator, p_value, R2_pct, defensible) %>%
+  select(moderator, model_type, p_value, R2_pct, defensible) %>%
   mutate(
+    model_type = ifelse(model_type == "three_level_rma.mv", "clustered", "fallback"),
     p_value = sprintf("%.4f", p_value),
     R2_pct = sprintf("%.1f%%", R2_pct),
     status = ifelse(defensible, "Defensible (k>=10)", "EXPLORATORY (k<10)")
@@ -1313,13 +1602,15 @@ for (i in 1:nrow(strat_results)) {
 
 # Formal subgroup comparison using rma with moderator
 cat("--- Formal Test of Subgroup Differences (Q-between) ---\n")
-rma_subgroup <- rma(
+rma_subgroup <- if (!is.null(meta_reg_pop)) meta_reg_pop$fit else rma(
   yi = log_odds, vi = var_log_odds,
   mods = ~population_type,
   data = combined_es,
   method = "REML", test = "knha"
 )
+subgroup_model_type <- if (!is.null(meta_reg_pop)) meta_reg_pop$model_type else "standard_rma"
 
+cat(sprintf("  Model: %s\n", subgroup_model_type))
 cat(sprintf("  Q_moderator = %.2f, df = 1, p = %.4f\n",
             rma_subgroup$QM, rma_subgroup$QMp))
 
@@ -1619,8 +1910,10 @@ p_forest <- ggplot(forest_data, aes(y = study_label)) +
   # 50% reference
   geom_vline(xintercept = 0.5, linetype = "dotted", color = "gray70") +
   # Study CIs
-  geom_errorbarh(aes(xmin = surv_lower, xmax = surv_upper),
-                 height = 0.3, color = "#34495E", linewidth = 0.5) +
+  geom_errorbar(
+    aes(xmin = surv_lower, xmax = surv_upper),
+    width = 0.3, color = "#34495E", linewidth = 0.5, orientation = "y"
+  ) +
   # Study points -- color by pop type, shape by tier
   geom_point(aes(x = survival_rate, size = weight_re_pct,
                  color = population_type, shape = data_tier),
@@ -1628,8 +1921,11 @@ p_forest <- ggplot(forest_data, aes(y = study_label)) +
   # Pooled diamond
   annotate("point", x = pooled_surv, y = 0.15,
            shape = 23, size = 4.5, fill = "#E74C3C", color = "#C0392B") +
-  annotate("errorbarh", xmin = pooled_surv_lower, xmax = pooled_surv_upper,
-           y = 0.15, height = 0.15, color = "#C0392B", linewidth = 0.7) +
+  annotate(
+    "errorbar", xmin = pooled_surv_lower, xmax = pooled_surv_upper,
+    y = 0.15, width = 0.15, color = "#C0392B", linewidth = 0.7,
+    orientation = "y"
+  ) +
   # Scales
   scale_color_manual(values = pop_colors, name = "Population type") +
   scale_shape_manual(values = tier_shapes, name = "Data tier") +
@@ -1645,9 +1941,9 @@ p_forest <- ggplot(forest_data, aes(y = study_label)) +
     y = NULL,
     caption = sprintf(
       paste0("Dashed line: pooled estimate (%.1f%%); ",
-             "Shaded: 95%% prediction interval (%.1f%%\u2013%.1f%%)\n",
-             "I\u00B2 = %.1f%% [%.1f%%, %.1f%%], ",
-             "\u03C4\u00B2 = %.3f, Q = %.1f (p %s)"),
+             "Shaded: 95%% prediction interval (%.1f%%-%.1f%%)\n",
+             "I^2 = %.1f%% [%.1f%%, %.1f%%], ",
+             "tau^2 = %.3f, Q = %.1f (p %s)"),
       pooled_surv * 100, pi_lower * 100, pi_upper * 100,
       I_sq, I_sq_lower, I_sq_upper, tau_sq, Q_stat,
       ifelse(Q_p < 0.001, "< 0.001", sprintf("= %.3f", Q_p))
@@ -1681,8 +1977,10 @@ cat("  9b. Tier comparison plot...\n")
 p_tier_compare <- ggplot(tier_comparison,
                           aes(y = factor(analysis, levels = rev(analysis)))) +
   geom_vline(xintercept = 0.5, linetype = "dotted", color = "gray70") +
-  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper),
-                 height = 0.3, color = "#34495E", linewidth = 0.8) +
+  geom_errorbar(
+    aes(xmin = ci_lower, xmax = ci_upper),
+    width = 0.3, color = "#34495E", linewidth = 0.8, orientation = "y"
+  ) +
   geom_point(aes(x = pooled_survival, size = k), color = "#3498DB") +
   geom_text(aes(x = pooled_survival,
                 label = sprintf("%.1f%% [%.1f, %.1f]\nk=%d, n=%s",
@@ -1745,7 +2043,7 @@ p_funnel <- ggplot() +
                  size = n_total),
              alpha = 0.8) +
   # Invert y-axis
-  scale_y_reverse(limits = c(max(combined_es$se_log_odds) * 1.15, 0)) +
+  scale_y_reverse(limits = c(max(funnel_bounds$se), 0)) +
   scale_color_manual(values = pop_colors, name = "Population type") +
   scale_shape_manual(values = tier_shapes, name = "Data tier") +
   scale_size_continuous(range = c(2, 7), name = "Sample size") +
@@ -1978,6 +2276,9 @@ cat("    - expanded_meta_analysis_stratified.csv\n")
 cat("    - expanded_meta_analysis_by_region.csv\n")
 cat("    - expanded_meta_analysis_tier_comparison.csv\n")
 cat("    - expanded_meta_analysis_loo.csv\n")
+cat("    - expanded_meta_primary_model_diagnostics.csv\n")
+cat("    - expanded_meta_primary_jackknife.csv\n")
+cat("    - expanded_meta_moderator_diagnostics.csv\n")
 cat("    - expanded_meta_influence.csv\n")
 cat("    - expanded_meta_trimfill.csv\n")
 cat("    - expanded_meta_tau_estimator_comparison.csv\n")
@@ -2010,8 +2311,7 @@ classification_results <- list()
 cat("  Scenario 1 (Current): Vardi=Natural, Garrison split (control=Nat, relocated=Rest)\n")
 scenario1 <- combined_es  # already has the current classification
 rma_s1 <- rma(yi = log_odds, vi = var_log_odds, data = scenario1, method = "REML", test = "knha")
-rma_s1_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
-                   data = scenario1, method = "REML", test = "knha")
+rma_s1_sub <- fit_clustered_moderator_model(scenario1, ~ population_type)
 
 s1_nat <- scenario1 %>% filter(population_type == "Natural colony")
 s1_rest <- scenario1 %>% filter(population_type == "Restoration fragment")
@@ -2028,23 +2328,24 @@ classification_results[[1]] <- data.frame(
   scenario = "Current (Vardi=Nat, Garrison split)",
   k_total = nrow(scenario1),
   k_natural = nrow(s1_nat), k_restoration = nrow(s1_rest),
+  moderator_model_type = if (!is.null(rma_s1_sub)) rma_s1_sub$model_type else NA_character_,
   pooled_survival = plogis(as.numeric(rma_s1$beta)),
   natural_survival = s1_nat_surv, restoration_survival = s1_rest_surv,
   difference_pp = (s1_nat_surv - s1_rest_surv) * 100,
-  moderator_p = rma_s1_sub$QMp,
+  moderator_p = if (!is.null(rma_s1_sub)) rma_s1_sub$qmp else NA_real_,
   I2 = rma_s1$I2, tau2 = rma_s1$tau2
 )
 cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
             nrow(scenario1), nrow(s1_nat), nrow(s1_rest),
             plogis(as.numeric(rma_s1$beta)) * 100,
-            (s1_nat_surv - s1_rest_surv) * 100, rma_s1_sub$QMp))
+            (s1_nat_surv - s1_rest_surv) * 100,
+            if (!is.null(rma_s1_sub)) rma_s1_sub$qmp else NA_real_))
 
 # --- Scenario 2: Conservative (Garrison excluded) ---
 cat("  Scenario 2 (Conservative): Vardi=Natural, Garrison=excluded\n")
 scenario2 <- combined_es %>% filter(!grepl("^garrison_ward_2008", study))
 rma_s2 <- rma(yi = log_odds, vi = var_log_odds, data = scenario2, method = "REML", test = "knha")
-rma_s2_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
-                   data = scenario2, method = "REML", test = "knha")
+rma_s2_sub <- fit_clustered_moderator_model(scenario2, ~ population_type)
 
 s2_nat <- scenario2 %>% filter(population_type == "Natural colony")
 s2_rest <- scenario2 %>% filter(population_type == "Restoration fragment")
@@ -2061,16 +2362,18 @@ classification_results[[2]] <- data.frame(
   scenario = "Conservative (Vardi=Nat, Garrison=excl)",
   k_total = nrow(scenario2),
   k_natural = nrow(s2_nat), k_restoration = nrow(s2_rest),
+  moderator_model_type = if (!is.null(rma_s2_sub)) rma_s2_sub$model_type else NA_character_,
   pooled_survival = plogis(as.numeric(rma_s2$beta)),
   natural_survival = s2_nat_surv, restoration_survival = s2_rest_surv,
   difference_pp = (s2_nat_surv - s2_rest_surv) * 100,
-  moderator_p = rma_s2_sub$QMp,
+  moderator_p = if (!is.null(rma_s2_sub)) rma_s2_sub$qmp else NA_real_,
   I2 = rma_s2$I2, tau2 = rma_s2$tau2
 )
 cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
             nrow(scenario2), nrow(s2_nat), nrow(s2_rest),
             plogis(as.numeric(rma_s2$beta)) * 100,
-            (s2_nat_surv - s2_rest_surv) * 100, rma_s2_sub$QMp))
+            (s2_nat_surv - s2_rest_surv) * 100,
+            if (!is.null(rma_s2_sub)) rma_s2_sub$qmp else NA_real_))
 
 # --- Scenario 3: Original coding (Vardi=Restoration, Garrison=excluded) ---
 cat("  Scenario 3 (Original): Vardi=Restoration, Garrison=excluded\n")
@@ -2081,8 +2384,7 @@ scenario3 <- combined_es %>%
                               "Restoration fragment", population_type)
   )
 rma_s3 <- rma(yi = log_odds, vi = var_log_odds, data = scenario3, method = "REML", test = "knha")
-rma_s3_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
-                   data = scenario3, method = "REML", test = "knha")
+rma_s3_sub <- fit_clustered_moderator_model(scenario3, ~ population_type)
 
 s3_nat <- scenario3 %>% filter(population_type == "Natural colony")
 s3_rest <- scenario3 %>% filter(population_type == "Restoration fragment")
@@ -2099,16 +2401,18 @@ classification_results[[3]] <- data.frame(
   scenario = "Original (Vardi=Rest, Garrison=excl)",
   k_total = nrow(scenario3),
   k_natural = nrow(s3_nat), k_restoration = nrow(s3_rest),
+  moderator_model_type = if (!is.null(rma_s3_sub)) rma_s3_sub$model_type else NA_character_,
   pooled_survival = plogis(as.numeric(rma_s3$beta)),
   natural_survival = s3_nat_surv, restoration_survival = s3_rest_surv,
   difference_pp = (s3_nat_surv - s3_rest_surv) * 100,
-  moderator_p = rma_s3_sub$QMp,
+  moderator_p = if (!is.null(rma_s3_sub)) rma_s3_sub$qmp else NA_real_,
   I2 = rma_s3$I2, tau2 = rma_s3$tau2
 )
 cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
             nrow(scenario3), nrow(s3_nat), nrow(s3_rest),
             plogis(as.numeric(rma_s3$beta)) * 100,
-            (s3_nat_surv - s3_rest_surv) * 100, rma_s3_sub$QMp))
+            (s3_nat_surv - s3_rest_surv) * 100,
+            if (!is.null(rma_s3_sub)) rma_s3_sub$qmp else NA_real_))
 
 # --- Scenario 4: Reclassify Bruckner as Natural (naturally-occurring storm fragments) ---
 cat("  Scenario 4 (Bruckner=Natural): Reclassify Bruckner as Natural colony\n")
@@ -2118,8 +2422,7 @@ cat("  Scenario 4 (Bruckner=Natural): Reclassify Bruckner as Natural colony\n")
 scenario4 <- combined_es %>%
   mutate(population_type = ifelse(study == "bruckner_bruckner_2001", "Natural colony", population_type))
 rma_s4 <- rma(yi = log_odds, vi = var_log_odds, data = scenario4, method = "REML", test = "knha")
-rma_s4_sub <- rma(yi = log_odds, vi = var_log_odds, mods = ~population_type,
-                   data = scenario4, method = "REML", test = "knha")
+rma_s4_sub <- fit_clustered_moderator_model(scenario4, ~ population_type)
 
 s4_nat <- scenario4 %>% filter(population_type == "Natural colony")
 s4_rest <- scenario4 %>% filter(population_type == "Restoration fragment")
@@ -2136,16 +2439,18 @@ classification_results[[4]] <- data.frame(
   scenario = "Bruckner=Natural (storm fragments)",
   k_total = nrow(scenario4),
   k_natural = nrow(s4_nat), k_restoration = nrow(s4_rest),
+  moderator_model_type = if (!is.null(rma_s4_sub)) rma_s4_sub$model_type else NA_character_,
   pooled_survival = plogis(as.numeric(rma_s4$beta)),
   natural_survival = s4_nat_surv, restoration_survival = s4_rest_surv,
   difference_pp = (s4_nat_surv - s4_rest_surv) * 100,
-  moderator_p = rma_s4_sub$QMp,
+  moderator_p = if (!is.null(rma_s4_sub)) rma_s4_sub$qmp else NA_real_,
   I2 = rma_s4$I2, tau2 = rma_s4$tau2
 )
 cat(sprintf("    k=%d (nat=%d, rest=%d), pooled=%.1f%%, diff=%.1f pp, p=%.4f\n",
             nrow(scenario4), nrow(s4_nat), nrow(s4_rest),
             plogis(as.numeric(rma_s4$beta)) * 100,
-            (s4_nat_surv - s4_rest_surv) * 100, rma_s4_sub$QMp))
+            (s4_nat_surv - s4_rest_surv) * 100,
+            if (!is.null(rma_s4_sub)) rma_s4_sub$qmp else NA_real_))
 
 # --- Save classification sensitivity ---
 class_sens <- do.call(rbind, classification_results)

@@ -1,0 +1,9 @@
+outcome,model,smooth,k_index,k_prime,edf,p_value
+survival,baseline,s(log_size),0.9646672729516614,NA,2.710104801179062,0.1
+survival,baseline,s(study),NA,NA,5.616629886566846,NA
+survival,spatiotemporal,s(log_size),0.9772983968831087,NA,2.189166578366268,0.4875
+survival,spatiotemporal,s(survey_year_num),0.9769075422462563,NA,2.148601539856286,0.4875
+survival,spatiotemporal,s(survey_year_factor),NA,NA,14.019729383662058,NA
+survival,spatiotemporal,"s(longitude,latitude)",0.9878340244444044,NA,4.874285021221336,0.8
+survival,spatiotemporal,s(site_id),NA,NA,40.60159043140186,NA
+survival,spatiotemporal,s(study),NA,NA,0.9209149463013016,NA

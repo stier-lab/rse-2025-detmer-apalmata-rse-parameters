@@ -35,7 +35,7 @@ For each region and time period, the following search terms were used:
 **Peer-reviewed literature:**
 - Eakin et al. 2010 (*PLoS ONE*) -- Caribbean corals in crisis: 2005 thermal stress
 - Miller et al. 2009 (*Coral Reefs*) -- Disease following 2005 bleaching in USVI
-- Rogers & Muller 2012 (*Dis Aquat Org*) -- A. palmata bleaching/disease/recovery in St. John 2003-2010
+- Rogers & Muller 2012 (*Coral Reefs* 31:807-819) -- A. palmata bleaching/disease/recovery in St. John 2003-2010
 - Lirman et al. 2011 (*PLoS ONE*) -- 2010 cold-water event mortality in FL
 - Colella et al. 2012 (*Coral Reefs*) -- Cold-water event catastrophic benthic mortality
 - Kemp et al. 2016 (*Ecosphere*) -- Life after cold death in FL Keys

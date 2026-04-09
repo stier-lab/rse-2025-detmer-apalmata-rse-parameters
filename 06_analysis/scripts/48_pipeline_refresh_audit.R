@@ -278,6 +278,16 @@ render_summary_lines <- function(artifact_status) {
     )
   }
 
+  stale_artifacts <- artifact_status %>%
+    filter(exists, generated_this_run %in% FALSE) %>%
+    arrange(category, artifact) %>%
+    transmute(line = sprintf("- `%s` (%s)", artifact, path))
+
+  missing_artifacts <- artifact_status %>%
+    filter(!exists) %>%
+    arrange(category, artifact) %>%
+    transmute(line = sprintf("- `%s` (%s)", artifact, path))
+
   c(
     summary_lines,
     "",
@@ -285,7 +295,15 @@ render_summary_lines <- function(artifact_status) {
     "",
     "- `canonical_statistics.csv` is the machine-readable summary of manuscript-facing numeric results.",
     "- `standardized_data_inventory.csv` snapshots current registered inputs, their row counts, hashes, and key-level integrity metadata.",
-    "- `canonical_artifact_status.csv` and `pipeline_artifact_freshness.csv` mark whether canonical outputs were regenerated during the current run."
+    "- `canonical_artifact_status.csv` and `pipeline_artifact_freshness.csv` mark whether canonical outputs were regenerated during the current run.",
+    "",
+    "## Stale Artifacts",
+    "",
+    if (nrow(stale_artifacts) > 0) stale_artifacts$line else "- None.",
+    "",
+    "## Missing Artifacts",
+    "",
+    if (nrow(missing_artifacts) > 0) missing_artifacts$line else "- None."
   )
 }
 

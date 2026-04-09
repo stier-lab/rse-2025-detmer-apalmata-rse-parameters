@@ -4,8 +4,12 @@
 # A. palmata Demographic Analysis - Data Loading and Preparation
 ################################################################################
 #
-# PURPOSE: Load, clean, and prepare A. palmata demographic data for analysis
-#          Creates standardized size classes and data quality summaries
+# PURPOSE: Load, clean, and prepare A. palmata demographic data for analysis.
+#          Creates standardized size classes, data quality summaries, and a
+#          cell-level survival dataset that merges individual-level data
+#          (aggregated to study x size_class x interval cells) with summary-level
+#          data from apal_surv_summ.csv for use in downstream transition matrix
+#          and parameter estimation scripts.
 #
 # INPUTS:
 #   - 05_data/standardized/apal_surv_ind.csv (individual survival data)
@@ -13,8 +17,9 @@
 #   - 05_data/standardized/apal_surv_summ.csv (summarized survival data)
 #
 # OUTPUTS:
-#   - 06_analysis/output/prepared_survival_data.rds
+#   - 06_analysis/output/prepared_survival_data.rds (individual 0/1 records)
 #   - 06_analysis/output/prepared_growth_data.rds
+#   - 06_analysis/output/prepared_survival_cells.rds (cell-level: ind + summary)
 #   - 06_analysis/output/standardized_data_inventory.csv
 #   - 06_analysis/output/summary_survival_by_size.csv
 #   - 06_analysis/output/summary_growth_by_size.csv
@@ -675,6 +680,134 @@ cat(sprintf("✓ Saved: prepared_survival_data.rds (%d records)\n", nrow(surv_cl
 
 saveRDS(growth_clean, file.path(output_dir, "prepared_growth_data.rds"))
 cat(sprintf("✓ Saved: prepared_growth_data.rds (%d records)\n", nrow(growth_clean)))
+
+# =============================================================================
+# 8b. BUILD CELL-LEVEL SURVIVAL DATASET (Individual + Summary)
+# =============================================================================
+# Creates a unified dataset where each row is a (study, size_class, year/interval)
+# cell with sample size and proportion surviving. This allows downstream scripts
+# (13, 17) to use inverse-variance weighting to combine individual-level and
+# summary-level data properly.
+#
+# See 04_extraction/data_integration_issues.md for the rationale.
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  BUILDING CELL-LEVEL SURVIVAL DATASET\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+# --- Step 1: Aggregate individual data to cells ---
+# Group by study × size_class × time_interval_yr (matches script 13 grouping)
+ind_cells <- surv_clean %>%
+  filter(!is.na(size_class)) %>%
+  mutate(time_interval_yr = coalesce(time_interval_yr, 1.0)) %>%
+  group_by(study, region, size_class, time_interval_yr, population_type,
+           data_type, fragment) %>%
+  summarise(
+    n_initial = n(),
+    n_survived = sum(survived),
+    prop_survived = mean(survived),
+    size_cm2_mean = mean(size_cm2, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(data_source = "individual")
+
+cat(sprintf("  Individual-level cells: %d (from %d records across %d studies)\n",
+            nrow(ind_cells), nrow(surv_clean), n_distinct(ind_cells$study)))
+
+# --- Step 2: Prepare summary data cells ---
+if (!is.null(surv_summ) && nrow(surv_summ) > 0) {
+  summ_cells <- surv_summ %>%
+    filter(!is.na(prop_survived), !is.na(n_initial), n_initial > 0) %>%
+    mutate(
+      # Assign size class using mean size and canonical SIZE_BREAKS
+      size_class = cut(size_cm2_mean,
+                       breaks = size_breaks,
+                       labels = size_labels,
+                       include.lowest = TRUE),
+      # Flag records where the reported size range spans multiple size classes
+      size_range_spans_classes = {
+        sc_min <- cut(coalesce(size_cm2_min, size_cm2_mean),
+                      breaks = size_breaks, labels = size_labels,
+                      include.lowest = TRUE)
+        sc_max <- cut(coalesce(size_cm2_max, size_cm2_mean),
+                      breaks = size_breaks, labels = size_labels,
+                      include.lowest = TRUE)
+        as.character(sc_min) != as.character(sc_max)
+      },
+      time_interval_yr = coalesce(time_interval_yr, 1.0),
+      n_survived = round(prop_survived * n_initial),
+      # Classify population_type using multiple signals:
+      # fragment = "Y" → Restoration fragment (outplanted fragments)
+      # data_type = "lab" or "nursery" → Restoration (lab-reared/nursery-grown)
+      # treatment_1 = "Ex situ" or "In situ" → Restoration (outplanted recruits)
+      # study name contains "recruits" → Restoration
+      # Otherwise fragment = "N" + field → Natural colony
+      population_type = case_when(
+        fragment == "Y" ~ "Restoration fragment",
+        data_type %in% c("lab", "nursery") ~ "Restoration recruit",
+        grepl("Ex situ|In situ", treatment_1, ignore.case = TRUE) ~ "Restoration recruit",
+        grepl("recruit", study, ignore.case = TRUE) ~ "Restoration recruit",
+        # Chamberland et al. 2015 is a larval settlement study — field-outplanted
+        # settlers are not natural colonies even when data_type = "field"
+        study == "chamberland_et_al_2015" ~ "Restoration recruit",
+        TRUE ~ "Natural colony"
+      ),
+      data_source = "summary"
+    ) %>%
+    filter(!is.na(size_class)) %>%
+    select(study, region, size_class, time_interval_yr, population_type,
+           data_type, fragment, n_initial, n_survived, prop_survived,
+           size_cm2_mean, data_source, size_range_spans_classes)
+
+  cat(sprintf("  Summary-level cells: %d (from %d studies)\n",
+              nrow(summ_cells), n_distinct(summ_cells$study)))
+
+  n_spanning <- sum(summ_cells$size_range_spans_classes, na.rm = TRUE)
+  if (n_spanning > 0) {
+    cat(sprintf("  ⚠ %d summary cells have size ranges spanning multiple size classes\n",
+                n_spanning))
+  }
+
+  # Add the flag column to ind_cells (always FALSE for individual data)
+  ind_cells$size_range_spans_classes <- FALSE
+
+  # --- Step 3: Stack into unified cells dataset ---
+  survival_cells <- bind_rows(ind_cells, summ_cells)
+} else {
+  cat("  No summary survival data found — cells dataset is individual-only.\n")
+  ind_cells$size_range_spans_classes <- FALSE
+  survival_cells <- ind_cells
+}
+
+# --- Step 4: Compute inverse-variance weights (logit scale) ---
+# Match the PLO (logit-transformed proportion) approach used in 14b meta-analysis.
+# Continuity correction for 0% or 100% survival cells (add 0.5 to numerator and
+# denominator) to avoid infinite logit values.
+survival_cells <- survival_cells %>%
+  mutate(
+    # Continuity-corrected proportion for logit transform
+    prop_adj = (n_survived + 0.5) / (n_initial + 1),
+    yi = log(prop_adj / (1 - prop_adj)),          # logit(p)
+    vi = 1 / (n_initial * prop_adj * (1 - prop_adj))  # variance of logit(p)
+  )
+
+cat(sprintf("\n  Total cells: %d (%d individual + %d summary)\n",
+            nrow(survival_cells),
+            sum(survival_cells$data_source == "individual"),
+            sum(survival_cells$data_source == "summary")))
+cat(sprintf("  Total studies: %d\n", n_distinct(survival_cells$study)))
+cat(sprintf("  Total N (colonies): %d\n", sum(survival_cells$n_initial)))
+
+# Size class breakdown
+cell_summary <- survival_cells %>%
+  group_by(size_class, data_source) %>%
+  summarise(n_cells = n(), total_n = sum(n_initial), .groups = "drop")
+cat("\n  Cells by size class and data source:\n")
+print(as.data.frame(cell_summary))
+
+saveRDS(survival_cells, file.path(output_dir, "prepared_survival_cells.rds"))
+cat(sprintf("\n✓ Saved: prepared_survival_cells.rds (%d cells)\n", nrow(survival_cells)))
 
 # Save summary statistics
 all_summaries <- list(

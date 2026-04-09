@@ -98,7 +98,7 @@ These items apply to the structured abstract, which has not yet been drafted.
 | A5 | **Risk of bias:** Specify methods for assessing risk of bias | TODO | |
 | A6 | **Synthesis methods:** Specify the methods used for synthesis | TODO | |
 | A7 | **Results -- Included studies:** Report the number of studies and participants | TODO | Numbers available: 17 studies, 22 effects, N = 8,805 |
-| A8 | **Results -- Synthesis:** Present the main results of the synthesis | TODO | Numbers available: pooled survival 78.0% (CI: 70.1--84.3%), lambda 1.001 (CI: 0.863--1.035), I^2 = 96.6% |
+| A8 | **Results -- Synthesis:** Present the main results of the synthesis | TODO | Numbers available: pooled survival 78.0% (CI: 70.1--84.3%), lambda 0.888 (CI: 0.740--0.959), I^2 = 96.6% |
 | A9 | **Results -- Risk of bias:** Present results of risk-of-bias assessment | TODO | Numbers available: mean 6.8/10 |
 | A10 | **Discussion -- Limitations:** Discuss limitations of the evidence | TODO | |
 | A11 | **Discussion -- Interpretation:** Provide a general interpretation of results | TODO | |

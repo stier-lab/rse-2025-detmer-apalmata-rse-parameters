@@ -1,0 +1,8 @@
+outcome,model,smooth,k_index,k_prime,edf,p_value
+positive_growth,baseline,s(log_size),1.019710307350602,NA,3.2811586881508643,0.9675
+positive_growth,baseline,s(study),NA,NA,5.06068693061876,NA
+positive_growth,spatiotemporal,s(log_size),0.9994152083061435,NA,3.34171763818641,0.525
+positive_growth,spatiotemporal,s(survey_year_factor),NA,NA,14.745781590932147,NA
+positive_growth,spatiotemporal,"s(longitude,latitude)",0.9930507284470872,NA,1.5814257603394266,0.335
+positive_growth,spatiotemporal,s(site_id),NA,NA,48.2880321132348,NA
+positive_growth,spatiotemporal,s(study),NA,NA,1.817199160768216e-4,NA

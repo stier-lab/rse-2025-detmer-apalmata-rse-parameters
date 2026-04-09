@@ -3,6 +3,10 @@
 # 23_VERIFICATION.R
 # Statistical Output Verification for Publication Figures
 # Extracts canonical values to ensure figure annotations are correct
+#
+# NOTE: Shares script number 23 with 23_figS2_data_gaps.R — different purposes
+# (verification vs figure). Both are retained because renaming would break
+# run_all.R and cross-references.
 ################################################################################
 
 suppressPackageStartupMessages({
@@ -188,7 +192,7 @@ cat("\n")
 # ==============================================================================
 
 cat("═══════════════════════════════════════════════════════════════════════\n")
-cat("GROWTH ANALYSIS (Canonical Values from 04_growth_rate_comparison.R)\n")
+cat("GROWTH COMPARISON ANALYSIS (AGR vs RGR from 04_growth_rate_comparison.R)\n")
 cat("═══════════════════════════════════════════════════════════════════════\n\n")
 
 growth_summary_file <- file.path(output_dir, "growth_rate_summary.csv")
@@ -217,13 +221,20 @@ if (file.exists(growth_summary_file)) {
     cat(sprintf("  Note: RGR explains %.0fx more variance than AGR because it accounts\n", improvement))
     cat("           for negative allometry (small colonies grow relatively faster)\n\n")
 
-    # Thresholds
+    # Allometry/comparison inflection from 04_growth_rate_comparison.R.
+    # This is not the primary manuscript growth threshold from 03_growth_thresholds.R.
     rgr_threshold <- growth_summary$threshold_cm2[growth_summary$metric == "RGR"]
     if (length(rgr_threshold) > 0) {
-      cat(sprintf("  RGR Threshold: %.1f cm² (where growth pattern changes most)\n\n",
+      cat(sprintf("  RGR allometry inflection: %.1f cm² (comparison-layer inflection from script 04)\n\n",
                   rgr_threshold))
-      add_stat("growth", "rgr_threshold_cm2", rgr_threshold[1], sprintf("%.1f cm²", rgr_threshold[1]),
-               "06_analysis/output/growth_rate_summary.csv")
+      add_stat(
+        "growth",
+        "rgr_allometry_inflection_cm2",
+        rgr_threshold[1],
+        sprintf("%.1f cm²", rgr_threshold[1]),
+        "06_analysis/output/growth_rate_summary.csv",
+        "Inflection from 04_growth_rate_comparison.R; not the primary manuscript threshold."
+      )
     }
 
     add_stat("growth", "agr_r2_pct", agr_r2 * 100, sprintf("%.1f%%", agr_r2 * 100),
@@ -291,6 +302,45 @@ cat("POPULATION MATRIX MODEL\n")
 cat("═══════════════════════════════════════════════════════════════════════\n\n")
 
 lambda_file <- file.path(output_dir, "lambda_bootstrap_samples.rds")
+pop_params_file <- file.path(output_dir, "population_parameters.csv")
+
+if (file.exists(pop_params_file)) {
+  pop_params <- read_csv(pop_params_file, show_col_types = FALSE)
+  get_param <- function(name) {
+    row <- pop_params %>% filter(parameter == name)
+    if (nrow(row) == 1) as.numeric(row$value[1]) else NA_real_
+  }
+
+  det_lambda <- get_param("lambda")
+  det_ci_lower <- get_param("lambda_ci_lower")
+  det_ci_upper <- get_param("lambda_ci_upper")
+  det_p_decline <- get_param("p_decline")
+
+  if (is.finite(det_lambda)) {
+    add_stat(
+      "population", "lambda_deterministic", det_lambda, sprintf("%.3f", det_lambda),
+      "06_analysis/output/population_parameters.csv"
+    )
+  }
+  if (is.finite(det_ci_lower)) {
+    add_stat(
+      "population", "lambda_ci_lower", det_ci_lower, sprintf("%.3f", det_ci_lower),
+      "06_analysis/output/population_parameters.csv"
+    )
+  }
+  if (is.finite(det_ci_upper)) {
+    add_stat(
+      "population", "lambda_ci_upper", det_ci_upper, sprintf("%.3f", det_ci_upper),
+      "06_analysis/output/population_parameters.csv"
+    )
+  }
+  if (is.finite(det_p_decline)) {
+    add_stat(
+      "population", "p_decline_pct", det_p_decline * 100, sprintf("%.1f%%", det_p_decline * 100),
+      "06_analysis/output/population_parameters.csv"
+    )
+  }
+}
 
 if (file.exists(lambda_file)) {
   lambda_samples <- readRDS(lambda_file)
@@ -317,16 +367,15 @@ if (file.exists(lambda_file)) {
   cat(sprintf("  Time to 50%% population: %.1f years (at mean rate)\n\n",
               log(0.5) / log(lambda_mean)))
 
-  add_stat("population", "lambda_mean", lambda_mean, sprintf("%.4f", lambda_mean),
-           "06_analysis/output/lambda_bootstrap_samples.rds")
-  add_stat("population", "lambda_ci_lower", lambda_ci[1], sprintf("%.3f", lambda_ci[1]),
-           "06_analysis/output/lambda_bootstrap_samples.rds")
-  add_stat("population", "lambda_ci_upper", lambda_ci[2], sprintf("%.3f", lambda_ci[2]),
-           "06_analysis/output/lambda_bootstrap_samples.rds")
-  add_stat("population", "p_decline_pct", p_decline, sprintf("%.1f%%", p_decline),
-           "06_analysis/output/lambda_bootstrap_samples.rds")
-  add_stat("population", "annual_decline_pct", annual_decline, sprintf("%.2f%%", annual_decline),
-           "06_analysis/output/lambda_bootstrap_samples.rds")
+  add_stat(
+    "population", "lambda_bootstrap_mean", lambda_mean, sprintf("%.4f", lambda_mean),
+    "06_analysis/output/lambda_bootstrap_samples.rds"
+  )
+  add_stat(
+    "population", "annual_decline_pct_from_bootstrap_mean",
+    annual_decline, sprintf("%.2f%%", annual_decline),
+    "06_analysis/output/lambda_bootstrap_samples.rds"
+  )
 
 } else {
   cat("  ⚠ Warning: lambda_bootstrap_samples.rds not found\n")
@@ -589,7 +638,7 @@ cat(sprintf("  GAM deviance explained = %.1f%%\n", gam_dev))
 cat(sprintf("  p %s\n", ifelse(p_val < 0.001, "< 0.001", sprintf("= %.4f", p_val))))
 cat("\n")
 
-cat("Figure 4 (Growth):\n")
+cat("Figure 2 (Growth):\n")
 if (exists("agr_r2") && exists("rgr_r2")) {
   cat(sprintf("  AGR R² = %.1f%%\n", agr_r2 * 100))
   cat(sprintf("  RGR R² = %.1f%%\n", rgr_r2 * 100))
@@ -597,7 +646,7 @@ if (exists("agr_r2") && exists("rgr_r2")) {
 }
 cat("\n")
 
-cat("Figure 5 (Population Model):\n")
+cat("Figure 4 (Population Model):\n")
 if (exists("lambda_mean")) {
   cat(sprintf("  λ = %.3f (95%% CI: %.2f-%.2f)\n", lambda_mean, lambda_ci[1], lambda_ci[2]))
   cat(sprintf("  P(decline) = %.0f%%\n", p_decline))

@@ -1,0 +1,2 @@
+model,k_effects,k_parent_studies,pooled_survival,ci_lower,ci_upper,pi_lower,pi_upper,sigma2_between,sigma2_within,tau2_total,max_abs_parent_study_change_pp,n_influential_parent_studies
+Three-level rma.mv(),22,17,0.7801945049377969,0.701037085786111,0.8430844233773642,0.39494448344256805,0.9507422103900565,0.30611316044090187,0.31719067205132134,0.6233038324922232,1.4215635881379418,0

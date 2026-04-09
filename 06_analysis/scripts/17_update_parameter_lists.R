@@ -5,10 +5,13 @@
 # PURPOSE:
 #   Regenerate the parameter_lists/ files using the current analysis pipeline
 #   outputs. This ensures parameters are consistent with the latest threshold
-#   and transition matrix analyses.
+#   and transition matrix analyses. Survival parameters are derived from
+#   cell-weighted estimates (prepared_survival_cells.rds), which combine
+#   individual-level and summary-level data with inverse-variance weighting.
 #
 # INPUTS:
-#   - 06_analysis/output/prepared_survival_data.rds
+#   - 06_analysis/output/prepared_survival_data.rds (individual records, for lab/growth)
+#   - 06_analysis/output/prepared_survival_cells.rds (cell-level: individual + summary)
 #   - 06_analysis/output/prepared_growth_data.rds
 #   - 06_analysis/output/survival_thresholds.csv
 #   - 06_analysis/output/growth_thresholds.csv
@@ -88,9 +91,15 @@ cat("\n")
 
 cat("Loading prepared data...\n")
 
-# Survival data
+# Survival data (individual records — still used for nursery/lab subsetting and growth)
 surv_data <- readRDS(file.path(output_dir, "prepared_survival_data.rds"))
-cat(sprintf("  Survival: %d observations\n", nrow(surv_data)))
+cat(sprintf("  Survival (individual): %d observations\n", nrow(surv_data)))
+
+# Cell-level survival dataset (individual + summary, sample-size weighted)
+surv_cells <- readRDS(file.path(output_dir, "prepared_survival_cells.rds"))
+cat(sprintf("  Survival (cells): %d cells from %d studies, N=%s\n",
+            nrow(surv_cells), n_distinct(surv_cells$study),
+            scales::comma(sum(surv_cells$n_initial))))
 
 # Growth data
 growth_data <- readRDS(file.path(output_dir, "prepared_growth_data.rds"))
@@ -172,6 +181,63 @@ bootstrap_survival <- function(data, size_class_col = "size_class",
       ci_upper = quantile(boot_means, 0.975),
       n = nrow(sc_data),
       n_studies = n_studies,
+      bootstrap_dist = boot_means
+    )
+  }
+
+  return(results)
+}
+
+# Cell-level hierarchical bootstrap for survival (individual + summary data)
+# Stage 1: Resample studies with replacement
+# Stage 2: Resample cells within each study (each cell has n_initial and prop_survived)
+# Returns sample-size-weighted mean survival per size class, matching script 13 methodology
+bootstrap_survival_cells <- function(cells, size_class_col = "size_class",
+                                      n_boot = 1000, study_col = "study") {
+  size_classes <- sort(unique(cells[[size_class_col]]))
+  results <- list()
+
+  for (sc in size_classes) {
+    sc_cells <- cells[cells[[size_class_col]] == sc, ]
+
+    if (nrow(sc_cells) == 0) {
+      sc_num <- as.numeric(gsub("[^0-9]", "", sc))
+      prior_a <- ifelse(sc_num >= 4, 7, ifelse(sc_num >= 2, 3, 1))
+      prior_b <- ifelse(sc_num >= 4, 3, ifelse(sc_num >= 2, 7, 9))
+      boot_samples <- rbeta(n_boot, prior_a, prior_b)
+      results[[as.character(sc)]] <- list(
+        mean = mean(boot_samples), sd = sd(boot_samples),
+        ci_lower = quantile(boot_samples, 0.025),
+        ci_upper = quantile(boot_samples, 0.975),
+        n = 0, n_studies = 0, bootstrap_dist = boot_samples,
+        note = sprintf("No data - using Beta(%d,%d) prior", prior_a, prior_b)
+      )
+      next
+    }
+
+    studies <- unique(sc_cells[[study_col]])
+    n_studies <- length(studies)
+    boot_means <- numeric(n_boot)
+
+    for (b in 1:n_boot) {
+      boot_studies <- sample(studies, n_studies, replace = TRUE)
+      boot_cells <- do.call(rbind, lapply(boot_studies, function(s) {
+        study_cells <- sc_cells[sc_cells[[study_col]] == s, ]
+        study_cells[sample(nrow(study_cells), nrow(study_cells), replace = TRUE), ]
+      }))
+      # Inverse-variance weighted mean on logit scale, back-transformed (matches script 13)
+      boot_cells$annual_surv <- boot_cells$prop_survived^(1 / boot_cells$time_interval_yr)
+      boot_cells$ann_adj <- (boot_cells$annual_surv * boot_cells$n_initial + 0.5) / (boot_cells$n_initial + 1)
+      boot_cells$yi_ann <- log(boot_cells$ann_adj / (1 - boot_cells$ann_adj))
+      boot_cells$vi_ann <- 1 / (boot_cells$n_initial * boot_cells$ann_adj * (1 - boot_cells$ann_adj))
+      boot_means[b] <- plogis(weighted.mean(boot_cells$yi_ann, w = 1 / boot_cells$vi_ann))
+    }
+
+    results[[as.character(sc)]] <- list(
+      mean = mean(boot_means), sd = sd(boot_means),
+      ci_lower = quantile(boot_means, 0.025),
+      ci_upper = quantile(boot_means, 0.975),
+      n = sum(sc_cells$n_initial), n_studies = n_studies,
       bootstrap_dist = boot_means
     )
   }
@@ -300,9 +366,9 @@ bootstrap_growth_transitions <- function(data, n_boot = 1000, study_col = "study
 # 1. FIELD SURVIVAL PARAMETERS
 # =============================================================================
 
-cat("Generating field survival parameters...\n")
+cat("Generating field survival parameters (cell-weighted, individual + summary)...\n")
 
-# Add size class to survival data
+# Add size class to individual survival data (still needed for nursery/lab and growth)
 surv_data <- surv_data %>%
   mutate(
     size_class = cut(size_cm2,
@@ -311,36 +377,55 @@ surv_data <- surv_data %>%
                      include.lowest = TRUE)
   )
 
-# Calculate survival by size class
-surv_by_sc <- surv_data %>%
+# Filter cells to natural colonies for field survival parameters
+# This matches script 13's transition matrix filter: wild populations only.
+# Restoration fragments and recruits go into nursery parameters instead.
+field_cells <- surv_cells %>%
+  filter(population_type == "Natural colony")
+
+cat(sprintf("  Field cells: %d (%d individual + %d summary) from %d studies, N=%s\n",
+            nrow(field_cells),
+            sum(field_cells$data_source == "individual"),
+            sum(field_cells$data_source == "summary"),
+            n_distinct(field_cells$study),
+            scales::comma(sum(field_cells$n_initial))))
+
+# Calculate survival by size class (inverse-variance weighted on logit scale)
+surv_by_sc <- field_cells %>%
+  filter(!is.na(size_class)) %>%
+  mutate(
+    annual_survival = prop_survived^(1 / time_interval_yr),
+    ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
+    yi_annual = log(ann_adj / (1 - ann_adj)),
+    vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
+  ) %>%
   group_by(size_class) %>%
   summarise(
-    n = n(),
-    mean = mean(survived),
-    sd = sd(survived),
-    Q05 = quantile(survived, 0.05),
-    Q25 = quantile(survived, 0.25),
-    Q50 = quantile(survived, 0.50),
-    Q75 = quantile(survived, 0.75),
-    Q95 = quantile(survived, 0.95),
+    n = sum(n_initial),
+    n_cells = n(),
+    n_studies = n_distinct(study),
+    mean = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
+    sd = sqrt(mean * (1 - mean) / n),  # Approximate binomial SE
     .groups = "drop"
   )
 
-cat("  Survival by size class:\n")
+cat("  Survival by size class (cell-weighted):\n")
 print(surv_by_sc)
 cat("\n")
 
-# Bootstrap survival distributions (hierarchical: studies then observations)
+# Bootstrap survival distributions (hierarchical: studies then cells)
 set.seed(42)
-SC_surv_results <- bootstrap_survival(surv_data, n_boot = 1000, study_col = "study")
+SC_surv_results <- bootstrap_survival_cells(field_cells, n_boot = 1000, study_col = "study")
 
 # Create field survival parameter list
 field_surv_pars <- list(
   SC_surv_results = SC_surv_results,
   surv_summary = surv_by_sc,
   size_class_breaks = size_class_breaks,
-  n_observations = nrow(surv_data),
-  n_studies = n_distinct(surv_data$study),
+  n_observations = sum(field_cells$n_initial),
+  n_cells = nrow(field_cells),
+  n_studies = n_distinct(field_cells$study),
+  data_integration = "cell-level weighted (individual + summary data)",
   generation_date = Sys.time(),
   ci_type = "cluster_bootstrap_percentile",
   ci_interpretation = "Confidence interval for population mean, not prediction interval for individual outcome",
@@ -430,37 +515,52 @@ cat("  ✓ Saved: field_growth_pars.rds\n\n")
 # 3. NURSERY SURVIVAL PARAMETERS
 # =============================================================================
 
-cat("Generating nursery survival parameters...\n")
+cat("Generating nursery survival parameters (cell-weighted)...\n")
 
-# Filter for nursery data (data_type values are "nursery_in" and "nursery_ex", not "nursery")
-nurs_surv_data <- surv_data %>%
-  filter(grepl("nursery", data_type) | grepl("nursery|Nursery", study, ignore.case = TRUE))
+# Filter cells to nursery/restoration data
+nurs_cells <- surv_cells %>%
+  filter(grepl("nursery", data_type, ignore.case = TRUE) |
+         population_type == "Restoration fragment" |
+         grepl("nursery|Nursery", study, ignore.case = TRUE))
 
-if (nrow(nurs_surv_data) > 0) {
-  nurs_surv_by_sc <- nurs_surv_data %>%
+if (nrow(nurs_cells) > 0) {
+  nurs_surv_by_sc <- nurs_cells %>%
+    filter(!is.na(size_class)) %>%
+    mutate(
+      annual_survival = prop_survived^(1 / time_interval_yr),
+      ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
+      yi_annual = log(ann_adj / (1 - ann_adj)),
+      vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
+    ) %>%
     group_by(size_class) %>%
     summarise(
-      n = n(),
-      mean = mean(survived),
-      sd = sd(survived),
+      n = sum(n_initial),
+      n_cells = n(),
+      n_studies = n_distinct(study),
+      mean = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
+      sd = sqrt(mean * (1 - mean) / n),
       .groups = "drop"
     )
 
   set.seed(42)
-  nurs_SC_surv_results <- bootstrap_survival(nurs_surv_data, n_boot = 500, study_col = "study")
+  nurs_SC_surv_results <- bootstrap_survival_cells(nurs_cells, n_boot = 500, study_col = "study")
 
   nurs_surv_pars <- list(
     SC_surv_results = nurs_SC_surv_results,
     surv_summary = nurs_surv_by_sc,
-    n_observations = nrow(nurs_surv_data),
-    n_studies = n_distinct(nurs_surv_data$study),
+    n_observations = sum(nurs_cells$n_initial),
+    n_cells = nrow(nurs_cells),
+    n_studies = n_distinct(nurs_cells$study),
+    data_integration = "cell-level weighted (individual + summary data)",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
     ci_interpretation = "Confidence interval for population mean, not prediction interval for individual outcome",
     note_prediction = "For individual coral predictions, combine parameter uncertainty with binomial/normal observation model"
   )
 
-  cat(sprintf("  %d nursery survival observations\n", nrow(nurs_surv_data)))
+  cat(sprintf("  %d nursery cells, N=%s from %d studies\n",
+              nrow(nurs_cells), scales::comma(sum(nurs_cells$n_initial)),
+              n_distinct(nurs_cells$study)))
 } else {
   # Create placeholder with field data priors
   cat("  No nursery-specific survival data, using field data priors\n")

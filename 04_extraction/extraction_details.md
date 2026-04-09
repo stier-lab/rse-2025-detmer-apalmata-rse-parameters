@@ -164,6 +164,66 @@
 
 ---
 
+### Study 5b: mendoza_quiroz_et_al_2023
+
+**Citation:** Mendoza-Quiroz E, et al. (2023). From nursery to reef: Evaluation of the settlement, survival, and growth rates of early recruits of the threatened coral *Acropora palmata*. *PeerJ* 11:e15813.
+
+**Data source:** Published data tables and supplementary material. Raw data file: `05_data/original/MendozaQuiroz2023Data.xlsx`.
+
+**Extractor:** Detmer (raw data processing via R scripts)
+
+**Values extracted:**
+- n_total (individual-level): 52 colony-intervals with valid survival outcome (Picudas reef + nursery + Cuevones)
+- n_survived (individual-level): 52 (100% survival in the individual-level data; mortality only in the lab recruit cohorts)
+- survival_rate: 1.0 (individual-level, Picudas + nursery); lab recruits: 0.010 (2011 cohort, n=1,155), 0.242 (2012 cohort, n=393)
+- mean_size_cm2: varies by site (nursery/Cuevones: diameter-derived; Picudas: L×W)
+- Individual growth data from in situ nursery, Cuevones reef, and Picudas reef
+- Ex situ (lab) recruit survival from Table 1 (2011 and 2012 cohorts) → enters `apal_surv_summ.csv`
+- Ex situ recruit sizes from supplementary data (2012 cohort only)
+
+**Assumptions:**
+- **Size conversion for nursery and Cuevones reef:** Size given as maximum diameter only. Converted to planar area using empirically estimated W:L ratio from Picudas reef data (which has both length and width): `area = d² × W:L_ratio`. This is neither circular (`π(d/2)²`) nor strictly square (`d²`), but uses the species-specific allometry from the same study.
+- **Picudas reef:** Length and width both available; area = L × W (direct).
+- **Longitude correction:** Picudas reef reported as -87.85°W (on land); corrected to -86.85°W based on map verification.
+- **Ex situ recruit sizes:** Only available for the 2012 cohort. The 2011 cohort initial size was estimated from other studies (flagged in study_notes).
+- **Growth estimation:** Lab growth estimated as the difference between mean sizes at months 3 and 12 (first and last months with size data), converted to cm²/yr.
+- **Time intervals:** Exact sampling dates available for nursery and Cuevones; for Picudas only month/year given, so time_interval_yr assumed to be 1.
+
+**Audit status:** Values verified against source data file. Size conversion method confirmed in integration code (`APAL_data_integration.rmd`, lines 786, 810).
+
+**Value entering meta-analysis:** Individual-level data enters the pipeline as Tier 1. Summary-level lab recruit data (Table 1) enters `apal_surv_summ.csv` as two rows (2011 and 2012 cohorts). Classified as "Restoration recruit" for population_type.
+
+---
+
+### Study 5c: neely_et_al_2022
+
+**Citation:** Neely KL, et al. (2022). Florida Keys National Marine Sanctuary Coral Disease Monitoring Data (2010-2016). Shared directly with Stier Lab, received 2026-04-01.
+
+**Data source:** Direct data sharing (unpublished APAL demographic monitoring). Raw file: `05_data/original/neely_apal_data.csv`.
+
+**Extractor:** Detmer & Stier Lab (raw data processing via R standardization script)
+
+**Values extracted:**
+- n_total: 878 unique tagged colonies across the Florida Keys (2010-2016)
+- n_colony_intervals: 1,706 colony-year records with valid survival outcome
+- survival_rate: 0.88 (non-disturbance intervals); 0.53 (2014 disease intervals); 0.82 overall
+- mean_size_cm2: ~580 cm² (median ~120 cm²; highly right-skewed, range 0.1–32,000 cm²)
+- Size measured as live tissue area (LAI, cm²) directly from photo analysis
+- Binary survival (0 = dead as absorbing state confirmed)
+- Time intervals spanning 2010-2016 with variable census frequency (~annual)
+
+**Assumptions:**
+- **2014 catastrophic mortality event:** Survey intervals spanning 2014 show 53% survival vs. 88% in non-disturbance intervals. These intervals are flagged with `disturbance = "disease"` and can be excluded in sensitivity analyses. See `04_extraction/disturbance_handling_decision.md`.
+- **No NOAA overlap:** Neely monitored distinct reef sites using the FKNMS monitoring network, separate from NOAA's Acropora Demographic Monitoring Program. Confirmed no shared tagged colonies.
+- **Absorbing death state:** Once a colony is recorded as dead (LAI = 0), it remains dead in all subsequent surveys. Verified programmatically.
+- **Live tissue area directly measured:** No size conversion needed — LAI is the biologically meaningful metric used throughout the pipeline.
+
+**Audit status:** Integration documented in `04_extraction/neely_2022_data_integration.md`. Data validated during standardization (no duplicate colony-intervals, absorbing death state confirmed, plausible size distributions).
+
+**Value entering meta-analysis:** Individual-level data enters the pipeline as Tier 1. For the expanded meta-analysis (14b), Neely contributes a single Florida Keys effect (the 22nd effect in the k=17/22 model).
+
+---
+
 ## Tier 2 Studies (Summary-Level, Hand-Extracted by Detmer)
 
 ---
@@ -713,6 +773,8 @@
 | 3 | USGS_USVI_exp | 1 | Detmer | 46 | 65.2% | USVI | Restoration | USGS data repository |
 | 4 | kuffner_et_al_2020 | 1 | Detmer | 53 | 81.1% | Florida | Restoration | USGS data release |
 | 5 | fundemar_fragments | 1 | Detmer | 44 | 86.4% | Dom. Rep. | Restoration | FUNDEMAR shared data |
+| 5b | mendoza_quiroz_et_al_2023 | 1 | Detmer | 52 | varies | Mexico | Natural/Restoration | Published data + Excel |
+| 5c | neely_et_al_2022 | 1 | Detmer | 878 | ~88% (non-disturbance) | FL Keys | Natural | Direct data sharing |
 | 6 | vardi_2011_jamaica | 2 | Detmer | 88 | 76.1% | Jamaica | Natural | Dissertation Fig. 4-2 |
 | 7 | vardi_2011_puerto_rico | 2 | Detmer | 130 | 92.3% | Puerto Rico | Natural | Dissertation Fig. 4-2 |
 | 8 | vardi_2011_virgin_gorda | 2 | Detmer | 27 | 96.3% | Virgin Gorda | Natural | Dissertation Fig. 4-2 |
@@ -745,6 +807,9 @@ Within-study rows (multiple size classes, sites, treatments, or years) were aggr
 ### Integer Rounding
 The PLO effect size computation requires integer counts (n_survived, n_died). The pipeline computes `n_survived = round(survival_rate x n_total)`, which introduces discretization error bounded by +/-1/(2n). Worst cases: williams_miller_2010 (n=18, +/-2.8 pp), vardi_2011_virgin_gorda (n=27, +/-1.9 pp). This is within confidence intervals for all studies.
 
+### Fragmentation Rate Extraction (Vardi 2011)
+Fragmentation rates come exclusively from Vardi (2011), who reported fragment production rates per parent colony per year for SC3-SC5 parents producing SC1-SC3 fragments. Vardi's original size classes used 0-100 cm² as the smallest class (SC1_Vardi). Our pipeline uses SC1 = 0-10 cm² and SC2 = 10-100 cm². Since Vardi's data do not distinguish fragment sizes within the 0-100 cm² range, Vardi's SC1 fragment production rates were split proportionally by range width: 10% of SC1_Vardi fragments assigned to pipeline SC1 (0-10 cm²) and 90% to pipeline SC2 (10-100 cm²). This is a simplifying assumption — the true size distribution of fragments within 0-100 cm² is unknown. See `05_data/standardized/apal_fragmentation.csv` and Script 13 for implementation.
+
 ### Size Standardization
 All sizes were converted to live planar tissue area (cm2) where possible. Studies reporting only linear dimensions (diameter, length) were converted using estimated width:length ratios calibrated from datasets with both measurements. Studies reporting volume (Rogers & Muller 2012) or lacking size data entirely had size set to NA. See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the extraction and standardization rules summarized for the maintained repo.
 
@@ -753,6 +818,18 @@ All four AI-extracted studies underwent independent verification by a separate A
 
 ---
 
+## Related Files
+
+- [extraction_protocol.md](extraction_protocol.md) -- Inclusion/exclusion criteria and size conversion rules
+- [study_characteristics.md](study_characteristics.md) -- PRISMA-style study characteristics table
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [risk_of_bias.md](risk_of_bias.md) -- Newcastle-Ottawa bias assessment per study
+- [disturbance_handling_decision.md](disturbance_handling_decision.md) -- Disturbance classification and inclusion rules
+- [neely_2022_data_integration.md](neely_2022_data_integration.md) -- Neely et al. 2022 integration notes
+
+---
+
 *Document prepared by: Adrian Stier & Claude (Anthropic), with primary extraction by Raine Detmer*
 *Ocean Recoveries Lab, UC Santa Barbara*
-*Date: March 2026*
+*Date: March 2026 (updated April 2026: added Mendoza-Quiroz and Neely entries, fragmentation split rule)*

@@ -328,8 +328,26 @@ overdisp_results <- tibble(
   n_obs = integer(),
   n_params = integer(),
   dispersion_ratio = numeric(),
-  overdispersed = logical()
+  overdispersed = logical(),
+  is_singular = logical(),
+  convergence_ok = logical(),
+  optimizer_messages = character()
 )
+
+extract_mer_diagnostics <- function(model) {
+  conv_messages <- tryCatch(unlist(model@optinfo$conv$lme4$messages),
+                            error = function(e) character())
+  conv_messages <- as.character(conv_messages)
+  conv_messages <- conv_messages[nzchar(conv_messages)]
+
+  list(
+    is_singular = tryCatch(lme4::isSingular(model, tol = 1e-4),
+                           error = function(e) NA),
+    convergence_ok = length(conv_messages) == 0,
+    optimizer_messages = if (length(conv_messages) == 0) NA_character_
+                         else paste(unique(conv_messages), collapse = " | ")
+  )
+}
 
 if (has_lme4) {
   cat("\nModel 2: GLMM with study random intercept\n")
@@ -353,12 +371,16 @@ if (has_lme4) {
                 sqrt(VarCorr(model_glmm_study)$study[1])))
     cat("Model 2 diagnostics:\n")
     od2 <- overdisp_test(model_glmm_study)
+    diag2 <- extract_mer_diagnostics(model_glmm_study)
     overdisp_results <- bind_rows(overdisp_results, tibble(
       model_name = "GLMM_study",
       n_obs = nrow(surv_natural),
       n_params = length(fixef(model_glmm_study)) + sum(sapply(VarCorr(model_glmm_study), function(x) prod(dim(x)))),
       dispersion_ratio = od2$ratio,
-      overdispersed = od2$overdispersed
+      overdispersed = od2$overdispersed,
+      is_singular = diag2$is_singular,
+      convergence_ok = diag2$convergence_ok,
+      optimizer_messages = diag2$optimizer_messages
     ))
 
     # Odds ratios with Wald CIs
@@ -458,12 +480,16 @@ if (has_lme4) {
     cat(sprintf("  Location SD: %.4f\n", sqrt(vc$location[1])))
     cat("Model 3 diagnostics:\n")
     od3 <- overdisp_test(model_glmm_loc)
+    diag3 <- extract_mer_diagnostics(model_glmm_loc)
     overdisp_results <- bind_rows(overdisp_results, tibble(
       model_name = "GLMM_study_location",
       n_obs = nrow(surv_natural),
       n_params = length(fixef(model_glmm_loc)) + sum(sapply(VarCorr(model_glmm_loc), function(x) prod(dim(x)))),
       dispersion_ratio = od3$ratio,
-      overdispersed = od3$overdispersed
+      overdispersed = od3$overdispersed,
+      is_singular = diag3$is_singular,
+      convergence_ok = diag3$convergence_ok,
+      optimizer_messages = diag3$optimizer_messages
     ))
   }
 
@@ -494,12 +520,16 @@ if (has_lme4) {
     cat(sprintf("  Year SD: %.4f\n", sqrt(vc$year_factor[1])))
     cat("Model 4 diagnostics:\n")
     od4 <- overdisp_test(model_glmm_full)
+    diag4 <- extract_mer_diagnostics(model_glmm_full)
     overdisp_results <- bind_rows(overdisp_results, tibble(
       model_name = "GLMM_study_location_year",
       n_obs = nrow(surv_natural),
       n_params = length(fixef(model_glmm_full)) + sum(sapply(VarCorr(model_glmm_full), function(x) prod(dim(x)))),
       dispersion_ratio = od4$ratio,
-      overdispersed = od4$overdispersed
+      overdispersed = od4$overdispersed,
+      is_singular = diag4$is_singular,
+      convergence_ok = diag4$convergence_ok,
+      optimizer_messages = diag4$optimizer_messages
     ))
   }
 
@@ -529,12 +559,16 @@ if (has_lme4) {
       cat(sprintf("  Year SD: %.4f\n", sqrt(vc$year_factor[1])))
       cat("Model 5 diagnostics:\n")
       od5 <- overdisp_test(model_glmm_coral)
+      diag5 <- extract_mer_diagnostics(model_glmm_coral)
       overdisp_results <- bind_rows(overdisp_results, tibble(
         model_name = "GLMM_coral_study_location_year",
         n_obs = nrow(surv_natural),
         n_params = length(fixef(model_glmm_coral)) + sum(sapply(VarCorr(model_glmm_coral), function(x) prod(dim(x)))),
         dispersion_ratio = od5$ratio,
-        overdispersed = od5$overdispersed
+        overdispersed = od5$overdispersed,
+        is_singular = diag5$is_singular,
+        convergence_ok = diag5$convergence_ok,
+        optimizer_messages = diag5$optimizer_messages
       ))
     }
   }

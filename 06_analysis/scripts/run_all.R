@@ -196,7 +196,7 @@ script_descriptions <- c(
   # 13-17: Synthesis
   "Transition matrix population model",
   "Formal meta-analysis (k=5, random effects)",
-  "Expanded meta-analysis (k=16, two-tier)",
+  "Expanded meta-analysis (k=17, two-tier)",
   "Heterogeneity analysis (I², Q-tests)",
   "Sensitivity analysis (LOSO, elasticity)",
   "Update parameter lists for API",
@@ -392,6 +392,24 @@ log_file <- sprintf("06_analysis/output/pipeline_log_%s.csv",
                     format(pipeline_start, "%Y%m%d_%H%M%S"))
 write.csv(results, log_file, row.names = FALSE)
 cat(sprintf("\nPipeline log saved: %s\n", log_file))
+
+# =============================================================================
+# CAPTURE SESSION INFO
+# =============================================================================
+
+session_info_file <- "06_analysis/output/session_info.txt"
+tryCatch({
+  si <- utils::capture.output(utils::sessionInfo())
+  writeLines(c(
+    sprintf("Session info captured: %s", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+    sprintf("Pipeline run ID: %s", run_id),
+    "",
+    si
+  ), con = session_info_file)
+  cat(sprintf("Session info saved: %s\n", session_info_file))
+}, error = function(e) {
+  cat(sprintf("Warning: could not save session info: %s\n", conditionMessage(e)))
+})
 
 # Restore working directory
 setwd(original_wd)

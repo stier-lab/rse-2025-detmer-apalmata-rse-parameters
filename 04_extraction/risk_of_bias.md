@@ -238,4 +238,18 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 ---
 
+---
+
+## Related Files
+
+- [extraction_protocol.md](extraction_protocol.md) -- Inclusion/exclusion criteria and size conversion rules
+- [extraction_details.md](extraction_details.md) -- Per-study verification table with audit status
+- [study_characteristics.md](study_characteristics.md) -- PRISMA-style study characteristics table
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [disturbance_handling_decision.md](disturbance_handling_decision.md) -- Disturbance classification and inclusion rules
+- [neely_2022_data_integration.md](neely_2022_data_integration.md) -- Neely et al. 2022 integration notes
+
+---
+
 *Assessment conducted by Claude (Anthropic) for the Detmer et al. (2025) A. palmata demographic synthesis. Scores are based on published methods, supplementary materials, raw data documentation, and metadata files.*

@@ -329,8 +329,16 @@ fit_metrics <- tibble(
     "event_rate",
     "brier_score",
     "auc",
+    "longitudinal_aic",
+    "longitudinal_bic",
+    "longitudinal_logLik",
+    "longitudinal_downgrade_reason",
     "longitudinal_random_structure",
-    "hazard_engine"
+    "hazard_aic",
+    "hazard_bic",
+    "hazard_logLik",
+    "hazard_engine",
+    "hazard_model_class"
   ),
   value = c(
     nrow(analysis_df),
@@ -339,8 +347,16 @@ fit_metrics <- tibble(
     mean(analysis_df$dead),
     brier,
     auc,
+    AIC(long_model),
+    BIC(long_model),
+    as.numeric(logLik(long_model)),
+    long_fit$downgrade_reason %||% NA_character_,
     long_fit$random_structure,
-    hazard_engine
+    AIC(hazard_model),
+    BIC(hazard_model),
+    as.numeric(logLik(hazard_model)),
+    hazard_engine,
+    class(hazard_model)[1]
   )
 )
 write_csv(fit_metrics, file.path(output_dir, "joint_longitudinal_fit_metrics.csv"))

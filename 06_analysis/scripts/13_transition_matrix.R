@@ -10,10 +10,13 @@
 #
 # METHODS:
 #   1. Calculate size class transition probabilities from growth data
-#   2. Combine with survival rates to build Lefkovitch matrix
-#   3. Calculate λ (dominant eigenvalue) and stable size distribution
-#   4. Elasticity analysis to identify key vital rates
-#   5. Bootstrap uncertainty quantification
+#   2. Calculate cell-weighted survival rates per size class using
+#      prepared_survival_cells.rds (individual + summary data, inverse-variance
+#      weighted) to incorporate all available survival information
+#   3. Combine with survival rates to build Lefkovitch matrix
+#   4. Calculate λ (dominant eigenvalue) and stable size distribution
+#   5. Elasticity analysis to identify key vital rates
+#   6. Bootstrap uncertainty quantification
 #
 # SIZE CLASSES (following Vardi 2011):
 #   SC1: 0-10 cm² (recruits/settlers)
@@ -23,7 +26,8 @@
 #   SC5: >4000 cm² (reproductive adults)
 #
 # INPUTS:
-#   - 06_analysis/output/prepared_survival_data.rds
+#   - 06_analysis/output/prepared_survival_data.rds (individual records, for growth + reference)
+#   - 06_analysis/output/prepared_survival_cells.rds (cell-level: individual + summary data)
 #   - 06_analysis/output/prepared_growth_data.rds
 #   - 05_data/standardized/apal_fragmentation.csv
 #
@@ -31,6 +35,7 @@
 #   - 06_analysis/output/transition_matrix.csv
 #   - 06_analysis/output/transition_matrix.rds
 #   - 06_analysis/output/population_parameters.csv
+#   - 06_analysis/output/transition_matrix_model_diagnostics.csv
 #   - 06_analysis/output/elasticity_matrix.csv
 #   - 06_analysis/output/elasticity_bootstrap_ci.csv  (critique audit 2026-03-29)
 #   - 06_analysis/output/fecundity_sensitivity.csv
@@ -65,7 +70,7 @@ if (file.exists("utils/shared_utilities.R")) {
 
 cat("\n")
 cat("╔═══════════════════════════════════════════════════════════════╗\n")
-cat("║  07: TRANSITION MATRIX & POPULATION MODEL                    ║\n")
+cat("║  13: TRANSITION MATRIX & POPULATION MODEL                    ║\n")
 cat("║  Size-Structured Projection Matrix for A. palmata            ║\n")
 cat("╚═══════════════════════════════════════════════════════════════╝\n\n")
 
@@ -105,11 +110,29 @@ cat("\nLoading prepared data...\n")
 surv_data <- readRDS(file.path(output_dir, "prepared_survival_data.rds"))
 growth_data <- readRDS(file.path(output_dir, "prepared_growth_data.rds"))
 
+# Load cell-level survival dataset (individual + summary, inverse-variance weights)
+# See 04_extraction/data_integration_issues.md for rationale
+surv_cells <- readRDS(file.path(output_dir, "prepared_survival_cells.rds"))
+cat(sprintf("  Cell-level survival dataset: %d cells (%d individual + %d summary) from %d studies\n",
+            nrow(surv_cells),
+            sum(surv_cells$data_source == "individual"),
+            sum(surv_cells$data_source == "summary"),
+            n_distinct(surv_cells$study)))
+
 # Restrict to natural colonies for population projection
 cat("  Filtering to natural colonies only for transition matrix...\n")
 cat(sprintf("  Total survival records before filter: %s\n", scales::comma(nrow(surv_data))))
 surv_data <- surv_data %>% filter(population_type == "Natural colony")
 cat(sprintf("  Natural colony survival records: %s\n", scales::comma(nrow(surv_data))))
+
+# Filter cells to natural colonies too
+surv_cells_natural <- surv_cells %>% filter(population_type == "Natural colony")
+cat(sprintf("  Natural colony cells: %d (%d individual + %d summary) from %d studies, N=%s\n",
+            nrow(surv_cells_natural),
+            sum(surv_cells_natural$data_source == "individual"),
+            sum(surv_cells_natural$data_source == "summary"),
+            n_distinct(surv_cells_natural$study),
+            scales::comma(sum(surv_cells_natural$n_initial))))
 
 # Filter sub-annual intervals (Issue: inflates SC5 survival)
 if ("sub_annual_interval" %in% names(surv_data)) {
@@ -264,53 +287,69 @@ if ("time_interval_yr" %in% names(surv_data)) {
 }
 
 # =============================================================================
-# 3. CALCULATE SURVIVAL RATES BY SIZE CLASS
+# 3. CALCULATE SURVIVAL RATES BY SIZE CLASS (using cell-level weighted data)
 # =============================================================================
+#
+# Uses prepared_survival_cells.rds which combines individual-level data
+# (aggregated to study × size_class × interval cells) with summary-level data.
+# Survival per size class is a sample-size-weighted mean of annualized cell
+# survival rates. This replaces the previous individual-only approach and
+# properly integrates all 16+ studies. See data_integration_issues.md.
 
 cat("\n")
 cat("═══════════════════════════════════════════════════════════════\n")
-cat("  SURVIVAL RATES BY SIZE CLASS\n")
+cat("  SURVIVAL RATES BY SIZE CLASS (cell-level weighted)\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
 
 # ANNUALIZE SURVIVAL: Convert observed survival over t years to annual rate
-# Binary survival (0/1) must be aggregated to proportion first, then annualized
 # S_annual = S_observed^(1/t) where t = monitoring interval in years
 
-# First compute raw (non-annualized) survival for comparison
+# First compute raw (non-annualized) survival from individual data for comparison
 raw_survival_by_class <- surv_data %>%
   filter(!is.na(size_class)) %>%
   group_by(size_class) %>%
   summarise(raw_survival = mean(survived), .groups = "drop")
 
-# Step 1: Compute raw survival by study x size class x interval
-survival_by_group <- surv_data %>%
+# Step 1: Annualize each cell's survival rate and compute logit-scale weights
+# We use inverse-variance weighting on the logit scale (matching meta-analytic
+# best practice for proportions). Steps:
+#   1. Annualize: S_annual = S_observed^(1/t) (constant hazard assumption)
+#   2. Apply continuity correction to avoid infinite logit values
+#   3. Compute logit(S_annual) and its variance
+#   4. Inverse-variance weight on logit scale, then back-transform with plogis()
+survival_by_group <- surv_cells_natural %>%
   filter(!is.na(size_class)) %>%
   mutate(
-    time_interval_yr = if ("time_interval_yr" %in% names(.))
-      coalesce(time_interval_yr, 1.0) else 1.0
-  ) %>%
-  group_by(size_class, study, time_interval_yr) %>%
-  summarise(
-    n = n(),
-    raw_survival = mean(survived),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    # Annualize: S_annual = S_raw^(1/t)
-    annual_survival = raw_survival^(1 / time_interval_yr)
+    annual_survival = prop_survived^(1 / time_interval_yr),
+    # Continuity-corrected annualized proportion for logit transform
+    # Uses same 0.5/(n+1) correction as the raw yi/vi in prepared_survival_cells
+    ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
+    yi_annual = log(ann_adj / (1 - ann_adj)),
+    vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
   )
 
-cat("\nSurvival annualization summary:\n")
-cat(sprintf("  Groups with non-annual intervals: %d\n",
+cat("\nSurvival annualization summary (cell-level):\n")
+cat(sprintf("  Total cells (natural colonies): %d\n", nrow(survival_by_group)))
+cat(sprintf("  Cells with non-annual intervals: %d\n",
             sum(abs(survival_by_group$time_interval_yr - 1) > 0.1)))
+cat(sprintf("  Cells from individual data: %d\n",
+            sum(survival_by_group$data_source == "individual")))
+cat(sprintf("  Cells from summary data: %d\n",
+            sum(survival_by_group$data_source == "summary")))
 
-# Step 2: Weighted mean of annualized rates by size class
+# Step 2: Inverse-variance weighted mean on logit scale, back-transformed
+# This down-weights imprecise cells (small n, extreme proportions) relative to
+# the old sample-size weighting, which is more appropriate for proportions.
 survival_by_class <- survival_by_group %>%
   group_by(size_class) %>%
   summarise(
-    survival = weighted.mean(annual_survival, w = n),
-    n = sum(n),
-    # NOTE: This SE is approximate -- uses binomial formula on annualized rates.
+    survival = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
+    n = sum(n_initial),
+    n_cells = n(),
+    n_studies = n_distinct(study),
+    n_ind_cells = sum(data_source == "individual"),
+    n_summ_cells = sum(data_source == "summary"),
+    # NOTE: This SE is approximate -- uses binomial formula on the back-transformed rate.
     # The definitive uncertainty comes from the hierarchical bootstrap (below).
     se = sqrt(survival * (1 - survival) / n),
     ci_lower = pmax(0, survival - 1.96 * se),
@@ -319,15 +358,17 @@ survival_by_class <- survival_by_group %>%
   ) %>%
   arrange(size_class)
 
-# Report change from raw to annualized
-cat("  Annualized survival rates by size class:\n")
+# Report change from individual-only raw to cell-weighted annualized
+cat("  Annualized survival rates by size class (cell-weighted):\n")
 comparison <- survival_by_class %>%
   left_join(raw_survival_by_class, by = "size_class")
 for (i in 1:nrow(comparison)) {
-  cat(sprintf("    %s: raw=%.4f -> annualized=%.4f (delta=%.4f)\n",
+  cat(sprintf("    %s: ind_raw=%.4f -> cell_weighted=%.4f (delta=%.4f, k=%d studies, %d+%d cells)\n",
               comparison$size_class[i], comparison$raw_survival[i],
               comparison$survival[i],
-              comparison$survival[i] - comparison$raw_survival[i]))
+              comparison$survival[i] - comparison$raw_survival[i],
+              comparison$n_studies[i],
+              comparison$n_ind_cells[i], comparison$n_summ_cells[i]))
 }
 
 print(survival_by_class)
@@ -336,13 +377,14 @@ print(survival_by_class)
 S <- survival_by_class$survival
 names(S) <- size_class_labels
 
-cat(sprintf("\nSurvival vector (annualized): %s\n",
+cat(sprintf("\nSurvival vector (annualized, cell-weighted): %s\n",
             paste(sprintf("%.3f", S), collapse = ", ")))
 
 # --- SC5 DATA CAVEAT ---
 # FIX: Enhanced SC5 single-study dependence warning (critique audit 2026-03-29)
-sc5_studies <- unique(surv_data$study[surv_data$size_class == "SC5"])
-sc5_n <- sum(surv_data$size_class == "SC5", na.rm = TRUE)
+sc5_cells <- surv_cells_natural %>% filter(size_class == "SC5")
+sc5_studies <- unique(sc5_cells$study)
+sc5_n <- sum(sc5_cells$n_initial)
 cat("\n")
 cat("╔═══════════════════════════════════════════════════════════════╗\n")
 cat("║  WARNING: SC5 SINGLE-STUDY DEPENDENCE                        ║\n")
@@ -496,9 +538,11 @@ if (file.exists(frag_file)) {
   }
 
 } else {
-  cat("⚠ Fragmentation data not found. Using zeros.\n")
+  cat("WARNING: Fragmentation data missing. Lambda will be underestimated.\n")
   F_mat <- matrix(0, nrow = 5, ncol = 5,
                   dimnames = list(size_class_labels, size_class_labels))
+  frag_data_annual <- NULL
+  frag_rate_cols <- character(0)
 }
 
 cat("\nFragmentation matrix (F):\n")
@@ -882,12 +926,19 @@ cat("═════════════════════════
 
 # METHODOLOGY NOTE:
 # We use a two-stage hierarchical bootstrap to properly account for the
-# nested data structure (colonies within studies). This approach:
-#   Stage 1: Resample studies with replacement
-#   Stage 2: Within each resampled study, resample colonies with replacement
+# nested data structure.
+# SURVIVAL: Resample studies -> resample cells within studies (cell = study ×
+#   size_class × interval unit from prepared_survival_cells.rds). Each cell
+#   carries its sample size, so the weighted mean naturally respects the
+#   variable precision across individual-level and summary-level data.
+# GROWTH: Resample studies -> resample individual colonies within studies
+#   (no summary growth data feeds the transition matrix).
 #
-# This produces more accurate (typically wider) confidence intervals than
-# simple bootstrapping, as it accounts for between-study correlation.
+# KNOWN LIMITATION: Survival and growth are resampled independently.
+# Joint resampling (same study draw for both) would capture within-study
+# correlation but is not implemented because survival uses cell-level data
+# (5 natural studies) while growth uses individual data (3 studies),
+# and the study sets only partially overlap.
 
 n_boot <- 2000  # Increased from 1000 for more stable percentile estimates
 lambda_boot <- numeric(n_boot)
@@ -942,14 +993,14 @@ resample_F_mat <- function(frag_data_annual, frag_rate_cols, size_class_labels) 
   return(F_boot)
 }
 
-# Get unique studies
-surv_studies <- unique(surv_data$study)
+# Get unique studies — survival from cells (includes summary studies), growth from individual data
+surv_studies <- unique(surv_cells_natural$study)
 growth_studies <- unique(growth_filtered$study)
 
 cat(sprintf("Running %d hierarchical bootstrap iterations...\n", n_boot))
-cat(sprintf("  Survival studies: %d (%s)\n", length(surv_studies),
+cat(sprintf("  Survival studies (from cells, natural): %d (%s)\n", length(surv_studies),
             paste(surv_studies, collapse = ", ")))
-cat(sprintf("  Growth studies: %d (%s)\n", length(growth_studies),
+cat(sprintf("  Growth studies (individual): %d (%s)\n", length(growth_studies),
             paste(growth_studies, collapse = ", ")))
 
 # FIX: Initialize storage for bootstrapped elasticity distributions (critique audit 2026-03-29)
@@ -969,41 +1020,27 @@ for (b in 1:n_boot) {
   surv_studies_boot <- sample(surv_studies, replace = TRUE)
   growth_studies_boot <- sample(growth_studies, replace = TRUE)
 
-  # STAGE 2: For each resampled study, resample colonies within that study
-  surv_boot <- do.call(rbind, lapply(seq_along(surv_studies_boot), function(i) {
-    study_data <- surv_data %>% filter(study == surv_studies_boot[i])
-    # Resample colonies within study
-    colonies <- unique(study_data$coral_id)
-    boot_colonies <- sample(colonies, replace = TRUE)
-    # Get all records for resampled colonies
-    do.call(rbind, lapply(boot_colonies, function(col) {
-      study_data %>% filter(coral_id == col)
-    }))
+  # STAGE 2 for survival: Resample cells within each resampled study
+  # Each cell is a (study × size_class × interval) unit with sample size and proportion.
+  # This properly handles both individual-level and summary-level data.
+  surv_cells_boot <- do.call(rbind, lapply(surv_studies_boot, function(s) {
+    study_cells <- surv_cells_natural[surv_cells_natural$study == s, ]
+    if (nrow(study_cells) == 0) return(NULL)
+    study_cells[sample(nrow(study_cells), replace = TRUE), ]
   }))
 
-  # Annualize bootstrap survival to match the point estimate methodology:
-  # Step 1: Compute raw survival by study x size_class x time_interval_yr group
-  #         (MUST include study to replicate the point estimate pipeline exactly)
-  # Step 2: Annualize each group: S_annual = S_raw^(1/t)
-  # Step 3: Weighted mean of annualized rates by size class
-  S_boot_df <- surv_boot %>%
+  # Annualize and compute inverse-variance-weighted survival on logit scale
+  S_boot_df <- surv_cells_boot %>%
     filter(!is.na(size_class)) %>%
     mutate(
-      time_interval_yr = if ("time_interval_yr" %in% names(.))
-        coalesce(time_interval_yr, 1.0) else 1.0
-    ) %>%
-    group_by(study, size_class, time_interval_yr) %>%
-    summarise(
-      n = n(),
-      raw_survival = mean(survived),
-      .groups = "drop"
-    ) %>%
-    mutate(
-      annual_survival = raw_survival^(1 / time_interval_yr)
+      annual_survival = prop_survived^(1 / time_interval_yr),
+      ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
+      yi_annual = log(ann_adj / (1 - ann_adj)),
+      vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
     ) %>%
     group_by(size_class) %>%
     summarise(
-      survival = weighted.mean(annual_survival, w = n),
+      survival = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
       .groups = "drop"
     ) %>%
     arrange(size_class)
@@ -1011,9 +1048,8 @@ for (b in 1:n_boot) {
   S_boot <- S_boot_df %>% pull(survival)
 
   # FIX: Impute missing size classes from full-data estimate instead of discarding (critique audit 2026-03-29)
-  # When a resampled study set lacks a size class (typically SC5, which comes only from NOAA),
-  # we fill the missing survival from the full-data point estimate (S vector). This avoids
-  # conditioning the bootstrap CI on NOAA inclusion, which biased the original approach.
+  # With more studies in the cells dataset, missing-SC events should be rarer,
+  # but we keep the imputation safety net.
   if (length(S_boot) < 5) {
     missing_sc <- setdiff(size_class_labels, S_boot_df$size_class)
     boot_failure_log[[length(boot_failure_log) + 1]] <- data.frame(
@@ -1028,15 +1064,14 @@ for (b in 1:n_boot) {
 
     # NEW approach: impute from full-data point estimate
     boot_imputed_flag[b] <- TRUE
-    S_boot_full <- S  # Full-data survival vector (5 elements)
-    # Overwrite the size classes we DO have from the bootstrap
+    S_boot_full <- S
     for (sc_row in 1:nrow(S_boot_df)) {
       sc_idx <- which(size_class_labels == S_boot_df$size_class[sc_row])
       S_boot_full[sc_idx] <- S_boot_df$survival[sc_row]
     }
     S_boot <- S_boot_full
   } else {
-    lambda_boot_discard[b] <- NA  # Placeholder; will be filled below with actual lambda
+    lambda_boot_discard[b] <- NA
     boot_imputed_flag[b] <- FALSE
   }
 
@@ -1077,7 +1112,7 @@ for (b in 1:n_boot) {
   G_boot[is.nan(G_boot)] <- 0
 
   # Resample fragmentation matrix to propagate uncertainty from source data
-  if (exists("frag_data_annual") && nrow(frag_data_annual) > 0) {
+  if (exists("frag_data_annual") && !is.null(frag_data_annual) && nrow(frag_data_annual) > 0) {
     F_mat_boot <- resample_F_mat(frag_data_annual, frag_rate_cols, size_class_labels)
   } else {
     F_mat_boot <- F_mat  # Fallback to fixed if no fragmentation data
@@ -1218,6 +1253,35 @@ if (n_discard_valid > 30) {
   cat(sprintf("  n valid (discard): %d vs n valid (impute): %d\n",
               n_discard_valid, length(lambda_boot)))
 }
+
+imputation_sensitivity <- data.frame(
+  approach = c("impute_missing_survival_classes", "discard_missing_survival_classes"),
+  n_boot_total = c(n_boot_total, n_boot_total),
+  n_valid = c(length(lambda_boot), n_discard_valid),
+  n_invalid = c(n_boot_total - length(lambda_boot), n_boot_total - n_discard_valid),
+  n_imputed_iterations = c(n_imputed, n_imputed),
+  pct_iterations_imputed = c(n_imputed / n_boot_total * 100, n_imputed / n_boot_total * 100),
+  lambda_mean = c(mean(lambda_boot), if (n_discard_valid > 0) mean(lambda_boot_discard_valid) else NA_real_),
+  lambda_median = c(median(lambda_boot), if (n_discard_valid > 0) median(lambda_boot_discard_valid) else NA_real_),
+  lambda_ci_lower = c(quantile(lambda_boot, 0.025),
+                      if (n_discard_valid > 0) quantile(lambda_boot_discard_valid, 0.025) else NA_real_),
+  lambda_ci_upper = c(quantile(lambda_boot, 0.975),
+                      if (n_discard_valid > 0) quantile(lambda_boot_discard_valid, 0.975) else NA_real_),
+  p_decline = c(
+    mean(lambda_boot < 1),
+    if (n_discard_valid > 0) mean(lambda_boot_discard_valid < 1) else NA_real_
+  ),
+  stringsAsFactors = FALSE
+) %>%
+  mutate(
+    change_vs_impute_pp = (lambda_mean - lambda_mean[approach == "impute_missing_survival_classes"]) * 100
+  )
+
+write_csv(
+  imputation_sensitivity,
+  file.path(output_dir, "transition_matrix_imputation_sensitivity.csv")
+)
+cat("  Saved: transition_matrix_imputation_sensitivity.csv\n")
 
 # Compare with simple bootstrap CI width
 simple_ci_width <- 0.030  # Approximate from previous simple bootstrap
@@ -1880,6 +1944,159 @@ pop_params <- rbind(pop_params, caveat_rows)
 
 write_csv(pop_params, file.path(output_dir, "population_parameters.csv"))
 cat("Saved: population_parameters.csv\n")
+
+sc5_support_by_study <- surv_data %>%
+  filter(size_class == "SC5") %>%
+  count(study, name = "n_records") %>%
+  mutate(
+    component = "SC5_survival",
+    total_records = sum(n_records),
+    share_pct = 100 * n_records / total_records
+  ) %>%
+  arrange(desc(n_records))
+
+fragmentation_support_by_study <- if (exists("frag_data") && !is.null(frag_data) && nrow(frag_data) > 0) {
+  frag_data %>%
+    mutate(
+      study = if ("study" %in% names(.)) as.character(study) else "vardi_2011_fragmentation"
+    ) %>%
+    count(study, name = "n_records") %>%
+    mutate(
+      component = "fragmentation",
+      total_records = sum(n_records),
+      share_pct = 100 * n_records / total_records
+    ) %>%
+    arrange(desc(n_records))
+} else {
+  tibble(
+    study = character(),
+    n_records = numeric(),
+    component = character(),
+    total_records = numeric(),
+    share_pct = numeric()
+  )
+}
+
+transition_matrix_source_leverage <- bind_rows(
+  sc5_support_by_study,
+  fragmentation_support_by_study
+)
+
+write_csv(
+  transition_matrix_source_leverage,
+  file.path(output_dir, "transition_matrix_source_leverage.csv")
+)
+cat("Saved: transition_matrix_source_leverage.csv\n")
+
+sc5_max_share_pct <- if (nrow(sc5_support_by_study) > 0) max(sc5_support_by_study$share_pct, na.rm = TRUE) else NA_real_
+sc5_noaa_share_pct <- if (nrow(sc5_support_by_study) > 0 && any(sc5_support_by_study$study == "NOAA_survey")) {
+  sc5_support_by_study$share_pct[sc5_support_by_study$study == "NOAA_survey"][1]
+} else {
+  NA_real_
+}
+fragmentation_max_share_pct <- if (nrow(fragmentation_support_by_study) > 0) max(fragmentation_support_by_study$share_pct, na.rm = TRUE) else NA_real_
+
+# Compact diagnostics export for statistical review
+transition_matrix_diagnostics <- data.frame(
+  category = c(
+    "data_support", "data_support", "data_support", "data_support", "data_support", "data_support",
+    "data_support", "data_support", "data_support",
+    "matrix", "matrix", "matrix", "matrix", "matrix", "matrix",
+    "bootstrap", "bootstrap", "bootstrap", "bootstrap", "bootstrap", "bootstrap", "bootstrap",
+    "elasticity", "elasticity", "elasticity"
+  ),
+  metric = c(
+    "survival_records_natural_filtered",
+    "growth_records_natural_filtered",
+    "survival_studies_after_filtering",
+    "growth_studies_after_filtering",
+    "sc5_supporting_studies",
+    "sc5_supporting_observations",
+    "sc5_max_study_share_pct",
+    "sc5_noaa_share_pct",
+    "fragmentation_max_study_share_pct",
+    "lambda",
+    "lambda_half_fragmentation",
+    "lambda_no_fragmentation",
+    "fragmentation_lambda_shift_half_vs_full",
+    "fragmentation_lambda_shift_none_vs_full",
+    "damping_ratio",
+    "n_boot_total",
+    "n_boot_valid",
+    "boot_failure_rate",
+    "n_imputed_iterations",
+    "lambda_mean_impute",
+    "lambda_mean_discard",
+    "lambda_discard_minus_impute_pp",
+    "sc5_cell_elasticity",
+    "sc5_survival_elasticity",
+    "fragmentation_elasticity_total"
+  ),
+  value = c(
+    nrow(surv_data),
+    nrow(growth_filtered),
+    n_surv_studies,
+    length(unique(growth_filtered$study)),
+    length(sc5_studies),
+    sum(surv_data$size_class == "SC5", na.rm = TRUE),
+    sc5_max_share_pct,
+    sc5_noaa_share_pct,
+    fragmentation_max_share_pct,
+    lambda,
+    lambda_half_frag,
+    lambda_no_frag,
+    lambda_half_frag - lambda,
+    lambda_no_frag - lambda,
+    damping_ratio,
+    n_boot_total,
+    n_boot_valid,
+    (n_boot_total - n_boot_valid) / n_boot_total,
+    n_imputed,
+    mean(lambda_boot),
+    if (n_discard_valid > 0) mean(lambda_boot_discard_valid) else NA_real_,
+    if (n_discard_valid > 0) {
+      (mean(lambda_boot_discard_valid) - mean(lambda_boot)) * 100
+    } else {
+      NA_real_
+    },
+    elasticity[5, 5],
+    unname(survival_elasticity["SC5"]),
+    e_frag
+  ),
+  note = c(
+    "Natural-colony survival records after sub-annual filtering",
+    "Natural-colony growth records after impossible-growth and interval filtering",
+    "Unique studies contributing survival data to the matrix",
+    "Unique studies contributing growth transitions to the matrix",
+    paste(sc5_studies, collapse = "; "),
+    "Filtered SC5 survival observations entering the matrix",
+    "Largest study share within SC5 survival support",
+    "NOAA share of SC5 survival observations",
+    "Largest study share within fragmentation support",
+    "Deterministic dominant eigenvalue",
+    "Lambda with fragmentation rates scaled to 50% of Vardi 2011 values",
+    "Counterfactual lambda with fragmentation removed",
+    "Half-fragmentation lambda minus the full-fragmentation lambda",
+    "No-fragmentation lambda minus the full-fragmentation lambda",
+    "Rate of convergence to stable structure",
+    "Requested bootstrap iterations",
+    "Bootstrap iterations yielding a valid lambda",
+    "Share of attempted bootstrap iterations that failed",
+    "Bootstrap iterations requiring survival imputation for missing classes",
+    "Mean lambda across bootstrap draws with class-level imputation enabled",
+    "Mean lambda across bootstrap draws when missing-class iterations are discarded",
+    "Discard minus impute lambda mean in percentage points",
+    "Elasticity of SC5 -> SC5 stasis cell",
+    "Aggregated SC5 survival elasticity",
+    "Sum of fragmentation elasticity contributions"
+  ),
+  stringsAsFactors = FALSE
+)
+write_csv(
+  transition_matrix_diagnostics,
+  file.path(output_dir, "transition_matrix_model_diagnostics.csv")
+)
+cat("Saved: transition_matrix_model_diagnostics.csv\n")
 
 # Elasticity matrix -- ensure canonical size class labels
 elasticity_df_out <- as.data.frame(elasticity)

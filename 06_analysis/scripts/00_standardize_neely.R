@@ -329,9 +329,11 @@ for (col in growth_cols) {
 }
 neely_growth <- neely_growth[, growth_cols]
 
-# Append
-combined_surv <- bind_rows(existing_surv, neely_surv)
-combined_growth <- bind_rows(existing_growth, neely_growth)
+# Append and sort for deterministic row order
+combined_surv <- bind_rows(existing_surv, neely_surv) %>%
+  arrange(study, coral_id, survey_yr)
+combined_growth <- bind_rows(existing_growth, neely_growth) %>%
+  arrange(study, coral_id, survey_yr)
 
 # Write back
 write_csv(combined_surv, surv_file)

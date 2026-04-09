@@ -153,3 +153,15 @@ Adding Neely **excluding catastrophe intervals** (TP4→TP5, TP5→TP6):
 - Still contributes ~1,000+ survival records
 
 **Recommended:** Run both and report the sensitivity.
+
+---
+
+## Related Files
+
+- [disturbance_handling_decision.md](disturbance_handling_decision.md) -- Disturbance classification and inclusion rules
+- [extraction_protocol.md](extraction_protocol.md) -- Inclusion/exclusion criteria and size conversion rules
+- [extraction_details.md](extraction_details.md) -- Per-study verification table with audit status
+- [study_characteristics.md](study_characteristics.md) -- PRISMA-style study characteristics table
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [risk_of_bias.md](risk_of_bias.md) -- Newcastle-Ottawa bias assessment per study

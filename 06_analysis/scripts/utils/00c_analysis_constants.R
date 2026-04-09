@@ -28,7 +28,18 @@ SIZE_LABELS_SHORT <- SIZE_LABELS
 SIZE_LABELS_DESC  <- SIZE_LABELS_FULL
 
 # --- Study metadata ---
-N_STUDIES <- 5L   # k in meta-analysis
-NOAA_DATA_FRACTION <- 0.78  # NOAA = 78% of observations
+# Number of unique studies contributing to the expanded meta-analysis.
+# The original individual-level meta used k=5; after adding summary-level
+# studies the expanded meta has k=17 unique studies (22 study-level effects,
+# because NOAA, Vardi, and Garrison are each split into sub-effects).
+N_STUDIES <- 17L
+N_EFFECTS <- 22L   # total study-level effects in expanded meta-analysis
+NOAA_DATA_FRACTION <- 0.78  # NOAA = 78% of individual-level observations
+
+# --- Bootstrap settings ---
+# Canonical number of bootstrap iterations for lambda CI, sensitivity, etc.
+# Defined here for future centralisation; individual scripts may still use
+# their own literal 2000L until migrated.
+N_BOOT <- 2000L
 
 cat("Loaded 00c_analysis_constants.R\n")

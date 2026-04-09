@@ -3,10 +3,10 @@
 # FIGURE 3: CARIBBEAN SURVIVAL SYNTHESIS (2-panel: a=forest, b=regional)
 # =============================================================================
 # Produces a publication-quality forest plot showing Caribbean-wide annual
-# survival evidence from the expanded meta-analysis (k=16 studies, N=9,208).
+# survival evidence from the expanded meta-analysis (k=17 studies, 22 effects, N=8,805).
 #
 # Layout (top to bottom):
-#   1. Natural colony studies (k=6) with subgroup pooled diamond
+#   1. Natural colony studies (k=7) with subgroup pooled diamond
 #   2. Restoration fragment studies (k=10) with subgroup pooled diamond
 #   3. Overall pooled estimate diamond
 #
@@ -14,8 +14,8 @@
 # to random-effects weight, and right-side annotation (survival % [CI], N).
 #
 # Visual elements:
-#   - Vertical dashed reference line at overall pooled estimate (81.1%)
-#   - Light shaded prediction interval band (43.3% - 96.0%)
+#   - Vertical dashed reference line at overall pooled estimate (78.0%)
+#   - Light shaded prediction interval band (39.5% - 95.1%)
 #   - Bottom heterogeneity annotation line
 #
 # INPUT:

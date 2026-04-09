@@ -5,5 +5,13 @@ n_studies,6
 event_rate,0.216733177377185
 brier_score,0.131240748332709
 auc,0.816229294247566
+longitudinal_aic,24696.5287426849
+longitudinal_bic,24765.4287162577
+longitudinal_logLik,-12338.2643713424
+longitudinal_downgrade_reason,slope_model_singular_precision_matrix
 longitudinal_random_structure,random_intercept_only
+hazard_aic,6401.36650464159
+hazard_bic,6511.62408593146
+hazard_logLik,-3184.6832523208
 hazard_engine,glmmTMB
+hazard_model_class,glmmTMB

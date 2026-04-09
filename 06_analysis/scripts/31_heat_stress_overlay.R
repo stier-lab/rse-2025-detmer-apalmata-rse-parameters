@@ -25,6 +25,7 @@
 # OUTPUTS:
 #   - 06_analysis/output/heat_stress_by_site_year.csv
 #   - 06_analysis/output/heat_stress_survival_analysis.csv
+#   - 06_analysis/output/heat_stress_model_diagnostics.csv
 #   - 06_analysis/figures/supplementary/FigSXX_heat_stress_survival.png
 #
 # NOTES:
@@ -129,6 +130,19 @@ n_pre1985 <- sum(site_years_all$survey_yr < 1985)
 if (n_pre1985 > 0) {
   cat(sprintf("\n  NOTE: %d site-years before 1985 (CRW unavailable) -- will be set to NA\n",
               n_pre1985))
+}
+
+classify_dhw_support <- function(n_rows, n_studies, n_regions, n_study_years) {
+  if (!is.finite(n_rows) || n_rows <= 0) return("none")
+  if (!is.finite(n_studies) || !is.finite(n_regions) || !is.finite(n_study_years)) {
+    return("sparse")
+  }
+  if (n_studies < 3 || n_regions < 3 || n_study_years < 12) return("sparse")
+  if (n_rows >= 500 && n_studies >= 5 && n_regions >= 5 && n_study_years >= 20) {
+    return("moderate")
+  }
+  if (n_rows >= 100) return("limited")
+  "sparse"
 }
 
 # ==============================================================================
@@ -321,8 +335,16 @@ cat(sprintf("  Method priority: cached lookup -> rerddap -> httr REST -> literat
 cat(sprintf("  Rate limit: 0.5s between ERDDAP requests\n\n"))
 
 # Reuse any existing site-year cache before querying external sources
-dhw_cache_file <- file.path(output_dir, "heat_stress_by_site_year.csv")
-if (file.exists(dhw_cache_file)) {
+dhw_cache_candidates <- c(
+  file.path(output_dir, "heat_stress_by_site_year_verified.csv"),
+  file.path(output_dir, "heat_stress_by_site_year.csv")
+)
+dhw_cache_file <- dhw_cache_candidates[file.exists(dhw_cache_candidates)][1]
+using_verified_cache <- length(dhw_cache_file) == 1 &&
+  !is.na(dhw_cache_file) &&
+  identical(basename(dhw_cache_file), "heat_stress_by_site_year_verified.csv")
+
+if (length(dhw_cache_file) == 1 && !is.na(dhw_cache_file)) {
   dhw_cache <- read_csv(dhw_cache_file, show_col_types = FALSE) %>%
     dplyr::select(dplyr::any_of(c(
       "lat_round", "lon_round", "survey_yr", "max_dhw", "dhw_source", "query_status"
@@ -332,8 +354,8 @@ if (file.exists(dhw_cache_file)) {
   site_years_all <- site_years_all %>%
     dplyr::left_join(dhw_cache, by = c("lat_round", "lon_round", "survey_yr"))
 
-  cat(sprintf("  Loaded cache: %d site-years from existing heat_stress_by_site_year.csv\n\n",
-              nrow(dhw_cache)))
+  cat(sprintf("  Loaded cache: %d site-years from %s\n\n",
+              nrow(dhw_cache), basename(dhw_cache_file)))
 } else {
   site_years_all$max_dhw <- NA_real_
   site_years_all$dhw_source <- NA_character_
@@ -362,7 +384,9 @@ for (i in seq_len(n_total)) {
   # Reuse cached rows from earlier successful or explicit no-data runs
   if ((!is.na(site_years_all$max_dhw[i]) && !is.na(site_years_all$dhw_source[i])) ||
       (!is.na(site_years_all$query_status[i]) &&
-       site_years_all$query_status[i] %in% c("success", "literature_lut", "pre-1985 (CRW unavailable)", "no_data"))) {
+       site_years_all$query_status[i] %in% c("success", "literature_lut", "pre-1985 (CRW unavailable)", "no_data")) ||
+      (using_verified_cache && !is.na(site_years_all$query_status[i]) &&
+       site_years_all$query_status[i] == "error")) {
     next
   }
 
@@ -498,7 +522,7 @@ dhw_coverage <- surv_with_dhw %>%
     n_dhw = sum(!is.na(max_dhw)),
     pct_dhw = n_dhw / n * 100,
     mean_dhw = mean(max_dhw, na.rm = TRUE),
-    max_dhw_val = max(max_dhw, na.rm = TRUE),
+    max_dhw_val = if (all(is.na(max_dhw))) NA_real_ else max(max_dhw, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   dplyr::mutate(
@@ -508,6 +532,48 @@ dhw_coverage <- surv_with_dhw %>%
 
 cat("\n  DHW coverage by study:\n")
 print(as.data.frame(dhw_coverage))
+
+dhw_supported_studies <- dplyr::n_distinct(surv_with_dhw$study[!is.na(surv_with_dhw$max_dhw)])
+dhw_supported_regions <- dplyr::n_distinct(surv_with_dhw$region[!is.na(surv_with_dhw$max_dhw)])
+dhw_supported_study_years <- dplyr::n_distinct(
+  surv_with_dhw %>%
+    dplyr::filter(!is.na(max_dhw)) %>%
+    dplyr::select(study, region, survey_yr)
+)
+dhw_support_label <- classify_dhw_support(
+  n_rows = n_matched,
+  n_studies = dhw_supported_studies,
+  n_regions = dhw_supported_regions,
+  n_study_years = dhw_supported_study_years
+)
+dhw_support_summary <- tibble::tibble(
+  dhw_file = if (length(dhw_cache_file) == 1 && !is.na(dhw_cache_file)) basename(dhw_cache_file) else NA_character_,
+  n_site_year_rows = nrow(site_years_all),
+  n_site_year_rows_with_dhw = sum(!is.na(site_years_all$max_dhw)),
+  n_survival_rows = n_total_ind,
+  n_survival_rows_with_dhw = n_matched,
+  pct_survival_rows_with_dhw = n_matched / n_total_ind * 100,
+  n_studies_with_dhw = dhw_supported_studies,
+  n_regions_with_dhw = dhw_supported_regions,
+  n_unique_study_years_with_dhw = dhw_supported_study_years,
+  n_query_error_rows = sum(site_years_all$query_status == "error", na.rm = TRUE),
+  n_no_data_rows = sum(site_years_all$query_status == "no_data", na.rm = TRUE),
+  inference_support = dhw_support_label,
+  caveat = sprintf(
+    "Verified DHW cache is preferred when present, but current support is often literature-LUT backed and is supported here by %d studies, %d regions, and %d study-years.",
+    dhw_supported_studies,
+    dhw_supported_regions,
+    dhw_supported_study_years
+  )
+)
+
+cat(sprintf(
+  "\n  Support summary: %s (%d studies, %d regions, %d study-region-years)\n",
+  dhw_support_summary$inference_support[1],
+  dhw_support_summary$n_studies_with_dhw[1],
+  dhw_support_summary$n_regions_with_dhw[1],
+  dhw_support_summary$n_unique_study_years_with_dhw[1]
+))
 
 # ==============================================================================
 # SECTION 5: ANALYZE HEAT STRESS IMPACT ON SURVIVAL
@@ -546,6 +612,8 @@ surv_for_model <- surv_with_dhw %>%
   dplyr::mutate(log_size = log(size_cm2 + 1))
 
 dhw_glmm <- NULL
+dhw_cor <- NULL
+dhw_moderator <- NULL
 if (nrow(surv_for_model) >= 50 && dplyr::n_distinct(surv_for_model$study) >= 2) {
   dhw_glmm <- tryCatch({
     lme4::glmer(survived ~ log_size + max_dhw + (1 | study),
@@ -570,13 +638,19 @@ if (nrow(surv_for_model) >= 50 && dplyr::n_distinct(surv_for_model$study) >= 2) 
     dhw_se   <- summary(dhw_glmm)$coefficients["max_dhw", "Std. Error"]
     dhw_z    <- summary(dhw_glmm)$coefficients["max_dhw", "z value"]
     dhw_p    <- summary(dhw_glmm)$coefficients["max_dhw", "Pr(>|z|)"]
+    dhw_p_display <- if (identical(dhw_support_summary$inference_support[1], "sparse")) NA_real_ else dhw_p
 
-    cat(sprintf("\n    DHW effect: %.4f (SE=%.4f, z=%.3f, p=%.4f)\n",
-                dhw_coef, dhw_se, dhw_z, dhw_p))
+    cat(sprintf("\n    DHW effect: %.4f (SE=%.4f, z=%.3f, p=%s)\n",
+                dhw_coef, dhw_se, dhw_z,
+                ifelse(is.na(dhw_p_display), "NA (descriptive only; sparse support)", sprintf("%.4f", dhw_p_display))))
     cat(sprintf("    Odds ratio per 1 DHW increase: %.4f\n", exp(dhw_coef)))
-    cat(sprintf("    Interpretation: Each additional DHW %s survival odds by %.1f%%\n",
-                ifelse(dhw_coef < 0, "decreases", "increases"),
-                abs(exp(dhw_coef) - 1) * 100))
+    if (identical(dhw_support_summary$inference_support[1], "sparse")) {
+      cat("    Interpretation: descriptive association only; DHW support is too thin for inferential use.\n")
+    } else {
+      cat(sprintf("    Interpretation: Each additional DHW %s survival odds by %.1f%%\n",
+                  ifelse(dhw_coef < 0, "decreases", "increases"),
+                  abs(exp(dhw_coef) - 1) * 100))
+    }
   }
 }
 
@@ -596,13 +670,15 @@ study_level_dhw <- surv_with_dhw %>%
 
 if (nrow(study_level_dhw) >= 5) {
   dhw_cor <- cor.test(study_level_dhw$mean_dhw, study_level_dhw$survival_rate,
-                      method = "spearman")
-  cat(sprintf("    Spearman rho = %.3f (p = %.4f, n = %d study-region-years)\n",
-              dhw_cor$estimate, dhw_cor$p.value, nrow(study_level_dhw)))
+                      method = "spearman", exact = FALSE)
+  dhw_cor_p_display <- if (identical(dhw_support_summary$inference_support[1], "sparse")) NA_real_ else dhw_cor$p.value
+  cat(sprintf("    Spearman rho = %.3f (p = %s, n = %d study-region-years)\n",
+              dhw_cor$estimate,
+              ifelse(is.na(dhw_cor_p_display), "NA (descriptive only; sparse support)", sprintf("%.4f", dhw_cor_p_display)),
+              nrow(study_level_dhw)))
 } else {
   cat(sprintf("    Insufficient study-level data for correlation (n = %d, need >= 5)\n",
               nrow(study_level_dhw)))
-  dhw_cor <- NULL
 }
 
 # --- 5d. Meta-analysis moderator: DHW effect on study-level survival ---
@@ -663,7 +739,9 @@ if (has_metafor && file.exists(meta_effects_file)) {
   yi_col <- intersect(c("yi", "logit_surv", "plo"), names(meta_with_dhw))
   vi_col <- intersect(c("vi", "var_logit", "var_plo"), names(meta_with_dhw))
 
-  if (n_meta_dhw >= 5 && length(yi_col) > 0 && length(vi_col) > 0) {
+  if (identical(dhw_support_summary$inference_support[1], "sparse")) {
+    cat("    Moderator test suppressed: DHW support is sparse, so this layer is descriptive only.\n")
+  } else if (n_meta_dhw >= 5 && length(yi_col) > 0 && length(vi_col) > 0) {
     meta_subset <- meta_with_dhw %>%
       dplyr::filter(!is.na(mean_dhw) & !is.na(.data[[yi_col[1]]]) & !is.na(.data[[vi_col[1]]]))
 
@@ -688,10 +766,7 @@ if (has_metafor && file.exists(meta_effects_file)) {
         dhw_mod_p    <- dhw_moderator$pval[2]
         cat(sprintf("\n    DHW moderator: coefficient = %.4f, p = %.4f\n",
                     dhw_mod_coef, dhw_mod_p))
-        cat(sprintf("    Interpretation: %s\n",
-                    ifelse(dhw_mod_p < 0.05,
-                           "DHW is a SIGNIFICANT moderator of study-level survival",
-                           "DHW is NOT a significant moderator of study-level survival")))
+        cat("    Interpretation: moderator fit retained as exploratory support, not a primary inferential claim.\n")
       }
     } else {
       cat("    Insufficient matched effects for moderator analysis after filtering\n")
@@ -727,27 +802,118 @@ cat(sprintf("  Saved: heat_stress_by_site_year.csv (%d rows)\n", nrow(dhw_output
 # --- 6b. Survival analysis by heat stress category ---
 analysis_output <- list()
 analysis_output$survival_by_category <- surv_by_stress
+dhw_diag_rows <- list(
+  tibble::tibble(
+    component = "support_summary",
+    analysis_mode = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), "descriptive_only", "screening"),
+    n_obs = dhw_support_summary$n_survival_rows_with_dhw[1],
+    n_studies = dhw_support_summary$n_studies_with_dhw[1],
+    n_regions = dhw_support_summary$n_regions_with_dhw[1],
+    n_study_years = dhw_support_summary$n_unique_study_years_with_dhw[1],
+    estimate = NA_real_,
+    p_value = NA_real_,
+    aic = NA_real_,
+    bic = NA_real_,
+    log_likelihood = NA_real_,
+    overdispersion_ratio = NA_real_,
+    overdispersed = NA,
+    inference_support = dhw_support_summary$inference_support[1],
+    note = dhw_support_summary$caveat[1]
+  )
+)
 
 if (!is.null(dhw_glmm)) {
   glmm_coefs <- as.data.frame(summary(dhw_glmm)$coefficients)
   glmm_coefs$term <- rownames(glmm_coefs)
   analysis_output$glmm_coefficients <- glmm_coefs
+
+  dhw_diag_rows[[length(dhw_diag_rows) + 1]] <- tibble::tibble(
+    component = "dhw_glmm",
+    analysis_mode = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), "descriptive_only", "inferential_screen"),
+    n_obs = nobs(dhw_glmm),
+    n_studies = dplyr::n_distinct(surv_for_model$study),
+    n_regions = dplyr::n_distinct(surv_for_model$region),
+    n_study_years = dplyr::n_distinct(surv_for_model %>% dplyr::select(study, region, survey_yr)),
+    estimate = unname(fixef(dhw_glmm)["max_dhw"]),
+    p_value = if (identical(dhw_support_summary$inference_support[1], "sparse")) NA_real_ else {
+      summary(dhw_glmm)$coefficients["max_dhw", "Pr(>|z|)"]
+    },
+    aic = AIC(dhw_glmm),
+    bic = BIC(dhw_glmm),
+    log_likelihood = as.numeric(logLik(dhw_glmm)),
+    overdispersion_ratio = od$ratio,
+    overdispersed = od$overdispersed,
+    inference_support = dhw_support_summary$inference_support[1],
+    note = ifelse(
+      identical(dhw_support_summary$inference_support[1], "sparse"),
+      "DHW GLMM retained as descriptive screening only because independent support is sparse.",
+      "DHW GLMM fit on DHW-matched survival subset."
+    )
+  )
 }
 
 if (!is.null(dhw_cor)) {
   analysis_output$correlation <- data.frame(
     method = "Spearman",
     rho = as.numeric(dhw_cor$estimate),
-    p_value = dhw_cor$p.value,
+    p_value = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), NA_real_, dhw_cor$p.value),
     n = nrow(study_level_dhw)
+  )
+
+  dhw_diag_rows[[length(dhw_diag_rows) + 1]] <- tibble::tibble(
+    component = "study_level_correlation",
+    analysis_mode = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), "descriptive_only", "inferential_screen"),
+    n_obs = nrow(study_level_dhw),
+    n_studies = dplyr::n_distinct(study_level_dhw$study),
+    n_regions = dplyr::n_distinct(study_level_dhw$region),
+    n_study_years = nrow(study_level_dhw),
+    estimate = as.numeric(dhw_cor$estimate),
+    p_value = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), NA_real_, dhw_cor$p.value),
+    aic = NA_real_,
+    bic = NA_real_,
+    log_likelihood = NA_real_,
+    overdispersion_ratio = NA_real_,
+    overdispersed = NA,
+    inference_support = dhw_support_summary$inference_support[1],
+    note = "Study-level DHW-survival correlation; treat as descriptive when support is sparse."
   )
 }
 
+if (!is.null(dhw_moderator)) {
+  dhw_diag_rows[[length(dhw_diag_rows) + 1]] <- tibble::tibble(
+    component = "meta_moderator",
+    analysis_mode = "exploratory_support",
+    n_obs = dhw_moderator$k,
+    n_studies = dhw_moderator$k,
+    n_regions = dplyr::n_distinct(meta_subset$region),
+    n_study_years = sum(meta_subset$n_years, na.rm = TRUE),
+    estimate = unname(coef(dhw_moderator)["mean_dhw"]),
+    p_value = dhw_moderator$pval[2],
+    aic = AIC(dhw_moderator),
+    bic = BIC(dhw_moderator),
+    log_likelihood = as.numeric(logLik(dhw_moderator)),
+    overdispersion_ratio = NA_real_,
+    overdispersed = NA,
+    inference_support = dhw_support_summary$inference_support[1],
+    note = "Exploratory DHW moderator on matched study-level effects."
+  )
+}
+
+dhw_diag <- dplyr::bind_rows(dhw_diag_rows)
+write_csv(dhw_diag, file.path(output_dir, "heat_stress_model_diagnostics.csv"))
+cat(sprintf("  Saved: heat_stress_model_diagnostics.csv (%d rows)\n", nrow(dhw_diag)))
+
 # Combine into one summary table
 analysis_summary <- surv_by_stress %>%
-  dplyr::mutate(analysis_type = "survival_by_category") %>%
+  dplyr::mutate(
+    analysis_type = "survival_by_category",
+    analysis_mode = ifelse(identical(dhw_support_summary$inference_support[1], "sparse"), "descriptive_only", "supporting_summary"),
+    inference_support = dhw_support_summary$inference_support[1],
+    caveat = dhw_support_summary$caveat[1]
+  ) %>%
   dplyr::select(analysis_type, heat_stress_category, n, survival_rate, se,
-                ci_lower, ci_upper, n_studies, mean_dhw)
+                ci_lower, ci_upper, n_studies, mean_dhw, analysis_mode,
+                inference_support, caveat)
 
 write_csv(analysis_summary, file.path(output_dir, "heat_stress_survival_analysis.csv"))
 cat(sprintf("  Saved: heat_stress_survival_analysis.csv (%d rows)\n", nrow(analysis_summary)))
@@ -817,10 +983,14 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
 
     # Add correlation annotation if available
     if (!is.null(dhw_cor)) {
+      cor_label <- if (identical(dhw_support_summary$inference_support[1], "sparse")) {
+        sprintf("rho = %.2f\nsupport = %s", dhw_cor$estimate, dhw_support_summary$inference_support[1])
+      } else {
+        sprintf("rho = %.2f, p = %.3f", dhw_cor$estimate, dhw_cor$p.value)
+      }
       p_b <- p_b +
         annotate("text", x = Inf, y = Inf,
-                 label = sprintf("rho = %.2f, p = %.3f",
-                                 dhw_cor$estimate, dhw_cor$p.value),
+                 label = cor_label,
                  hjust = 1.1, vjust = 1.5, size = 3.5, color = "grey30")
     }
   } else {
@@ -831,9 +1001,9 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
   # --- Panel c: DHW timeline for major sites ---
   dhw_timeline <- site_years_all %>%
     dplyr::filter(!is.na(max_dhw)) %>%
-    dplyr::group_by(study, survey_yr) %>%
+    dplyr::group_by(study, region, lat_round, lon_round, survey_yr) %>%
     dplyr::summarise(
-      max_dhw = max(max_dhw, na.rm = TRUE),
+      max_dhw = if (all(is.na(max_dhw))) NA_real_ else max(max_dhw, na.rm = TRUE),
       heat_stress_category = dplyr::first(heat_stress_category),
       .groups = "drop"
     )
@@ -907,6 +1077,11 @@ cat(sprintf("  Site-years with DHW: %d (%.1f%%)\n",
             sum(!is.na(site_years_all$max_dhw)) / n_total * 100))
 cat(sprintf("  Individual records matched: %d / %d (%.1f%%)\n",
             n_matched, n_total_ind, n_matched / n_total_ind * 100))
+cat(sprintf("  DHW support: %s (%d studies, %d regions, %d study-region-years)\n",
+            dhw_support_summary$inference_support[1],
+            dhw_support_summary$n_studies_with_dhw[1],
+            dhw_support_summary$n_regions_with_dhw[1],
+            dhw_support_summary$n_unique_study_years_with_dhw[1]))
 
 if (nrow(surv_by_stress) > 0) {
   cat("\n  Survival by heat stress:\n")
@@ -921,14 +1096,23 @@ if (nrow(surv_by_stress) > 0) {
 
 if (!is.null(dhw_glmm)) {
   dhw_coef <- fixef(dhw_glmm)["max_dhw"]
-  dhw_p    <- summary(dhw_glmm)$coefficients["max_dhw", "Pr(>|z|)"]
-  cat(sprintf("\n  GLMM: DHW effect on survival = %.4f (p = %.4f)\n", dhw_coef, dhw_p))
-  cat(sprintf("    Each +1 DHW: %.1f%% change in survival odds\n",
-              (exp(dhw_coef) - 1) * 100))
+  dhw_p_display <- if (identical(dhw_support_summary$inference_support[1], "sparse")) NA_real_ else {
+    summary(dhw_glmm)$coefficients["max_dhw", "Pr(>|z|)"]
+  }
+  cat(sprintf("\n  GLMM: DHW effect on survival = %.4f (p = %s)\n",
+              dhw_coef,
+              ifelse(is.na(dhw_p_display), "NA (descriptive only; sparse support)", sprintf("%.4f", dhw_p_display))))
+  if (identical(dhw_support_summary$inference_support[1], "sparse")) {
+    cat("    Treat the DHW slope as supportive climate context, not strong attribution.\n")
+  } else {
+    cat(sprintf("    Each +1 DHW: %.1f%% change in survival odds\n",
+                (exp(dhw_coef) - 1) * 100))
+  }
 }
 
 cat("\nOutputs:\n")
 cat("  - heat_stress_by_site_year.csv\n")
 cat("  - heat_stress_survival_analysis.csv\n")
+cat("  - heat_stress_model_diagnostics.csv\n")
 cat("  - FigSXX_heat_stress_survival.png/.pdf\n")
 cat("\n")

@@ -1,3 +1,3 @@
-outcome,model_variant,n_rows,n_events,concordance,concordance_se,log_likelihood,aic,frailty_theta,frailty_error_message
-recurrent_shrinkage,frailty,5756,2208,0.7901450584184682,0.004920060012077674,-11934.259215148679,24794.40093289775,0.37897635311979605,NA
-terminal_mortality,frailty,7346,1580,0.6716198813029657,0.007792926878944464,-9349.678048198411,18718.527956763388,0.0061154799905773945,NA
+outcome,model_variant,n_rows,n_events,concordance,concordance_se,log_likelihood,aic,frailty_theta,time_varying_prior_shrink,frailty_error_message
+recurrent_shrinkage,frailty_time_varying,5756,2208,0.5286473130013233,0.0067827635574872975,-12429.095052773442,24876.241869359197,0.003409037396147954,TRUE,NA
+terminal_mortality,frailty_time_varying,7346,1580,0.6733721613898849,0.0077651503065334195,-9344.155290809796,18715.943295027933,0.013808941331509736,TRUE,NA

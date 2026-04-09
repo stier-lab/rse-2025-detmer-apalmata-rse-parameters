@@ -71,9 +71,9 @@ These studies were identified and/or extracted during the March 2026 expanded se
 
 | Study ID | Citation | Region | Pop. Type | Design | n | Outcome Extracted | Size Metric | Time Interval | Extractor | Audit Result | Key Caveats |
 |----------|----------|--------|-----------|--------|---|-------------------|-------------|---------------|-----------|--------------|-------------|
-| rogers_muller_2012 | Rogers, C.S. & Muller, E.M. (2012). *Dis Aquat Org* 98:1--8. | USVI (Haulover Bay, St. John) | Natural | Tagged colony monitoring at USGS/NPS site, 2003--2009 | 69 | Survival (44/69 survived 7 yr) | Volume (cm^3) -- not convertible to area; set to NA | 7 years (annualized) | AI (Claude) | PASS | Size in volume, not area -- entered as NA. Independence from Muller et al. 2008 confirmed (different bay, 4 km apart). Fig. 7 mortality year-by-year not used (read error caught in audit). |
+| rogers_muller_2012 | Rogers, C.S. & Muller, E.M. (2012). Bleaching, disease and recovery in the threatened scleractinian coral *Acropora palmata* in St. John, USVI: 2003-2010. *Coral Reefs* 31:807--819. | USVI (Haulover Bay, St. John) | Natural | Tagged colony monitoring at USGS/NPS site, 2003--2009 | 69 | Survival (44/69 survived 7 yr) | Volume (cm^3) -- not convertible to area; set to NA | 7 years (annualized) | AI (Claude) | PASS | Size in volume, not area -- entered as NA. Independence from Muller et al. 2008 confirmed (different bay, 4 km apart). Fig. 7 mortality year-by-year not used (read error caught in audit). |
 | ramos_romero_et_al_2025 | Ramos-Romero, S. et al. (2025). *Restor Ecol* (in press/2025). | Cuba (4 restoration sites) | Restoration | Kaplan-Meier survival of outplanted fragments at 4 sites | 200 | Survival (KM estimates from Table 2) | Not specified; set to NA | 423--453 days per site (annualized) | AI (Claude) | PASS after corrections | Time intervals initially extracted as time-of-last-KM-event (232--347 d); corrected to full monitoring duration (423--453 d). Study-level survival changed from 61.0% to 70.5% after correction. |
-| rogers_et_al_1982 | Rogers, C.S. et al. (1982). *Science* 216:749--751. | USVI (St. Croix, 2 sites) | Natural | 173 individually labeled branches tracked ~11 months post-Hurricane David (1979) at Tague Bay and Butler Bay | 173 | Survival (branch-level, post-hurricane) | Branch-level; size classes not specified | ~11 months (annualized) | AI (Claude) | PASS | Reclassified from excluded ("fragment survival only, non-annual") after re-evaluation. Provides extractable annual survival data for 173 labeled branches across 2 St. Croix reef sites. Post-hurricane monitoring context. |
+| rogers_et_al_1982 | Rogers, C.S., Suchanek, T.H. & Pecora, F.A. (1982). Effects of Hurricanes David and Frederic (1979) on shallow *Acropora palmata* reef communities: St. Croix, USVI. *Bull Mar Sci* 32(2):532--548. | USVI (St. Croix, 2 sites) | Natural | 173 individually labeled branches tracked ~11 months post-Hurricane David (1979) at Tague Bay and Butler Bay | 173 | Survival (branch-level, post-hurricane) | Branch-level; size classes not specified | ~11 months (annualized) | AI (Claude) | PASS | Reclassified from excluded ("fragment survival only, non-annual") after re-evaluation. Provides extractable annual survival data for 173 labeled branches across 2 St. Croix reef sites. Post-hurricane monitoring context. |
 
 ### 1D. Additional Data Contributions (not in survival meta-analysis)
 
@@ -267,6 +267,18 @@ These entries demonstrate that the literature search was broad enough to capture
 | Tier 2: Hand-extracted summary | Detmer reading tables/figures | 8 (Vardi 2011, Bruckner, Ortiz Prosper, Forrester 2013, Rosales, Maurer, Williams-Miller, Garrison-Ward) | ~961 |
 | Tier 2: AI-extracted summary | Claude reading PDFs, audited | 3 (Rogers-Muller 2012, Ramos-Romero 2025, Rogers 1982; Muller 2008 & Sutherland 2016 removed after data audit) | ~442 |
 | **Total** | | **17 unique studies, 22 study-level effects** | **~8,805** |
+
+---
+
+## Related Files
+
+- [extraction_protocol.md](extraction_protocol.md) -- Inclusion/exclusion criteria and size conversion rules
+- [extraction_details.md](extraction_details.md) -- Per-study verification table with audit status
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [risk_of_bias.md](risk_of_bias.md) -- Newcastle-Ottawa bias assessment per study
+- [disturbance_handling_decision.md](disturbance_handling_decision.md) -- Disturbance classification and inclusion rules
+- [neely_2022_data_integration.md](neely_2022_data_integration.md) -- Neely et al. 2022 integration notes
 
 ---
 

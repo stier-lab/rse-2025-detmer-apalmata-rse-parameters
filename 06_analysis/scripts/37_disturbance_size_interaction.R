@@ -24,6 +24,7 @@
 #   - 06_analysis/output/disturbance_size_survival_model.csv
 #   - 06_analysis/output/disturbance_size_growth_model.csv
 #   - 06_analysis/output/disturbance_size_model_comparison.csv
+#   - 06_analysis/output/disturbance_size_model_diagnostics.csv
 #   - 06_analysis/output/disturbance_size_prediction_grid.csv
 #   - 06_analysis/figures/supplementary/disturbance_size_interaction.png (+ .pdf)
 #
@@ -116,8 +117,31 @@ extract_fixed_effects <- function(model, model_name) {
     mutate(
       model = model_name,
       odds_ratio = exp(estimate)
-    )
+  )
   coefs
+}
+
+extract_glmer_diagnostics <- function(model, model_name, response_name) {
+  fit <- model
+  od <- tryCatch(overdisp_test(model), error = function(e) NULL)
+  singular_fit <- tryCatch(lme4::isSingular(model, tol = 1e-4), error = function(e) NA)
+  conv_msg <- tryCatch({
+    msgs <- model@optinfo$conv$lme4$messages
+    if (length(msgs) == 0) NA_character_ else paste(unique(unlist(msgs)), collapse = "; ")
+  }, error = function(e) NA_character_)
+
+  tibble::tibble(
+    response = response_name,
+    model = model_name,
+    n_obs = stats::nobs(fit),
+    aic = stats::AIC(fit),
+    bic = stats::BIC(fit),
+    logLik = as.numeric(stats::logLik(fit)),
+    overdispersion_ratio = if (is.null(od)) NA_real_ else od$ratio,
+    overdispersed = if (is.null(od)) NA else od$overdispersed,
+    singular_fit = singular_fit,
+    convergence_message = conv_msg
+  )
 }
 
 summarise_rate <- function(x) {
@@ -275,10 +299,18 @@ model_comparison <- bind_rows(
     lrt_p = c(NA_real_, growth_lrt_p)
   )
 )
+model_diagnostics <- bind_rows(
+  extract_glmer_diagnostics(surv_add, "additive", "survival"),
+  extract_glmer_diagnostics(surv_int, "interaction", "survival"),
+  extract_glmer_diagnostics(growth_add, "additive", "positive_growth"),
+  extract_glmer_diagnostics(growth_int, "interaction", "positive_growth")
+)
 write_csv(model_comparison, file.path(output_dir, "disturbance_size_model_comparison.csv"))
+write_csv(model_diagnostics, file.path(output_dir, "disturbance_size_model_diagnostics.csv"))
 write_csv(surv_terms, file.path(output_dir, "disturbance_size_survival_model.csv"))
 write_csv(growth_terms, file.path(output_dir, "disturbance_size_growth_model.csv"))
 print_success("Saved: disturbance_size_model_comparison.csv")
+print_success("Saved: disturbance_size_model_diagnostics.csv")
 print_success("Saved: disturbance_size_survival_model.csv")
 print_success("Saved: disturbance_size_growth_model.csv")
 

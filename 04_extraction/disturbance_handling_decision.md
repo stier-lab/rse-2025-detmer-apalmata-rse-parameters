@@ -74,3 +74,15 @@ The transition matrix (script 13) uses ALL individual-level data to estimate siz
 - Stochastic lambda (Tuljapurkar approximation) explicitly models between-study variance, which now includes the Neely catastrophe contribution
 
 The population model thus represents a realistic assessment of population trajectory under the historical disturbance regime, not an idealized baseline.
+
+---
+
+## Related Files
+
+- [neely_2022_data_integration.md](neely_2022_data_integration.md) -- Neely et al. 2022 integration (includes 2014 catastrophe details)
+- [extraction_protocol.md](extraction_protocol.md) -- Inclusion/exclusion criteria and size conversion rules
+- [extraction_details.md](extraction_details.md) -- Per-study verification table with audit status
+- [study_characteristics.md](study_characteristics.md) -- PRISMA-style study characteristics table
+- [data_integration_issues.md](data_integration_issues.md) -- Individual + summary data combination method
+- [data_flow_diagram.md](data_flow_diagram.md) -- Mermaid diagram of the full data pipeline
+- [risk_of_bias.md](risk_of_bias.md) -- Newcastle-Ottawa bias assessment per study

@@ -1,0 +1,55 @@
+"script","description","status","duration_sec"
+"00_standardize_neely.R","Standardize Standardize Neely data","SUCCESS",0.9
+"01_data_preparation.R","Data preparation and cleaning","SUCCESS",5.1
+"02_survival_thresholds.R","Survival threshold analysis","SUCCESS",19.4
+"03_growth_thresholds.R","Growth threshold analysis","SUCCESS",13.1
+"04_growth_rate_comparison.R","Growth rate analysis (AGR vs RGR)","SUCCESS",96.8
+"05_variance_partitioning.R","Variance partitioning (size/space/time)","SUCCESS",52
+"06_data_gap_analysis.R","Data gap analysis and certainty scoring","SUCCESS",2.5
+"07_integrate_summary_data.R","Integrate summary data","SUCCESS",2.6
+"08_climate_demography.R","Climate-demography integration","SUCCESS",6.2
+"09_power_analysis.R","Power analysis for future studies","SUCCESS",24.4
+"10_cross_validation.R","Cross-validation framework","SUCCESS",11.1
+"11_context_comparison.R","Context comparison (field/nursery/lab)","SUCCESS",3.3
+"12_model_selection.R","Model selection tables","SUCCESS",7.6
+"13_transition_matrix.R","Transition matrix population model","SUCCESS",5194.4
+"14_meta_analysis.R","Formal meta-analysis (k=5, random effects)","SUCCESS",5.3
+"14b_expanded_meta_analysis.R","Expanded meta-analysis (k=16, two-tier)","SUCCESS",4.1
+"15_heterogeneity_analysis.R","Heterogeneity analysis (I², Q-tests)","SUCCESS",2.5
+"16_sensitivity_analysis.R","Sensitivity analysis (LOSO, elasticity)","SUCCESS",39.9
+"17_update_parameter_lists.R","Update parameter lists for API","SUCCESS",55.4
+"18_fig1_study_landscape.R","Figure 1: Study landscape with map","SUCCESS",3.7
+"19_fig2_demographic_rates.R","Figure 2: Demographic rates (survival + RGR)","SUCCESS",4.1
+"20_fig_size_class_survival_synthesis.R","Manuscript-support size-class survival synthesis","SUCCESS",2.8
+"20b_fig_expanded_forest_plot.R","Figure 3: Caribbean survival synthesis","SUCCESS",3.4
+"20c_fig_regional_survival.R","Figure S15: Regional survival variation","SUCCESS",2.5
+"21_fig3_natural_vs_restoration.R","Figure S8: Shared-range natural vs restoration comparison","SUCCESS",3.7
+"22_fig6_population_model.R","Figure 4: Population model & sensitivity","SUCCESS",3.6
+"23_figS2_data_gaps.R","Figure S2: Data gaps heatmap","SUCCESS",2.5
+"24_supp_S3_S4.R","Supplementary S3-S4: Model diagnostics & selection","SUCCESS",4.2
+"25_supp_S5_S6_S7_thresholds_growth.R","Supplementary S5-S7: Thresholds & growth","SUCCESS",6.9
+"26_supp_S8_S9.R","Supplementary S8-S9: Heterogeneity and comparison layer","SUCCESS",3.8
+"27_supp_S10_S11.R","Supplementary S10-S11: Context and climate layer","SUCCESS",3.8
+"28_supp_S12_S13_S14.R","Supplementary S12-S14: Sensitivity and projections","SUCCESS",4.1
+"29_natural_vs_restoration.R","Natural vs restoration (within-region + size-matched)","SUCCESS",3.1
+"30_disturbance_sensitivity.R","Disturbance sensitivity analysis","SUCCESS",4.3
+"31_heat_stress_overlay.R","Heat stress overlay","SUCCESS",3.5
+"31b_verify_dhw.R","DHW/site-year verification","SUCCESS",352.9
+"32_disturbance_survival_analysis.R","Disturbance survival analysis","SUCCESS",5.4
+"33_hurricane_exposure.R","Hurricane exposure summary","SUCCESS",6.7
+"34_disturbance_summaries.R","Disturbance catalogs and summary figures","SUCCESS",3.9
+"35_curate_literature_scope.R","Literature scope curation","SUCCESS",0.6
+"36_shrinkage_retrogression_summary.R","Shrinkage and retrogression synthesis","SUCCESS",3.1
+"37_disturbance_size_interaction.R","Disturbance-by-size interaction analysis","FAILED",14.8
+"38_study_window_disturbance_audit.R","Study-window disturbance audit","SUCCESS",3.2
+"39_restoration_subtype_sensitivity.R","Restoration subtype sensitivity analysis","SUCCESS",2.7
+"40_manzello_heatwave_scenarios.R","Manzello 2025 heatwave scenario projections","SUCCESS",4.4
+"41_multistate_transition_model.R","Advanced multistate transition model","SUCCESS",4.3
+"42_joint_longitudinal_survival_model.R","Advanced joint longitudinal-survival model","SUCCESS",6.8
+"43_stochastic_ipm_disturbance_model.R","Advanced stochastic disturbance-driven IPM","SUCCESS",9.5
+"44_regime_switching_model.R","Advanced regime-switching hidden-state model","SUCCESS",4.4
+"45_distributed_lag_disturbance_model.R","Advanced distributed-lag disturbance model","SUCCESS",38.2
+"46_recurrent_event_frailty_model.R","Advanced recurrent-event frailty model","SUCCESS",5.1
+"47_spatiotemporal_hierarchical_model.R","Advanced spatiotemporal hierarchical model","SUCCESS",18.2
+"23_verification.R","Pipeline verification","SUCCESS",2.3
+"48_pipeline_refresh_audit.R","Refresh pipeline manifests and generated reporting artifacts","SUCCESS",2.5

@@ -749,8 +749,22 @@ if (has_lme4 && requireNamespace("MuMIn", quietly = TRUE)) {
     n_params <- length(fixef(mod)) + sum(sapply(VarCorr(mod), function(x) prod(dim(x))))
     ratio <- sum(pearson_resid^2) / (n_obs - n_params)
     flag <- ifelse(ratio > 1.5, "WARNING: potential overdispersion", "OK")
+    conv_messages <- tryCatch(unlist(mod@optinfo$conv$lme4$messages),
+                              error = function(e) character())
+    conv_messages <- as.character(conv_messages)
+    conv_messages <- conv_messages[nzchar(conv_messages)]
     cat(sprintf("  %s: dispersion ratio = %.3f [%s]\n", nm, ratio, flag))
-    data.frame(model = nm, dispersion_ratio = ratio, flag = flag, stringsAsFactors = FALSE)
+    data.frame(
+      model = nm,
+      dispersion_ratio = ratio,
+      flag = flag,
+      is_singular = tryCatch(lme4::isSingular(mod, tol = 1e-4),
+                             error = function(e) NA),
+      convergence_ok = length(conv_messages) == 0,
+      optimizer_messages = if (length(conv_messages) == 0) NA_character_
+                           else paste(unique(conv_messages), collapse = " | "),
+      stringsAsFactors = FALSE
+    )
   })
   glmm_overdisp_df <- do.call(rbind, glmm_overdisp)
 
@@ -808,6 +822,9 @@ if (has_lme4 && requireNamespace("MuMIn", quietly = TRUE)) {
   # Save GLMM R² results (combined survival + growth)
   write_csv(glmm_r2_combined, file.path(output_dir, "variance_partitioning_glmm_r2.csv"))
   cat("\n✓ Saved: variance_partitioning_glmm_r2.csv\n")
+
+  write_csv(glmm_overdisp_df, file.path(output_dir, "variance_partitioning_glmm_overdispersion.csv"))
+  cat("✓ Saved: variance_partitioning_glmm_overdispersion.csv\n")
 
 } else {
   cat("SKIPPED: lme4 or MuMIn not available. Install with install.packages(c('lme4', 'MuMIn'))\n")

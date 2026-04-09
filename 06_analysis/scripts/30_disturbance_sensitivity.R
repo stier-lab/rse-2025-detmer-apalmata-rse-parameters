@@ -28,6 +28,9 @@
 #   CSVs:
 #     - 06_analysis/output/disturbance_sensitivity_summary.csv
 #     - 06_analysis/output/disturbance_interval_comparison.csv
+#     - 06_analysis/output/disturbance_sensitivity_model_diagnostics.csv
+#     - 06_analysis/output/disturbance_sensitivity_scenario_status.csv
+#     - 06_analysis/output/disturbance_sensitivity_influence.csv
 #   Figure:
 #     - 06_analysis/figures/supplementary/FigSXX_disturbance_sensitivity.png
 #
@@ -345,6 +348,171 @@ run_tier1_meta <- function(data, label) {
   )
 }
 
+scenario_analysis_status <- function(meta_result) {
+  if (is.null(meta_result)) return("descriptive_only_meta_not_fit")
+  if (!is.finite(meta_result$k) || meta_result$k < 2) return("descriptive_only_meta_not_fit")
+  if (meta_result$k < 5) return("descriptive_only_small_k")
+  "meta_sensitivity_fit"
+}
+
+scenario_analysis_note <- function(meta_result) {
+  status <- scenario_analysis_status(meta_result)
+  dplyr::case_when(
+    status == "descriptive_only_meta_not_fit" ~ "Scenario did not retain enough studies for a valid meta-analysis.",
+    status == "descriptive_only_small_k" ~ "Scenario fit is retained as a sensitivity/descriptive check only because k is small.",
+    TRUE ~ "Scenario yields a sensitivity meta-analysis fit; interpret as robustness context, not as a replacement primary analysis."
+  )
+}
+
+build_scenario_status <- function(
+    scenario_label,
+    data,
+    meta_result,
+    baseline_data,
+    neely_reference,
+    baseline_meta = NULL
+) {
+  pooled_survival <- if (is.null(meta_result)) NA_real_ else meta_result$pooled_surv
+  delta_vs_all_data_pp <- if (!is.null(meta_result) && !is.null(baseline_meta)) {
+    (meta_result$pooled_surv - baseline_meta$pooled_surv) * 100
+  } else {
+    NA_real_
+  }
+
+  tibble::tibble(
+    scenario = scenario_label,
+    n_records_retained = nrow(data),
+    pct_records_retained = nrow(data) / nrow(baseline_data) * 100,
+    n_studies_retained = dplyr::n_distinct(data$study),
+    n_regions_retained = dplyr::n_distinct(data$region),
+    n_timeline_records_retained = sum(data$is_timeline_disturbance, na.rm = TRUE),
+    n_baseline_exclusion_records_retained = sum(data$is_baseline_exclusion, na.rm = TRUE),
+    n_neely_records_retained = sum(data$study == "neely_et_al_2022", na.rm = TRUE),
+    neely_survival_retained = if (sum(data$study == "neely_et_al_2022", na.rm = TRUE) > 0) {
+      mean(data$survived[data$study == "neely_et_al_2022"], na.rm = TRUE)
+    } else {
+      NA_real_
+    },
+    n_neely_reference = nrow(neely_reference),
+    k_meta = if (is.null(meta_result)) NA_integer_ else meta_result$k,
+    n_meta_total = if (is.null(meta_result)) NA_integer_ else meta_result$n_total,
+    pooled_survival = pooled_survival,
+    delta_vs_all_data_pp = delta_vs_all_data_pp,
+    analysis_status = scenario_analysis_status(meta_result),
+    interpretation = scenario_analysis_note(meta_result)
+  )
+}
+
+calc_meta_influence <- function(meta_result, scenario_label) {
+  if (is.null(meta_result)) {
+    return(tibble::tibble(
+      scenario = scenario_label,
+      excluded_study = NA_character_,
+      k_scenario = NA_integer_,
+      k_remaining = NA_integer_,
+      pooled_survival_full = NA_real_,
+      pooled_survival_refit = NA_real_,
+      delta_pp = NA_real_,
+      abs_delta_pp = NA_real_,
+      refit_status = "scenario_not_fit",
+      note = "Scenario did not yield a valid meta-analysis."
+    ))
+  }
+
+  if (!is.finite(meta_result$k) || meta_result$k < 3) {
+    return(tibble::tibble(
+      scenario = scenario_label,
+      excluded_study = NA_character_,
+      k_scenario = meta_result$k,
+      k_remaining = NA_integer_,
+      pooled_survival_full = meta_result$pooled_surv,
+      pooled_survival_refit = NA_real_,
+      delta_pp = NA_real_,
+      abs_delta_pp = NA_real_,
+      refit_status = "scenario_too_small_for_influence",
+      note = "Influence diagnostics require at least three retained studies."
+    ))
+  }
+
+  study_effects <- meta_result$study_effects
+  base_pooled <- meta_result$pooled_surv
+
+  influence_rows <- lapply(seq_len(nrow(study_effects)), function(i) {
+    dat_i <- study_effects[-i, , drop = FALSE]
+    excluded_study <- study_effects$study[i]
+
+    if (nrow(dat_i) < 2) {
+      return(tibble::tibble(
+        scenario = scenario_label,
+        excluded_study = excluded_study,
+        k_scenario = meta_result$k,
+        k_remaining = nrow(dat_i),
+        pooled_survival_full = base_pooled,
+        pooled_survival_refit = NA_real_,
+        delta_pp = NA_real_,
+        abs_delta_pp = NA_real_,
+        refit_status = "too_small_after_exclusion",
+        note = "Excluding this study leaves fewer than two studies."
+      ))
+    }
+
+    refit <- tryCatch(
+      metafor::rma(
+        yi = dat_i$log_odds,
+        vi = dat_i$var_log_odds,
+        method = "REML",
+        test = "knha"
+      ),
+      error = function(e) e
+    )
+
+    if (inherits(refit, "error")) {
+      return(tibble::tibble(
+        scenario = scenario_label,
+        excluded_study = excluded_study,
+        k_scenario = meta_result$k,
+        k_remaining = nrow(dat_i),
+        pooled_survival_full = base_pooled,
+        pooled_survival_refit = NA_real_,
+        delta_pp = NA_real_,
+        abs_delta_pp = NA_real_,
+        refit_status = "refit_failed",
+        note = refit$message
+      ))
+    }
+
+    pooled_refit <- plogis(as.numeric(refit$beta))
+    delta_pp <- (pooled_refit - base_pooled) * 100
+
+    tibble::tibble(
+      scenario = scenario_label,
+      excluded_study = excluded_study,
+      k_scenario = meta_result$k,
+      k_remaining = nrow(dat_i),
+      pooled_survival_full = base_pooled,
+      pooled_survival_refit = pooled_refit,
+      delta_pp = delta_pp,
+      abs_delta_pp = abs(delta_pp),
+      refit_status = "ok",
+      note = "Leave-one-study-out pooled survival shift."
+    )
+  })
+
+  influence_df <- dplyr::bind_rows(influence_rows)
+  if (nrow(influence_df) > 0 && any(influence_df$refit_status == "ok")) {
+    max_delta <- max(influence_df$abs_delta_pp[influence_df$refit_status == "ok"], na.rm = TRUE)
+    influence_df <- influence_df %>%
+      dplyr::mutate(
+        is_max_abs_delta = ifelse(refit_status == "ok", abs_delta_pp == max_delta, FALSE)
+      )
+  } else {
+    influence_df <- influence_df %>%
+      dplyr::mutate(is_max_abs_delta = FALSE)
+  }
+
+  influence_df
+}
+
 # Run with ALL data
 meta_full <- run_tier1_meta(surv_data, "All data")
 
@@ -366,6 +534,52 @@ meta_no_any_disturbance <- run_tier1_meta(
   surv_no_any_regime,
   "Excl. all timeline-linked context"
 )
+
+scenario_data_list <- list(
+  "All data (including disease 2014)" = surv_data,
+  "Excluding disease 2014 intervals" = surv_no_disease,
+  "Excluding NOAA storm intervals" = surv_no_storm,
+  "Excluding baseline-exclusion events" = surv_no_baseline_exclusion,
+  "Excluding all timeline-linked context" = surv_no_any_regime
+)
+
+scenario_meta_list <- list(
+  "All data (including disease 2014)" = meta_full,
+  "Excluding disease 2014 intervals" = meta_no_disease,
+  "Excluding NOAA storm intervals" = meta_no_storm,
+  "Excluding baseline-exclusion events" = meta_no_baseline_exclusion,
+  "Excluding all timeline-linked context" = meta_no_any_disturbance
+)
+
+disturbance_scenario_status <- dplyr::bind_rows(lapply(names(scenario_data_list), function(scenario_label) {
+  build_scenario_status(
+    scenario_label = scenario_label,
+    data = scenario_data_list[[scenario_label]],
+    meta_result = scenario_meta_list[[scenario_label]],
+    baseline_data = surv_data,
+    neely_reference = neely_data,
+    baseline_meta = meta_full
+  )
+}))
+
+write_csv(
+  disturbance_scenario_status,
+  file.path(output_dir, "disturbance_sensitivity_scenario_status.csv")
+)
+print_success("Saved: disturbance_sensitivity_scenario_status.csv")
+
+disturbance_sensitivity_influence <- dplyr::bind_rows(lapply(names(scenario_meta_list), function(scenario_label) {
+  calc_meta_influence(
+    meta_result = scenario_meta_list[[scenario_label]],
+    scenario_label = scenario_label
+  )
+}))
+
+write_csv(
+  disturbance_sensitivity_influence,
+  file.path(output_dir, "disturbance_sensitivity_influence.csv")
+)
+print_success("Saved: disturbance_sensitivity_influence.csv")
 
 # ==============================================================================
 # SECTION 5: COMPILE SENSITIVITY SUMMARY
@@ -451,7 +665,8 @@ if (!is.null(meta_no_baseline_exclusion)) {
 }
 
 if (!is.null(meta_no_any_disturbance)) {
-  neely_no_disease <- neely_data %>% dplyr::filter(!is_disease_2014)
+  neely_no_any_context <- neely_data %>%
+    dplyr::filter(!is_timeline_disturbance, !is_disease_2014, !is_storm)
   sensitivity_rows[["no_any_disturbance"]] <- data.frame(
     scenario = "Excluding all timeline-linked context",
     k = meta_no_any_disturbance$k,
@@ -463,13 +678,19 @@ if (!is.null(meta_no_any_disturbance)) {
     tau2 = round(meta_no_any_disturbance$tau2, 4),
     pi_lower = round(meta_no_any_disturbance$pi_lower, 4),
     pi_upper = round(meta_no_any_disturbance$pi_upper, 4),
-    neely_survival = round(mean(neely_no_disease$survived), 4),
-    neely_n = nrow(neely_no_disease),
+    neely_survival = round(mean(neely_no_any_context$survived), 4),
+    neely_n = nrow(neely_no_any_context),
     stringsAsFactors = FALSE
   )
 }
 
 sensitivity_summary <- bind_rows(sensitivity_rows)
+sensitivity_summary <- sensitivity_summary %>%
+  left_join(
+    disturbance_scenario_status %>%
+      dplyr::select(scenario, analysis_status, interpretation, delta_vs_all_data_pp),
+    by = "scenario"
+  )
 
 # Add the study-level comparison (descriptive rows for individual disturbance types)
 noaa_storm_rows <- surv_data %>% dplyr::filter(is_storm)
@@ -480,21 +701,33 @@ sensitivity_summary_full <- bind_rows(
     k = NA, n_total = sum(neely_data$disturbance == "disease_2014", na.rm = TRUE),
     pooled_survival = round(mean(neely_data$survived[neely_data$disturbance == "disease_2014" & !is.na(neely_data$disturbance)]), 4),
     ci_lower = NA, ci_upper = NA, I2 = NA, tau2 = NA, pi_lower = NA, pi_upper = NA,
-    neely_survival = NA, neely_n = NA, stringsAsFactors = FALSE
+    neely_survival = NA, neely_n = NA,
+    analysis_status = "descriptive_only_interval_subset",
+    interpretation = "Single-study disturbance subset; descriptive interval summary only.",
+    delta_vs_all_data_pp = NA_real_,
+    stringsAsFactors = FALSE
   ),
   data.frame(
     scenario = "Neely: aftermath intervals only",
     k = NA, n_total = sum(neely_data$disturbance == "disease_2014_aftermath", na.rm = TRUE),
     pooled_survival = round(mean(neely_data$survived[neely_data$disturbance == "disease_2014_aftermath" & !is.na(neely_data$disturbance)]), 4),
     ci_lower = NA, ci_upper = NA, I2 = NA, tau2 = NA, pi_lower = NA, pi_upper = NA,
-    neely_survival = NA, neely_n = NA, stringsAsFactors = FALSE
+    neely_survival = NA, neely_n = NA,
+    analysis_status = "descriptive_only_interval_subset",
+    interpretation = "Single-study disturbance subset; descriptive interval summary only.",
+    delta_vs_all_data_pp = NA_real_,
+    stringsAsFactors = FALSE
   ),
   data.frame(
     scenario = "NOAA: storm intervals only",
     k = NA, n_total = nrow(noaa_storm_rows),
     pooled_survival = round(mean(noaa_storm_rows$survived), 4),
     ci_lower = NA, ci_upper = NA, I2 = NA, tau2 = NA, pi_lower = NA, pi_upper = NA,
-    neely_survival = NA, neely_n = NA, stringsAsFactors = FALSE
+    neely_survival = NA, neely_n = NA,
+    analysis_status = "descriptive_only_interval_subset",
+    interpretation = "Single-study storm subset; descriptive interval summary only.",
+    delta_vs_all_data_pp = NA_real_,
+    stringsAsFactors = FALSE
   )
 )
 
@@ -822,6 +1055,178 @@ if (requireNamespace("lme4", quietly = TRUE)) {
   print_warn("lme4 not available — skipping GLMM check")
 }
 
+# ------------------------------------------------------------------------------
+# Save compact diagnostics table for statistical review
+# ------------------------------------------------------------------------------
+
+extract_meta_diag <- function(meta_result, scenario_label) {
+  if (is.null(meta_result)) {
+    return(data.frame(
+      model_component = "meta_analysis",
+      scenario = scenario_label,
+      model_class = "not_fit",
+      family = "random-effects meta-analysis",
+      nobs = NA_real_,
+      k = NA_real_,
+      logLik = NA_real_,
+      AIC = NA_real_,
+      BIC = NA_real_,
+      pooled_survival = NA_real_,
+      ci_lower = NA_real_,
+      ci_upper = NA_real_,
+      I2 = NA_real_,
+      tau2 = NA_real_,
+      pi_lower = NA_real_,
+      pi_upper = NA_real_,
+      overdispersion_ratio = NA_real_,
+      overdispersion_p = NA_real_,
+      overdispersed = NA,
+      note = "Scenario did not yield a valid meta-analysis",
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data.frame(
+    model_component = "meta_analysis",
+    scenario = scenario_label,
+    model_class = class(meta_result$rma)[1],
+    family = "random-effects meta-analysis",
+    nobs = meta_result$n_total,
+    k = meta_result$k,
+    logLik = tryCatch(as.numeric(logLik(meta_result$rma)), error = function(e) NA_real_),
+    AIC = tryCatch(as.numeric(AIC(meta_result$rma)), error = function(e) NA_real_),
+    BIC = tryCatch(as.numeric(BIC(meta_result$rma)), error = function(e) NA_real_),
+    pooled_survival = meta_result$pooled_surv,
+    ci_lower = meta_result$pooled_lower,
+    ci_upper = meta_result$pooled_upper,
+    I2 = meta_result$I2,
+    tau2 = meta_result$tau2,
+    pi_lower = meta_result$pi_lower,
+    pi_upper = meta_result$pi_upper,
+    overdispersion_ratio = NA_real_,
+    overdispersion_p = NA_real_,
+    overdispersed = NA,
+    note = "Knapp-Hartung REML meta-analysis on study-level PLO effects; scenario guardrails are exported separately.",
+    stringsAsFactors = FALSE
+  )
+}
+
+extract_gam_diag <- function(model, scenario_label, n_obs) {
+  model_summary <- summary(model)
+  smooth_edf <- if (!is.null(model_summary$s.table) && nrow(model_summary$s.table) >= 1) {
+    as.numeric(model_summary$s.table[1, "edf"])
+  } else {
+    NA_real_
+  }
+  smooth_ref_df <- if (!is.null(model_summary$s.table) && nrow(model_summary$s.table) >= 1) {
+    as.numeric(model_summary$s.table[1, "Ref.df"])
+  } else {
+    NA_real_
+  }
+
+  data.frame(
+    model_component = "gam",
+    scenario = scenario_label,
+    model_class = class(model)[1],
+    family = model$family$family,
+    nobs = n_obs,
+    k = NA_real_,
+    logLik = tryCatch(as.numeric(logLik(model)), error = function(e) NA_real_),
+    AIC = tryCatch(as.numeric(AIC(model)), error = function(e) NA_real_),
+    BIC = tryCatch(as.numeric(BIC(model)), error = function(e) NA_real_),
+    pooled_survival = NA_real_,
+    ci_lower = NA_real_,
+    ci_upper = NA_real_,
+    I2 = NA_real_,
+    tau2 = NA_real_,
+    pi_lower = NA_real_,
+    pi_upper = NA_real_,
+    overdispersion_ratio = NA_real_,
+    overdispersion_p = NA_real_,
+    overdispersed = NA,
+    note = sprintf(
+      "r.sq = %.3f; deviance explained = %.1f%%; smooth edf = %.2f; ref.df = %.2f",
+      model_summary$r.sq, model_summary$dev.expl * 100, smooth_edf, smooth_ref_df
+    ),
+    stringsAsFactors = FALSE
+  )
+}
+
+if (exists("glmm_neely")) {
+  disease_p_value <- tryCatch(
+    summary(glmm_neely)$coefficients["is_disease_2014TRUE", "Pr(>|z|)"],
+    error = function(e) NA_real_
+  )
+  glmm_diag <- data.frame(
+    model_component = "glmm",
+    scenario = "Neely disease effect",
+    model_class = class(glmm_neely)[1],
+    family = glmm_neely@resp$family$family,
+    nobs = nrow(neely_for_glmm),
+    k = NA_real_,
+    logLik = tryCatch(as.numeric(logLik(glmm_neely)), error = function(e) NA_real_),
+    AIC = tryCatch(as.numeric(AIC(glmm_neely)), error = function(e) NA_real_),
+    BIC = tryCatch(as.numeric(BIC(glmm_neely)), error = function(e) NA_real_),
+    pooled_survival = NA_real_,
+    ci_lower = NA_real_,
+    ci_upper = NA_real_,
+    I2 = NA_real_,
+    tau2 = NA_real_,
+    pi_lower = NA_real_,
+    pi_upper = NA_real_,
+    overdispersion_ratio = od$ratio,
+    overdispersion_p = od$p_value,
+    overdispersed = od$overdispersed,
+    note = sprintf(
+      "disease OR = %.3f; disease p = %.4g; singular = %s",
+      disease_or, disease_p_value, isSingular(glmm_neely)
+    ),
+    stringsAsFactors = FALSE
+  )
+} else {
+  glmm_diag <- data.frame(
+    model_component = "glmm",
+    scenario = "Neely disease effect",
+    model_class = "not_fit",
+    family = "binomial",
+    nobs = NA_real_,
+    k = NA_real_,
+    logLik = NA_real_,
+    AIC = NA_real_,
+    BIC = NA_real_,
+    pooled_survival = NA_real_,
+    ci_lower = NA_real_,
+    ci_upper = NA_real_,
+    I2 = NA_real_,
+    tau2 = NA_real_,
+    pi_lower = NA_real_,
+    pi_upper = NA_real_,
+    overdispersion_ratio = NA_real_,
+    overdispersion_p = NA_real_,
+    overdispersed = NA,
+    note = "lme4 unavailable or model not fit",
+    stringsAsFactors = FALSE
+  )
+}
+
+disturbance_model_diagnostics <- bind_rows(
+  extract_meta_diag(meta_full, "All data"),
+  extract_meta_diag(meta_no_disease, "Exclude disease 2014"),
+  extract_meta_diag(meta_no_storm, "Exclude NOAA storm"),
+  extract_meta_diag(meta_no_baseline_exclusion, "Exclude baseline-exclusion events"),
+  extract_meta_diag(meta_no_any_disturbance, "Exclude all timeline context"),
+  extract_gam_diag(gam_full, "All data", nrow(surv_natural)),
+  extract_gam_diag(gam_no_disease, "Exclude baseline-exclusion events", nrow(surv_natural_no_disease)),
+  extract_gam_diag(gam_no_any, "Exclude all timeline context", nrow(surv_natural_no_any)),
+  glmm_diag
+)
+
+write_csv(
+  disturbance_model_diagnostics,
+  file.path(output_dir, "disturbance_sensitivity_model_diagnostics.csv")
+)
+print_success("Saved: disturbance_sensitivity_model_diagnostics.csv")
+
 # ==============================================================================
 # SUMMARY
 # ==============================================================================
@@ -856,6 +1261,8 @@ cat(sprintf("  - Baseline-exclusion intervals (total): %.1f%% survival (n=%d)\n"
 cat("\n  Outputs saved to 06_analysis/output/:\n")
 cat("    - disturbance_sensitivity_summary.csv\n")
 cat("    - disturbance_interval_comparison.csv\n")
+cat("    - disturbance_sensitivity_scenario_status.csv\n")
+cat("    - disturbance_sensitivity_influence.csv\n")
 if (figure_saved) {
   cat("  Figure saved to 06_analysis/figures/supplementary/:\n")
   cat("    - FigSXX_disturbance_sensitivity.png/pdf\n\n")

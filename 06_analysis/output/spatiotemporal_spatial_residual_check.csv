@@ -1,0 +1,3 @@
+outcome,model,n_sites,mean_abs_site_residual,mean_nearest_neighbor_km,nearest_neighbor_residual_correlation,moran_like_inverse_distance
+survival,spatiotemporal,66,0.09679205965031208,0.09735306962779086,0.0016206152371568707,0.02224015900234676
+positive_growth,spatiotemporal,65,0.0703128887705592,0.076873709226124,0.013456022292635678,0.029394310623908227

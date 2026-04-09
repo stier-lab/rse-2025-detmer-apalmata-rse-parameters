@@ -147,17 +147,14 @@ surv_summ_processed <- surv_summ %>%
     # FALSE = size may be total colony (could overestimate biological size class)
     size_class_reliable = size_live %in% c("Y", "both"),
 
-    # Determine size class from mean size if available
+    # Determine size class from mean size using canonical SIZE_BREAKS
     # NOTE: For records with size_live != "Y", this may OVERESTIMATE the
     # biological size class (e.g., a partially dead colony might be SC5 by
     # total size but SC3 by live tissue)
-    size_class = case_when(
-      !is.na(size_cm2_mean) & size_cm2_mean <= 25 ~ "SC1",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 100 ~ "SC2",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 500 ~ "SC3",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 2000 ~ "SC4",
-      !is.na(size_cm2_mean) & size_cm2_mean > 2000 ~ "SC5",
-      TRUE ~ "Unknown"
+    size_class = if_else(
+      is.na(size_cm2_mean),
+      "Unknown",
+      as.character(cut(size_cm2_mean, breaks = SIZE_BREAKS, labels = SIZE_LABELS, right = TRUE))
     ),
     # Data source flag
     data_source = "summary",
@@ -249,42 +246,28 @@ surv_summ_study <- surv_summ_processed %>%
   )
 
 # Check for overlapping studies between individual and summary data
-overlap_studies <- intersect(
+surv_overlap_studies <- intersect(
   unique(surv_ind_study$study),
   unique(surv_summ_study$study)
 )
-if (length(overlap_studies) > 0) {
-  warning(sprintf("WARNING: %d studies appear in both individual and summary data: %s\n",
-                  length(overlap_studies), paste(overlap_studies, collapse = ", ")))
-  cat("  These studies will have duplicate entries in the combined output.\n")
-  cat("  Consider removing summary-level data for these studies.\n")
+if (length(surv_overlap_studies) > 0) {
+  warning(sprintf("WARNING: %d survival studies appear in both individual and summary data: %s\n",
+                  length(surv_overlap_studies), paste(surv_overlap_studies, collapse = ", ")))
+  cat("  Summary rows for overlapping studies will be excluded from combined outputs.\n")
 }
 
-# Save data source overlap table
-all_ind_studies <- unique(surv_ind_study$study)
-all_summ_studies <- unique(surv_summ_study$study)
-all_study_names <- sort(union(all_ind_studies, all_summ_studies))
-data_source_overlap <- data.frame(
-  study = all_study_names,
-  in_individual = all_study_names %in% all_ind_studies,
-  in_summary = all_study_names %in% all_summ_studies,
-  resolution_method = ifelse(
-    all_study_names %in% intersect(all_ind_studies, all_summ_studies),
-    "both_kept_as_separate_rows",
-    "single_source"
-  ),
-  stringsAsFactors = FALSE
-)
-write_csv(data_source_overlap, file.path(output_dir, "data_source_overlap.csv"))
-cat(sprintf("  ✓ Saved: data_source_overlap.csv (%d studies)\n", nrow(data_source_overlap)))
+surv_summ_study_resolved <- surv_summ_study %>%
+  filter(!study %in% surv_overlap_studies)
 
-# Combine
-surv_by_study <- bind_rows(surv_ind_study, surv_summ_study) %>%
+# Combine using a conservative source-resolution rule:
+# if individual data exist for a study, do not also include summary rows for that study.
+surv_by_study <- bind_rows(surv_ind_study, surv_summ_study_resolved) %>%
   arrange(region, study)
 
 cat(sprintf("  Individual data studies: %d\n", nrow(surv_ind_study)))
 cat(sprintf("  Summary data studies: %d\n", nrow(surv_summ_study)))
-cat(sprintf("  Combined total: %d study-region combinations\n", nrow(surv_by_study)))
+cat(sprintf("  Summary overlap exclusions: %d\n", nrow(surv_summ_study) - nrow(surv_summ_study_resolved)))
+cat(sprintf("  Combined total (resolved): %d study-region combinations\n", nrow(surv_by_study)))
 
 write_csv(surv_by_study, file.path(output_dir, "survival_by_study_combined.csv"))
 cat("  ✓ Saved: survival_by_study_combined.csv\n\n")
@@ -313,14 +296,11 @@ growth_summ_processed <- growth_summ %>%
     # Reliability flag for size class assignment
     size_class_reliable = size_live %in% c("Y", "both"),
 
-    # Size class assignment (see reliability caveat above)
-    size_class = case_when(
-      !is.na(size_cm2_mean) & size_cm2_mean <= 25 ~ "SC1",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 100 ~ "SC2",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 500 ~ "SC3",
-      !is.na(size_cm2_mean) & size_cm2_mean <= 2000 ~ "SC4",
-      !is.na(size_cm2_mean) & size_cm2_mean > 2000 ~ "SC5",
-      TRUE ~ "Unknown"
+    # Size class assignment using canonical SIZE_BREAKS (see reliability caveat above)
+    size_class = if_else(
+      is.na(size_cm2_mean),
+      "Unknown",
+      as.character(cut(size_cm2_mean, breaks = SIZE_BREAKS, labels = SIZE_LABELS, right = TRUE))
     ),
     data_source = "summary",
     n_effective = n_final,
@@ -402,12 +382,55 @@ growth_summ_study <- growth_summ_processed %>%
     .groups = "drop"
   )
 
-growth_by_study <- bind_rows(growth_ind_study, growth_summ_study) %>%
+# Resolve growth overlap with the same conservative rule
+growth_overlap_studies <- intersect(
+  unique(growth_ind_study$study),
+  unique(growth_summ_study$study)
+)
+if (length(growth_overlap_studies) > 0) {
+  warning(sprintf("WARNING: %d growth studies appear in both individual and summary data: %s\n",
+                  length(growth_overlap_studies), paste(growth_overlap_studies, collapse = ", ")))
+  cat("  Summary growth rows for overlapping studies will be excluded from combined outputs.\n")
+}
+
+growth_summ_study_resolved <- growth_summ_study %>%
+  filter(!study %in% growth_overlap_studies)
+
+# Save data source overlap table after both overlap checks are defined
+all_study_names <- sort(union(
+  union(unique(surv_ind_study$study), unique(surv_summ_study$study)),
+  union(unique(growth_ind_study$study), unique(growth_summ_study$study))
+))
+data_source_overlap <- data.frame(
+  study = all_study_names,
+  in_survival_individual = all_study_names %in% unique(surv_ind_study$study),
+  in_survival_summary = all_study_names %in% unique(surv_summ_study$study),
+  survival_resolution_method = case_when(
+    all_study_names %in% surv_overlap_studies ~ "prefer_individual_exclude_summary",
+    all_study_names %in% unique(surv_ind_study$study) |
+      all_study_names %in% unique(surv_summ_study$study) ~ "single_source",
+    TRUE ~ NA_character_
+  ),
+  in_growth_individual = all_study_names %in% unique(growth_ind_study$study),
+  in_growth_summary = all_study_names %in% unique(growth_summ_study$study),
+  growth_resolution_method = case_when(
+    all_study_names %in% growth_overlap_studies ~ "prefer_individual_exclude_summary",
+    all_study_names %in% unique(growth_ind_study$study) |
+      all_study_names %in% unique(growth_summ_study$study) ~ "single_source",
+    TRUE ~ NA_character_
+  ),
+  stringsAsFactors = FALSE
+)
+write_csv(data_source_overlap, file.path(output_dir, "data_source_overlap.csv"))
+cat(sprintf("  ✓ Saved: data_source_overlap.csv (%d studies)\n", nrow(data_source_overlap)))
+
+growth_by_study <- bind_rows(growth_ind_study, growth_summ_study_resolved) %>%
   arrange(region, study)
 
 cat(sprintf("  Individual data studies: %d\n", nrow(growth_ind_study)))
 cat(sprintf("  Summary data studies: %d\n", nrow(growth_summ_study)))
-cat(sprintf("  Combined total: %d study-region combinations\n", nrow(growth_by_study)))
+cat(sprintf("  Summary overlap exclusions: %d\n", nrow(growth_summ_study) - nrow(growth_summ_study_resolved)))
+cat(sprintf("  Combined total (resolved): %d study-region combinations\n", nrow(growth_by_study)))
 
 write_csv(growth_by_study, file.path(output_dir, "growth_by_study_combined.csv"))
 cat("  ✓ Saved: growth_by_study_combined.csv\n\n")
@@ -418,43 +441,20 @@ cat("  ✓ Saved: growth_by_study_combined.csv\n\n")
 
 cat("Calculating regional estimates (combined data)...\n")
 
-# Individual data regional
-surv_ind_region <- surv_ind %>%
+# Combined regional estimates from the resolved study-level table
+regional_combined <- surv_by_study %>%
   group_by(region) %>%
   summarise(
-    n_ind = n(),
-    survival_ind = mean(survived),
-    n_studies_ind = n_distinct(study),
+    n_total = sum(n, na.rm = TRUE),
+    survival_combined = weighted.mean(mean_survival, n, na.rm = TRUE),
+    n_studies_total = n(),
+    n_studies_ind = sum(data_source == "individual"),
+    n_studies_summ = sum(data_source == "summary"),
+    n_ind = sum(if_else(data_source == "individual", n, 0), na.rm = TRUE),
+    n_summ = sum(if_else(data_source == "summary", n, 0), na.rm = TRUE),
+    pct_from_summary = ifelse(n_total > 0, n_summ / n_total * 100, NA_real_),
+    overlap_resolved = sum(study %in% surv_overlap_studies & data_source == "individual"),
     .groups = "drop"
-  )
-
-# Summary data regional
-surv_summ_region <- surv_summ_processed %>%
-  group_by(region) %>%
-  summarise(
-    n_summ = sum(n_initial),
-    survival_summ = weighted.mean(prop_survived, n_initial),
-    n_studies_summ = n_distinct(study),
-    .groups = "drop"
-  )
-
-# Combined regional estimates
-regional_combined <- full_join(surv_ind_region, surv_summ_region, by = "region") %>%
-  mutate(
-    n_ind = replace_na(n_ind, 0),
-    n_summ = replace_na(n_summ, 0),
-    n_total = n_ind + n_summ,
-    # Weighted average
-    survival_combined = case_when(
-      n_ind > 0 & n_summ > 0 ~ (survival_ind * n_ind + survival_summ * n_summ) / n_total,
-      n_ind > 0 ~ survival_ind,
-      n_summ > 0 ~ survival_summ,
-      TRUE ~ NA_real_
-    ),
-    n_studies_ind = replace_na(n_studies_ind, 0),
-    n_studies_summ = replace_na(n_studies_summ, 0),
-    n_studies_total = n_studies_ind + n_studies_summ,
-    pct_from_summary = n_summ / n_total * 100
   ) %>%
   arrange(desc(n_total))
 
@@ -476,15 +476,22 @@ contribution <- data.frame(
   n_individual = c(nrow(surv_ind), nrow(growth_ind)),
   n_summary_effective = c(sum(surv_summ_processed$n_initial),
                           sum(growth_summ_processed$n_final)),
+  n_summary_effective_resolved = c(sum(surv_summ_processed$n_initial[!surv_summ_processed$study %in% surv_overlap_studies]),
+                                   sum(growth_summ_processed$n_final[!growth_summ_processed$study %in% growth_overlap_studies])),
   n_summary_records = c(nrow(surv_summ_processed), nrow(growth_summ_processed)),
+  n_summary_records_resolved = c(nrow(surv_summ_processed %>% filter(!study %in% surv_overlap_studies)),
+                                 nrow(growth_summ_processed %>% filter(!study %in% growth_overlap_studies))),
   studies_individual = c(n_distinct(surv_ind$study), n_distinct(growth_ind$study)),
   studies_summary = c(n_distinct(surv_summ_processed$study),
-                      n_distinct(growth_summ_processed$study))
+                      n_distinct(growth_summ_processed$study)),
+  studies_summary_resolved = c(n_distinct(surv_summ_processed$study[!surv_summ_processed$study %in% surv_overlap_studies]),
+                               n_distinct(growth_summ_processed$study[!growth_summ_processed$study %in% growth_overlap_studies])),
+  overlap_studies_excluded = c(length(surv_overlap_studies), length(growth_overlap_studies))
 ) %>%
   mutate(
-    n_total = n_individual + n_summary_effective,
+    n_total = n_individual + n_summary_effective_resolved,
     pct_individual = round(n_individual / n_total * 100, 1),
-    pct_summary = round(n_summary_effective / n_total * 100, 1)
+    pct_summary = round(n_summary_effective_resolved / n_total * 100, 1)
   )
 
 cat("\nData contribution summary:\n")

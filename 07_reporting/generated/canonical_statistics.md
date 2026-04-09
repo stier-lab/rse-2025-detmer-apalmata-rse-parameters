@@ -1,6 +1,6 @@
 # Canonical Statistics
 
-Generated from pipeline run `20260404_161343` on 2026-04-04 16:13:43.
+Generated from pipeline run `20260405_080608` on 2026-04-06 15:23:39.
 
 ## Disturbance
 
@@ -20,8 +20,8 @@ Generated from pipeline run `20260404_161343` on 2026-04-04 16:13:43.
 | Metric | Value | Source |
 |---|---|---|
 | `agr_r2_pct` | 3.6% | `06_analysis/output/growth_rate_summary.csv` |
+| `rgr_allometry_inflection_cm2` | 853.0 cm² | `06_analysis/output/growth_rate_summary.csv` |
 | `rgr_r2_pct` | 18.2% | `06_analysis/output/growth_rate_summary.csv` |
-| `rgr_threshold_cm2` | 853.0 cm² | `06_analysis/output/growth_rate_summary.csv` |
 | `rgr_vs_agr_improvement_x` | 5x | `06_analysis/output/growth_rate_summary.csv` |
 
 ## Meta Analysis
@@ -43,12 +43,13 @@ Generated from pipeline run `20260404_161343` on 2026-04-04 16:13:43.
 
 | Metric | Value | Source |
 |---|---|---|
-| `annual_decline_pct` | 5.22% | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `lambda_ci_lower` | 0.824 | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `lambda_ci_upper` | 1.059 | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `lambda_mean` | 0.9478 | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `max_elasticity_pct` | 57.8% | `06_analysis/output/elasticity_matrix.csv` |
-| `p_decline_pct` | 88.6% | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `annual_decline_pct_from_bootstrap_mean` | 5.22% | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `lambda_bootstrap_mean` | 0.9478 | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `lambda_ci_lower` | 0.740 | `06_analysis/output/population_parameters.csv` |
+| `lambda_ci_upper` | 0.959 | `06_analysis/output/population_parameters.csv` |
+| `lambda_deterministic` | 0.888 | `06_analysis/output/population_parameters.csv` |
+| `max_elasticity_pct` | 58.6% | `06_analysis/output/elasticity_matrix.csv` |
+| `p_decline_pct` | 99.9% | `06_analysis/output/population_parameters.csv` |
 
 ## Restoration
 

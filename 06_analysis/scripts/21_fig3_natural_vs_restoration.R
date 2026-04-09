@@ -2,6 +2,8 @@
 # =============================================================================
 # FIGURE S8: STUDY-LEVEL COMPARISON WITHIN SHARED SIZE RANGE (Supplementary)
 # =============================================================================
+# NOTE: Script filename retains historical "fig3" label; actual output is FigS8_natural_vs_restoration.
+#
 # Zoomed to the overlap zone (~11-202 cm²) where both natural colonies and
 # restoration fragments have data. Per-study colors (6 Okabe-Ito) make study
 # identity the primary visual channel; shape/linetype encode population type

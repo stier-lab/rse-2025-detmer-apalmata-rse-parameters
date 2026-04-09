@@ -5,6 +5,8 @@
 
 R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **~14,100 individual-level observations** from **7 studies** (including the Neely et al. 2022 FKNMS dataset) and **10 additional summary-level studies** (17 unique studies contributing 22 study-level effects; NOAA split into FL Keys/Curacao/Navassa, Vardi 2011 split into Jamaica/Puerto Rico/Virgin Gorda, Garrison & Ward 2008 split into control/relocated, and Neely 2022 as a single FL Keys effect) across **13 Caribbean regions**. The analytical focus is size-dependent demography, population viability, disturbance regime context, and restoration implications. Manuscript targeting *Coral Reefs*.
 
+**Central question:** How do *Acropora palmata* survival and growth vary with colony size across the Caribbean, and what does this mean for population viability under chronic disturbance and restoration?
+
 > **Interactive Platform**: An interactive web tool for exploring this data is available in a [separate repository](https://github.com/stier-lab/Detmer-2025-coral-platform).
 
 > **Design Philosophy**: Transparency over false precision. Given extreme heterogeneity across studies, the repo defaults to stratified views, explicit uncertainty, and clear separation between canonical manuscript outputs, supporting analyses, and exploratory extensions.
@@ -57,17 +59,18 @@ This organization ensures every step from literature search to final analysis is
 
 | Finding | Value | Interpretation |
 |---------|-------|----------------|
-| **Population Growth Rate (λ)** | 0.967 (CI: 0.828–1.059) | Deterministic λ is below replacement, but bootstrap uncertainty still spans decline and growth |
-| **Probability of Decline** | 86.0% | Most bootstrap replicates indicate decline |
-| **Most Critical Parameter** | SC5 Stasis | Large-adult persistence contributes 57.4% of matrix-cell elasticity |
+| **Population Growth Rate (λ)** | 0.888 (CI: 0.740–0.959) | Deterministic λ is well below replacement; bootstrap CI excludes 1.0, indicating consistent decline |
+| **Most Critical Parameter** | SC5 Stasis | Large-adult persistence contributes 58.6% of matrix-cell elasticity |
 | **Survival Nonlinearity** | Threshold ~7,498 cm² | Supported sigmoidal survival response, but weakly stable across study folds |
 | **Core Growth Nonlinearity** | RGR threshold at 36.9 cm² | The steepest proportional-growth shift occurs early in ontogeny |
 | **Shrinkage Frequency** | 39.4% | Matrix-compatible growth records frequently show tissue loss rather than simple positive growth |
 | **Disturbance × Size** | Survival interaction `p = 6.93e-4` | Disturbance modifies the size-survival relationship rather than acting as background noise |
-| **Study Heterogeneity (I²)** | 97.2% | Extreme between-study variation |
+| **Study Heterogeneity (I²)** | 97.2% (expanded meta-analysis, k=17) | Extreme between-study variation |
 | **Expanded Meta-Analysis** | k=17 (22 effects), 78.0% | CI: 70.1–84.3% pooled annual survival |
 | **Natural vs Restoration** | 84.1% vs 74.5% | 9.5 pp difference, p=0.153 |
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
+| **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
+| **Zero fecundity assumption** | λ = 0.888 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ closer to or above 1.0. |
 
 > For manuscript-facing interpretation, use [07_reporting/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript_narrative_integration.md), [07_reporting/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md), and [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
 
@@ -91,6 +94,8 @@ Detmer-2025-coral-parameters/
 │   ├── study_characteristics.md
 │   ├── extraction_details.md
 │   ├── risk_of_bias.md
+│   ├── data_integration_issues.md    # Individual vs summary data integration
+│   ├── data_flow_diagram.md          # Mermaid pipeline diagram
 │   └── raine_working_notes/          # Original researcher's Excel trackers + notes
 ├── 05_data/                        # All data
 │   ├── original/                     # 14 raw source files (DO NOT MODIFY)
@@ -279,7 +284,7 @@ All data in this repository has a documented chain of custody:
 
 1. **Original data** (`05_data/original/`): Raw files from published data repositories (NOAA NCEI, USGS, InPort) or direct sharing. Each file has column definitions in [`05_data/original/README.md`](05_data/original/README.md). **These files must not be modified.**
 
-2. **Standardized data** (`05_data/standardized/`): Produced by `05_data/integration/APAL_data_integration.rmd` from original data. Column definitions and size conversion methods in [`05_data/standardized/README.md`](05_data/standardized/README.md).
+2. **Standardized data** (`05_data/standardized/`): Produced by `05_data/integration/APAL_data_integration.rmd` from original data. Column definitions and size conversion methods in [`05_data/standardized/README.md`](05_data/standardized/README.md). The standardization step (`05_data/integration/APAL_data_integration.rmd`) is a one-time process run outside the main pipeline -- it converts the 14 raw source files into the 6 canonical CSVs. Script 01 then loads these CSVs and builds the analysis-ready RDS files.
 
 3. **AI-extracted data** (`05_data/ai_extracted/`): Extracted from published PDFs by AI (Claude, March 2026). Every row tagged `[AI_EXTRACTED]` in study_notes. Each value was independently audited against the source PDF by a separate verification agent. Audit results documented in [`04_extraction/extraction_protocol.md`](04_extraction/extraction_protocol.md) Section 8.
 
@@ -320,6 +325,8 @@ For figure numbering and manuscript-facing build targets, use [07_reporting/figu
 | [04_extraction/study_characteristics.md](04_extraction/study_characteristics.md) | Per-study characteristics table |
 | [04_extraction/risk_of_bias.md](04_extraction/risk_of_bias.md) | Risk of bias assessment |
 | [04_extraction/raine_working_notes/](04_extraction/raine_working_notes/) | Original working notes: per-study extraction decisions, assumptions, caveats |
+| [04_extraction/data_integration_issues.md](04_extraction/data_integration_issues.md) | Individual vs. summary data integration: issues, resolution, survival comparison |
+| [04_extraction/data_flow_diagram.md](04_extraction/data_flow_diagram.md) | Mermaid diagram of the full data pipeline |
 | [06_analysis/README.md](06_analysis/README.md) | Analysis directory index: scripts, outputs, figures, and how to navigate them |
 | [06_analysis/scripts/README.md](06_analysis/scripts/README.md) | Script-by-script map of the maintained analysis surface |
 | [06_analysis/output/README.md](06_analysis/output/README.md) | Output prefixes, canonical result files, and interpretation notes |

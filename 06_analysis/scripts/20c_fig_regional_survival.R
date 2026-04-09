@@ -11,10 +11,10 @@
 #   - X-axis: annual survival rate (0.4 to 1.0)
 #   - Individual study points colored by population_type (natural/restoration)
 #   - Regional pooled estimates (diamonds) for regions with k >= 2 studies
-#   - Vertical dashed line at overall pooled mean (81.1%)
+#   - Vertical dashed line at overall pooled mean (78.0%)
 #
 # Data source:
-#   06_analysis/output/expanded_meta_analysis_study_effects.csv (16 rows)
+#   06_analysis/output/expanded_meta_analysis_study_effects.csv (22 rows)
 #
 # OUTPUT:
 #   06_analysis/figures/supplementary/FigS15_regional_survival.{png,pdf}
@@ -123,7 +123,7 @@ cat(sprintf("  %d regions, survival range: %.1f%% to %.1f%%\n",
 
 # Overall pooled survival (meta-analytic RE estimate from 14_meta_analysis.R)
 # The N-weighted raw pooled is ~78.2%, but the random-effects meta-analytic
-# estimate is 81.1% — use the meta-analytic value for the reference line
+# estimate is 78.0% — use the meta-analytic value for the reference line
 overall_pooled_raw <- sum(study_data$n_survived) / sum(study_data$n_total)
 # Read RE meta-analytic pooled estimate from expanded meta-analysis results
 meta_results_path <- file.path(output_dir, "expanded_meta_analysis_results.csv")
