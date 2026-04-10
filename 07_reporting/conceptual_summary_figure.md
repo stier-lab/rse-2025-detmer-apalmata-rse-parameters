@@ -10,9 +10,9 @@ The figure should keep a clear boundary between what is directly supported by th
 - Observed support: disturbance timing and overlap, size-dependent survival and growth, shrinkage/retrogression frequencies, and restoration subtype differences.
 - Interpretive linkage: how those observed patterns combine into population-viability consequences and restoration implications.
 
-## Panel / Component Plan
+## Component Plan
 
-### Panel A. Disturbance regime
+### Disturbance regime
 Show the disturbance layer as a Caribbean-wide temporal and spatial context, not as background noise. Use labels for acute events and chronic/indirect pressures, with a note that the study-window audit reconstructs overlap between disturbances and demographic intervals.
 
 Include the following ideas:
@@ -20,18 +20,18 @@ Include the following ideas:
 - baseline-exclusion events versus context-only events
 - observed overlap from the study-window audit
 
-### Panel B. Size-structured demographic response
+### Size-structured demographic response
 Show the key size-dependent demographic processes:
 - survival generally increases with size
 - growth is nonlinear and size dependent
 - shrinkage and retrogression are common enough to matter biologically
 
-This panel should emphasize that partial mortality and backward transitions are not edge cases; they are a central part of the species' demographic regime.
+This section should emphasize that partial mortality and backward transitions are not edge cases; they are a central part of the species' demographic regime.
 
-### Panel C. Viability consequence
+### Viability consequence
 Show the synthesis step: disturbance and shrinkage redistribute individuals across size classes and alter the balance of stasis, growth, retrogression, and fragmentation. The intended message is that large-adult persistence remains a major viability lever, but the fate of smaller and mid-sized colonies determines how much the population can recover after disturbance.
 
-### Panel D. Restoration implication
+### Restoration implication
 Show how the same logic changes restoration interpretation:
 - restoration is not one biological category
 - nursery outplants, re-cemented outplants, outplanted colonies, and natural fragments behave differently
