@@ -2,6 +2,10 @@
 # =============================================================================
 # SUPPLEMENTARY FIGURES S12, S13, S14
 # =============================================================================
+#
+# PURPOSE: Generate supplementary Figures S12 (sensitivity analysis), S13
+#          (cross-validation), and S14 (population projections).
+#
 # FigS12: Sensitivity analysis (2 panels)
 #   (a) Multi-dimensional robustness dashboard — lambda under different
 #       assumptions (leave-one-out, boundary shifts, outlier removal)

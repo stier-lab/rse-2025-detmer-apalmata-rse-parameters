@@ -5,7 +5,12 @@
 ################################################################################
 #
 # PURPOSE: Assess how disturbance events influence survival estimates and
-#   meta-analytic results. Tests five scenarios:
+#   meta-analytic results.
+#
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival with disturbance flags)
+#
+# Tests five scenarios:
 #     1. All data (primary/baseline)
 #     2. Excluding Neely disease intervals (disease_2014 + aftermath)
 #     3. Excluding NOAA storm intervals

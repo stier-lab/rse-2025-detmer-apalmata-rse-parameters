@@ -2,9 +2,13 @@
 # =============================================================================
 # FIGURE S8: STUDY-LEVEL COMPARISON WITHIN SHARED SIZE RANGE (Supplementary)
 # =============================================================================
+#
+# PURPOSE: Generate supplementary Figure S8 comparing size-dependent survival
+#          and growth across individual studies within the shared size range.
+#
 # NOTE: Script filename retains historical "fig3" label; actual output is FigS8_natural_vs_restoration.
 #
-# Zoomed to the overlap zone (~11-202 cm²) where both natural colonies and
+# Zoomed to the overlap zone (~11-202 cm^2) where both natural colonies and
 # restoration fragments have data. Per-study colors (6 Okabe-Ito) make study
 # identity the primary visual channel; shape/linetype encode population type
 # as a secondary channel. This prevents readers from interpreting the figure
@@ -14,6 +18,10 @@
 # 12-panel small multiples: 6 studies x 2 metrics (survival + RGR).
 # Row a: Size-dependent survival (logistic regression per study)
 # Row b: Size-dependent RGR (linear regression per study)
+#
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
 #
 # OUTPUT: 06_analysis/figures/supplementary/FigS8_natural_vs_restoration.{png,pdf}
 #         174 x 140 mm, 300 DPI (Coral Reefs double-column)

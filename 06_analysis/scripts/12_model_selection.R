@@ -7,6 +7,11 @@
 #   models for survival and growth analyses, following best practices for
 #   meta-analysis and GLMM reporting.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 06_analysis/output/survival_thresholds.csv (data-driven threshold estimate)
+#
 # METHODS:
 #   1. Fit multiple model specifications (null, linear, threshold, categorical)
 #   2. Calculate AIC, BIC, log-likelihood, deviance

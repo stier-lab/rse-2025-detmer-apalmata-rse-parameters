@@ -2,6 +2,10 @@
 # =============================================================================
 # FIGURE: GEOGRAPHIC VARIATION IN A. PALMATA SURVIVAL ACROSS THE CARIBBEAN
 # =============================================================================
+#
+# PURPOSE: Generate supplementary figure showing regional variation in annual
+#          survival across the Caribbean from the expanded meta-analysis.
+#
 # Produces a single-panel horizontal point-range plot (174 x 100 mm) showing
 # annual survival estimates by Caribbean region from the expanded meta-analysis
 # (10 regions, 16 studies).
@@ -13,12 +17,12 @@
 #   - Regional pooled estimates (diamonds) for regions with k >= 2 studies
 #   - Vertical dashed line at overall pooled mean (78.0%)
 #
-# Data source:
-#   06_analysis/output/expanded_meta_analysis_study_effects.csv (22 rows)
+# INPUTS:
+#   - 06_analysis/output/expanded_meta_analysis_study_effects.csv (22 study effects)
 #
-# OUTPUT:
-#   06_analysis/figures/supplementary/FigS15_regional_survival.{png,pdf}
-#   06_analysis/output/regional_survival_summary.csv
+# OUTPUTS:
+#   - 06_analysis/figures/supplementary/FigS15_regional_survival.{png,pdf}
+#   - 06_analysis/output/regional_survival_summary.csv
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-02

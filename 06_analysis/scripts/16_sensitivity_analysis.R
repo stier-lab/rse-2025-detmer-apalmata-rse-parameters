@@ -6,6 +6,11 @@
 #   Test robustness of key findings to methodological choices and assumptions.
 #   Implements multiple sensitivity checks for survival and growth analyses.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 05_data/standardized/apal_fragmentation.csv (fragmentation data)
+#
 # METHODS:
 #   1. Leave-one-out analysis (influence of individual studies)
 #   2. Size class boundary sensitivity

@@ -3,6 +3,24 @@
 # 34_DISTURBANCE_SUMMARIES.R
 # Publication-quality summaries for the A. palmata disturbance timeline
 ################################################################################
+#
+# PURPOSE: Generate publication-quality summary tables and figures from the
+#          curated disturbance/stressor timeline for A. palmata across the
+#          Caribbean (by type, region, decade, and severity).
+#
+# INPUTS:
+#   - 05_data/standardized/apal_disturbance_stressor_timeline.csv (curated timeline)
+#
+# OUTPUTS:
+#   - 07_reporting/tables/disturbance_catalog.csv (full annotated catalog)
+#   - 07_reporting/tables/disturbance_summary_by_type.csv
+#   - 07_reporting/tables/disturbance_summary_by_region.csv
+#   - 07_reporting/tables/disturbance_summary_by_tier.csv
+#   - 07_reporting/tables/disturbance_summary_by_decade.csv
+#   - 06_analysis/figures/supplementary/FigS18_disturbance_summary.{png,pdf}
+#
+# Author: Detmer & Stier Lab
+################################################################################
 
 source("06_analysis/scripts/utils/shared_utilities.R")
 

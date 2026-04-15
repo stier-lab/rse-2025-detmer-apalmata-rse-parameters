@@ -2,9 +2,30 @@
 ################################################################################
 # 23_VERIFICATION.R
 # Statistical Output Verification for Publication Figures
-# Extracts canonical values to ensure figure annotations are correct
+################################################################################
 #
-# NOTE: Shares script number 23 with 23_figS2_data_gaps.R — different purposes
+# PURPOSE: Extract and verify canonical statistics from all pipeline outputs to
+#          ensure figure annotations and manuscript text are consistent.
+#
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (growth data)
+#   - 06_analysis/output/population_parameters.csv (lambda, elasticity)
+#   - 06_analysis/output/lambda_bootstrap_samples.rds (bootstrap lambda)
+#   - 06_analysis/output/elasticity_vital_rates.csv (vital-rate elasticities)
+#   - 06_analysis/output/expanded_meta_analysis_results.csv (meta-analysis)
+#   - 06_analysis/output/survival_thresholds.csv (threshold estimates)
+#   - 06_analysis/output/growth_thresholds.csv (growth thresholds)
+#   - 06_analysis/output/disturbance_sensitivity_summary.csv (disturbance)
+#   - 06_analysis/output/shrinkage_retrogression_subset_summary.csv (shrinkage)
+#   - 06_analysis/output/restoration_subtype_sensitivity.csv (restoration)
+#   - 06_analysis/output/study_window_disturbance_summary_overall.csv (audit)
+#
+# OUTPUTS:
+#   - 06_analysis/output/canonical_statistics.csv (verified statistics)
+#   - 06_analysis/output/pipeline_assertion_checks.csv (pass/fail checks)
+#
+# NOTE: Shares script number 23 with 23_figS2_data_gaps.R -- different purposes
 # (verification vs figure). Both are retained because renaming would break
 # run_all.R and cross-references.
 ################################################################################

@@ -2,6 +2,10 @@
 # =============================================================================
 # FIGURE 3: CARIBBEAN SURVIVAL SYNTHESIS (2-panel: a=forest, b=regional)
 # =============================================================================
+#
+# PURPOSE: Generate Figure 3 for the manuscript -- forest plot of Caribbean-wide
+#          annual survival from the expanded meta-analysis (k=17, 22 effects).
+#
 # Produces a publication-quality forest plot showing Caribbean-wide annual
 # survival evidence from the expanded meta-analysis (k=17 studies, 22 effects, N=8,805).
 #

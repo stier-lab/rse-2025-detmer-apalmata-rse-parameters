@@ -2,6 +2,10 @@
 # =============================================================================
 # FIGURE 4: POPULATION VIABILITY ASSESSMENT (4-panel: (a | b) / (c | d))
 # =============================================================================
+#
+# PURPOSE: Generate Figure 4 for the manuscript showing the Lefkovitch
+#          population model results (transition matrix, elasticity, lambda).
+#
 # Panel a: 5x5 transition matrix heatmap
 # Panel b: Elasticity bar chart (stasis, growth, retrogression) with
 # fragmentation shown as a non-additive overlay
@@ -9,6 +13,15 @@
 # Panel d: Leave-one-study-out lambda sensitivity (horizontal point plot)
 #
 # NOTE: Script filename retains historical "fig6" label; actual output is Fig4_population_model.
+#
+# INPUTS:
+#   - 06_analysis/output/population_parameters.csv (deterministic lambda)
+#   - 06_analysis/output/transition_matrix_source_leverage.csv (NOAA/Vardi leverage)
+#   - 06_analysis/output/transition_matrix.csv (5x5 Lefkovitch matrix)
+#   - 06_analysis/output/elasticity_matrix.csv (elasticity matrix)
+#   - 06_analysis/output/elasticity_vital_rates.csv (vital-rate elasticities)
+#   - 06_analysis/output/lambda_bootstrap_samples.rds (2000 bootstrap lambda values)
+#   - 06_analysis/output/sensitivity_lambda_loo.csv (leave-one-study-out lambda)
 #
 # OUTPUT: 06_analysis/figures/manuscript/Fig4_population_model.{png,pdf}
 #         174 x 180 mm (double-column), 300 DPI

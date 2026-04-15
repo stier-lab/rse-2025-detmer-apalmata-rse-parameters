@@ -2,12 +2,24 @@
 # =============================================================================
 # FIGURE 2: SIZE-DEPENDENT VITAL RATES (3-panel: a / b / c)
 # =============================================================================
+#
+# PURPOSE: Generate Figure 2 for the manuscript showing size-dependent survival,
+#          growth, and size-class synthesis across studies.
+#
 # Panel a: Survival probability vs colony size (GAM smooth, binned proportions)
 # Panel b: Relative growth rate vs colony size (GAM smooth, Detmer threshold)
 # Panel c: Size-class survival synthesis across 15 studies
 #
-# Both panels: natural colonies only, shared log10 x-axis (1-15,000 cm²),
+# Both panels: natural colonies only, shared log10 x-axis (1-15,000 cm^2),
 #   GAM (k=4, REML), 25-bin overlays, rug marks / scatter cloud.
+#
+# INPUTS:
+#   - 06_analysis/output/survival_threshold_models.rds (fitted survival GAM)
+#   - 06_analysis/output/growth_threshold_models.rds (fitted growth GAM)
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 06_analysis/output/size_class_survival_synthesis.csv (study x size-class survival)
+#   - 06_analysis/output/size_class_survival_pooled.csv (pooled means with CIs)
 #
 # OUTPUT: 06_analysis/figures/manuscript/Fig2_demographic_rates.{png,pdf}
 #         174 x 220 mm (double-column, vertical stack), 300 DPI

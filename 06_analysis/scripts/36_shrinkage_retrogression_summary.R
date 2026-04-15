@@ -9,6 +9,11 @@
 #   (transitions to smaller size classes) in a standalone, manuscript-ready
 #   product.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 06_analysis/output/transition_sample_sizes.csv (transition counts, if available)
+#   - 06_analysis/output/transition_matrix.rds (transition matrix object, if available)
+#
 # OUTPUTS:
 #   - 06_analysis/output/shrinkage_retrogression_subset_summary.csv
 #   - 06_analysis/output/shrinkage_retrogression_size_class_summary.csv

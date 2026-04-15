@@ -2,8 +2,16 @@
 # =============================================================================
 # SUPPLEMENTARY FIGURE: DATA GAPS — CERTAINTY HEATMAP (Size Class x Region)
 # =============================================================================
+#
+# PURPOSE: Generate supplementary Figure S2 showing data coverage and certainty
+#          across size classes and Caribbean regions as a heatmap.
+#
 # Heatmap showing data coverage and certainty across size classes and regions.
 # Cell values show sample sizes; fill color indicates certainty level.
+#
+# INPUTS:
+#   - 06_analysis/output/certainty_matrix.csv (pre-computed, if available)
+#   - 06_analysis/output/prepared_survival_data.rds (fallback for computing matrix)
 #
 # OUTPUT: 06_analysis/figures/supplementary/FigS2_data_gaps.{png,pdf}
 #         174 x 100 mm (double-column), 300 DPI

@@ -6,6 +6,11 @@
 #   Compare demographic parameters across different study contexts to assess
 #   transferability of nursery/lab results to field populations.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 05_data/standardized/apal_surv_summ.csv (summary survival for context diversity)
+#
 # METHODS:
 #   1. Compare survival rates by context (field, nursery in-situ, nursery ex-situ, lab)
 #   2. Compare growth rates by context

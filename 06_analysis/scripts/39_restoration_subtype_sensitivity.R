@@ -8,6 +8,10 @@
 #   Replace the broad "restoration fragment" bucket with a reproducible subtype
 #   mapping and subtype-level sensitivity summaries.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#
 # OUTPUTS:
 #   - 05_data/standardized/restoration_subtype_mapping.csv
 #   - 06_analysis/output/restoration_subtype_study_summary.csv

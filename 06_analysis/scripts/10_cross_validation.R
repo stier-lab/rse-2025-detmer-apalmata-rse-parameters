@@ -6,6 +6,10 @@
 #   Implement comprehensive cross-validation to assess model predictive
 #   performance and generalizability across studies, regions, and time periods.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#
 # METHODS:
 #   1. Leave-one-study-out cross-validation (LOSO-CV)
 #   2. Leave-one-region-out cross-validation (LORO-CV)

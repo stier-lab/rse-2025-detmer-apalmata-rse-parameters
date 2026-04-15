@@ -8,6 +8,10 @@
 #   Rebuild the curated disturbance overlap on prepared survival intervals and
 #   summarize which study windows overlap which disturbance events.
 #
+# INPUTS:
+#   - 05_data/standardized/apal_disturbance_stressor_timeline.csv (curated timeline)
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival intervals)
+#
 # OUTPUTS:
 #   - 06_analysis/output/study_window_disturbance_audit.csv
 #   - 06_analysis/output/study_window_disturbance_summary_by_study.csv

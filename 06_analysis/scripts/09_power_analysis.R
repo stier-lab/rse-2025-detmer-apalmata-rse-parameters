@@ -6,6 +6,9 @@
 #   Calculate statistical power for various study designs and provide
 #   recommendations for sample sizes in under-studied size classes and regions.
 #
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#
 # METHODS:
 #   - Simulation-based power analysis for survival detection
 #   - GLM power estimation (conservative) using observed variance components

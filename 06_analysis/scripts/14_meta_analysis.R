@@ -6,7 +6,15 @@
 ################################################################################
 #
 # PURPOSE: Conduct formal random-effects meta-analysis with publication-quality
-#          figures for the A. palmata survival data synthesis
+#          figures for the A. palmata survival data synthesis.
+#
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual-level survival data)
+#
+# OUTPUTS:
+#   - 06_analysis/output/meta_analysis_study_effects.csv (study-level effect sizes)
+#   - 06_analysis/output/meta_analysis_results.csv (pooled estimates and heterogeneity)
+#   - 06_analysis/figures/supplementary/meta_analysis/*.png (forest, funnel, etc.)
 #
 # KEY STRATIFICATION FINDING:
 #   - Overall I² = 97.8% (CONSIDERABLE heterogeneity)

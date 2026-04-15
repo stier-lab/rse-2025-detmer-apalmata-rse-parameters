@@ -2,8 +2,12 @@
 # =============================================================================
 # FIGURE: SIZE-CLASS SURVIVAL SYNTHESIS — ALL AVAILABLE EVIDENCE
 # =============================================================================
+#
+# PURPOSE: Compute and visualize annual survival by size class (SC1-SC5) across
+#          all available data (individual + summary) for use in Fig 2c.
+#
 # Produces a single-panel publication figure showing annual survival by size
-# class (SC1–SC5) across ALL available data: 6 individual-level studies +
+# class (SC1-SC5) across ALL available data: 6 individual-level studies +
 # 9 summary-level studies = up to 15 unique studies spanning the Caribbean.
 #
 # Core story: survival increases with colony size, and we have multi-study
@@ -11,9 +15,9 @@
 #
 # Data processing:
 #   1. Individual-level data (prepared_survival_data.rds): bin each obs into
-#      SC1–SC5, compute study × size_class survival rate
+#      SC1-SC5, compute study x size_class survival rate
 #   2. Summary-level data (apal_surv_summ.csv): assign SC via midpoint of
-#      reported size range, annualize survival, aggregate within study × SC
+#      reported size range, annualize survival, aggregate within study x SC
 #   3. Combine into unified dataset
 #   4. Compute pooled means (study-level, sqrt(n)-weighted) with 95% CI
 #      via logit-scale normal approximation
@@ -24,9 +28,13 @@
 # produced by 22_fig6_population_model.R. This figure's content (size-class
 # survival synthesis) was absorbed into Fig 2 panel c (script 19).
 #
-# OUTPUT:
-#   06_analysis/figures/manuscript/Fig4_size_class_survival.{png,pdf}
-#   06_analysis/output/size_class_survival_synthesis.csv
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival records)
+#   - 05_data/standardized/apal_surv_summ.csv (summary survival data)
+#
+# OUTPUTS:
+#   - 06_analysis/figures/manuscript/Fig4_size_class_survival.{png,pdf}
+#   - 06_analysis/output/size_class_survival_synthesis.csv
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-02

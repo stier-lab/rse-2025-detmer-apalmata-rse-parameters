@@ -2,6 +2,10 @@
 # =============================================================================
 # SUPPLEMENTARY FIGURES S3 & S4 — Journal-Ready Versions
 # =============================================================================
+#
+# PURPOSE: Generate supplementary Figures S3 (model diagnostics) and S4 (model
+#          selection AICc comparison) for survival and growth models.
+#
 # S3: Model Diagnostics (2-panel vertical stack)
 #     (a) Survival GAM: Fitted vs Pearson residuals
 #     (b) Growth LM: Fitted vs residuals with LOWESS
@@ -10,14 +14,16 @@
 #     (a) Survival: delta-AICc for candidate models (GLM + GLMM)
 #     (b) Growth: delta-AICc for candidate models (LM + LMM)
 #
-# OUTPUT:
-#   06_analysis/figures/supplementary/FigS3_model_diagnostics.{png,pdf}
-#   06_analysis/figures/supplementary/FigS4_model_selection.{png,pdf}
-#   174 mm width, 300 DPI (Coral Reefs double-column)
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual survival data)
+#   - 06_analysis/output/prepared_growth_data.rds (individual growth data)
+#   - 06_analysis/output/model_selection_survival.csv (survival model AICc table)
+#   - 06_analysis/output/model_selection_growth.csv (growth model AICc table)
 #
-# DEPENDENCIES:
-#   01_data_preparation.R  -> prepared_survival_data.rds, prepared_growth_data.rds
-#   12_model_selection.R   -> model_selection_survival.csv, model_selection_growth.csv
+# OUTPUTS:
+#   - 06_analysis/figures/supplementary/FigS3_model_diagnostics.{png,pdf}
+#   - 06_analysis/figures/supplementary/FigS4_model_selection.{png,pdf}
+#   174 mm width, 300 DPI (Coral Reefs double-column)
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-02

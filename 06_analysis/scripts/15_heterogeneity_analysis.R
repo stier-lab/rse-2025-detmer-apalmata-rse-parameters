@@ -632,7 +632,7 @@ cat("  - heterogeneity_forest_plot.png (visualization)\n\n")
 # 8. MORTALITY DEFINITION AS MODERATOR (Tier 1 individual-level studies only)
 # =============================================================================
 # FIX: Add mortality definition as moderator (critique audit 2026-03-29)
-# Mortality definitions vary across studies (CLAUDE.md Critical Constraints):
+# Mortality definitions vary across studies (see project guide Critical Constraints):
 #   NOAA = no tissue/skeleton gone
 #   Kuffner = >=50% tissue loss (most liberal)
 #   Others = no live tissue at interval end

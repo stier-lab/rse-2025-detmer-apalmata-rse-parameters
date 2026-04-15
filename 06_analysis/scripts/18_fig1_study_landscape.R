@@ -2,11 +2,25 @@
 # =============================================================================
 # FIGURE 1: STUDY LANDSCAPE (2-panel: a=map, b=data availability)
 # =============================================================================
+#
+# PURPOSE: Generate Figure 1 for the manuscript showing study locations and
+#          data availability across the Caribbean.
+#
 # Panel a: Caribbean map showing ALL studies in the meta-analysis:
 #   - Tier 1 (individual-level data, 6 studies): filled circles
 #   - Tier 2 (summary-level data, 10 studies): filled triangles
 # Bubble size = total sample size per region; shape = data tier
 # Also outputs supplementary size distribution histogram (unchanged)
+#
+# INPUTS:
+#   - 06_analysis/output/prepared_survival_data.rds (individual-level survival)
+#   - 06_analysis/output/prepared_growth_data.rds (individual-level growth)
+#   - 06_analysis/output/expanded_meta_analysis_study_effects.csv (all study effects)
+#   - 05_data/standardized/apal_surv_summ.csv (summary data for Tier 2 coords)
+#
+# OUTPUTS:
+#   - 06_analysis/figures/manuscript/Fig1_study_landscape.{png,pdf}
+#   - 06_analysis/figures/supplementary/FigS1_size_distribution.{png,pdf}
 #
 # Journal: Coral Reefs (Springer) — 174mm double-column, 8-12pt
 # =============================================================================

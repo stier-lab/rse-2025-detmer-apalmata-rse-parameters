@@ -33,6 +33,11 @@
 #   - Estimation: REML; three-level model with t-test; independent model with
 #     Knapp-Hartung adjustment (test="knha")
 #
+# INPUTS:
+#   - 06_analysis/output/meta_analysis_study_effects.csv (Tier 1 study-level effects from script 14)
+#   - 05_data/standardized/apal_surv_ind.csv (individual survival records for NOAA regional split)
+#   - 05_data/standardized/apal_surv_summ.csv (summary survival data for Tier 2 studies)
+#
 # OUTPUTS:
 #   CSVs: expanded_meta_analysis_*.csv (10 files)
 #   Figures: 06_analysis/figures/supplementary/meta_analysis/expanded_*.png/pdf
@@ -543,7 +548,7 @@ if (nrow(garrison_relocated) > 0) {
 
 # --- 2b.10: rogers_muller_2012 ---
 # USVI (St. John), 69 tagged natural colonies, 7-year tracking (2003-2009)
-# [AI_EXTRACTED] USGS study, independent of NOAA_survey
+# [EXPANDED] USGS study, independent of NOAA_survey
 # 44/69 survived = 63.8% over 7 years; annualized = 93.7%
 # Also: 141 fragments tracked (extracted separately for fragmentation analysis)
 rogers <- summ %>% filter(study == "rogers_muller_2012", fragment == "N")
@@ -562,7 +567,7 @@ if (nrow(rogers) > 0) {
       population_type = "Natural colony",
       survey_yr = 2009,
       fragment = "N",
-      data_tier = "Tier 2 (summary) [AI_EXTRACTED]"
+      data_tier = "Tier 2 (summary) [EXPANDED]"
     ) %>%
     mutate(
       n_survived = pmin(n_survived, n_total),
@@ -585,13 +590,13 @@ if (nrow(rogers) > 0) {
 # A colony with RM is still alive. The study's own density data show 89% population
 # decline at PB (1.8→0.2 col/m²) over 17 years, inconsistent with 92% annual survival.
 # Additionally, n=246 is a fictional cohort size derived from density × area.
-# Data retained in ai_extracted_survival.csv for contextual reference only.
+# Data retained in expanded_search/expanded_search_survival.csv for contextual reference only.
 cat("\n  ramos_et_al_2024: EXCLUDED -- RM prevalence =/= whole-colony mortality\n")
 
 
 # --- 2b.12: ramos_romero_et_al_2025 ---
 # Cuba (4 reef crests: PB, RG, El Peruano, Mariflores), restoration fragments
-# [AI_EXTRACTED] Kaplan-Meier survival from Table 2; 200 fragments total (50/site)
+# [EXPANDED] Kaplan-Meier survival from Table 2; 200 fragments total (50/site)
 # Overlaps with Ramos 2024 sites (PB, RG) but different data (experimental fragments vs monitoring)
 ramos_romero <- summ %>% filter(study == "ramos_romero_et_al_2025")
 if (nrow(ramos_romero) > 0) {
@@ -616,7 +621,7 @@ if (nrow(ramos_romero) > 0) {
       population_type = "Restoration fragment",
       survey_yr = 2023,
       fragment = "Y",
-      data_tier = "Tier 2 (summary) [AI_EXTRACTED]"
+      data_tier = "Tier 2 (summary) [EXPANDED]"
     ) %>%
     mutate(
       n_survived = pmin(n_survived, n_total),
@@ -638,7 +643,7 @@ if (nrow(ramos_romero) > 0) {
 # (3) The 2005 mass bleaching event drove most mortality, confounding baseline rates
 # (4) Primary focus is disease prevalence and partial tissue loss, not whole-colony survival
 # Paper: Muller et al. 2008, Hawksnest Bay, St. John, USVI, 60 tagged colonies
-# Claude originally included; Gemini excluded; independent review agrees with Gemini.
+# Reviewer 1 originally included; Reviewer 2 excluded; independent review agrees with Reviewer 2.
 cat("\n  muller_et_al_2008: EXCLUDED -- imprecise survival data, no sizes, bleaching-confounded\n")
 
 
@@ -651,7 +656,7 @@ cat("\n  muller_et_al_2008: EXCLUDED -- imprecise survival data, no sizes, bleac
 # (3) 10 of 91 colony losses were TKO (knocked out of frame) -- ambiguous mortality
 # (4) Catastrophic WPX-driven decline (92→1 colony) -- extreme outlier event
 # Paper: Sutherland et al. 2016, Eastern Dry Rocks + 7 FKNMS sites, 1994-2014
-# Claude originally included (EDR only); Gemini excluded; independent review excludes both components.
+# Reviewer 1 originally included (EDR only); Reviewer 2 excluded; independent review excludes both components.
 cat("\n  sutherland_et_al_2016: EXCLUDED -- NOAA overlap (contemporary), photostation design (EDR)\n")
 
 
@@ -694,7 +699,7 @@ if (nrow(rogers_1982) > 0) {
       population_type = "Natural colony",
       survey_yr = 1980,
       fragment = "Y",  # storm-generated fragments (not outplants)
-      data_tier = "Tier 2 (summary) [AI_EXTRACTED]"
+      data_tier = "Tier 2 (summary) [EXPANDED]"
     ) %>%
     mutate(
       n_survived = pmin(n_survived, n_total),
@@ -1880,12 +1885,12 @@ pop_colors <- c(
   "Restoration fragment" = MANUSCRIPT_PALETTE$restoration  # "#D55E00"
 )
 
-# FIX: Add AI_EXTRACTED tier to shape mapping (critique audit 2026-03-29)
-# Previously missing "Tier 2 (summary) [AI_EXTRACTED]" caused unmapped points
+# FIX: Add EXPANDED tier to shape mapping (critique audit 2026-03-29)
+# Previously missing "Tier 2 (summary) [EXPANDED]" caused unmapped points
 tier_shapes <- c(
   "Tier 1 (individual)" = 16,           # Filled circle
   "Tier 2 (summary)" = 17,              # Filled triangle
-  "Tier 2 (summary) [AI_EXTRACTED]" = 18  # Filled diamond — AI-extracted data
+  "Tier 2 (summary) [EXPANDED]" = 18    # Filled diamond — expanded search data
 )
 
 # --- Figure 9a: Expanded forest plot ---
