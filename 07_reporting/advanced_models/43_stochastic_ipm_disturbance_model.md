@@ -90,8 +90,9 @@ From `stochastic_ipm_simulation_summary.csv`:
 
 Interpretation:
 - All modeled regime mixtures remain below replacement (`lambda < 1`).
-- Catastrophic years strongly depress the long-run growth trajectory.
-- The current recruitment scenarios are too small to materially change the viability conclusion; they function as explicit assumption bounds, not a rescue mechanism.
+- The IPM stochastic lambdas (0.78-0.82) are lower than the Lefkovitch matrix lambda (0.961) because: (a) the IPM fits its own GAMs to near-annual intervals only, while the matrix uses study-level rma() across all intervals; (b) the IPM conditions on disturbance regime, separating catastrophic years that the matrix averages over; (c) the continuous size kernel captures mortality patterns that the 5-class discretization smooths.
+- Catastrophic years strongly depress the long-run growth trajectory. The catastrophic kernel lambda (0.509) corresponds to the Neely 2014 bleaching event.
+- The current recruitment scenarios are too small to materially change the viability conclusion; they function as explicit assumption bounds, not a rescue mechanism. The `recruit_surv_pars.rds` file (s_recruit = 0.028) provides empirical post-settlement survival for future fecundity modeling.
 - Even the no-disturbance counterfactual remains declining under currently estimated natural-colony vital rates.
 
 ## Limitations

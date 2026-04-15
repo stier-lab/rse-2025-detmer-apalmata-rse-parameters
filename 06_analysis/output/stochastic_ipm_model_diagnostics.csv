@@ -1,6 +1,6 @@
 row_type,model,formula,n,aic,deviance_explained,annual_recruits_per_mature_colony,settlement_post_survival_product
-model,survival_gam,"survived ~ regime_class + s(log_size, k = 7) + s(log_size, by = regime_class,      k = 5)",5508,4698.133880808233,0.10884186088603216,NA,NA
-model,growth_gam,"delta_log_size ~ regime_class + s(log_size, k = 7) + s(log_size,      by = regime_class, k = 5)",4508,15749.916052718581,0.04739430511230257,NA,NA
+model,survival_gam,"survived ~ regime_class + s(log_size, k = 7) + s(log_size, by = regime_class,      k = 5)",5508,4698.133880808269,0.1088418608859816,NA,NA
+model,growth_gam,"delta_log_size ~ regime_class + s(log_size, k = 7) + s(log_size,      by = regime_class, k = 5)",4508,15749.916052718589,0.04739430511230309,NA,NA
 recruitment_scenario,recruitment_scenario:zero,No recruitment term; survival+growth only baseline,NA,NA,NA,0,0
 recruitment_scenario,recruitment_scenario:conservative,Scenario-scaled direct recruitment under thermal-stress settlement conditions,NA,NA,NA,0.0010360000000000002,0.051800000000000006
 recruitment_scenario,recruitment_scenario:optimistic,Scenario-scaled direct recruitment under baseline settlement conditions,NA,NA,NA,0.00434,0.0868
