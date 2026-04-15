@@ -48,7 +48,7 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 
 | Phase | Scripts | What they do |
 |-------|---------|-------------|
-| Data Prep | 01 | Load, clean, standardize, assign size classes; build `prepared_survival_cells.rds` (individual + summary, cell-level weighted) |
+| Data Prep | 01 | Load, clean, standardize, assign size classes; build `prepared_survival_cells.rds` (individual + summary, for study-level rma) |
 | Core | 02-07 | Survival/growth thresholds, growth rates, variance, data gaps |
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
 | Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=17/22 effects), sensitivity |

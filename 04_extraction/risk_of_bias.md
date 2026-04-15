@@ -89,7 +89,7 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 1. **NOAA dominance**: The highest-quality study (10/10) is the largest single contributor to individual-level data. Results are heavily weighted toward this data source, though the addition of Neely et al. 2022 (878 colonies) has partially reduced NOAA's dominance.
 
-2. **Tier structure matters**: The 7 Tier 1 (individual-level) studies average 7.1/10, while the 11 Tier 2 (summary/AI-extracted) studies average 6.8/10. The Tier 2 studies are not systematically lower quality, but their data contribute less statistical weight due to summary-level reporting.
+2. **Tier structure matters**: The 7 Tier 1 (individual-level) studies average 7.1/10, while the 11 Tier 2 (summary/expanded search) studies average 6.8/10. The Tier 2 studies are not systematically lower quality, but their data contribute less statistical weight due to summary-level reporting.
 
 3. **Mortality definition heterogeneity**: The single biggest methodological concern is that "mortality" means different things across studies. NOAA defines it as no tissue/skeleton remaining; Kuffner et al. use >=50% tissue loss; Garrison & Ward include colony disappearance. This heterogeneity likely contributes to the extreme I-squared of 96.6% observed in the meta-analysis.
 
@@ -206,7 +206,7 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 - Mortality definition: Explicit -- "dead and removed from further inclusion if: (1) entire colony/fragment disappeared and could not be relocated, or (2) live tissue was not observed (100% tissue loss)" (Score: 2)
 - Temporal adequacy: 5-year study (1999--2004) with 6-month then annual assessments; direct annual survival estimable (Score: 2)
 
-### Tier 2: AI-Extracted Summary Data
+### Tier 2: Expanded Search Summary Data
 
 **16. rogers_muller_2012 (9/10, Low Risk)**
 - Selection: Census of all 69 A. palmata colonies within a 17,627 m2 reef zone at Haulover Bay (Score: 2)
@@ -252,4 +252,4 @@ The overall risk-of-bias profile for this synthesis is **moderate, with strength
 
 ---
 
-*Assessment conducted by Claude (Anthropic) for the Detmer et al. (2025) A. palmata demographic synthesis. Scores are based on published methods, supplementary materials, raw data documentation, and metadata files.*
+*Assessment conducted by Stier Lab for the Detmer et al. (2025) A. palmata demographic synthesis. Scores are based on published methods, supplementary materials, raw data documentation, and metadata files.*

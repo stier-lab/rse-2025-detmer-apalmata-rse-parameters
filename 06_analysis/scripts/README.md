@@ -47,7 +47,7 @@ If you want to understand the paper, read these 8 scripts in order:
 
 | Script | What it does | Produces |
 |--------|-------------|----------|
-| 01_data_preparation.R | Load and clean all data; build cell-weighted survival dataset | prepared_survival_data.rds, prepared_survival_cells.rds |
+| 01_data_preparation.R | Load and clean all data; build cell-level survival dataset for study-level meta-analysis | prepared_survival_data.rds, prepared_survival_cells.rds |
 | 13_transition_matrix.R | Build 5x5 Lefkovitch matrix, compute lambda, bootstrap uncertainty | transition_matrix.csv, lambda_bootstrap_samples.rds |
 | 14b_expanded_meta_analysis.R | Three-level meta-analysis of survival across 17 studies | expanded_meta_analysis_results.csv |
 | 17_update_parameter_lists.R | Generate RSE model parameters | parameter_lists/*.rds |
@@ -67,7 +67,7 @@ If you want to understand the paper, read these 8 scripts in order:
         ├── prepared_growth_data.rds ───────────────┤
         ├── prepared_survival_cells.rds ──┐         │
         │   (individual + summary,        │         │
-        │    cell-level weighted)          │         │
+        │    study-level rma)          │         │
         ▼                                 │         ▼
 ┌───────────────────────────┐             │ ┌───────────────────┐
 │  Core Analysis (02--07)   │             │ │  07_integrate_    │
@@ -149,12 +149,12 @@ These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, an
 
 | Script | Description | Key Outputs |
 |--------|-------------|-------------|
-| `13_transition_matrix.R` | 5x5 Lefkovitch population projection matrix, eigenvalue analysis (lambda), elasticity analysis, bootstrap uncertainty, and explicit leverage exports. Survival rates from cell-level weighted data (`prepared_survival_cells.rds`, individual + summary); growth from individual records. | `transition_matrix.csv`, `elasticity_matrix.csv`, `population_parameters.csv`, `transition_matrix_imputation_sensitivity.csv`, `transition_matrix_model_diagnostics.csv` |
+| `13_transition_matrix.R` | 5x5 Lefkovitch population projection matrix, eigenvalue analysis (lambda), elasticity analysis, bootstrap uncertainty, and explicit leverage exports. Survival rates via study-level `rma()` per size class (cells aggregated to study-level, then pooled via `metafor::rma`, REML); growth from individual records. | `transition_matrix.csv`, `elasticity_matrix.csv`, `population_parameters.csv`, `transition_matrix_imputation_sensitivity.csv`, `transition_matrix_model_diagnostics.csv` |
 | `14_meta_analysis.R` | Formal random-effects meta-analysis (k=5 studies), Knapp-Hartung adjustment, moderator analysis, subgroup analyses | `meta_analysis_results.csv`, `meta_analysis_study_effects.csv`, `meta_analysis_stratified.csv` |
 | `14b_expanded_meta_analysis.R` | Two-tier expanded meta-analysis (17 studies, 22 effects), individual + summary data, clustered natural-vs-restoration moderator analysis, and primary-model jackknife diagnostics | `expanded_meta_analysis_results.csv`, `expanded_meta_analysis_study_effects.csv`, `expanded_meta_primary_model_diagnostics.csv`, `expanded_meta_primary_jackknife.csv`, `expanded_meta_moderator_diagnostics.csv` |
 | `15_heterogeneity_analysis.R` | I-squared, Q-tests, heterogeneity source identification, between-study variance decomposition | `heterogeneity_analysis.csv` |
 | `16_sensitivity_analysis.R` | Leave-one-study-out sensitivity, elasticity perturbation, NOAA-dominance checks | `sensitivity_*.csv` |
-| `17_update_parameter_lists.R` | Serialize bootstrap parameter distributions to RDS format for the web platform API. Field and nursery survival use cell-level weighted data (individual + summary); growth and lab survival use individual records. | `parameter_lists/*.rds` |
+| `17_update_parameter_lists.R` | Serialize bootstrap parameter distributions to RDS format for the RSE model. Field survival reads script 13's rma() bootstrap output directly; nursery survival uses cell-level bootstrap; growth and lab survival use individual records. | `parameter_lists/*.rds` |
 
 ### 18--28 -- Manuscript Figures
 
@@ -336,11 +336,11 @@ parameter_lists/                    # RDS files consumed by the web platform API
 
 | Metric | Value |
 |--------|-------|
-| Population growth rate (lambda) | 0.888 (95% CI: 0.740–0.959) |
-| Most critical parameter | SC5 stasis (58.6% of matrix-cell elasticity) |
+| Population growth rate (lambda) | 0.961 (95% CI: 0.816–1.010) |
+| Most critical parameter | SC5 stasis (58.9% of matrix-cell elasticity) |
 | Between-study heterogeneity | I-squared = 97.2% |
 | NOAA data share | 78% of individual-level observations |
-| Total observations | 7,346 individual records + 332 summary records from 16 studies (cell-weighted) |
+| Total observations | 7,346 individual records + 332 summary records from 16 studies |
 
 ---
 

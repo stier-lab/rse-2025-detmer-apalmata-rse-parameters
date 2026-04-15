@@ -2,7 +2,7 @@
 
 **Flagged by:** Raine Detmer (1-on-1 meeting, 2026-04-07)
 **Source:** `raine_working_notes/2026-04-07_APAL_data_integration_issues.pdf`
-**Status:** Implemented (2026-04-07) — cell-level sample-size weighting in scripts 01, 13, 17
+**Status:** Implemented (2026-04-07, updated 2026-04-14) — cell-level aggregation in script 01; study-level rma() per size class in script 13; field survival from script 13's rma() bootstrap in script 17
 
 ---
 
@@ -117,8 +117,8 @@ Raine's reaction: "I like that idea. And it seems easy to explain to when writin
 | Script | Change |
 |---|---|
 | `01_data_preparation.R` | New Section 8b: aggregates individual data to (study × size_class × time_interval_yr) cells, assigns size classes to summary records using canonical `SIZE_BREAKS`, stacks into `prepared_survival_cells.rds` with `data_source` flag, sample size, and inverse-variance weights (logit scale). |
-| `13_transition_matrix.R` | Section 3: survival rates now computed from cell-weighted data (natural colonies, 1,302 cells from 7 studies, N=23,644). Section 9: bootstrap resamples cells within studies instead of individual colonies. |
-| `17_update_parameter_lists.R` | Field and nursery survival parameters now computed from cell-weighted data via `bootstrap_survival_cells()`. Growth remains individual-level. |
+| `13_transition_matrix.R` | Section 3: survival rates now computed via study-level random-effects meta-analysis (`metafor::rma()` per size class on PLO-transformed proportions). Cells aggregated to study-level effects first, then pooled via REML. Section 9: bootstrap resamples studies -> cells -> re-aggregates to study-level -> re-fits rma() per iteration. |
+| `17_update_parameter_lists.R` | Field survival parameters now read from script 13's rma() bootstrap output (`survival_bootstrap_by_sc.rds`). Nursery survival uses cell-level bootstrap. Growth remains individual-level. New `recruit_surv_pars.rds` packages restoration recruit data (s_recruit). |
 
 ### What was NOT changed
 
@@ -148,11 +148,14 @@ SC1 shifted modestly because cell-level aggregation weights NOAA plot-years by s
 
 ### Lambda comparison
 
-| Metric | Individual-only (old) | Cell-weighted, sample-size | Cell-weighted, logit IV (current) |
-|---|---|---|---|
-| Deterministic λ | 0.986 | 0.959 | 0.888 |
-| 95% Bootstrap CI | [0.876, 1.005] | [0.801, 1.012] | [0.740, 0.959] |
-| Survival studies in bootstrap | 3 | 5 | 5 |
+| Metric | Individual-only (old) | Cell-weighted, sample-size | Cell-weighted, logit IV | Study-level rma (current) |
+|---|---|---|---|---|
+| Deterministic λ | 0.986 | 0.959 | 0.888 | **0.961** |
+| 95% Bootstrap CI | [0.876, 1.005] | [0.801, 1.012] | [0.740, 0.959] | **[0.816, 1.010]** |
+| P(decline) | — | — | — | **94.3%** |
+| Survival studies in bootstrap | 3 | 5 | 5 | 5 |
+
+**Note (2026-04-14):** The cell-weighted logit IV approach was identified as downward-biased due to three compounding errors: n=1 cell pathology (32.4% of NOAA cells), logit transformation upweighting rare mortality, and wrong variance formula for annualized survival. See `07_reporting/methodology_critique_2026-04-14.md` for full analysis. The study-level rma() approach (current) treats each study as the unit of analysis with proper random-effects pooling (REML), matching the methodology in script 14b's expanded meta-analysis.
 
 ### Diagram
 

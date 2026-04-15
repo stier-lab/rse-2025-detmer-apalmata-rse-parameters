@@ -77,7 +77,7 @@
 - `05_data/integration/APAL_data_integration.rmd` is mentioned as the source of standardized data, but it's not called by `run_all.R`. The relationship between this RMarkdown and script 01 is unclear.
 
 ### Fecundity = 0 is the biggest assumption but it's buried
-- Lambda = 0.888 with zero sexual reproduction. This means the species is declining without any recruitment. The fecundity sensitivity analysis exists but the zero-fecundity baseline deserves prominent discussion in the README.
+- Lambda = 0.961 with zero sexual reproduction. This means the species is declining without any recruitment. The fecundity sensitivity analysis exists but the zero-fecundity baseline deserves prominent discussion in the README.
 
 ### Pre-2023 caveat should be in Key Results
 - The functional extinction of A. palmata from Florida after the 2023 heatwave (Manzello et al. 2025) fundamentally recontextualizes every number in the paper. This is mentioned in CLAUDE.md but not in the README Key Results table.
@@ -102,7 +102,7 @@
 - `14b_expanded_meta_analysis.R` (2,708 lines), `13_transition_matrix.R` (2,274 lines), `04_growth_rate_comparison.R` (2,326 lines). Hard to review, hard to maintain, hard to test.
 
 ### No test suite
-- Zero `test_that()` calls. One `stopifnot` in the entire codebase. `23_verification.R` has 9 coarse range checks (e.g., "lambda in [0.80, 1.05]"). A regression that shifts lambda from 0.888 to 0.876 would pass silently.
+- Zero `test_that()` calls. One `stopifnot` in the entire codebase. `23_verification.R` has 9 coarse range checks (e.g., "lambda in [0.80, 1.05]"). A regression that shifts lambda from 0.961 to 0.940 would pass silently.
 
 ### No `sessionInfo()` captured
 - The pipeline never records which package versions produced a given set of results. No way to diagnose version-dependent discrepancies.
@@ -137,8 +137,8 @@
 ## Questions a New Grad Student Would Ask Adrian
 
 1. "What is the one-sentence version of this paper, and which 5 scripts produce the evidence?"
-2. "Lambda = 0.888 with zero fecundity — is the paper arguing the species was already declining before 2023, or that it was marginally viable?"
-3. "How much of this repo was written by Raine, how much by you, how much by Claude?"
+2. "Lambda = 0.961 with zero fecundity — is the paper arguing the species was already declining before 2023, or that it was marginally viable?"
+3. "How much of this repo was written by Raine vs by you?"
 4. "If I wanted to add a new study from Bonaire, what's the actual step-by-step?"
 5. "Scripts 41-47 — should I read them? Are any going in the paper?"
 6. "Why is fragmentation from only one study? Shouldn't storm fragmentation be commonly observed?"

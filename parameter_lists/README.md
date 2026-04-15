@@ -39,7 +39,7 @@ Each RDS file is a list containing:
 | `n_observations` | integer | Total colonies (sum of cell sample sizes for survival) |
 | `n_cells` | integer | Number of (study × size_class × interval) cells (survival only) |
 | `n_studies` | integer | Number of source studies |
-| `data_integration` | character | Weighting method (e.g., "cell-level weighted (individual + summary data)") |
+| `data_integration` | character | Weighting method (e.g., "study-level rma (from script 13, metafor::rma per size class)") |
 | `generation_date` | POSIXct | Date parameters were generated |
 
 ---
@@ -84,15 +84,15 @@ All parameter files use consistent size class definitions:
 | `Q75` | numeric | 75th percentile |
 | `Q95` | numeric | 95th percentile |
 
-### Typical Values (Field Data, cell-weighted, natural colonies only)
+### Typical Values (Field Data, study-level rma, natural colonies only)
 
 | Size Class | N (colonies) | k (studies) | Mean Survival |
 |------------|-------------|-------------|---------------|
-| SC1 (0-10 cm²) | 129 | 3 | 0.546 |
-| SC2 (10-100 cm²) | 1,265 | 4 | 0.662 |
-| SC3 (100-900 cm²) | 2,304 | 5 | 0.776 |
-| SC4 (900-4000 cm²) | 1,699 | 4 | 0.880 |
-| SC5 (>4000 cm²) | 1,768 | 3 | 0.947 |
+| SC1 (0-10 cm²) | 129 | 3 | 0.507 |
+| SC2 (10-100 cm²) | 1,265 | 4 | 0.731 |
+| SC3 (100-900 cm²) | 2,304 | 5 | 0.786 |
+| SC4 (900-4000 cm²) | 1,699 | 4 | 0.881 |
+| SC5 (>4000 cm²) | 1,768 | 3 | 0.948 |
 
 ---
 
@@ -127,7 +127,7 @@ All parameter files use consistent size class definitions:
 ## Context Definitions
 
 ### Field (`field_*`)
-Wild and outplanted populations on natural reefs. Survival parameters are computed from cell-level weighted data that combines individual-level records (7 studies) with summary-level records (10 additional studies) via sample-size weighting. Growth parameters use individual-level data only.
+Wild populations on natural reefs. Survival parameters are computed via study-level random-effects meta-analysis (`metafor::rma()` per size class, REML) from script 13's bootstrap output. Cells are first aggregated to study-level effects, then pooled via rma(). Growth parameters use individual-level data only.
 
 **Characteristics:**
 - Largest sample sizes (especially SC4-SC5)
@@ -192,12 +192,12 @@ Rscript 06_analysis/scripts/17_update_parameter_lists.R
 ```
 
 This script:
-1. Loads `prepared_survival_cells.rds` (cell-level, individual + summary, with sample-size weights)
-2. Loads `prepared_survival_data.rds` and `prepared_growth_data.rds` (individual records for lab/growth)
-3. Filters by data type (field/nursery/lab)
-4. Generates hierarchical bootstrap replicates (n=1,000 per size class; study-then-cell resampling for survival, study-then-colony for growth)
-5. Calculates summary statistics
-6. Saves to RDS format
+1. Reads field survival from script 13's rma() bootstrap output (`survival_bootstrap_by_sc.rds`, 2,000 iterations)
+2. Loads `prepared_survival_cells.rds` for nursery survival (cell-level bootstrap, 500 iterations)
+3. Loads `prepared_survival_data.rds` and `prepared_growth_data.rds` (individual records for lab/growth)
+4. Generates hierarchical bootstrap replicates for growth (study-then-colony, 1,000 iterations)
+5. Packages restoration recruit survival as `recruit_surv_pars.rds` with `s_recruit` parameter
+6. Saves to RDS format with both analysis and RSE-compatible elements
 
 ---
 

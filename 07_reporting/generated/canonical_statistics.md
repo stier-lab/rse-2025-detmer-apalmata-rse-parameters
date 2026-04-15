@@ -1,6 +1,6 @@
 # Canonical Statistics
 
-Generated from pipeline run `20260405_080608` on 2026-04-06 15:23:39.
+Generated from pipeline run on 2026-04-14 (post-rma fix).
 
 ## Disturbance
 
@@ -43,13 +43,13 @@ Generated from pipeline run `20260405_080608` on 2026-04-06 15:23:39.
 
 | Metric | Value | Source |
 |---|---|---|
-| `annual_decline_pct_from_bootstrap_mean` | 5.22% | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `lambda_bootstrap_mean` | 0.9478 | `06_analysis/output/lambda_bootstrap_samples.rds` |
-| `lambda_ci_lower` | 0.740 | `06_analysis/output/population_parameters.csv` |
-| `lambda_ci_upper` | 0.959 | `06_analysis/output/population_parameters.csv` |
-| `lambda_deterministic` | 0.888 | `06_analysis/output/population_parameters.csv` |
-| `max_elasticity_pct` | 58.6% | `06_analysis/output/elasticity_matrix.csv` |
-| `p_decline_pct` | 99.9% | `06_analysis/output/population_parameters.csv` |
+| `annual_decline_pct_from_bootstrap_mean` | 3.9% | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `lambda_bootstrap_mean` | 0.9540 | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `lambda_ci_lower` | 0.816 | `06_analysis/output/population_parameters.csv` |
+| `lambda_ci_upper` | 1.010 | `06_analysis/output/population_parameters.csv` |
+| `lambda_deterministic` | 0.961 | `06_analysis/output/population_parameters.csv` |
+| `max_elasticity_pct` | 58.9% | `06_analysis/output/elasticity_matrix.csv` |
+| `p_decline_pct` | 94.3% | `06_analysis/output/population_parameters.csv` |
 
 ## Restoration
 

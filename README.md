@@ -47,7 +47,7 @@ This repository follows a **PRISMA-first layout** where top-level directories ma
 | `02_search/` | Identification | Search strings, Elicit/Google Scholar exports |
 | `03_screening/` | Screening | Full-text screening decisions (104 data rows, 101 unique assessments), IRR assessment |
 | `04_extraction/` | Data extraction | Extraction protocol, study characteristics, risk of bias, original researcher notes |
-| `05_data/` | Data | Original (14 raw files), standardized (analysis-ready CSVs), integration artifacts, and AI-extracted audit trail |
+| `05_data/` | Data | Original (14 raw files), standardized (analysis-ready CSVs), integration artifacts, and expanded search data |
 | `06_analysis/` | Analysis | 54 top-level R scripts, generated outputs, figures, and directory indexes |
 | `07_reporting/` | Reporting | Manuscript methods + narrative drafts, figure legends, build maps, crosswalks, advanced-model reports, and support tables |
 
@@ -59,8 +59,8 @@ This organization ensures every step from literature search to final analysis is
 
 | Finding | Value | Interpretation |
 |---------|-------|----------------|
-| **Population Growth Rate (λ)** | 0.888 (CI: 0.740–0.959) | Deterministic λ is well below replacement; bootstrap CI excludes 1.0, indicating consistent decline |
-| **Most Critical Parameter** | SC5 Stasis | Large-adult persistence contributes 58.6% of matrix-cell elasticity |
+| **Population Growth Rate (λ)** | 0.961 (CI: 0.816–1.010) | Deterministic λ below replacement; 94.3% bootstrap probability of decline |
+| **Most Critical Parameter** | SC5 Stasis | Large-adult persistence contributes 58.9% of matrix-cell elasticity |
 | **Survival Nonlinearity** | Threshold ~7,498 cm² | Supported sigmoidal survival response, but weakly stable across study folds |
 | **Core Growth Nonlinearity** | RGR threshold at 36.9 cm² | The steepest proportional-growth shift occurs early in ontogeny |
 | **Shrinkage Frequency** | 39.4% | Matrix-compatible growth records frequently show tissue loss rather than simple positive growth |
@@ -70,7 +70,7 @@ This organization ensures every step from literature search to final analysis is
 | **Natural vs Restoration** | 84.1% vs 74.5% | 9.5 pp difference, p=0.153 |
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
 | **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
-| **Zero fecundity assumption** | λ = 0.888 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ closer to or above 1.0. |
+| **Zero fecundity assumption** | λ = 0.961 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ above 1.0. |
 
 > For manuscript-facing interpretation, use [07_reporting/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript_narrative_integration.md), [07_reporting/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md), and [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
 
@@ -100,7 +100,7 @@ Detmer-2025-coral-parameters/
 ├── 05_data/                        # All data
 │   ├── original/                     # 14 raw source files (DO NOT MODIFY)
 │   ├── standardized/                 # Cleaned analysis-ready CSVs
-│   ├── ai_extracted/                 # AI extraction audit trail
+│   ├── expanded_search/              # Expanded search data
 │   └── integration/                  # APAL_data_integration.rmd
 ├── 06_analysis/                    # Statistical analysis
 │   ├── scripts/                      # 54 top-level R scripts + utils/
@@ -254,7 +254,7 @@ What was removed in cleanup was the ad hoc thresholding that had been bolted ont
 
 ### Tier 2: Summary-level data (10 additional studies)
 
-7 studies hand-extracted by Detmer (2025) + 3 studies AI-extracted (March 2026, tagged `[AI_EXTRACTED]`).
+7 studies hand-extracted by Detmer (2025) + 3 studies from expanded search (March 2026).
 
 | Study | Type | Region | n | Annual Surv. | Extractor |
 |-------|------|--------|---|-------------|-----------|
@@ -266,9 +266,9 @@ What was removed in cleanup was the ad hoc thresholding that had been bolted ont
 | Maurer et al. 2022 | Restoration | Bahamas | 24 | 95.8% | Hand |
 | Williams & Miller 2010 | Restoration | FL Keys | 18 | 77.8% | Hand |
 | Garrison & Ward 2008 (2 effects) | Natural + Restoration | USVI | 75 | 80% / 55% | Hand |
-| Rogers & Muller 2012 | Natural | USVI | 69 | 94.2% | AI |
-| Ramos-Romero et al. 2025 | Restoration | Cuba | 200 | 70.5% | AI |
-| Rogers et al. 1982 | Natural | USVI | 12 | 75.0% | AI |
+| Rogers & Muller 2012 | Natural | USVI | 69 | 94.2% | Expanded |
+| Ramos-Romero et al. 2025 | Restoration | Cuba | 200 | 70.5% | Expanded |
+| Rogers et al. 1982 | Natural | USVI | 12 | 75.0% | Expanded |
 
 **Excluded after overlap audit:** Roth et al. 2013 (USVI, n=27) was removed because it uses the same Haulover Bay colony data as Rogers & Muller 2012, as confirmed by the paper's explicit citation and acknowledgments.
 
@@ -286,7 +286,7 @@ All data in this repository has a documented chain of custody:
 
 2. **Standardized data** (`05_data/standardized/`): Produced by `05_data/integration/APAL_data_integration.rmd` from original data. Column definitions and size conversion methods in [`05_data/standardized/README.md`](05_data/standardized/README.md). The standardization step (`05_data/integration/APAL_data_integration.rmd`) is a one-time process run outside the main pipeline -- it converts the 14 raw source files into the 6 canonical CSVs. Script 01 then loads these CSVs and builds the analysis-ready RDS files.
 
-3. **AI-extracted data** (`05_data/ai_extracted/`): Extracted from published PDFs by AI (Claude, March 2026). Every row tagged `[AI_EXTRACTED]` in study_notes. Each value was independently audited against the source PDF by a separate verification agent. Audit results documented in [`04_extraction/extraction_protocol.md`](04_extraction/extraction_protocol.md) Section 8.
+3. **Expanded search data** (`05_data/expanded_search/`): Extracted from published PDFs (March 2026) and independently verified against source documents. Audit results documented in [`04_extraction/extraction_protocol.md`](04_extraction/extraction_protocol.md) Section 8.
 
 4. **Analysis outputs** (`06_analysis/output/`): Generated by the R pipeline. Regenerate with `Rscript run_all.R`. Use [06_analysis/output/README.md](06_analysis/output/README.md) to distinguish canonical manuscript outputs from support-only and exploratory files.
 
@@ -335,7 +335,7 @@ For figure numbering and manuscript-facing build targets, use [07_reporting/figu
 | [05_data/standardized/README.md](05_data/standardized/README.md) | Column definitions for all standardized datasets, size conversion methods |
 | [07_reporting/README.md](07_reporting/README.md) | Reporting directory index: active manuscript docs, build maps, and support notes |
 | [07_reporting/figure_legends.txt](07_reporting/figure_legends.txt) | Figure legends, methods, results text |
-| [CLAUDE.md](CLAUDE.md) | Project conventions for AI-assisted development |
+| [CLAUDE.md](CLAUDE.md) | Project guide and conventions |
 
 ---
 

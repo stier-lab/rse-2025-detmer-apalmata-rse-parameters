@@ -231,7 +231,7 @@ Lefkovitch population projection matrix (5×5).
 
 Matrix element (i,j) = probability of transitioning from size class j to size class i.
 
-**Key finding:** `lambda = 0.888` (95% bootstrap interval: `0.740-0.959`), indicating that decline is more likely than growth in the current synthesis (P(decline) = 99.9%).
+**Key finding:** `lambda = 0.961` (95% bootstrap interval: `0.816-1.010`), indicating that decline is likely in the current synthesis (P(decline) = 94.3%).
 
 ---
 
@@ -240,7 +240,7 @@ Matrix element (i,j) = probability of transitioning from size class j to size cl
 
 Proportional sensitivity of λ to each matrix element.
 
-**Key finding:** SC5 stasis (staying large) remains the dominant matrix-cell elasticity (`58.6%`).
+**Key finding:** SC5 stasis (staying large) remains the dominant matrix-cell elasticity (`58.9%`).
 
 ---
 

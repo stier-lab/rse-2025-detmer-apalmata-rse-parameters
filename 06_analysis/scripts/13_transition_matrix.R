@@ -10,9 +10,10 @@
 #
 # METHODS:
 #   1. Calculate size class transition probabilities from growth data
-#   2. Calculate cell-weighted survival rates per size class using
-#      prepared_survival_cells.rds (individual + summary data, inverse-variance
-#      weighted) to incorporate all available survival information
+#   2. Calculate survival rates per size class via study-level random-effects
+#      meta-analysis (metafor::rma, REML) on PLO-transformed proportions.
+#      Cells from prepared_survival_cells.rds are aggregated to study-level
+#      effects, then pooled via rma() per size class.
 #   3. Combine with survival rates to build Lefkovitch matrix
 #   4. Calculate λ (dominant eigenvalue) and stable size distribution
 #   5. Elasticity analysis to identify key vital rates
@@ -41,6 +42,7 @@
 #   - 06_analysis/output/fecundity_sensitivity.csv
 #   - 06_analysis/output/fragmentation_scenarios.csv  (critique audit 2026-03-29)
 #   - 06_analysis/output/lambda_bootstrap_samples.rds (now includes imputed + discard approaches)
+#   - 06_analysis/output/survival_bootstrap_by_sc.rds (per-SC bootstrap for script 17)
 #   - 06_analysis/figures/supplementary/exploratory/population_projections.png
 #
 # Author: Detmer & Stier Lab
@@ -287,22 +289,19 @@ if ("time_interval_yr" %in% names(surv_data)) {
 }
 
 # =============================================================================
-# 3. CALCULATE SURVIVAL RATES BY SIZE CLASS (using cell-level weighted data)
+# 3. CALCULATE SURVIVAL RATES BY SIZE CLASS (study-level rma per size class)
 # =============================================================================
 #
-# Uses prepared_survival_cells.rds which combines individual-level data
-# (aggregated to study × size_class × interval cells) with summary-level data.
-# Survival per size class is a sample-size-weighted mean of annualized cell
-# survival rates. This replaces the previous individual-only approach and
-# properly integrates all 16+ studies. See data_integration_issues.md.
+# Uses prepared_survival_cells.rds aggregated to study-level effects per size
+# class, then fits a random-effects meta-analysis (rma, REML) per size class.
+# This is methodologically consistent with script 14b's meta-analysis and avoids
+# the cell-level n=1 pathology that biased the previous logit IV approach.
+# See 07_reporting/methodology_critique_2026-04-14.md for rationale.
 
 cat("\n")
 cat("═══════════════════════════════════════════════════════════════\n")
-cat("  SURVIVAL RATES BY SIZE CLASS (cell-level weighted)\n")
+cat("  SURVIVAL RATES BY SIZE CLASS (study-level rma)\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
-
-# ANNUALIZE SURVIVAL: Convert observed survival over t years to annual rate
-# S_annual = S_observed^(1/t) where t = monitoring interval in years
 
 # First compute raw (non-annualized) survival from individual data for comparison
 raw_survival_by_class <- surv_data %>%
@@ -310,65 +309,113 @@ raw_survival_by_class <- surv_data %>%
   group_by(size_class) %>%
   summarise(raw_survival = mean(survived), .groups = "drop")
 
-# Step 1: Annualize each cell's survival rate and compute logit-scale weights
-# We use inverse-variance weighting on the logit scale (matching meta-analytic
-# best practice for proportions). Steps:
-#   1. Annualize: S_annual = S_observed^(1/t) (constant hazard assumption)
-#   2. Apply continuity correction to avoid infinite logit values
-#   3. Compute logit(S_annual) and its variance
-#   4. Inverse-variance weight on logit scale, then back-transform with plogis()
-survival_by_group <- surv_cells_natural %>%
+# Step 1: Aggregate cells to study-level effects per size class
+# Each study contributes one effect per size class: n-weighted annualized survival
+study_sc_effects <- surv_cells_natural %>%
   filter(!is.na(size_class)) %>%
-  mutate(
-    annual_survival = prop_survived^(1 / time_interval_yr),
-    # Continuity-corrected annualized proportion for logit transform
-    # Uses same 0.5/(n+1) correction as the raw yi/vi in prepared_survival_cells
-    ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
-    yi_annual = log(ann_adj / (1 - ann_adj)),
-    vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
-  )
-
-cat("\nSurvival annualization summary (cell-level):\n")
-cat(sprintf("  Total cells (natural colonies): %d\n", nrow(survival_by_group)))
-cat(sprintf("  Cells with non-annual intervals: %d\n",
-            sum(abs(survival_by_group$time_interval_yr - 1) > 0.1)))
-cat(sprintf("  Cells from individual data: %d\n",
-            sum(survival_by_group$data_source == "individual")))
-cat(sprintf("  Cells from summary data: %d\n",
-            sum(survival_by_group$data_source == "summary")))
-
-# Step 2: Inverse-variance weighted mean on logit scale, back-transformed
-# This down-weights imprecise cells (small n, extreme proportions) relative to
-# the old sample-size weighting, which is more appropriate for proportions.
-survival_by_class <- survival_by_group %>%
-  group_by(size_class) %>%
+  mutate(annual_survival = prop_survived^(1 / time_interval_yr)) %>%
+  group_by(study, size_class) %>%
   summarise(
-    survival = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
     n = sum(n_initial),
+    n_survived_ann = sum(n_initial * annual_survival),
+    survival = n_survived_ann / n,
     n_cells = n(),
-    n_studies = n_distinct(study),
-    n_ind_cells = sum(data_source == "individual"),
-    n_summ_cells = sum(data_source == "summary"),
-    # NOTE: This SE is approximate -- uses binomial formula on the back-transformed rate.
-    # The definitive uncertainty comes from the hierarchical bootstrap (below).
-    se = sqrt(survival * (1 - survival) / n),
-    ci_lower = pmax(0, survival - 1.96 * se),
-    ci_upper = pmin(1, survival + 1.96 * se),
     .groups = "drop"
   ) %>%
-  arrange(size_class)
+  # Apply Haldane continuity correction for escalc
+  mutate(
+    n_survived_int = pmax(1, pmin(n - 1, round(survival * n))),
+    n_died_int = n - n_survived_int
+  )
 
-# Report change from individual-only raw to cell-weighted annualized
-cat("  Annualized survival rates by size class (cell-weighted):\n")
+cat("Study-level effects per size class:\n")
+study_sc_effects %>%
+  select(study, size_class, n, survival) %>%
+  tidyr::pivot_wider(names_from = size_class, values_from = c(survival, n),
+                     names_sep = "_") %>%
+  print()
+
+# Step 2: Fit rma() per size class using PLO (logit-transformed proportion)
+# This matches the methodology in script 14b's expanded meta-analysis
+if (!requireNamespace("metafor", quietly = TRUE)) {
+  stop("metafor package required for rma() per size class. Install with: install.packages('metafor')")
+}
+
+survival_by_class <- data.frame(
+  size_class = factor(size_class_labels, levels = size_class_labels),
+  survival = numeric(5), n = numeric(5), n_studies = integer(5),
+  se = numeric(5), ci_lower = numeric(5), ci_upper = numeric(5),
+  tau2 = numeric(5), I2 = numeric(5)
+)
+
+cat("\n  Study-level random-effects meta-analysis (rma, REML) per size class:\n")
+rma_fits <- list()  # Store for bootstrap use
+
+for (i in seq_along(size_class_labels)) {
+  sc <- size_class_labels[i]
+  sc_data <- study_sc_effects %>% filter(size_class == sc)
+
+  if (nrow(sc_data) < 2) {
+    # Fewer than 2 studies: use simple weighted mean (no random effect estimable)
+    survival_by_class$survival[i] <- weighted.mean(sc_data$survival, sc_data$n)
+    survival_by_class$n[i] <- sum(sc_data$n)
+    survival_by_class$n_studies[i] <- nrow(sc_data)
+    survival_by_class$se[i] <- sqrt(survival_by_class$survival[i] *
+                                     (1 - survival_by_class$survival[i]) /
+                                     survival_by_class$n[i])
+    survival_by_class$ci_lower[i] <- pmax(0, survival_by_class$survival[i] - 1.96 * survival_by_class$se[i])
+    survival_by_class$ci_upper[i] <- pmin(1, survival_by_class$survival[i] + 1.96 * survival_by_class$se[i])
+    survival_by_class$tau2[i] <- NA
+    survival_by_class$I2[i] <- NA
+    rma_fits[[sc]] <- NULL
+    cat(sprintf("    %s: k=%d (too few for rma), survival=%.4f, n=%d\n",
+                sc, nrow(sc_data), survival_by_class$survival[i], survival_by_class$n[i]))
+    next
+  }
+
+  # Compute PLO effect sizes per study
+  es <- metafor::escalc(measure = "PLO",
+                         xi = sc_data$n_survived_int,
+                         ni = sc_data$n,
+                         add = 0.5, to = "only0")
+
+  # Fit random-effects model (REML)
+  fit <- tryCatch(
+    metafor::rma(yi = es$yi, vi = es$vi, method = "REML"),
+    error = function(e) {
+      # Fallback to fixed-effect if REML fails (e.g., k=2)
+      metafor::rma(yi = es$yi, vi = es$vi, method = "FE")
+    }
+  )
+
+  # Back-transform from logit to probability
+  pred <- predict(fit, transf = plogis)
+
+  survival_by_class$survival[i] <- pred$pred
+  survival_by_class$n[i] <- sum(sc_data$n)
+  survival_by_class$n_studies[i] <- nrow(sc_data)
+  survival_by_class$se[i] <- pred$se  # on probability scale after transf
+  survival_by_class$ci_lower[i] <- pred$ci.lb
+  survival_by_class$ci_upper[i] <- pred$ci.ub
+  survival_by_class$tau2[i] <- fit$tau2
+  survival_by_class$I2[i] <- fit$I2
+  rma_fits[[sc]] <- fit
+
+  cat(sprintf("    %s: k=%d, survival=%.4f (CI: %.3f-%.3f), I2=%.1f%%, tau2=%.4f, n=%d\n",
+              sc, nrow(sc_data), pred$pred, pred$ci.lb, pred$ci.ub,
+              fit$I2, fit$tau2, sum(sc_data$n)))
+}
+
+# Report change from individual-only raw to rma-pooled
+cat("\n  Comparison (individual-only raw vs rma-pooled):\n")
 comparison <- survival_by_class %>%
   left_join(raw_survival_by_class, by = "size_class")
 for (i in 1:nrow(comparison)) {
-  cat(sprintf("    %s: ind_raw=%.4f -> cell_weighted=%.4f (delta=%.4f, k=%d studies, %d+%d cells)\n",
+  cat(sprintf("    %s: ind_raw=%.4f -> rma=%.4f (delta=%.4f, k=%d studies)\n",
               comparison$size_class[i], comparison$raw_survival[i],
               comparison$survival[i],
               comparison$survival[i] - comparison$raw_survival[i],
-              comparison$n_studies[i],
-              comparison$n_ind_cells[i], comparison$n_summ_cells[i]))
+              comparison$n_studies[i]))
 }
 
 print(survival_by_class)
@@ -377,7 +424,7 @@ print(survival_by_class)
 S <- survival_by_class$survival
 names(S) <- size_class_labels
 
-cat(sprintf("\nSurvival vector (annualized, cell-weighted): %s\n",
+cat(sprintf("\nSurvival vector (annualized, study-level rma): %s\n",
             paste(sprintf("%.3f", S), collapse = ", ")))
 
 # --- SC5 DATA CAVEAT ---
@@ -927,10 +974,10 @@ cat("═════════════════════════
 # METHODOLOGY NOTE:
 # We use a two-stage hierarchical bootstrap to properly account for the
 # nested data structure.
-# SURVIVAL: Resample studies -> resample cells within studies (cell = study ×
-#   size_class × interval unit from prepared_survival_cells.rds). Each cell
-#   carries its sample size, so the weighted mean naturally respects the
-#   variable precision across individual-level and summary-level data.
+# SURVIVAL: Resample studies -> resample cells within studies -> aggregate
+#   to study-level effects -> fit rma() per size class. This matches the
+#   point estimate methodology (Section 3) and treats studies as the unit
+#   of analysis with proper random-effects pooling.
 # GROWTH: Resample studies -> resample individual colonies within studies
 #   (no summary growth data feeds the transition matrix).
 #
@@ -944,6 +991,8 @@ n_boot <- 2000  # Increased from 1000 for more stable percentile estimates
 lambda_boot <- numeric(n_boot)
 boot_matrices <- list()  # Store bootstrap matrices for stochastic projection
 boot_failure_log <- list()  # Track bootstrap failure patterns
+boot_survival_by_sc <- matrix(NA_real_, nrow = n_boot, ncol = 5,
+                               dimnames = list(NULL, size_class_labels))  # Per-SC survival for script 17
 
 # FIX: Track imputation vs discard for each bootstrap iteration (critique audit 2026-03-29)
 # Previously, ~24% of bootstrap iterations were discarded when a resampled study set
@@ -998,7 +1047,7 @@ surv_studies <- unique(surv_cells_natural$study)
 growth_studies <- unique(growth_filtered$study)
 
 cat(sprintf("Running %d hierarchical bootstrap iterations...\n", n_boot))
-cat(sprintf("  Survival studies (from cells, natural): %d (%s)\n", length(surv_studies),
+cat(sprintf("  Survival studies (from cells, natural, rma per SC): %d (%s)\n", length(surv_studies),
             paste(surv_studies, collapse = ", ")))
 cat(sprintf("  Growth studies (individual): %d (%s)\n", length(growth_studies),
             paste(growth_studies, collapse = ", ")))
@@ -1020,30 +1069,74 @@ for (b in 1:n_boot) {
   surv_studies_boot <- sample(surv_studies, replace = TRUE)
   growth_studies_boot <- sample(growth_studies, replace = TRUE)
 
-  # STAGE 2 for survival: Resample cells within each resampled study
-  # Each cell is a (study × size_class × interval) unit with sample size and proportion.
-  # This properly handles both individual-level and summary-level data.
-  surv_cells_boot <- do.call(rbind, lapply(surv_studies_boot, function(s) {
+  # STAGE 2 for survival: Resample cells within each resampled study,
+  # aggregate to study-level, then fit rma() per size class.
+  # This matches the point estimate methodology (Section 3).
+  surv_cells_boot <- do.call(rbind, lapply(seq_along(surv_studies_boot), function(idx) {
+    s <- surv_studies_boot[idx]
     study_cells <- surv_cells_natural[surv_cells_natural$study == s, ]
     if (nrow(study_cells) == 0) return(NULL)
-    study_cells[sample(nrow(study_cells), replace = TRUE), ]
+    boot_cells <- study_cells[sample(nrow(study_cells), replace = TRUE), ]
+    # Tag with instance ID so duplicate studies get separate aggregation
+    boot_cells$study_instance <- paste0(s, "_", idx)
+    boot_cells
   }))
 
-  # Annualize and compute inverse-variance-weighted survival on logit scale
-  S_boot_df <- surv_cells_boot %>%
+  # Aggregate resampled cells to study-level effects per size class
+  study_sc_boot <- surv_cells_boot %>%
     filter(!is.na(size_class)) %>%
-    mutate(
-      annual_survival = prop_survived^(1 / time_interval_yr),
-      ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
-      yi_annual = log(ann_adj / (1 - ann_adj)),
-      vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
-    ) %>%
-    group_by(size_class) %>%
+    mutate(annual_survival = prop_survived^(1 / time_interval_yr)) %>%
+    group_by(study_instance, size_class) %>%
     summarise(
-      survival = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
+      n = sum(n_initial),
+      survival = weighted.mean(annual_survival, w = n_initial),
       .groups = "drop"
     ) %>%
-    arrange(size_class)
+    mutate(
+      n_survived_int = pmax(1, pmin(n - 1, round(survival * n))),
+      n_died_int = n - n_survived_int
+    )
+
+  # Fit rma() per size class on study-level effects
+  S_boot_df <- data.frame(size_class = character(), survival = numeric(),
+                           stringsAsFactors = FALSE)
+  for (sc in size_class_labels) {
+    sc_dat <- study_sc_boot %>% filter(size_class == sc)
+    if (nrow(sc_dat) == 0) next
+    if (nrow(sc_dat) == 1) {
+      # Single study instance: use its estimate directly
+      S_boot_df <- rbind(S_boot_df, data.frame(size_class = sc,
+                                                 survival = sc_dat$survival))
+      next
+    }
+    # Compute PLO effect sizes and fit rma
+    es_b <- tryCatch(
+      metafor::escalc(measure = "PLO", xi = sc_dat$n_survived_int,
+                       ni = sc_dat$n, add = 0.5, to = "only0"),
+      error = function(e) NULL
+    )
+    if (is.null(es_b)) {
+      S_boot_df <- rbind(S_boot_df, data.frame(size_class = sc,
+                                                 survival = weighted.mean(sc_dat$survival, sc_dat$n)))
+      next
+    }
+    fit_b <- tryCatch(
+      metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "REML"),
+      error = function(e) tryCatch(
+        metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "FE"),
+        error = function(e2) NULL
+      )
+    )
+    if (is.null(fit_b)) {
+      S_boot_df <- rbind(S_boot_df, data.frame(size_class = sc,
+                                                 survival = weighted.mean(sc_dat$survival, sc_dat$n)))
+    } else {
+      pred_b <- predict(fit_b, transf = plogis)
+      S_boot_df <- rbind(S_boot_df, data.frame(size_class = sc,
+                                                 survival = pred_b$pred))
+    }
+  }
+  S_boot_df <- S_boot_df %>% arrange(factor(size_class, levels = size_class_labels))
 
   S_boot <- S_boot_df %>% pull(survival)
 
@@ -1074,6 +1167,9 @@ for (b in 1:n_boot) {
     lambda_boot_discard[b] <- NA
     boot_imputed_flag[b] <- FALSE
   }
+
+  # Store per-SC survival for downstream use (script 17 parameter lists)
+  boot_survival_by_sc[b, ] <- S_boot
 
   # STAGE 2 for growth: Resample colonies within each resampled study
   growth_boot <- do.call(rbind, lapply(seq_along(growth_studies_boot), function(i) {
@@ -1209,11 +1305,13 @@ if (n_discard_valid > 30) {
               quantile(lambda_boot_discard_valid, 0.975)))
 }
 
-# Remove boot_matrices entries corresponding to NA lambda values
-boot_matrices <- boot_matrices[!is.na(lambda_boot)]
+# Remove entries corresponding to NA lambda values (growth failures)
+valid_mask <- !is.na(lambda_boot)
+boot_matrices <- boot_matrices[valid_mask]
+boot_survival_by_sc <- boot_survival_by_sc[valid_mask, , drop = FALSE]
 
 n_boot_total <- n_boot
-lambda_boot <- lambda_boot[!is.na(lambda_boot)]
+lambda_boot <- lambda_boot[valid_mask]
 n_boot_valid <- length(lambda_boot)
 
 # Bootstrap CIs for matrix elements
@@ -1745,6 +1843,56 @@ cat(sprintf("  Even fecundity of %.4f recruits/adult/year would push lambda abov
             min_fecundity_for_growth))
 cat("  The absence of sexual reproduction in this model is a critical assumption.\n")
 
+# --- Data-informed fecundity decomposition using recruit survival ---
+# The recruit_surv_pars.rds file (from script 17) contains post-settlement
+# survival from FUNDEMAR, Chamberland, and Mendoza-Quiroz restoration programs.
+# We use this to decompose fecundity into: larvae × settlement × s_recruit
+recruit_pars_path <- file.path(project_root, "parameter_lists", "recruit_surv_pars.rds")
+if (file.exists(recruit_pars_path)) {
+  recruit_pars <- readRDS(recruit_pars_path)
+  s_recruit <- recruit_pars$s_recruit
+  sett_rate <- 0.15  # FUNDEMAR 2025 estimate (rest_pars.rmd in RSE repo)
+
+  cat("\n  --- DATA-INFORMED FECUNDITY DECOMPOSITION ---\n")
+  cat(sprintf("  Post-settlement recruit survival (s_recruit): %.4f (from %d studies, N=%s)\n",
+              s_recruit, recruit_pars$n_studies,
+              scales::comma(recruit_pars$n_observations)))
+  cat(sprintf("  Settlement rate: %.0f%% (FUNDEMAR 2025)\n", sett_rate * 100))
+  cat(sprintf("  Net fecundity = larvae_per_adult × %.2f × %.4f\n", sett_rate, s_recruit))
+
+  # How many larvae per adult are needed for lambda > 1?
+  # min_fecundity is in units of "net SC1 recruits per adult per year"
+  # net_fecundity = larvae × settlement × s_recruit
+  # So larvae_needed = min_fecundity / (settlement × s_recruit)
+  larvae_needed <- min_fecundity_for_growth / (sett_rate * s_recruit)
+  cat(sprintf("  Larvae per adult needed for lambda > 1: %.0f\n", ceiling(larvae_needed)))
+  cat(sprintf("    (= %.4f net recruits / (%.2f settlement × %.4f s_recruit))\n",
+              min_fecundity_for_growth, sett_rate, s_recruit))
+
+  # Scenario table
+  larvae_scenarios <- c(100, 500, 1000, 5000, 10000)
+  cat("\n  Larvae/adult/yr  Settlement  s_recruit  Net fecundity  Lambda\n")
+  cat(paste(rep("-", 66), collapse = ""), "\n")
+  for (n_larvae in larvae_scenarios) {
+    net_f <- n_larvae * sett_rate * s_recruit
+    A_scen <- A
+    A_scen[1, 4] <- A_scen[1, 4] + net_f
+    A_scen[1, 5] <- A_scen[1, 5] + net_f
+    lambda_scen <- Re(eigen(A_scen)$values[1])
+    cat(sprintf("  %10d       %5.2f      %6.4f     %8.4f      %.4f\n",
+                n_larvae, sett_rate, s_recruit, net_f, lambda_scen))
+  }
+
+  # Save decomposition to fecundity_sensitivity.csv
+  fecundity_sensitivity$s_recruit <- s_recruit
+  fecundity_sensitivity$settlement_rate <- sett_rate
+  fecundity_sensitivity$larvae_needed_for_lambda_gt_1 <- ceiling(larvae_needed)
+  write_csv(fecundity_sensitivity, file.path(output_dir, "fecundity_sensitivity.csv"))
+  cat("  Updated: fecundity_sensitivity.csv (with s_recruit decomposition)\n")
+} else {
+  cat("\n  NOTE: recruit_surv_pars.rds not found; run script 17 first for data-informed fecundity decomposition.\n")
+}
+
 # =============================================================================
 # TULJAPURKAR APPROXIMATION USING BETWEEN-STUDY VARIANCE
 # FIX: Renamed from "stochastic lambda" to avoid implying true environmental
@@ -1863,6 +2011,7 @@ results <- list(
   survival_elasticity = survival_elasticity,
   fragmentation_elasticity = frag_elasticity,
   survival_by_class = survival_by_class,
+  survival_bootstrap_by_sc = boot_survival_by_sc,
   size_class_breaks = size_class_breaks,
   size_class_labels = size_class_labels,
   # FIX: Added fragmentation scenario lambdas (critique audit 2026-03-29)
@@ -2125,6 +2274,11 @@ cat("✓ Saved: stochastic_projections.csv\n")
 # Downstream scripts (22_fig6_population_model.R, 23_verification.R) expect a numeric vector.
 saveRDS(lambda_boot, file.path(output_dir, "lambda_bootstrap_samples.rds"))
 cat("✓ Saved: lambda_bootstrap_samples.rds (imputed approach, backward-compatible numeric vector)\n")
+
+# Per-size-class bootstrap survival distributions for script 17 parameter lists
+saveRDS(boot_survival_by_sc, file.path(output_dir, "survival_bootstrap_by_sc.rds"))
+cat(sprintf("✓ Saved: survival_bootstrap_by_sc.rds (%d iterations x %d size classes)\n",
+            nrow(boot_survival_by_sc), ncol(boot_survival_by_sc)))
 
 # FIX: Also save detailed bootstrap comparison for auditing (critique audit 2026-03-29)
 bootstrap_comparison <- list(

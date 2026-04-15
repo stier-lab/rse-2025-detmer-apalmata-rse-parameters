@@ -50,7 +50,7 @@ flowchart TB
         Script02["02-06: Thresholds, GAMs,<br/>growth rates, variance, data gaps"]
         Script07["07: Summary data diagnostics<br/>(forest plots, regional estimates)"]
         Script08["08-12: Robustness checks<br/>(climate, power, CV, model selection)"]
-        Script13["13: Transition matrix<br/>Survival: cell-weighted<br/>Growth: individual-level<br/>Bootstrap: cell-level"]
+        Script13["13: Transition matrix<br/>Survival: study-level rma()<br/>Growth: individual-level<br/>Bootstrap: study-level rma()"]
         Script14["14, 14b: Meta-analysis<br/>(independent rma.mv pipeline)"]
         Script17["17: RSE parameter lists<br/>field/nursery/lab survival + growth"]
         Script18["18-28: Manuscript figures"]

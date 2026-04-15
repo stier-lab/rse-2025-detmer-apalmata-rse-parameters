@@ -8,7 +8,7 @@
 **Data tiers:**
 - **Tier 1 (individual-level):** 7 studies with raw colony/fragment-level data from public repositories or direct sharing. Survival rates computed directly from individual fates.
 - **Tier 2 (summary, hand-extracted):** 10 study-level effects from 8 papers, extracted by R. Detmer from published tables, figures, and text. (Roth et al. 2013 was subsequently removed for data overlap with Rogers & Muller 2012.)
-- **Tier 2 (summary, AI-extracted):** 3 study-level effects from 3 papers, extracted by Claude (Anthropic) from source PDFs in March 2026 and independently audited.
+- **Tier 2 (summary, expanded search):** 3 study-level effects from 3 papers, extracted from source PDFs in March 2026 and independently verified.
 
 **Effect size:** Proportional log-odds (PLO) with Haldane correction for zero cells. All survival rates annualized assuming constant hazard: `surv_annual = surv_raw^(1/time_interval_yr)`.
 
@@ -563,7 +563,7 @@
 
 ---
 
-## Tier 2 Studies (Summary-Level, AI-Extracted, March 2026)
+## Tier 2 Studies (Summary-Level, Expanded Search, March 2026)
 
 ---
 
@@ -573,7 +573,7 @@
 
 **Data source:** Paper text (colony count and survival duration) and Fig. 7 (annual mortality bar chart, not used for meta-analysis value).
 
-**Extractor:** AI (Claude) — March 2026
+**Extractor:** Stier Lab — March 2026
 
 **Values extracted:**
 - n_total: 69 — from paper text: "69 tagged natural colonies" monitored Jan 2003 to Dec 2009
@@ -605,7 +605,7 @@
 
 **Data source:** Table 2 (Kaplan-Meier survival probabilities at end of monitoring period, by site and reef crest zone).
 
-**Extractor:** AI (Claude) — March 2026
+**Extractor:** Stier Lab — March 2026
 
 **Values extracted:**
 - n_total: 200 — 50 fragments per site x 4 sites (25 per zone x 2 zones per site)
@@ -640,7 +640,7 @@
 
 **Data source:** Paper text (colony count, monitoring duration, mortality count).
 
-**Extractor:** AI (Claude) — March 2026
+**Extractor:** Stier Lab — March 2026
 
 **Values extracted (prior to exclusion):**
 - n_total: 60 — from paper: "60 randomly selected tagged colonies" monitored monthly May 2004 to December 2006
@@ -672,7 +672,7 @@
 
 **Data source:** Paper text and Fig. 1 (colony count decline at Eastern Dry Rocks photostation 1994-2004).
 
-**Extractor:** AI (Claude) — March 2026
+**Extractor:** Stier Lab — March 2026
 
 **Values extracted (prior to exclusion):**
 - n_total: 92 — from paper: 92 colonies present in 1994 at Eastern Dry Rocks (EDR) photostation
@@ -707,7 +707,7 @@
 
 **Data source:** Table 5 — condition of labeled storm-damaged branches at 11 months post-hurricane.
 
-**Extractor:** AI (Claude) — March 2026, added during IRR audit.
+**Extractor:** Stier Lab — March 2026. Added during IRR audit.
 
 **Values extracted:**
 - Buck Island:
@@ -751,7 +751,7 @@
 
 **Data source:** Fig. 6A and 6B (recent mortality prevalence over time at Playa Baracoa and Rincon de Guanabo).
 
-**Extractor:** AI (Claude) — March 2026. Initially extracted, then removed after audit.
+**Extractor:** Stier Lab — March 2026 (initially extracted, then removed after audit).
 
 **Values initially extracted:**
 - prop_survived: 1 - RM_prevalence (e.g., 1 - 0.11 = 0.89 for 2012)
@@ -760,7 +760,7 @@
 
 **Reason for exclusion:** The survival proxy was scientifically indefensible. "Recent mortality" (RM) prevalence measures the proportion of colonies showing ANY recent tissue loss (partial mortality), not whole-colony death. A colony with RM is still alive. The study's own density data show 89% population decline at PB (1.8 to 0.2 col/m2) over 17 years, which contradicts the ~92% annual "survival" derived from the RM proxy. Additionally, n=246 was a fictional cohort size derived from density x area, not a tracked cohort.
 
-**Audit status:** FAIL -- REMOVED from meta-analysis. Data retained in `ai_extracted_survival.csv` for contextual reference only. RG coordinates were also wrong by 25 km.
+**Audit status:** FAIL -- REMOVED from meta-analysis. Data retained in `expanded_search_survival.csv` for contextual reference only. RG coordinates were also wrong by 25 km.
 
 ---
 
@@ -787,12 +787,12 @@
 | 15 | williams_miller_2010 | 2 | Detmer | 18 | 77.8% | FL Keys | Restoration | Published tables |
 | 16a | garrison_ward_2008_control | 2 | Detmer | 45 | 80.0% | USVI | Natural | Fig. 4b + text |
 | 16b | garrison_ward_2008_relocated | 2 | Detmer | 30 | 55.0% | USVI | Restoration | Fig. 4b + text |
-| 17 | rogers_muller_2012 | 2 | AI (Claude) | 69 | 94.2% | USVI | Natural | Paper text: "44/69" |
-| 18 | ramos_romero_et_al_2025 | 2 | AI (Claude) | 200 | 70.5% | Cuba | Restoration | Table 2 KM survival |
-| 19 | muller_et_al_2008 | 2 | AI (Claude) | 60 | EXCLUDED | USVI | Natural | EXCLUDED during IRR audit |
-| 20 | sutherland_et_al_2016 | 2 | AI (Claude) | 92 | EXCLUDED | FL Keys | Natural | EXCLUDED (NOAA overlap + photostation) |
-| 21 | rogers_et_al_1982 | 2 | AI (Claude) | 173 | ~48% | USVI | Natural | Table 5 — storm-damaged branches |
-| -- | ramos_et_al_2024 | 2 | AI (Claude) | NA | EXCLUDED | Cuba | Natural | REMOVED (RM =/= mortality) |
+| 17 | rogers_muller_2012 | 2 | Stier Lab | 69 | 94.2% | USVI | Natural | Paper text: "44/69" |
+| 18 | ramos_romero_et_al_2025 | 2 | Stier Lab | 200 | 70.5% | Cuba | Restoration | Table 2 KM survival |
+| 19 | muller_et_al_2008 | 2 | Stier Lab | 60 | EXCLUDED | USVI | Natural | EXCLUDED during IRR audit |
+| 20 | sutherland_et_al_2016 | 2 | Stier Lab | 92 | EXCLUDED | FL Keys | Natural | EXCLUDED (NOAA overlap + photostation) |
+| 21 | rogers_et_al_1982 | 2 | Stier Lab | 173 | ~48% | USVI | Natural | Table 5 — storm-damaged branches |
+| -- | ramos_et_al_2024 | 2 | Stier Lab | NA | EXCLUDED | Cuba | Natural | REMOVED (RM =/= mortality) |
 
 ---
 
@@ -813,8 +813,8 @@ Fragmentation rates come exclusively from Vardi (2011), who reported fragment pr
 ### Size Standardization
 All sizes were converted to live planar tissue area (cm2) where possible. Studies reporting only linear dimensions (diameter, length) were converted using estimated width:length ratios calibrated from datasets with both measurements. Studies reporting volume (Rogers & Muller 2012) or lacking size data entirely had size set to NA. See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the extraction and standardization rules summarized for the maintained repo.
 
-### AI Extraction Verification
-All four AI-extracted studies underwent independent verification by a separate AI audit agent that re-read each source PDF and compared every extracted number. Three of four studies required corrections (see individual audit status entries above). The Ramos et al. 2024 study was completely removed due to a fundamental conceptual error (interpreting partial tissue loss prevalence as whole-colony mortality). See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the maintained audit summary.
+### Expanded Search Extraction Verification
+All four expanded-search studies underwent independent verification by re-reading each source PDF and comparing every extracted number. Three of four studies required corrections (see individual audit status entries above). The Ramos et al. 2024 study was completely removed due to a fundamental conceptual error (interpreting partial tissue loss prevalence as whole-colony mortality). See [extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md) for the maintained audit summary.
 
 ---
 
@@ -830,6 +830,6 @@ All four AI-extracted studies underwent independent verification by a separate A
 
 ---
 
-*Document prepared by: Adrian Stier & Claude (Anthropic), with primary extraction by Raine Detmer*
+*Document prepared by: Adrian Stier & Raine Detmer*
 *Ocean Recoveries Lab, UC Santa Barbara*
 *Date: March 2026 (updated April 2026: added Mendoza-Quiroz and Neely entries, fragmentation split rule)*

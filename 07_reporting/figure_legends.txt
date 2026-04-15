@@ -151,9 +151,9 @@ retrogression is not negligible. A dedicated shrinkage synthesis indicates that
 39.4% of matrix-compatible growth records involve tissue loss, and observed
 retrogression probabilities are 15.2% in SC2, 16.8% in SC3, 17.2% in SC4, and
 9.1% in SC5. Large-adult persistence remains the dominant viability lever:
-SC5-to-SC5 stasis accounts for 58.6% of matrix-cell elasticity, and aggregated
-SC5 survival elasticity is 58.6%. The current deterministic `lambda` is 0.888,
-with a bootstrap 95% interval of 0.740-0.959 and a 99.9% bootstrap
+SC5-to-SC5 stasis accounts for 58.9% of matrix-cell elasticity, and aggregated
+SC5 survival elasticity is 58.9%. The current deterministic `lambda` is 0.961,
+with a bootstrap 95% interval of 0.816-1.010 and a 94.3% bootstrap
 probability of decline. Leave-one-study-out sensitivity spans `lambda` =
 0.882-0.993, showing that the viability estimate remains conditional on a small
 set of natural-colony transition datasets.
@@ -548,7 +548,7 @@ construction to reduce bias from linear-growth assumptions over long gaps.
 POPULATION MATRIX COMPOSITION:
 The transition matrix is built from the natural-colony subset and remains
 Florida heavy, especially for large adults. SC5 stasis is still the dominant
-elasticity component (58.6% of matrix-cell elasticity), but the resulting
+elasticity component (58.9% of matrix-cell elasticity), but the resulting
 `lambda` estimate is conditional on the available study mix and not a
 Caribbean-wide universal growth rate.
 

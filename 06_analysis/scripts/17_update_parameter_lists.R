@@ -5,17 +5,19 @@
 # PURPOSE:
 #   Regenerate the parameter_lists/ files using the current analysis pipeline
 #   outputs. This ensures parameters are consistent with the latest threshold
-#   and transition matrix analyses. Survival parameters are derived from
-#   cell-weighted estimates (prepared_survival_cells.rds), which combine
-#   individual-level and summary-level data with inverse-variance weighting.
+#   and transition matrix analyses. Field survival parameters are read directly
+#   from script 13's rma() bootstrap output (survival_bootstrap_by_sc.rds),
+#   ensuring identical survival estimates as the transition matrix. Nursery
+#   survival uses cell-level bootstrap from prepared_survival_cells.rds.
 #
 # INPUTS:
+#   - 06_analysis/output/survival_bootstrap_by_sc.rds (field survival from script 13's rma bootstrap)
+#   - 06_analysis/output/transition_matrix.rds (point estimates, metadata)
 #   - 06_analysis/output/prepared_survival_data.rds (individual records, for lab/growth)
-#   - 06_analysis/output/prepared_survival_cells.rds (cell-level: individual + summary)
+#   - 06_analysis/output/prepared_survival_cells.rds (cell-level, for nursery bootstrap)
 #   - 06_analysis/output/prepared_growth_data.rds
 #   - 06_analysis/output/survival_thresholds.csv
 #   - 06_analysis/output/growth_thresholds.csv
-#   - 06_analysis/output/transition_matrix.rds
 #   - 05_data/standardized/apal_surv_lab_short.csv
 #
 # OUTPUTS:
@@ -23,6 +25,7 @@
 #   - parameter_lists/field_growth_pars.rds
 #   - parameter_lists/nurs_surv_pars.rds
 #   - parameter_lists/nurs_growth_pars.rds
+#   - parameter_lists/recruit_surv_pars.rds (restoration recruit survival + s_recruit)
 #   - parameter_lists/lab_surv_pars.rds
 #   - parameter_lists/lab_growth_pars.rds
 #
@@ -189,9 +192,11 @@ bootstrap_survival <- function(data, size_class_col = "size_class",
 }
 
 # Cell-level hierarchical bootstrap for survival (individual + summary data)
+# NOTE: This function is used for NURSERY survival only (line ~623).
+# Field survival now comes from script 13's rma() bootstrap output directly.
 # Stage 1: Resample studies with replacement
 # Stage 2: Resample cells within each study (each cell has n_initial and prop_survived)
-# Returns sample-size-weighted mean survival per size class, matching script 13 methodology
+# Returns inverse-variance-weighted mean survival per size class on logit scale
 bootstrap_survival_cells <- function(cells, size_class_col = "size_class",
                                       n_boot = 1000, study_col = "study") {
   size_classes <- sort(unique(cells[[size_class_col]]))
@@ -363,10 +368,10 @@ bootstrap_growth_transitions <- function(data, n_boot = 1000, study_col = "study
 }
 
 # =============================================================================
-# 1. FIELD SURVIVAL PARAMETERS
+# 1. FIELD SURVIVAL PARAMETERS (from script 13's study-level rma bootstrap)
 # =============================================================================
 
-cat("Generating field survival parameters (cell-weighted, individual + summary)...\n")
+cat("Generating field survival parameters (from script 13 rma bootstrap)...\n")
 
 # Add size class to individual survival data (still needed for nursery/lab and growth)
 surv_data <- surv_data %>%
@@ -377,58 +382,102 @@ surv_data <- surv_data %>%
                      include.lowest = TRUE)
   )
 
-# Filter cells to natural colonies for field survival parameters
-# This matches script 13's transition matrix filter: wild populations only.
-# Restoration fragments and recruits go into nursery parameters instead.
-field_cells <- surv_cells %>%
-  filter(population_type == "Natural colony")
+# Read script 13's per-SC bootstrap survival distributions
+# These are computed via: cells -> study-level aggregation -> rma(PLO, REML) per SC
+# with 2000 hierarchical bootstrap iterations (resample studies -> cells -> re-aggregate -> re-fit rma)
+surv_boot_sc_path <- file.path(output_dir, "survival_bootstrap_by_sc.rds")
+if (!file.exists(surv_boot_sc_path)) {
+  stop("survival_bootstrap_by_sc.rds not found. Run script 13 first.")
+}
+boot_survival_by_sc <- readRDS(surv_boot_sc_path)
 
-cat(sprintf("  Field cells: %d (%d individual + %d summary) from %d studies, N=%s\n",
-            nrow(field_cells),
-            sum(field_cells$data_source == "individual"),
-            sum(field_cells$data_source == "summary"),
-            n_distinct(field_cells$study),
-            scales::comma(sum(field_cells$n_initial))))
+# Read point estimates from transition_matrix.rds (already loaded at top of script)
+if (is.null(trans_results) || is.null(trans_results$survival_by_class)) {
+  stop("transition_matrix.rds missing or lacks survival_by_class. Run script 13 first.")
+}
+surv_by_class <- trans_results$survival_by_class
 
-# Calculate survival by size class (inverse-variance weighted on logit scale)
-surv_by_sc <- field_cells %>%
-  filter(!is.na(size_class)) %>%
-  mutate(
-    annual_survival = prop_survived^(1 / time_interval_yr),
-    ann_adj = (annual_survival * n_initial + 0.5) / (n_initial + 1),
-    yi_annual = log(ann_adj / (1 - ann_adj)),
-    vi_annual = 1 / (n_initial * ann_adj * (1 - ann_adj))
-  ) %>%
-  group_by(size_class) %>%
-  summarise(
-    n = sum(n_initial),
-    n_cells = n(),
-    n_studies = n_distinct(study),
-    mean = plogis(weighted.mean(yi_annual, w = 1 / vi_annual)),
-    sd = sqrt(mean * (1 - mean) / n),  # Approximate binomial SE
-    .groups = "drop"
+cat(sprintf("  Loaded %d bootstrap iterations x %d size classes from script 13\n",
+            nrow(boot_survival_by_sc), ncol(boot_survival_by_sc)))
+
+# Build SC_surv_results list from rma bootstrap
+SC_surv_results <- lapply(1:5, function(i) {
+  sc <- SIZE_LABELS[i]
+  boot_dist <- boot_survival_by_sc[, i]
+  list(
+    mean = mean(boot_dist),
+    sd = sd(boot_dist),
+    ci_lower = quantile(boot_dist, 0.025),
+    ci_upper = quantile(boot_dist, 0.975),
+    n = surv_by_class$n[i],
+    n_studies = surv_by_class$n_studies[i],
+    bootstrap_dist = boot_dist
   )
+})
+names(SC_surv_results) <- SIZE_LABELS
 
-cat("  Survival by size class (cell-weighted):\n")
+# Build surv_by_sc summary tibble
+surv_by_sc <- tibble(
+  size_class = factor(SIZE_LABELS, levels = SIZE_LABELS),
+  n = surv_by_class$n,
+  n_studies = surv_by_class$n_studies,
+  mean = surv_by_class$survival,
+  sd = surv_by_class$se
+)
+
+cat("  Survival by size class (study-level rma from script 13):\n")
 print(surv_by_sc)
 cat("\n")
 
-# Bootstrap survival distributions (hierarchical: studies then cells)
-set.seed(42)
-SC_surv_results <- bootstrap_survival_cells(field_cells, n_boot = 1000, study_col = "study")
+# --- Build backward-compatible elements for RSE model consumption ---
+# The RSE repo (Detmer-2025-coral-RSE) expects $SC_surv_summ_df (data.frame with
+# integer size_class 1-5 and Q05/Q25/Q50/Q75/Q95 columns) and $SC_surv_df
+# (data.frame with prop_survived, size_class, replicate columns).
+SC_surv_summ_df <- do.call(rbind, lapply(seq_along(SC_surv_results), function(i) {
+  r <- SC_surv_results[[i]]
+  data.frame(
+    size_class = i,
+    n = r$n, n_studies = r$n_studies,
+    mean = r$mean, sd = r$sd,
+    Q05 = quantile(r$bootstrap_dist, 0.05),
+    Q25 = quantile(r$bootstrap_dist, 0.25),
+    Q50 = quantile(r$bootstrap_dist, 0.50),
+    Q75 = quantile(r$bootstrap_dist, 0.75),
+    Q95 = quantile(r$bootstrap_dist, 0.95),
+    row.names = NULL
+  )
+}))
 
-# Create field survival parameter list
+SC_surv_df <- do.call(rbind, lapply(seq_along(SC_surv_results), function(i) {
+  r <- SC_surv_results[[i]]
+  data.frame(
+    prop_survived = r$bootstrap_dist,
+    size_class = i,
+    replicate = seq_along(r$bootstrap_dist)
+  )
+}))
+
+# Filter cells to natural colonies (still needed for metadata and downstream nursery filtering)
+field_cells <- surv_cells %>%
+  filter(population_type == "Natural colony")
+
+# Create field survival parameter list (includes both new and RSE-compatible elements)
 field_surv_pars <- list(
+  # New format (used by this repo's scripts)
   SC_surv_results = SC_surv_results,
   surv_summary = surv_by_sc,
+  # RSE-compatible format (used by Detmer-2025-coral-RSE)
+  SC_surv_summ_df = SC_surv_summ_df,
+  SC_surv_df = SC_surv_df,
+  # Metadata
   size_class_breaks = size_class_breaks,
-  n_observations = sum(field_cells$n_initial),
-  n_cells = nrow(field_cells),
-  n_studies = n_distinct(field_cells$study),
-  data_integration = "cell-level weighted (individual + summary data)",
+  n_observations = sum(surv_by_class$n),
+  n_studies = max(surv_by_class$n_studies),
+  n_bootstrap = nrow(boot_survival_by_sc),
+  data_integration = "study-level rma (from script 13, metafor::rma per size class)",
   generation_date = Sys.time(),
-  ci_type = "cluster_bootstrap_percentile",
-  ci_interpretation = "Confidence interval for population mean, not prediction interval for individual outcome",
+  ci_type = "rma_bootstrap_percentile",
+  ci_interpretation = "Confidence interval from study-level random-effects meta-analysis bootstrap",
   note_prediction = "For individual coral predictions, combine parameter uncertainty with binomial/normal observation model"
 )
 
@@ -493,12 +542,42 @@ trans_summary <- growth_trans_df %>%
     .groups = "drop"
   )
 
-# Create field growth parameter list
+# --- Build backward-compatible growth elements for RSE model ---
+# RSE expects $summ_list (list of 5 data.frames, one per from-class) and
+# $mat_list (list of 5 data.frames, rows = bootstrap replicates, cols = to-classes).
+summ_list <- lapply(SIZE_LABELS, function(from_sc) {
+  sub <- trans_summary %>% filter(from_class == from_sc)
+  df <- data.frame(
+    to_class = sub$to_class,
+    mean = sub$mean_prob,
+    Q05 = sub$Q05,
+    Q95 = sub$Q95
+  )
+  rownames(df) <- df$to_class
+  df
+})
+names(summ_list) <- SIZE_LABELS
+
+mat_list <- lapply(SIZE_LABELS, function(from_sc) {
+  sub <- growth_trans_df %>% filter(from_class == from_sc)
+  wide <- sub %>%
+    tidyr::pivot_wider(names_from = to_class, values_from = prob, id_cols = replicate) %>%
+    select(-replicate)
+  as.data.frame(wide)
+})
+names(mat_list) <- SIZE_LABELS
+
+# Create field growth parameter list (includes both new and RSE-compatible elements)
 field_growth_pars <- list(
+  # New format
   growth_trans_df = growth_trans_df,
   growth_results = SC_growth_results,
   growth_summary = growth_by_sc,
   trans_summary = trans_summary,
+  # RSE-compatible format
+  summ_list = summ_list,
+  mat_list = mat_list,
+  # Metadata
   size_class_breaks = size_class_breaks,
   n_observations = nrow(growth_data),
   n_studies = n_distinct(growth_data$study),
@@ -545,9 +624,31 @@ if (nrow(nurs_cells) > 0) {
   set.seed(42)
   nurs_SC_surv_results <- bootstrap_survival_cells(nurs_cells, n_boot = 500, study_col = "study")
 
+  # RSE-compatible elements for nursery survival
+  nurs_SC_surv_summ_df <- do.call(rbind, lapply(seq_along(nurs_SC_surv_results), function(i) {
+    r <- nurs_SC_surv_results[[i]]
+    data.frame(
+      size_class = i, n = r$n, n_studies = r$n_studies,
+      mean = r$mean, sd = r$sd,
+      Q05 = quantile(r$bootstrap_dist, 0.05),
+      Q25 = quantile(r$bootstrap_dist, 0.25),
+      Q50 = quantile(r$bootstrap_dist, 0.50),
+      Q75 = quantile(r$bootstrap_dist, 0.75),
+      Q95 = quantile(r$bootstrap_dist, 0.95),
+      row.names = NULL
+    )
+  }))
+  nurs_SC_surv_df <- do.call(rbind, lapply(seq_along(nurs_SC_surv_results), function(i) {
+    r <- nurs_SC_surv_results[[i]]
+    data.frame(prop_survived = r$bootstrap_dist, size_class = i,
+               replicate = seq_along(r$bootstrap_dist))
+  }))
+
   nurs_surv_pars <- list(
     SC_surv_results = nurs_SC_surv_results,
     surv_summary = nurs_surv_by_sc,
+    SC_surv_summ_df = nurs_SC_surv_summ_df,
+    SC_surv_df = nurs_SC_surv_df,
     n_observations = sum(nurs_cells$n_initial),
     n_cells = nrow(nurs_cells),
     n_studies = n_distinct(nurs_cells$study),
@@ -609,10 +710,31 @@ if (nrow(nurs_growth_data) > 0) {
   nurs_growth_results <- bootstrap_growth(nurs_growth_data, n_boot = 500,
                                            study_col = "study", growth_col = "growth_rate")
 
+  # RSE-compatible growth elements
+  nurs_trans_summary <- nurs_growth_trans_df %>%
+    group_by(from_class, to_class) %>%
+    summarise(mean_prob = mean(prob), Q05 = quantile(prob, 0.05),
+              Q95 = quantile(prob, 0.95), .groups = "drop")
+  nurs_summ_list <- lapply(SIZE_LABELS, function(from_sc) {
+    sub <- nurs_trans_summary %>% filter(from_class == from_sc)
+    df <- data.frame(to_class = sub$to_class, mean = sub$mean_prob,
+                     Q05 = sub$Q05, Q95 = sub$Q95)
+    rownames(df) <- df$to_class; df
+  }); names(nurs_summ_list) <- SIZE_LABELS
+  nurs_mat_list <- lapply(SIZE_LABELS, function(from_sc) {
+    sub <- nurs_growth_trans_df %>% filter(from_class == from_sc)
+    wide <- sub %>% tidyr::pivot_wider(names_from = to_class, values_from = prob,
+                                        id_cols = replicate) %>% select(-replicate)
+    as.data.frame(wide)
+  }); names(nurs_mat_list) <- SIZE_LABELS
+
   nurs_growth_pars <- list(
     growth_trans_df = nurs_growth_trans_df,
     growth_results = nurs_growth_results,
     growth_summary = nurs_growth_by_sc,
+    trans_summary = nurs_trans_summary,
+    summ_list = nurs_summ_list,
+    mat_list = nurs_mat_list,
     n_observations = nrow(nurs_growth_data),
     n_studies = n_distinct(nurs_growth_data$study),
     generation_date = Sys.time(),
@@ -628,6 +750,8 @@ if (nrow(nurs_growth_data) > 0) {
     growth_trans_df = field_growth_pars$growth_trans_df,
     growth_results = field_growth_pars$growth_results,
     growth_summary = growth_by_sc,
+    summ_list = field_growth_pars$summ_list,
+    mat_list = field_growth_pars$mat_list,
     n_observations = 0,
     n_studies = 0,
     note = "No nursery-specific data; using field growth as prior",
@@ -775,6 +899,174 @@ if (nrow(lab_growth_by_sc) > 0) {
 
 saveRDS(lab_growth_pars, file.path(param_dir, "lab_growth_pars.rds"))
 cat("  ✓ Saved: lab_growth_pars.rds\n\n")
+
+# =============================================================================
+# 7. RESTORATION RECRUIT SURVIVAL PARAMETERS (for RSE model only)
+# =============================================================================
+# These are post-settlement recruit survival rates from restoration programs
+# (FUNDEMAR, Chamberland, Mendoza-Quiroz). They represent a fundamentally
+# different life stage than nursery fragments (SC1 microscopic recruits, ~0.006 cm²)
+# with very low survival (~1.7%).
+#
+# NOT USED in this repo's transition matrix or natural-colony analyses.
+# Packaged separately for the RSE model's lab/early-life module, where they
+# can inform the s1 (post-outplant first-year survival) parameter for
+# recruit-based restoration scenarios.
+
+cat("Generating restoration recruit survival parameters (RSE only)...\n")
+
+recruit_cells <- surv_cells %>%
+  filter(population_type == "Restoration recruit")
+
+if (nrow(recruit_cells) > 0) {
+  recruit_studies <- unique(recruit_cells$study)
+  n_recruit_studies <- length(recruit_studies)
+
+  # Study-level summary
+  recruit_by_study <- recruit_cells %>%
+    group_by(study) %>%
+    summarise(
+      n = sum(n_initial),
+      n_cells = n(),
+      mean_survival = weighted.mean(prop_survived, w = n_initial),
+      .groups = "drop"
+    )
+
+  cat(sprintf("  %d cells from %d studies, N=%s\n",
+              nrow(recruit_cells), n_recruit_studies,
+              scales::comma(sum(recruit_cells$n_initial))))
+  print(recruit_by_study)
+
+  # Annualize and compute study-level survival
+  recruit_ann <- recruit_cells %>%
+    mutate(annual_survival = prop_survived^(1 / time_interval_yr)) %>%
+    group_by(study) %>%
+    summarise(
+      n = sum(n_initial),
+      survival = weighted.mean(annual_survival, w = n_initial),
+      .groups = "drop"
+    )
+
+  # Hierarchical bootstrap (resample studies, then cells within studies)
+  set.seed(42)
+  n_boot_recruit <- 1000
+  recruit_boot <- numeric(n_boot_recruit)
+
+  for (b in 1:n_boot_recruit) {
+    boot_studies <- sample(recruit_studies, n_recruit_studies, replace = TRUE)
+    boot_cells <- do.call(rbind, lapply(boot_studies, function(s) {
+      study_cells <- recruit_cells[recruit_cells$study == s, ]
+      study_cells[sample(nrow(study_cells), nrow(study_cells), replace = TRUE), ]
+    }))
+    boot_cells$annual_surv <- boot_cells$prop_survived^(1 / boot_cells$time_interval_yr)
+    recruit_boot[b] <- weighted.mean(boot_cells$annual_surv, w = boot_cells$n_initial)
+  }
+
+  # --- Build s_recruit: a ready-to-use RSE parameter ---
+  # The RSE model currently has:
+  #   s0 = lab survival (settlement to outplant-ready): 0.95
+  #   s1 = post-outplant first-year survival (nursery fragments): 0.70
+  # s_recruit is a NEW alternative for recruit-based restoration scenarios,
+  # representing post-settlement survival of microscopic recruits on the reef.
+  # Raine can use s_recruit instead of s1 when modeling larval propagation pathways.
+  s_recruit_mean <- mean(recruit_boot)
+  s_recruit_boot <- recruit_boot  # Full bootstrap distribution
+
+  # --- Fecundity decomposition for transition matrix sensitivity ---
+  # In the Lefkovitch matrix, F[1,j] = net recruits surviving to next census per adult.
+  # For sexual reproduction: F[1,j] = eggs × fertilization × settlement × s_recruit
+  # Literature values (from methodology critique):
+  #   Settlement rate: ~15% (FUNDEMAR 2025 data, rest_pars.rmd)
+  #   Fertilization success: highly variable, density-dependent (Levitan)
+  #   Eggs per adult: unknown for most populations
+  # We provide the s_recruit piece; the RSE model or fecundity analysis supplies the rest.
+  #
+  # Example: if an SC5 adult produces 1000 larvae, 15% settle, 2.8% survive year 1:
+  #   net_fecundity = 1000 * 0.15 * 0.028 = 4.2 recruits/adult/yr entering SC1
+  # Compare to script 13's min fecundity for lambda > 1: ~1.0 recruit/adult/yr
+
+  recruit_surv_pars <- list(
+    # --- Primary: bootstrap distribution ---
+    survival_boot = recruit_boot,
+    survival_summary = tibble(
+      n = sum(recruit_cells$n_initial),
+      n_studies = n_recruit_studies,
+      mean_survival = mean(recruit_boot),
+      sd_survival = sd(recruit_boot),
+      ci_lower = quantile(recruit_boot, 0.025),
+      ci_upper = quantile(recruit_boot, 0.975),
+      Q05 = quantile(recruit_boot, 0.05),
+      Q25 = quantile(recruit_boot, 0.25),
+      Q50 = quantile(recruit_boot, 0.50),
+      Q75 = quantile(recruit_boot, 0.75),
+      Q95 = quantile(recruit_boot, 0.95)
+    ),
+    by_study = recruit_by_study,
+    by_study_annualized = recruit_ann,
+
+    # --- RSE model parameter: s_recruit ---
+    # Drop-in alternative to s1 for recruit-based restoration scenarios
+    s_recruit = s_recruit_mean,
+    s_recruit_boot = s_recruit_boot,
+    s_recruit_ci = quantile(recruit_boot, c(0.025, 0.975)),
+
+    # --- Context for fecundity decomposition ---
+    # settlement_rate is from FUNDEMAR 2025 data (rest_pars.rmd in RSE repo)
+    settlement_rate_fundemar = 0.15,
+    fecundity_example = list(
+      description = "Example: net fecundity = larvae_per_adult * settlement_rate * s_recruit",
+      larvae_per_adult = 1000,
+      settlement_rate = 0.15,
+      s_recruit = s_recruit_mean,
+      net_fecundity = 1000 * 0.15 * s_recruit_mean
+    ),
+
+    # --- Metadata ---
+    n_observations = sum(recruit_cells$n_initial),
+    n_studies = n_recruit_studies,
+    note = paste0(
+      "Post-settlement recruit survival from restoration programs. ",
+      "These are microscopic recruits (~0.006 cm^2, SC1) with very low survival. ",
+      "NOT used in the transition matrix or natural-colony analyses. ",
+      "s_recruit is a ready-to-use alternative to the RSE model's s1 (0.70) ",
+      "for recruit-based restoration scenarios. ",
+      "s1=0.70 applies to larger nursery fragments; ",
+      "s_recruit applies to microscopic post-settlement recruits."
+    ),
+    comparison = list(
+      s1_current = 0.70,
+      s_recruit = s_recruit_mean,
+      interpretation = paste0(
+        "s1=0.70 is for nursery fragments (SC2-sized, ~10-100 cm^2). ",
+        "s_recruit=", round(s_recruit_mean, 4), " is for microscopic settlers (~0.006 cm^2). ",
+        "The 25x difference reflects the size-survival relationship: ",
+        "larger fragments have dramatically higher survival."
+      )
+    ),
+    data_integration = "cell-level n-weighted (restoration recruits only)",
+    generation_date = Sys.time()
+  )
+
+  cat(sprintf("  s_recruit (annualized): %.4f (95%% CI: %.4f-%.4f)\n",
+              s_recruit_mean,
+              quantile(recruit_boot, 0.025),
+              quantile(recruit_boot, 0.975)))
+  cat(sprintf("  Compare to RSE s1 (nursery fragments): 0.70\n"))
+  cat(sprintf("  Example net fecundity (1000 larvae × 0.15 settlement × %.4f s_recruit): %.1f recruits/adult/yr\n",
+              s_recruit_mean, 1000 * 0.15 * s_recruit_mean))
+} else {
+  cat("  No restoration recruit data found\n")
+  recruit_surv_pars <- list(
+    survival_boot = rep(NA, 1000),
+    n_observations = 0,
+    n_studies = 0,
+    note = "No restoration recruit data available",
+    generation_date = Sys.time()
+  )
+}
+
+saveRDS(recruit_surv_pars, file.path(param_dir, "recruit_surv_pars.rds"))
+cat("  ✓ Saved: recruit_surv_pars.rds\n\n")
 
 # =============================================================================
 # SUMMARY

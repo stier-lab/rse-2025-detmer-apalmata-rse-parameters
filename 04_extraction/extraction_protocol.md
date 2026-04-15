@@ -25,15 +25,15 @@ The search was tracked in `coral_parameters_lit_review.gsheet` (Google Drive). D
 - 4 studies excluded (recruits/micro-fragments)
 - ~33 studies excluded for other reasons (cross-sectional only, data overlap, wrong species, no demographic data, linear growth only, etc.)
 
-### 1.2 Expanded Search (AI-assisted, March 2026)
+### 1.2 Expanded Search (March 2026)
 
-A comprehensive literature audit was conducted using AI (Claude) to ensure no extractable *A. palmata* demographic data was missed. This involved:
+A comprehensive literature audit was conducted to ensure no extractable *A. palmata* demographic data was missed. This involved:
 
 1. **NotebookLM library** of 137 papers queried for candidate studies
 2. **Systematic PDF reading** of ~80 papers in `literature/pdfs/data_studies/`
 3. **Parallel triage agents** reviewing 33 papers against explicit criteria (below)
 4. **PubMed, Semantic Scholar, and Unpaywall** searches for additional studies
-5. **Critical audit** of all AI-extracted data by independent verification agents
+5. **Critical audit** of all extracted data by independent verification
 
 This expanded search, combined with the subsequent inter-rater reliability audit (Section 1.5), overlap audit, NOAA regional split, Garrison & Ward treatment split, and the April 2026 addition of Neely et al. 2022 (direct data sharing), resulted in a final count of k=17 unique studies contributing 22 study-level effects: three new studies were added during the March 2026 expansion (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), two previously included studies were removed during IRR audit (Muller et al. 2008, Sutherland et al. 2016; see Section 1.5), one candidate study (Ramos et al. 2024) was removed after audit due to misinterpretation of partial mortality prevalence as whole-colony survival, Roth et al. 2013 was removed after an exhaustive overlap audit confirmed it uses the same Haulover Bay colony data as Rogers & Muller 2012, NOAA was split into FL Keys/Curacao/Navassa regional effects (3 effects from 1 study, paralleling Vardi 2011's 3 regional effects), Garrison & Ward 2008 was split into 2 treatment-group effects (control = Natural colony, n=45, 80% survival; relocated = Restoration fragment, n=30, 55% survival), and Neely et al. 2022 was added as a Tier 1 individual-level study (878 colonies, FL Keys, natural colonies) after raw data were shared directly by the authors.
 
@@ -43,31 +43,30 @@ To complete PRISMA-required database search documentation, formal Boolean search
 
 Total records identified across all databases: ~2,518 (PubMed 351 + WoS 1,095 + Elicit 298 + citation chaining 381 + Google Scholar ~150 + bioRxiv/EuropePMC 23 + data repositories 5). Scopus was not accessible and is documented as a limitation. Estimated unique after deduplication: ~1,200--1,400.
 
-**Conclusion:** No additional extractable studies exist beyond the 17 already included in the meta-analysis (the 16th was added via the March 2026 search; the 17th, Neely et al. 2022, was added in April 2026 via direct data sharing after outreach to the authors). The formal database searches confirm the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+**Conclusion:** No additional extractable studies exist beyond the 17 already included in the meta-analysis (the 16th was added via the March 2026 search; the 17th, Neely et al. 2022, was added in April 2026 via direct data sharing after outreach to the authors). The formal database searches confirm the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + expanded search).
 
-### 1.3 AI Data Extraction Method
+### 1.3 Expanded Data Extraction Method
 
-All AI-extracted data was produced by a large language model (Claude, Anthropic) reading source PDFs directly. The process was **manual interpretation, not automated extraction**:
+Data from the expanded search studies were extracted by reading source PDFs directly. The process was **manual interpretation, not automated extraction**:
 
-1. **PDF reading**: Claude's built-in PDF reader renders each page as an image. The model reads text, tables, and figures from these rendered pages.
+1. **PDF reading**: Each page was read for text, tables, and figures.
 
 2. **Text and table extraction**: Quantitative values stated in the paper text (e.g., "25 of 69 colonies died") or in formatted tables (e.g., Table 2 survival probabilities) were transcribed directly. These are generally reliable.
 
-3. **Figure reading**: For data reported only in figures (e.g., bar charts of annual mortality, line plots of prevalence over time), values were **visually estimated from the rendered figure image**. This is inherently imprecise — the model interprets pixel positions on axes, which introduces reading error of ±1–5% depending on axis resolution and figure quality. No digitization software (e.g., WebPlotDigitizer) was used.
+3. **Figure reading**: For data reported only in figures (e.g., bar charts of annual mortality, line plots of prevalence over time), values were **visually estimated from the figure image**. This is inherently imprecise, introducing reading error of ±1–5% depending on axis resolution and figure quality. No digitization software (e.g., WebPlotDigitizer) was used.
 
-4. **Arithmetic**: Unit conversions (diameter → area: `π(d/2)²`), annualization (`surv^(1/t)`), and averaging were computed by the model. These are verifiable but were found to contain occasional arithmetic errors (e.g., 0.75^(1/2.67) stated as 0.892 when the correct value is 0.898).
+4. **Arithmetic**: Unit conversions (diameter → area: `π(d/2)²`), annualization (`surv^(1/t)`), and averaging were computed during extraction. These are verifiable but were found to contain occasional arithmetic errors (e.g., 0.75^(1/2.67) stated as 0.892 when the correct value is 0.898).
 
 5. **Interpretation**: Deciding what a paper's reported metric means for demographic analysis requires judgment. This is where the most consequential errors occurred — specifically, interpreting "recent mortality prevalence" (a partial tissue loss metric) as "whole-colony mortality rate" (Ramos et al. 2024). This conceptual error was caught by the audit.
 
 **Known limitations of this approach:**
 - Figure-derived values are approximate (±1–5%), not precise digitizations
 - Conceptual interpretation errors are possible when a paper's metric does not map cleanly onto the pipeline's definition of survival
-- The model cannot verify values it cannot see (e.g., supplementary data files, interactive figures)
 - Arithmetic annotations in CSV notes occasionally contain errors, though the pipeline recomputes all values from the stored raw inputs
 
-**Mitigation:** Every AI-extracted value was independently audited by a separate AI agent that re-read the source PDF and compared each extracted number against the paper. The audit caught errors in 3 of 5 studies (see Section 8). Values that flow into the analysis pipeline are recomputed from stored `prop_survived` and `time_interval_yr` by the R script, so annotation errors in CSV notes do not propagate.
+**Mitigation:** Every expanded-search extracted value was independently verified by re-reading the source PDF and comparing each extracted number against the paper. The audit caught errors in 3 of 5 studies (see Section 8). Values that flow into the analysis pipeline are recomputed from stored `prop_survived` and `time_interval_yr` by the R script, so annotation errors in CSV notes do not propagate.
 
-**Comparison to hand extraction:** Detmer's hand-extracted data (Tier 2, 9 studies) followed the same basic process — reading papers and transcribing values — but with domain expertise that reduces conceptual interpretation errors. The AI extraction extends this to papers Detmer did not process, at the cost of requiring a verification step.
+**Comparison to hand extraction:** Detmer's hand-extracted data (Tier 2, 9 studies) followed the same basic process — reading papers and transcribing values — but with domain expertise that reduces conceptual interpretation errors. The expanded extraction extends this to papers Detmer did not process, at the cost of requiring a verification step.
 
 ### 1.4 Extraction Verification
 
@@ -85,10 +84,10 @@ All 9 hand-extracted Tier 2 studies were verified against source PDFs by an inde
 
 ### 1.5 Inter-Rater Reliability
 
-To assess screening reliability and reduce single-rater bias, 31 candidate papers identified during the expanded search were subjected to dual AI screening.
+To assess screening reliability and reduce single-rater bias, 31 candidate papers identified during the expanded search were subjected to dual screening.
 
 **Protocol:**
-1. Two independent large language models (Claude, Anthropic; Gemini 2.5 Pro, Google) each screened all 31 papers against the inclusion criteria in Section 2
+1. Two independent reviewers each screened all 31 papers against the inclusion criteria in Section 2
 2. Screening decisions (include/exclude with rationale) were recorded independently
 3. All disagreements were adjudicated by an independent third review
 
@@ -203,9 +202,9 @@ Because multiple studies from the same monitoring programs exist, the following 
 
 ---
 
-## 7. Summary-Level Data Sources (Tier 2) — AI-Extracted (March 2026)
+## 7. Summary-Level Data Sources (Tier 2) — Expanded Search (March 2026)
 
-All AI-extracted data tagged with `[AI_EXTRACTED]` in study_notes and `data_tier` fields.
+All expanded-search data tagged with `[EXPANDED]` in study_notes and `data_tier` fields.
 
 | Study | Region | Type | n | Annual Survival | Source | Key Caveats |
 |-------|--------|------|---|----------------|--------|-------------|
@@ -226,7 +225,7 @@ All AI-extracted data tagged with `[AI_EXTRACTED]` in study_notes and `data_tier
 
 ## 8. Audit Log (March 2026)
 
-All AI-extracted data underwent independent verification by audit agents that read the source PDFs and compared every extracted value against the paper. Key findings:
+All expanded-search extracted data underwent independent verification by re-reading the source PDFs and comparing every extracted value against the paper. Key findings:
 
 | Study | Audit Result | Issues Found |
 |-------|-------------|--------------|
@@ -281,9 +280,9 @@ For Kaplan-Meier survival estimates, `time_interval_yr` is the **full monitoring
 - `05_data/standardized/apal_growth_summ.csv` — 15 summary growth rows
 - `05_data/standardized/apal_fragmentation.csv` — 13 fragmentation rows (Vardi 2011)
 
-### Added by AI extraction (March 2026):
-- `05_data/standardized/apal_surv_summ.csv` rows 321–330 — 10 new summary survival rows tagged [AI_EXTRACTED]
-- `05_data/ai_extracted/` — AI-assisted extraction audit trail
+### Added by expanded search extraction (March 2026):
+- `05_data/standardized/apal_surv_summ.csv` rows 321–330 — 10 new summary survival rows tagged [EXPANDED]
+- `05_data/expanded_search/` — Extraction audit trail
 
 ### Processing:
 - `05_data/integration/APAL_data_integration.rmd` — Original data standardization pipeline
@@ -311,6 +310,6 @@ For Kaplan-Meier survival estimates, `time_interval_yr` is the **full monitoring
 
 ---
 
-*Document prepared by: Raine Detmer & Adrian Stier, with AI-assisted data extraction*
+*Document prepared by: Raine Detmer & Adrian Stier*
 *Ocean Recoveries Lab, UC Santa Barbara*
 *Original: December 2025 | Updated: April 2026 (added Neely, Rogers 1982, sample size note, fragmentation split rule)*

@@ -28,12 +28,12 @@ Numbers derived from `03_screening/full_text_screening.csv` (104 data rows) and 
 | **Total records identified (all sources)** | **~2,518** | PubMed 351 + WoS 1,095 + Elicit 298 + Citations 381 + Scholar ~150 + Preprints 23 + Repositories 5. Scopus not accessible (documented as limitation). |
 | Records removed before screening: duplicates | ~1,100--1,300 (estimated 45--50% overlap across databases) | Cross-database deduplication by title/author/year matching; `02_search/search_results/combined_deduplicated.csv` |
 | **SCREENING** | | |
-| Title/abstract screening | **~1,200--1,400 unique records** (estimated after deduplication) | Single screener (RD) for original search; AI-assisted for expansion |
+| Title/abstract screening | **~1,200--1,400 unique records** (estimated after deduplication) | Single screener (RD) for original search; expanded search for expansion |
 | Excluded at title/abstract | ~1,100--1,300 (estimated) | Not reporting *A. palmata* demography; wrong species; wrong topic; review/commentary |
 | Full-text assessed | 98 unique papers + 3 data repositories = 101 | `full_text_screening.csv`: 52 original + 33 expanded + 13 formal/expanded database (2026-03-29) |
 | Full-text excluded with reasons | 82 unique excluded studies (86 CSV rows; see reconciliation) | Categorized below |
 | **INCLUDED** | | |
-| Studies included in synthesis | 17 studies contributing 22 study-level effects | 7 Tier 1 individual + 7 Tier 2 hand-extracted + 3 Tier 2 AI-extracted |
+| Studies included in synthesis | 17 studies contributing 22 study-level effects | 7 Tier 1 individual + 7 Tier 2 hand-extracted + 3 Tier 2 expanded search |
 
 ---
 
@@ -117,7 +117,7 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
  │   + 3 data repositories = 55        │   │   Excluded: ~1,100-1,300 (approx.)      │
  │                                      │   │                                          │
  │ (Single screener, RD)                │   │ Full-text assessed from databases:       │
- │                                      │   │   33 from expanded search (AI-assisted)  │
+ │                                      │   │   33 from expanded search                │
  │                                      │   │   + 13 from formal/expanded search       │
  │                                      │   │     (2026-03-29)                         │
  │                                      │   │   = 46 additional full-text assessments  │
@@ -131,7 +131,7 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
                     │    (52 original + 33 expanded + 13 formal/       │
                     │     expanded 2026-03-29)                         │
                     │                                                  │
-                    │  AI-assisted expansion served as partial          │
+                    │  Expanded search served as partial                │
                     │  second-screener check (IRR: 71% raw agreement)  │
                     └──────────┬──────────────────────┬────────────────┘
                                │                      │
@@ -248,7 +248,7 @@ flowchart TD
     D --- D11
 
     subgraph audit["AUDIT"]
-        F["<b>Independent audit</b><br/>(AI-extracted + overlap checks)"]
+        F["<b>Independent audit</b><br/>(expanded search + overlap checks)"]
         G["<b>Removed: 4</b><br/>Ramos 2024 (RM prevalence)<br/>Muller 2008 (imprecise, no sizes)<br/>Sutherland 2016 (NOAA overlap)<br/>Roth 2013 (Rogers & Muller overlap)"]
     end
 
@@ -256,7 +256,7 @@ flowchart TD
     F --> G
 
     subgraph included["INCLUDED: 17 studies, 22 effects"]
-        H["<b>Tier 1 individual:</b> 7 studies (8 effects)<br/><b>Tier 2 hand-extracted:</b> 7 studies (10 effects)<br/><b>Tier 2 AI-extracted:</b> 3 studies (3 effects)<br/><br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda<br/>Neely 2022: FL Keys (direct data sharing)"]
+        H["<b>Tier 1 individual:</b> 7 studies (8 effects)<br/><b>Tier 2 hand-extracted:</b> 7 studies (10 effects)<br/><b>Tier 2 expanded search:</b> 3 studies (3 effects)<br/><br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda<br/>Neely 2022: FL Keys (direct data sharing)"]
     end
 
     F --> H
