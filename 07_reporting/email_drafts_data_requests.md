@@ -13,22 +13,24 @@
 
 ## Contact Directory
 
-| Program | Contact | Role | Email (best available) | Notes |
-|---------|---------|------|----------------------|-------|
-| Manzello paper (gateway) | Derek Manzello | Corresponding author; NOAA Coral Reef Watch Director | derek.manzello@noaa.gov | Best single point of contact for introductions |
-| Manzello paper (data/code) | Ross Cunning | First author on GitHub repo; Perry Institute for Marine Science | rcunning@perryinstitute.org (verify) | Compiled all raw data; knows exactly what each program submitted |
-| CRF | Jessica Levy (Director of Restoration Strategy) or science staff | CRF Key Largo | info@coralrestoration.org (general); check coralrestoration.org/about/staff | Ken Nedimyer has left CRF; now runs Reef Renewal International |
-| Mote Marine Lab | Erinn Muller | Assoc. VP Research; coral program lead | emuller@mote.org (verify via mote.org/staff/erinn-muller) | Also co-author on Muller et al. 2025 restoration review |
-| Mission: Iconic Reefs | Jennifer Moore | NOAA Threatened Coral Recovery Coordinator; MIR co-lead | jennifer.moore@noaa.gov (verify via fisheries.noaa.gov/contact/jennifer-moore) | Federal program — may need data sharing agreement |
-| Nova Southeastern | David Gilliam | Professor; runs SECREMP | gilliam@nova.edu (verify via hcas.nova.edu/faculty/david_gilliam) | SE Florida focus; lower-DHW sites |
-| Univ. of Miami | Diego Lirman | Assoc. Prof.; Rescue a Reef | dlirman@rsmas.miami.edu (verify via Rosenstiel directory) | We already have Maurer 2022 from his lab |
-| Biscayne NP / NPS | Amanda Bourque | Ecologist, Habitat Restoration | amanda_bourque@nps.gov (verify) | Northernmost FL reef populations |
+| Program | Contact | Role | Email | Verified | Notes |
+|---------|---------|------|-------|----------|-------|
+| Manzello paper (gateway) | Derek Manzello | Corresponding author; NOAA Coral Reef Watch Coordinator | derek.manzello@noaa.gov | Yes ([NOAA STAR](https://www.star.nesdis.noaa.gov/star/Manzello_D.php)) | Best single point of contact for introductions |
+| Manzello paper (data/code) | Ross Cunning | Research Biologist; **now at Shedd Aquarium** (was Perry Institute) | ross.cunning@gmail.com | Yes ([Shedd bio](https://www.sheddaquarium.org/about-shedd/leadership/research-experts/ross-cunning-ph-d)) | Compiled all Manzello raw data; knows what each program submitted |
+| CRF | Jessica Levy | Director of Global Restoration Strategy | Check [CRF staff page](https://coralrestoration.org/staff/jessica-levy/) | No public email found | Ken Nedimyer has left CRF; fallback: info@coralrestoration.org |
+| Mote Marine Lab | Erinn Muller | Assoc. VP Research; coral program lead | Check [Mote staff page](https://mote.org/staff/erinn-muller/) | No public email found | Also co-author on Muller et al. 2025 restoration review |
+| Mission: Iconic Reefs | Jennifer Moore | NOAA Threatened Coral Recovery Coordinator; MIR co-lead | jennifer.moore@noaa.gov | Yes ([NOAA Fisheries](https://www.fisheries.noaa.gov/contact/jennifer-moore)) | Federal program — may need data sharing agreement; phone (727) 551-5797 |
+| Nova Southeastern | David Gilliam | Professor; runs SECREMP | gilliam@nova.edu | Yes ([NSU faculty](https://hcas.nova.edu/faculty/david_gilliam.html)) | SE Florida focus; lower-DHW sites; phone (954) 262-3634 |
+| Univ. of Miami | Diego Lirman | Assoc. Prof.; Rescue a Reef | dlirman@rsmas.miami.edu | Yes ([UM directory](https://people.miami.edu/profile/9f69291a85396981d4ccc07b8003f6f2)) | We already have Maurer 2022 from his lab; phone (305) 421-4168 |
+| Biscayne NP / NPS | Amanda Bourque | Ecologist, Habitat Restoration | amanda_bourque@nps.gov (unverified) | No | Northernmost FL reef populations |
 
 ---
 
 ## Email 0: Gateway Email to Derek Manzello (or Ross Cunning)
 
 This is the most important email. If Manzello or Cunning make introductions, the subsequent requests carry much more weight.
+
+**NOTE:** Ross Cunning is now at Shedd Aquarium (Chicago), not Perry Institute. Update any references if CC'ing him.
 
 **To:** derek.manzello@noaa.gov
 **CC:** Raine Detmer

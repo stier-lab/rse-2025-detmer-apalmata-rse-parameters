@@ -24,7 +24,7 @@ These data would:
 ### Priority 1 — Large programs with individual-level data
 
 #### A. Coral Restoration Foundation (CRF)
-- **Contact:** Ken Nedimyer (founder), or science director
+- **Contact:** Jessica Levy, Director of Global Restoration Strategy (Ken Nedimyer has left CRF; see [staff page](https://coralrestoration.org/staff/jessica-levy/))
 - **Location:** Key Largo, FL
 - **What they likely have:** Tens of thousands of nursery-reared fragments tracked from outplanting through 2023. CRF is the largest *A. palmata* restoration program in FL. Fragments are tagged, sized at outplanting, and monitored periodically. Genotype tracked for all outplants.
 - **Manzello provider code:** "crf"
