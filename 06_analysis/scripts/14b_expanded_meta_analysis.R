@@ -2710,4 +2710,262 @@ rob_per_study <- combined_rob %>%
 write_csv(rob_per_study, file.path(output_dir, "expanded_meta_rob_per_study.csv"))
 cat("  Saved: expanded_meta_rob_per_study.csv\n")
 
+# ==============================================================================
+# SECTION: PUBLICATION BIAS ASSESSMENT
+# Funnel plot asymmetry, Egger's regression test, and trim-and-fill analysis.
+# Addresses CLAUDE.md constraint: "No formal publication bias assessment (funnel
+# plot, Egger's test) has been conducted."
+# ==============================================================================
+
+cat("\n")
+cat("==============================================================================\n")
+cat("  PUBLICATION BIAS ASSESSMENT\n")
+cat("==============================================================================\n\n")
+
+pub_bias_results <- data.frame(
+  test = character(),
+  statistic = numeric(),
+  p_value = numeric(),
+  interpretation = character(),
+  stringsAsFactors = FALSE
+)
+
+# --- 1. Funnel plot (metafor::funnel) on the primary model ---
+cat("  1. Funnel plot (metafor::funnel)...\n")
+
+# metafor::funnel works with both rma and rma.mv objects
+funnel_file_png <- file.path(fig_dir, "expanded_publication_bias_funnel.png")
+funnel_file_pdf <- file.path(fig_dir, "expanded_publication_bias_funnel.pdf")
+
+# PNG version
+png(funnel_file_png, width = 174, height = 140, units = "mm", res = 300)
+par(mar = c(5, 4, 2, 2))
+metafor::funnel(rma_expanded,
+                xlab = "Log Odds (Survival)",
+                ylab = "Standard Error",
+                main = "",
+                back = "white",
+                shade = "gray90",
+                hlines = "white",
+                pch = 19,
+                col = ifelse(combined_es$population_type == "Natural colony",
+                             MANUSCRIPT_PALETTE$natural,
+                             MANUSCRIPT_PALETTE$restoration))
+legend("topright",
+       legend = c("Natural colony", "Restoration fragment"),
+       col = c(MANUSCRIPT_PALETTE$natural, MANUSCRIPT_PALETTE$restoration),
+       pch = 19, cex = 0.8, bty = "n")
+dev.off()
+
+# PDF version
+pdf(funnel_file_pdf, width = 174/25.4, height = 140/25.4)
+par(mar = c(5, 4, 2, 2))
+metafor::funnel(rma_expanded,
+                xlab = "Log Odds (Survival)",
+                ylab = "Standard Error",
+                main = "",
+                back = "white",
+                shade = "gray90",
+                hlines = "white",
+                pch = 19,
+                col = ifelse(combined_es$population_type == "Natural colony",
+                             MANUSCRIPT_PALETTE$natural,
+                             MANUSCRIPT_PALETTE$restoration))
+legend("topright",
+       legend = c("Natural colony", "Restoration fragment"),
+       col = c(MANUSCRIPT_PALETTE$natural, MANUSCRIPT_PALETTE$restoration),
+       pch = 19, cex = 0.8, bty = "n")
+dev.off()
+
+cat(sprintf("    Saved: %s\n", basename(funnel_file_png)))
+cat(sprintf("    Saved: %s\n", basename(funnel_file_pdf)))
+
+# --- 2. Egger's regression test for funnel plot asymmetry ---
+# For the three-level rma.mv model, regtest() may not work directly.
+# Use meta-regression with sqrt(vi) as a precision moderator (Egger approach).
+cat("\n  2. Egger's regression test for funnel plot asymmetry...\n")
+
+egger_result <- tryCatch({
+  # Try regtest on the independent-effects model first (well-supported)
+  rt <- regtest(rma_independent, model = "lm", predictor = "sei")
+  list(
+    zval = rt$zval,
+    pval = rt$pval,
+    method = "regtest(rma, predictor='sei')"
+  )
+}, error = function(e) {
+  cat(sprintf("    regtest failed: %s\n", e$message))
+  NULL
+})
+
+# Also fit the meta-regression approach on the three-level model
+egger_mv <- tryCatch({
+  metafor::rma.mv(
+    yi = log_odds,
+    V = var_log_odds,
+    mods = ~ sqrt(var_log_odds),
+    random = ~1 | study_id / study,
+    data = combined_es,
+    method = "REML",
+    test = "t"
+  )
+}, error = function(e) {
+  cat(sprintf("    Three-level Egger's test failed: %s\n", e$message))
+  NULL
+})
+
+if (!is.null(egger_result)) {
+  egger_z <- egger_result$zval
+  egger_p <- egger_result$pval
+  egger_interp <- if (egger_p < 0.05) {
+    "Significant asymmetry detected (p < 0.05); potential publication bias"
+  } else if (egger_p < 0.10) {
+    "Marginally significant asymmetry (0.05 < p < 0.10); suggestive but inconclusive"
+  } else {
+    "No significant asymmetry detected (p >= 0.10); no strong evidence of publication bias"
+  }
+  cat(sprintf("    Egger's test (independent model): z = %.3f, p = %.4f\n",
+              egger_z, egger_p))
+  cat(sprintf("    Interpretation: %s\n", egger_interp))
+
+  pub_bias_results <- rbind(pub_bias_results, data.frame(
+    test = "Egger's regression (independent model)",
+    statistic = round(egger_z, 4),
+    p_value = round(egger_p, 4),
+    interpretation = egger_interp,
+    stringsAsFactors = FALSE
+  ))
+}
+
+if (!is.null(egger_mv)) {
+  # The slope on sqrt(vi) tests for small-study effects
+  mv_coef <- coef(summary(egger_mv))
+  # The moderator row (row 2) tests asymmetry
+  egger_mv_t <- mv_coef[2, "tval"]
+  egger_mv_p <- mv_coef[2, "pval"]
+  egger_mv_interp <- if (egger_mv_p < 0.05) {
+    "Significant asymmetry in three-level model (p < 0.05); potential publication bias"
+  } else if (egger_mv_p < 0.10) {
+    "Marginally significant asymmetry in three-level model (0.05 < p < 0.10)"
+  } else {
+    "No significant asymmetry in three-level model (p >= 0.10)"
+  }
+  cat(sprintf("    Egger's test (three-level model): t = %.3f, p = %.4f\n",
+              egger_mv_t, egger_mv_p))
+  cat(sprintf("    Interpretation: %s\n", egger_mv_interp))
+
+  pub_bias_results <- rbind(pub_bias_results, data.frame(
+    test = "Egger's regression (three-level model)",
+    statistic = round(egger_mv_t, 4),
+    p_value = round(egger_mv_p, 4),
+    interpretation = egger_mv_interp,
+    stringsAsFactors = FALSE
+  ))
+}
+
+# --- 3. Trim-and-fill analysis ---
+# trimfill() requires an rma object (not rma.mv), so use rma_independent
+cat("\n  3. Trim-and-fill analysis...\n")
+
+tf_result <- tryCatch({
+  trimfill(rma_independent)
+}, error = function(e) {
+  cat(sprintf("    trimfill failed: %s\n", e$message))
+  NULL
+})
+
+if (!is.null(tf_result)) {
+  n_imputed <- tf_result$k0
+  tf_est <- plogis(as.numeric(tf_result$beta))
+  tf_ci_lo <- plogis(tf_result$ci.lb)
+  tf_ci_hi <- plogis(tf_result$ci.ub)
+  orig_est <- plogis(as.numeric(rma_independent$beta))
+  shift_pp <- (tf_est - orig_est) * 100  # percentage point shift
+
+  tf_interp <- if (n_imputed == 0) {
+    "No missing studies imputed; no evidence of publication bias from trim-and-fill"
+  } else {
+    sprintf("%d studies imputed; adjusted estimate shifts by %+.1f pp (%.1f%% -> %.1f%%)",
+            n_imputed, shift_pp, orig_est * 100, tf_est * 100)
+  }
+
+  cat(sprintf("    Studies imputed (k0): %d\n", n_imputed))
+  cat(sprintf("    Original pooled survival: %.1f%% (CI: %.1f%% - %.1f%%)\n",
+              orig_est * 100,
+              plogis(rma_independent$ci.lb) * 100,
+              plogis(rma_independent$ci.ub) * 100))
+  cat(sprintf("    Adjusted pooled survival: %.1f%% (CI: %.1f%% - %.1f%%)\n",
+              tf_est * 100, tf_ci_lo * 100, tf_ci_hi * 100))
+  cat(sprintf("    Shift: %+.1f percentage points\n", shift_pp))
+  cat(sprintf("    Interpretation: %s\n", tf_interp))
+
+  pub_bias_results <- rbind(pub_bias_results, data.frame(
+    test = "Trim-and-fill (L0 estimator)",
+    statistic = n_imputed,
+    p_value = NA_real_,
+    interpretation = tf_interp,
+    stringsAsFactors = FALSE
+  ))
+
+  # Save trim-and-fill funnel plot
+  tf_funnel_png <- file.path(fig_dir, "expanded_trimfill_funnel.png")
+  tf_funnel_pdf <- file.path(fig_dir, "expanded_trimfill_funnel.pdf")
+
+  png(tf_funnel_png, width = 174, height = 140, units = "mm", res = 300)
+  par(mar = c(5, 4, 2, 2))
+  metafor::funnel(tf_result,
+                  xlab = "Log Odds (Survival)",
+                  ylab = "Standard Error",
+                  main = "")
+  dev.off()
+
+  pdf(tf_funnel_pdf, width = 174/25.4, height = 140/25.4)
+  par(mar = c(5, 4, 2, 2))
+  metafor::funnel(tf_result,
+                  xlab = "Log Odds (Survival)",
+                  ylab = "Standard Error",
+                  main = "")
+  dev.off()
+
+  cat(sprintf("    Saved: %s\n", basename(tf_funnel_png)))
+  cat(sprintf("    Saved: %s\n", basename(tf_funnel_pdf)))
+} else {
+  pub_bias_results <- rbind(pub_bias_results, data.frame(
+    test = "Trim-and-fill (L0 estimator)",
+    statistic = NA_real_,
+    p_value = NA_real_,
+    interpretation = "Trim-and-fill analysis could not be performed",
+    stringsAsFactors = FALSE
+  ))
+}
+
+# --- 4. Save publication bias results ---
+pub_bias_file <- file.path(output_dir, "publication_bias_assessment.csv")
+write_csv(pub_bias_results, pub_bias_file)
+cat(sprintf("\n  Saved: %s\n", basename(pub_bias_file)))
+
+# --- 5. Console summary ---
+cat("\n")
+cat("  ---------------------------------------------------------------\n")
+cat("  PUBLICATION BIAS ASSESSMENT SUMMARY\n")
+cat("  ---------------------------------------------------------------\n")
+cat(sprintf("  Number of effects (k): %d\n", nrow(combined_es)))
+cat(sprintf("  Number of unique studies: %d\n", n_distinct(combined_es$study_id)))
+for (i in seq_len(nrow(pub_bias_results))) {
+  cat(sprintf("  [%d] %s\n", i, pub_bias_results$test[i]))
+  if (!is.na(pub_bias_results$statistic[i])) {
+    cat(sprintf("      Statistic: %.4f", pub_bias_results$statistic[i]))
+    if (!is.na(pub_bias_results$p_value[i])) {
+      cat(sprintf(", p = %.4f", pub_bias_results$p_value[i]))
+    }
+    cat("\n")
+  }
+  cat(sprintf("      %s\n", pub_bias_results$interpretation[i]))
+}
+cat("  ---------------------------------------------------------------\n")
+cat("  NOTE: With k=22 effects, Egger's test has limited power and\n")
+cat("  trim-and-fill assumes a specific missing-data mechanism.\n")
+cat("  Results should be interpreted cautiously.\n")
+cat("  ---------------------------------------------------------------\n")
+
 cat("\n\nExpanded meta-analysis complete.\n")

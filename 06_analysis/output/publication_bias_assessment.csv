@@ -1,0 +1,4 @@
+test,statistic,p_value,interpretation
+Egger's regression (independent model),0.4531,0.6553,No significant asymmetry detected (p >= 0.10); no strong evidence of publication bias
+Egger's regression (three-level model),3.4676,0.0024,Significant asymmetry in three-level model (p < 0.05); potential publication bias
+Trim-and-fill (L0 estimator),3,NA,3 studies imputed; adjusted estimate shifts by -2.4 pp (79.4% -> 77.0%)
