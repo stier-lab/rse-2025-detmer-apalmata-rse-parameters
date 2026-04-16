@@ -1,6 +1,6 @@
 metric,value,notes
-lambda_deterministic,0.887932014092709,Dominant eigenvalue of point-estimate matrix
-lambda_tuljapurkar_between_study_variance,0.8863204060420032,Tuljapurkar approx using LOSO variance as proxy; overestimates stochastic correction
+lambda_deterministic,0.9613236196732565,Dominant eigenvalue of point-estimate matrix
+lambda_tuljapurkar_between_study_variance,0.9595788049124303,Tuljapurkar approx using LOSO variance as proxy; overestimates stochastic correction
 var_log_lambda_loso,0.0036333240426087363,Variance of log(lambda) across LOSO study exclusions
 tuljapurkar_correction,0.0018166620213043681,sigma^2 / 2 correction term
 n_loso_lambdas,3,Number of LOSO lambda values used

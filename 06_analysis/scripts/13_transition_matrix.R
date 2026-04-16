@@ -1894,6 +1894,138 @@ if (file.exists(recruit_pars_path)) {
 }
 
 # =============================================================================
+# MORTALITY DEFINITION SENSITIVITY ANALYSIS
+# =============================================================================
+# Studies use different criteria for "dead":
+#   NOAA: no tissue AND skeleton gone (most conservative)
+#   Kuffner: >=50% tissue loss (most aggressive)
+#   Others: no live tissue remaining
+# This sensitivity recomputes survival and lambda stratified by definition.
+
+cat("\n")
+cat("═══════════════════════════════════════════════════════════════\n")
+cat("  MORTALITY DEFINITION SENSITIVITY ANALYSIS\n")
+cat("═══════════════════════════════════════════════════════════════\n\n")
+
+# Map studies to mortality definitions
+# (mortality_definition column exists in individual data but not in cells)
+mort_def_map <- data.frame(
+  study = c("NOAA_survey", "kuffner_et_al_2020", "neely_et_al_2022",
+            "pausch_et_al_2018", "mendoza_quiroz_et_al_2023",
+            "fundemar_fragments", "USGS_USVI_exp",
+            # Summary-level studies (from extraction protocol)
+            "vardi_2011", "garrison_ward_2008", "bruckner_bruckner_2001",
+            "ortiz_prosper_2005", "forrester_et_al_2013", "rosales_et_al_2024",
+            "maurer_et_al_2022", "williams_miller_2010",
+            "rogers_muller_2012", "ramos_romero_et_al_2025", "rogers_1982"),
+  mort_definition = c("no_tissue_or_skeleton", "gte_50pct_tissue_loss", "unknown",
+                       "complete_mortality_or_missing", "no_live_tissue",
+                       "no_live_tissue", "no_live_tissue",
+                       "no_live_tissue", "no_live_tissue", "no_live_tissue",
+                       "no_live_tissue", "no_live_tissue", "no_live_tissue",
+                       "no_live_tissue", "no_live_tissue",
+                       "no_live_tissue", "no_live_tissue", "no_live_tissue"),
+  stringsAsFactors = FALSE
+)
+
+# Join to cells
+cells_with_mort <- surv_cells_natural %>%
+  left_join(mort_def_map, by = "study")
+
+# Group definitions for sensitivity
+# Conservative = NOAA-style (skeleton gone) vs Standard = all others
+cells_with_mort <- cells_with_mort %>%
+  mutate(mort_group = case_when(
+    mort_definition == "no_tissue_or_skeleton" ~ "NOAA_conservative",
+    mort_definition == "gte_50pct_tissue_loss" ~ "Kuffner_aggressive",
+    TRUE ~ "standard_no_live_tissue"
+  ))
+
+cat("Studies by mortality definition group:\n")
+mort_summary <- cells_with_mort %>%
+  group_by(mort_group) %>%
+  summarise(n_studies = n_distinct(study), n = sum(n_initial),
+            studies = paste(unique(study), collapse = ", "), .groups = "drop")
+print(as.data.frame(mort_summary %>% select(-studies)))
+
+# Compute lambda for each group that has enough data
+mort_sensitivity <- data.frame(
+  group = character(), n_studies = integer(), n_total = integer(),
+  lambda = numeric(), stringsAsFactors = FALSE
+)
+
+for (grp in unique(cells_with_mort$mort_group)) {
+  grp_cells <- cells_with_mort %>% filter(mort_group == grp)
+  grp_studies <- unique(grp_cells$study)
+
+  if (length(grp_studies) < 2) {
+    cat(sprintf("\n  %s: only %d study, skipping rma\n", grp, length(grp_studies)))
+    next
+  }
+
+  # Aggregate to study-level per SC
+  grp_sc <- grp_cells %>%
+    filter(!is.na(size_class)) %>%
+    mutate(annual_survival = prop_survived^(1 / time_interval_yr)) %>%
+    group_by(study, size_class) %>%
+    summarise(n = sum(n_initial),
+              survival = weighted.mean(annual_survival, w = n_initial),
+              .groups = "drop") %>%
+    mutate(n_survived_int = pmax(1, pmin(n - 1, round(survival * n))))
+
+  S_grp <- numeric(5)
+  names(S_grp) <- size_class_labels
+  has_all_sc <- TRUE
+
+  for (i in seq_along(size_class_labels)) {
+    sc <- size_class_labels[i]
+    sc_dat <- grp_sc %>% filter(size_class == sc)
+    if (nrow(sc_dat) < 2) {
+      # Use overall estimate for missing SCs
+      S_grp[i] <- S[i]
+      next
+    }
+    es_g <- tryCatch(
+      metafor::escalc(measure = "PLO", xi = sc_dat$n_survived_int,
+                       ni = sc_dat$n, add = 0.5, to = "only0"),
+      error = function(e) NULL
+    )
+    if (is.null(es_g)) { S_grp[i] <- S[i]; next }
+    fit_g <- tryCatch(
+      metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "REML"),
+      error = function(e) tryCatch(
+        metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "FE"),
+        error = function(e2) NULL
+      )
+    )
+    if (is.null(fit_g)) { S_grp[i] <- S[i]; next }
+    S_grp[i] <- predict(fit_g, transf = plogis)$pred
+  }
+
+  A_grp <- G %*% diag(S_grp) + F_mat
+  lambda_grp <- Re(eigen(A_grp)$values[1])
+
+  mort_sensitivity <- rbind(mort_sensitivity, data.frame(
+    group = grp, n_studies = length(grp_studies),
+    n_total = sum(grp_cells$n_initial), lambda = lambda_grp
+  ))
+
+  cat(sprintf("\n  %s (k=%d, N=%s): S = [%s], lambda = %.4f\n",
+              grp, length(grp_studies), scales::comma(sum(grp_cells$n_initial)),
+              paste(sprintf("%.3f", S_grp), collapse = ", "), lambda_grp))
+}
+
+# Add the full-data row
+mort_sensitivity <- rbind(
+  data.frame(group = "all_studies", n_studies = length(unique(surv_cells_natural$study)),
+             n_total = sum(surv_cells_natural$n_initial), lambda = lambda),
+  mort_sensitivity
+)
+
+write_csv(mort_sensitivity, file.path(output_dir, "mortality_definition_sensitivity.csv"))
+cat("\n✓ Saved: mortality_definition_sensitivity.csv\n")
+
+# =============================================================================
 # TULJAPURKAR APPROXIMATION USING BETWEEN-STUDY VARIANCE
 # FIX: Renamed from "stochastic lambda" to avoid implying true environmental
 # stochasticity. This uses between-study variance as a proxy for environmental

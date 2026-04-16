@@ -1,25 +1,25 @@
 parameter,value,notes
-lambda,0.887932014092709,deterministic dominant eigenvalue
-lambda_ci_lower,0.7397736488808008,percentile bootstrap 2.5%
-lambda_ci_upper,0.9592819948237122,percentile bootstrap 97.5%
-lambda_ci_bc_lower,0.7822577478227772,bias-corrected 2.5%
-lambda_ci_bc_upper,0.9669695654291801,bias-corrected 97.5%
-p_decline,0.999,P(lambda < 1)
-generation_time_NOTE_unreliable,1.4672217299619956,Cochran-Ellner method; unreliable when fragmentation elasticity near zero
-damping_ratio,1.5475368611004896,Mod(eigenvalue1) / Mod(eigenvalue2); rate of convergence to stable distribution
-elasticity_stasis,0.7946713422288776,diagonal elasticity sum
-elasticity_growth,0.12357512423283978,below-diagonal elasticity sum
-elasticity_shrink,0.08175353353828287,above-diagonal elasticity sum
-elasticity_frag,0.05857623939990849,total fragmentation elasticity
-parametric_uncertainty_lambda,0.8468111523510642,NOT environmental stochasticity; parametric uncertainty only
-parametric_uncertainty_lambda_ci_lower,0.7729647894870368,NOT environmental stochasticity; parametric uncertainty only
-parametric_uncertainty_lambda_ci_upper,0.9311955811954894,NOT environmental stochasticity; parametric uncertainty only
-jensens_inequality_effect,0.041120861741644865,lambda_deterministic minus parametric_uncertainty_lambda
-lambda_boot_se,0.0466063234059245,bootstrap standard error of lambda
-lambda_boot_cv,0.05287413499091068,bootstrap coefficient of variation of lambda
+lambda,0.9613236196732565,deterministic dominant eigenvalue
+lambda_ci_lower,0.815716655508045,percentile bootstrap 2.5%
+lambda_ci_upper,1.0102506116031893,percentile bootstrap 97.5%
+lambda_ci_bc_lower,0.8545025412113076,bias-corrected 2.5%
+lambda_ci_bc_upper,1.0152591277452567,bias-corrected 97.5%
+p_decline,0.943,P(lambda < 1)
+generation_time_NOTE_unreliable,0.4984597707714714,Cochran-Ellner method; unreliable when fragmentation elasticity near zero
+damping_ratio,1.5233778885598788,Mod(eigenvalue1) / Mod(eigenvalue2); rate of convergence to stable distribution
+elasticity_stasis,0.7971957109906325,diagonal elasticity sum
+elasticity_growth,0.12234865732737046,below-diagonal elasticity sum
+elasticity_shrink,0.08045563168199668,above-diagonal elasticity sum
+elasticity_frag,0.05626715944417777,total fragmentation elasticity
+parametric_uncertainty_lambda,0.9090074384251966,NOT environmental stochasticity; parametric uncertainty only
+parametric_uncertainty_lambda_ci_lower,0.7918119334018329,NOT environmental stochasticity; parametric uncertainty only
+parametric_uncertainty_lambda_ci_upper,0.9723468115549376,NOT environmental stochasticity; parametric uncertainty only
+jensens_inequality_effect,0.05231618124805992,lambda_deterministic minus parametric_uncertainty_lambda
+lambda_boot_se,0.04182752410433926,bootstrap standard error of lambda
+lambda_boot_cv,0.043846450582104984,bootstrap coefficient of variation of lambda
 n_boot_valid,2000,bootstrap iterations that produced valid lambda
 n_boot_total,2000,total bootstrap iterations attempted
-lambda_no_fragmentation,0.8214019195823401,lambda without fragmentation matrix (G %*% diag(S) only)
+lambda_no_fragmentation,0.8922511955477606,lambda without fragmentation matrix (G %*% diag(S) only)
 loso_lambda_min,0.881757619547589,minimum lambda from leave-one-study-out (script 16)
 loso_lambda_max,0.992756207864126,maximum lambda from leave-one-study-out (script 16)
 loso_lambda_range,0.11099858831653697,span of LOSO lambda values
