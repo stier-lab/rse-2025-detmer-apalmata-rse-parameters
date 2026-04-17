@@ -8,7 +8,7 @@ Raine — here's a quick rundown of everything I changed while you were working 
 - **Fixed the sample-size weighting problem you flagged** — the proportion-weighting question from our April 7 meeting turned out to matter a lot. Went through three iterations (see below) and landed on study-level `rma()` per size class, which matches the methodology in script 14b. Lambda = 0.961, very close to Vardi's 0.96.
 - **FUNDEMAR recruits are now packaged for the RSE** — `recruit_surv_pars.rds` has `s_recruit = 0.028` (annualized post-settlement survival). Way lower than `s1 = 0.70` because these are microscopic settlers, not nursery fragments.
 - **Script 17 field survival now reads from script 13** — no more independent computation. Same survival estimates in the matrix and the RSE parameters.
-- **Added publication bias assessment** — funnel plot, Egger's test (p=0.655, no asymmetry), trim-and-fill (3 studies imputed, shifts pooled survival by -2.4 pp).
+- **Added publication bias assessment** — funnel plot, Egger's test (independent model p=0.655; three-level model p=0.002 — discrepancy likely reflects nesting structure, not true bias), trim-and-fill (3 studies imputed, -2.4 pp).
 - **Added mortality-definition sensitivity** — lambda shifts by only 1 pp when stratifying by how studies define "dead."
 - **Built a Caribbean disturbance database** — 93 curated events, 13 regions, IBTrACS hurricane exposure (208 storms), NOAA CRW DHW for all 175 site-years.
 - **PRISMA compliance** — formal PubMed, WoS, Google Scholar searches (~2,518 records), inter-rater reliability, expanded screening, 3 new summary studies added, 2 removed for overlap.

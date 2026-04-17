@@ -379,14 +379,19 @@ for (i in seq_along(size_class_labels)) {
                          ni = sc_data$n,
                          add = 0.5, to = "only0")
 
-  # Fit random-effects model (REML)
-  fit <- tryCatch(
-    metafor::rma(yi = es$yi, vi = es$vi, method = "REML"),
-    error = function(e) {
-      # Fallback to fixed-effect if REML fails (e.g., k=2)
-      metafor::rma(yi = es$yi, vi = es$vi, method = "FE")
-    }
-  )
+  # Fit random-effects model (REML) with Knapp-Hartung adjustment for CIs
+  # Note: at k=2-3, KH produces very wide CIs — this is conservative but correct
+  fit <- tryCatch({
+    f <- metafor::rma(yi = es$yi, vi = es$vi, method = "REML", test = "knha")
+    f$estimation_method <- "REML"
+    f
+  }, error = function(e) {
+    # Fallback to fixed-effect if REML fails (e.g., k=2)
+    cat(sprintf("      NOTE: %s fell back to FE (REML failed: %s)\n", sc, e$message))
+    f <- metafor::rma(yi = es$yi, vi = es$vi, method = "FE", test = "knha")
+    f$estimation_method <- "FE"
+    f
+  })
 
   # Back-transform from logit to probability
   pred <- predict(fit, transf = plogis)
@@ -1121,9 +1126,9 @@ for (b in 1:n_boot) {
       next
     }
     fit_b <- tryCatch(
-      metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "REML"),
+      metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "REML", test = "knha"),
       error = function(e) tryCatch(
-        metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "FE"),
+        metafor::rma(yi = es_b$yi, vi = es_b$vi, method = "FE", test = "knha"),
         error = function(e2) NULL
       )
     )
@@ -1992,9 +1997,9 @@ for (grp in unique(cells_with_mort$mort_group)) {
     )
     if (is.null(es_g)) { S_grp[i] <- S[i]; next }
     fit_g <- tryCatch(
-      metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "REML"),
+      metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "REML", test = "knha"),
       error = function(e) tryCatch(
-        metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "FE"),
+        metafor::rma(yi = es_g$yi, vi = es_g$vi, method = "FE", test = "knha"),
         error = function(e2) NULL
       )
     )
