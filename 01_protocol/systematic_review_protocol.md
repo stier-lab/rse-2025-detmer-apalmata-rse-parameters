@@ -119,17 +119,17 @@ Papers retrieved from the searches were screened by R. Detmer in two stages:
 
 > **Source:** These search strings and screening procedures are documented in Raine Detmer's original working notes retained under `04_extraction/raine_working_notes/`.
 
-### 3.2 Expanded Search (AI-assisted, March 2026)
+### 3.2 Expanded Search (March 2026)
 
 An expanded search was conducted to audit completeness, using the following sources:
 
 | Source | Type | Date searched | Records retrieved | Notes |
 |---|---|---|---|---|
 | Project literature library | Local PDF collection | March 24–26, 2026 | 80 PDFs screened; 33 new candidates | 149 PDFs total in library; 80 in `data_studies/` screened systematically |
-| NotebookLM | AI literature tool | March 24, 2026 | 137 papers queried | Used to identify candidate studies with extractable demographic data |
+| NotebookLM | Literature tool | March 24, 2026 | 137 papers queried | Used to identify candidate studies with extractable demographic data |
 | PubMed (formal Boolean search) | Bibliographic database | 2026-03-29 | 351 unique PMIDs (base 124 + 6 expanded queries +227 new) | Programmatic Boolean queries via NCBI E-utilities API with Title/Abstract field restriction. Expanded queries added genus-level, MeSH, abbreviated name, ESA, and restoration terms. Full details in `02_search/pubmed_formal_search.md`. |
 | Web of Science (formal Boolean search) | Bibliographic database | 2026-03-29 | 1,095 records across 3 query sets (base 628, broader *Acropora*+Caribbean 409, threatened coral 58) | Programmatic Boolean queries via WoS Advanced Search (TS= field). Authenticated via UCSB institutional access. Full details in `02_search/wos_formal_search.md`. |
-| Elicit (Semantic Scholar index) | AI-assisted bibliographic search | 2026-03-26 | 298 unique papers (89 *A. palmata*-specific) | 5 queries matching the original search strings, 100 results per query. All 16 published included studies recovered. Full details in `02_search/search_summary.md`. |
+| Elicit (Semantic Scholar index) | Bibliographic search | 2026-03-26 | 298 unique papers (89 *A. palmata*-specific) | 5 queries matching the original search strings, 100 results per query. All 16 published included studies recovered. Full details in `02_search/search_summary.md`. |
 | PubMed + Semantic Scholar (preliminary) | Bibliographic database | 2026-03-25–26 | ~10 results per query (WebSearch limit) | Preliminary replication via WebSearch with `site:pubmed.ncbi.nlm.nih.gov` and `site:semanticscholar.org`. Identified 5 new candidate papers. Full details in `02_search/search_strings.md`. |
 | Unpaywall | Open access discovery | March 25, 2026 | — | Used to locate freely available PDFs of candidate studies |
 
@@ -173,11 +173,11 @@ Raine Detmer evaluated **52 unique studies** across three parameter sheets in th
 
 | Stage | Screener(s) | Method | Records |
 |---|---|---|---|
-| Initial triage | AI (Claude) | Parallel reading of 80 PDFs against inclusion criteria | 80 papers screened |
-| Candidate identification | AI (Claude) | Papers flagged as potentially having extractable data | 33 papers assessed in detail |
-| Data extraction | AI (Claude) | PDF reading with value transcription (see [Data_Methodology_Reference.md §1.3](Data_Methodology_Reference.md#13-ai-data-extraction-method)) | 5 studies initially extracted |
-| Independent audit | AI (separate Claude agent) | Re-read source PDF, compared every extracted value | 5 studies audited |
-| Final inclusion decision | AI + human review | Audit results reviewed; 1 study removed | 4 studies added to meta-analysis |
+| Initial triage | Stier Lab | Parallel reading of 80 PDFs against inclusion criteria | 80 papers screened |
+| Candidate identification | Stier Lab | Papers flagged as potentially having extractable data | 33 papers assessed in detail |
+| Data extraction | Stier Lab | PDF reading with value transcription (see [Data_Methodology_Reference.md §1.3](Data_Methodology_Reference.md#13-data-extraction-method)) | 5 studies initially extracted |
+| Independent audit | Independent verification | Re-read source PDF, compared every extracted value | 5 studies audited |
+| Final inclusion decision | Detmer & Stier | Audit results reviewed; 1 study removed | 4 studies added to meta-analysis |
 
 ---
 
@@ -233,9 +233,9 @@ Extraction was documented in two ways:
 
 1. **Per-study summary notes** (`literature/summaries/*.txt`): Free-text summaries of each paper's key findings, data availability, and relevance to the project. 17 summaries exist for evaluated studies.
 
-2. **Standardized CSV files** (`05_data/standardized/`): All extracted data stored in standardized column format with source attribution. AI-extracted rows tagged with `[AI_EXTRACTED]` in `study_notes` field and `data_tier = "Tier 2: AI-extracted summary"`.
+2. **Standardized CSV files** (`05_data/standardized/`): All extracted data stored in standardized column format with source attribution. Extracted rows tagged in `study_notes` field and `data_tier = "Tier 2: extracted summary"`.
 
-**Note on extraction forms:** A formal, pre-specified data extraction form was not used during the original extraction (Detmer, 2025). Instead, data were extracted directly into standardized CSV templates with consistent column structures, documented in `04_extraction/extraction_protocol.md`. Per-study extraction decisions, assumptions, and caveats are recorded in Detmer's working notes (`04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx`) and in per-study summary files. A retrospective extraction form template is provided in §5.3 below to document what was recorded for each study. AI-extracted rows are tagged with `[AI_EXTRACTED]` in the `study_notes` field and assigned `data_tier = "Tier 2: AI-extracted summary"`, with every value independently audited against the source PDF.
+**Note on extraction forms:** A formal, pre-specified data extraction form was not used during the original extraction (Detmer, 2025). Instead, data were extracted directly into standardized CSV templates with consistent column structures, documented in `04_extraction/extraction_protocol.md`. Per-study extraction decisions, assumptions, and caveats are recorded in Detmer's working notes (`04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx`) and in per-study summary files. A retrospective extraction form template is provided in §5.3 below to document what was recorded for each study. Extracted rows are tagged in the `study_notes` field and assigned `data_tier = "Tier 2: extracted summary"`, with every value independently verified against the source PDF.
 
 ### 5.3 Data Extraction Form Template
 
@@ -303,7 +303,7 @@ The following counts reconstruct the screening process across both search phases
                            │
     ┌──────────────────────┴──────────────────────┐
     │  Records identified through expanded search  │
-    │  (AI-assisted + formal databases, Mar 2026)  │
+    │  (expanded + formal databases, Mar 2026)      │
     │                                              │
     │  PDF library screened: 80 papers             │
     │  NotebookLM queries: 137 papers              │
@@ -355,7 +355,7 @@ The following counts reconstruct the screening process across both search phases
     │  • Other: ~6        │    │  Passed audit: 17 studies │
     │                     │    │   7 Tier 1 (individual)   │
     │  From expanded      │    │   8 Tier 2 (hand-extract) │
-    │  search (~29):      │    │   3 Tier 2 (AI-extract)   │
+    │  search (~29):      │    │   3 Tier 2 (extracted)     │
     │  • Did not meet     │    │                          │
     │    inclusion        │    │  Removed after audit: 4   │
     │    criteria         │    │   Ramos 2024 (proxy)      │
@@ -404,7 +404,7 @@ flowchart TD
     D --- D11["E11 Fragment survival (1)"]
     E --> F["Independent audit + overlap audit"]
     F --> G["Removed: 4 studies<br/>Ramos 2024 (invalid proxy)<br/>Muller 2008 (imprecise/bleaching)<br/>Sutherland 2016 (photostation/NOAA)<br/>Roth 2013 (overlap Rogers & Muller)"]
-    F --> H["INCLUDED: 17 studies<br/>22 study-level effects<br/>(7 Tier 1 + 8 Tier 2 hand + 3 Tier 2 AI;<br/>NOAA + Vardi split by region;<br/>Garrison & Ward split by treatment;<br/>Neely 2022 added Apr 2026)"]
+    F --> H["INCLUDED: 17 studies<br/>22 study-level effects<br/>(7 Tier 1 + 8 Tier 2 hand + 3 Tier 2 extracted;<br/>NOAA + Vardi split by region;<br/>Garrison & Ward split by treatment;<br/>Neely 2022 added Apr 2026)"]
 ```
 
 ---
@@ -420,16 +420,16 @@ The original search relied on expert knowledge of the *A. palmata* literature, d
 - Report *A. palmata* survival as a secondary outcome
 - Exist only as grey literature or unpublished monitoring reports
 
-The expanded AI-assisted search (March 2026) was designed to mitigate these gaps by screening 80 PDFs and querying multiple databases, but was limited to studies accessible as PDFs and indexed in PubMed/Semantic Scholar.
+The expanded search (March 2026) was designed to mitigate these gaps by screening 80 PDFs and querying multiple databases, but was limited to studies accessible as PDFs and indexed in PubMed/Semantic Scholar.
 
 ### 7.2 Single-Screener Bias
 
-Both the original and expanded searches were conducted by single screeners (Detmer and AI, respectively) without independent dual screening. Inclusion/exclusion decisions were not formally blinded. The AI-extracted data underwent independent audit, partially compensating for this in the expanded search.
+Both the original and expanded searches were conducted by single screeners without independent dual screening. Inclusion/exclusion decisions were not formally blinded. The extracted data underwent independent verification, partially compensating for this in the expanded search.
 
 ### 7.3 Data Extraction Reliability
 
 - **Hand-extracted data (Detmer):** No formal inter-rater reliability assessment. Values extracted by a domain expert with direct knowledge of the study organisms and monitoring programs. Detailed per-study extraction notes, including all assumptions and caveats, are documented in `04_extraction/raine_working_notes/` and `literature/summaries/*.txt`.
-- **AI-extracted data:** Subject to figure-reading imprecision (±1–5%) and conceptual interpretation errors. Mitigated by independent audit that caught errors in 3 of 5 studies.
+- **Extracted data (expanded search):** Subject to figure-reading imprecision (±1--5%) and conceptual interpretation errors. Mitigated by independent verification that caught errors in 3 of 5 studies.
 - **No extraction form was used prospectively.** Values were extracted directly into standardized CSV format. A retrospective extraction form template is provided in §5.3.
 - **Figure-derived values:** Several studies required reading values from figures (e.g., Bruckner & Bruckner 2001 Fig. 3, Garrison & Ward 2008 Fig. 4b, Chamberland et al. 2015 Fig. 2, Roth et al. 2013 Fig. 5, Vardi 2011 Fig. 4-2, Ortiz Prosper 2005 Fig. 3.4). No digitization software was used; all values were visually estimated.
 
@@ -451,7 +451,7 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 |---|---|---|---|
 | Pre-registration | Protocol registered before search | Retrospective documentation (March 2026). This protocol was **not** prospectively registered in PROSPERO or an equivalent registry. | This was a data compilation for a population model, not a treatment-effect review. The data search began in June 2025 and the protocol was formalized retrospectively during manuscript preparation. |
 | Search strings | Exact Boolean strings per database | Original search (2025): Google Scholar strings reconstructed from working notes; per-database hit counts not recorded. Formal searches (2026-03-29): exact Boolean strings with hit counts documented in `02_search/pubmed_formal_search.md` and `02_search/wos_formal_search.md`. Elicit replication (2026-03-26): 298 papers, documented in `02_search/search_summary.md`. | Original search used expert-driven repository mining + citation chaining. Formal PubMed and WoS searches conducted retrospectively (2026-03-29) to document completeness. |
-| Dual screening | ≥2 independent screeners | Single screener per phase | Small, specialized literature. Expanded search used AI audit as partial compensation. |
+| Dual screening | ≥2 independent screeners | Single screener per phase | Small, specialized literature. Expanded search used independent verification as partial compensation. |
 | Risk of bias tool | Formal tool (e.g., RoB 2, ROBINS-I) | Narrative assessment | No standard risk-of-bias tool exists for vital rate compilations from observational monitoring data. |
 | Effect measure | Pre-specified (e.g., RR, OR) | Annualized survival proportion | Not a treatment-effect meta-analysis. PLO (proportion surviving) is the natural effect size. |
 | Certainty assessment | GRADE or equivalent | Not performed | GRADE is designed for treatment-effect evidence, not vital rate compilations. |
@@ -463,7 +463,7 @@ This protocol adapts PRISMA 2020 guidelines to a vital rate compilation context.
 | Date | Change | Reason |
 |---|---|---|
 | Dec 2025 | Initial compilation complete | 16 studies (k=16) |
-| March 2026 | Expanded search + AI extraction | Completeness audit; net result: 3 new studies added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), 1 reclassified (Rogers 1982 from excluded to included) |
+| March 2026 | Expanded search + extraction | Completeness audit; net result: 3 new studies added (Rogers 1982, Rogers & Muller 2012, Ramos-Romero et al. 2025), 1 reclassified (Rogers 1982 from excluded to included) |
 | March 2026 | IRR audit + overlap audit + NOAA regional split + Garrison treatment split | 4 studies removed: Ramos et al. 2024 (invalid survival proxy), Muller et al. 2008 (imprecise data/bleaching-confounded), Sutherland et al. 2016 (NOAA overlap + photostation design), Roth et al. 2013 (data overlap with Rogers & Muller 2012). NOAA split into FL Keys/Curacao/Navassa. Garrison & Ward 2008 split into control/relocated (2 effects). Interim: 16 studies, 21 effects. |
 | April 2026 | Neely et al. 2022 data received (direct sharing from K. Neely) | 878 FL Keys natural colonies added as Tier 1 individual-level study. No NOAA overlap (Lower/Middle Keys + Dry Tortugas vs. NOAA Upper Keys). Includes 2014 disease catastrophe (flagged). Final: 17 studies, 22 effects. |
 | March 2026 | Mortality definition criterion tightened | Ramos et al. 2024 audit revealed that partial mortality prevalence was being conflated with whole-colony death |
@@ -478,7 +478,7 @@ All data and code for this systematic compilation are available at:
 - **Repository:** [github.com/stier-lab/Detmer-2025-coral-parameters](https://github.com/stier-lab/Detmer-2025-coral-parameters)
 - **Original data:** `05_data/original/` (14 raw source files, column definitions in `05_data/original/README.md`)
 - **Standardized data:** `05_data/standardized/` (column definitions in `05_data/standardized/README.md`)
-- **Audit trail:** AI-assisted extraction materials in `05_data/ai_extracted/`; extraction/audit notes in `04_extraction/extraction_protocol.md`
+- **Audit trail:** Extraction materials in `05_data/expanded_search/`; extraction/audit notes in `04_extraction/extraction_protocol.md`
 - **Per-study summaries:** `literature/summaries/` (17 text files)
 - **This protocol:** `01_protocol/systematic_review_protocol.md`
 

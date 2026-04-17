@@ -1,0 +1,2 @@
+model,n_obs,n_params,aic,dispersion_ratio,overdispersed,is_singular,convergence_ok,optimizer_messages
+positive_growth_glmm,4660,4,5033.5255730652625,0.9735612027176037,FALSE,FALSE,TRUE,NA

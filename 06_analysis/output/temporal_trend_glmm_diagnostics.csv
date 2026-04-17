@@ -1,2 +1,2 @@
 model,n_obs,n_studies,n_regions,survey_year_center,random_effects,dispersion_ratio,overdispersed,is_singular,convergence_ok,optimizer_messages
-temporal_survival_glmm,7335,7,7,2012.9682344921607,1 | study + 1 | region,1.0053600199075348,FALSE,FALSE,TRUE,NA
+temporal_survival_glmm,7335,7,7,2012.9682344921607,1 | study + 1 | region,1.0053601148231812,FALSE,FALSE,TRUE,NA

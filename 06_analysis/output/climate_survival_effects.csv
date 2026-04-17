@@ -1,8 +1,8 @@
 effect,coefficient,p_value,interpretation
 "Temporal trend (WLS, probability scale)",-0.01944115745353294,0.0019032465051668317,WLS: -0.0194 change in survival per year (probability scale)
-"Temporal trend (GLMM, log-odds scale)",-0.13222373322076092,2.046739157699495e-31,GLMM: Significant temporal trend detected (log-odds scale)
+"Temporal trend (GLMM, log-odds scale)",-0.1322238793685089,2.035167120391013e-31,GLMM: Significant temporal trend detected (log-odds scale)
 Disturbance: Disease,-0.25387813849352314,NA,-25.4% change vs baseline
 Disturbance: Storm,0.05184882684882686,NA,5.2% change vs baseline
-DHW effect (GLMM),-0.06179585031555284,NA,OR 0.940 (95% CI 0.885-0.999) from 1746 DHW-supported rows; support=sparse; file=heat_stress_by_site_year_verified.csv
+DHW effect (GLMM),-0.06179584856097769,NA,OR 0.940 (95% CI 0.885-0.999) from 1746 DHW-supported rows; support=sparse; file=heat_stress_by_site_year_verified.csv
 Most climate-vulnerable size class,NA,NA,SC2 (CV = 0.26)
 Most climate-variable region,NA,NA,Florida Keys (CV = 0.15)

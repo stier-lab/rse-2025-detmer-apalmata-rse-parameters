@@ -8,19 +8,19 @@ data_support,sc5_supporting_observations,1418,Filtered SC5 survival observations
 data_support,sc5_max_study_share_pct,83.21579689703808,Largest study share within SC5 survival support
 data_support,sc5_noaa_share_pct,83.21579689703808,NOAA share of SC5 survival observations
 data_support,fragmentation_max_study_share_pct,100,Largest study share within fragmentation support
-matrix,lambda,0.887932014092709,Deterministic dominant eigenvalue
-matrix,lambda_half_fragmentation,0.8592319141388717,Lambda with fragmentation rates scaled to 50% of Vardi 2011 values
-matrix,lambda_no_fragmentation,0.8214019195823401,Counterfactual lambda with fragmentation removed
-matrix,fragmentation_lambda_shift_half_vs_full,-0.028700099953837377,Half-fragmentation lambda minus the full-fragmentation lambda
-matrix,fragmentation_lambda_shift_none_vs_full,-0.06653009451036895,No-fragmentation lambda minus the full-fragmentation lambda
-matrix,damping_ratio,1.5475368611004896,Rate of convergence to stable structure
+matrix,lambda,0.9613236196732565,Deterministic dominant eigenvalue
+matrix,lambda_half_fragmentation,0.9314898304210432,Lambda with fragmentation rates scaled to 50% of Vardi 2011 values
+matrix,lambda_no_fragmentation,0.8922511955477606,Counterfactual lambda with fragmentation removed
+matrix,fragmentation_lambda_shift_half_vs_full,-0.02983378925221336,Half-fragmentation lambda minus the full-fragmentation lambda
+matrix,fragmentation_lambda_shift_none_vs_full,-0.06907242412549597,No-fragmentation lambda minus the full-fragmentation lambda
+matrix,damping_ratio,1.5233778885598788,Rate of convergence to stable structure
 bootstrap,n_boot_total,2000,Requested bootstrap iterations
 bootstrap,n_boot_valid,2000,Bootstrap iterations yielding a valid lambda
 bootstrap,boot_failure_rate,0,Share of attempted bootstrap iterations that failed
 bootstrap,n_imputed_iterations,43,Bootstrap iterations requiring survival imputation for missing classes
-bootstrap,lambda_mean_impute,0.8814578888890825,Mean lambda across bootstrap draws with class-level imputation enabled
-bootstrap,lambda_mean_discard,0.8798382639372923,Mean lambda across bootstrap draws when missing-class iterations are discarded
-bootstrap,lambda_discard_minus_impute_pp,-0.1619624951790244,Discard minus impute lambda mean in percentage points
-elasticity,sc5_cell_elasticity,0.5864673613357207,Elasticity of SC5 -> SC5 stasis cell
-elasticity,sc5_survival_elasticity,0.599383874187555,Aggregated SC5 survival elasticity
-elasticity,fragmentation_elasticity_total,0.05857623939990849,Sum of fragmentation elasticity contributions
+bootstrap,lambda_mean_impute,0.9539546200214046,Mean lambda across bootstrap draws with class-level imputation enabled
+bootstrap,lambda_mean_discard,0.9533404413876259,Mean lambda across bootstrap draws when missing-class iterations are discarded
+bootstrap,lambda_discard_minus_impute_pp,-0.061417863377877246,Discard minus impute lambda mean in percentage points
+elasticity,sc5_cell_elasticity,0.5886712903535559,Elasticity of SC5 -> SC5 stasis cell
+elasticity,sc5_survival_elasticity,0.6020664220779434,Aggregated SC5 survival elasticity
+elasticity,fragmentation_elasticity_total,0.05626715944417777,Sum of fragmentation elasticity contributions

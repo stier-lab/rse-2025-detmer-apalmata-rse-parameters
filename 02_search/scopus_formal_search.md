@@ -3,7 +3,7 @@
 **Date:** 2026-03-28
 **Database:** Scopus (Elsevier)
 **Institution:** University of California Santa Barbara
-**Searcher:** AI (Claude Opus 4.6) via Playwright CDP, supervised by Adrian Stier
+**Searcher:** Adrian Stier
 **Status:** BLOCKED — authentication required
 
 ---

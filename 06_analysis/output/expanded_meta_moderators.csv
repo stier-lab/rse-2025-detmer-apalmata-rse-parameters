@@ -1,5 +1,5 @@
 moderator,model_type,coefficient,se,ci_lower,ci_upper,t_value,p_value,R2_pct,k,k_parent_studies,k_per_level,defensible
 Population type (natural vs restoration),three_level_rma.mv,-0.46987397415055854,0.3866455922673726,-1.276402546666759,0.33665459836564204,-1.2152575473448872,0.23841977461365793,1.8754963063237609,22,17,"natural=10, restoration=12",TRUE
-Log colony size (cm^2),three_level_rma.mv,0.12166157837205131,0.09261979338406615,-0.07575283814625679,0.3190759948903594,1.3135591640499316,0.20873229987807243,12.226359194755608,17,12,NA,TRUE
+Log colony size (cm^2),three_level_rma.mv,0.12166157836846124,0.09261979338658413,-0.07575283815521382,0.3190759948921363,1.3135591639754594,0.20873229990252987,12.226359191199872,17,12,NA,TRUE
 Study year,three_level_rma.mv,0.01612255864331773,0.01773108345675765,-0.020863833327899203,0.05310895061453466,0.9092822039125376,0.37402913557573414,0,22,17,NA,TRUE
-Region (categorical),three_level_rma.mv,NA,NA,NA,NA,NA,0.5161576074491825,0,22,17,Bahamas; British Virgin Islands; Cuba; Curacao; Dominican Republic; Dry Tortugas; Florida Keys; Jamaica; Navassa; Puerto Rico; US Virgin Islands; USVI; Virgin Gorda,FALSE
+Region (categorical),three_level_rma.mv,NA,NA,NA,NA,NA,0.4033674414579762,4.123182715702397,22,17,Bahamas; British Virgin Islands; Cuba; Curacao; Dominican Republic; Florida Keys; Jamaica; Navassa; Puerto Rico; US Virgin Islands; USVI; Virgin Gorda,FALSE

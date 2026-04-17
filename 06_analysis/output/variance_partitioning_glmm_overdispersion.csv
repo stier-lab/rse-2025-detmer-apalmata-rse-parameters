@@ -1,0 +1,9 @@
+model,dispersion_ratio,flag,is_singular,convergence_ok,optimizer_messages
+Size only,0.9881752809313973,OK,FALSE,TRUE,NA
+Region only,0.9881526091464542,OK,FALSE,FALSE,unable to evaluate scaled gradient |  Hessian is numerically singular: parameters are not uniquely determined
+Year only,1.0086708251168182,OK,FALSE,FALSE,"Model failed to converge with max|grad| = 0.00936212 (tol = 0.002, component 1)
+  See ?lme4::convergence and ?lme4::troubleshooting. | Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables? | Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?"
+Full (Size + Region + Year),0.976833487271791,OK,FALSE,FALSE,"unable to evaluate scaled gradient | Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+  See ?lme4::convergence and ?lme4::troubleshooting."

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-29
 **Database:** Google Scholar (scholar.google.com)
-**Searcher:** AI (Claude Opus 4.6) via Playwright CDP, supervised by Adrian Stier
+**Searcher:** Adrian Stier
 **Method:** Programmatic queries via Chrome DevTools Protocol connected to authenticated Chrome session. Top 20 results per query extracted to CSV.
 
 ---

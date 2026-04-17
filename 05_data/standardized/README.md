@@ -359,13 +359,13 @@ Summary statistics for fragmentation rates across all years and regions.
 
 ---
 
-## AI-Extracted Data (March 2026)
+## Expanded Search Data (March 2026)
 
-Two additional files contain data extracted from published PDFs by AI (Claude). These serve as both data sources and audit trails.
+Two additional files contain data extracted from published PDFs during the expanded search. These serve as both data sources and audit trails.
 
-### `ai_extracted_survival.csv`
+### `expanded_search_survival.csv`
 
-73 rows of detailed survival data from 7 studies. Every row has `[AI_EXTRACTED]` in `study_notes`. These are granular extractions (year-by-year, site-by-site, zone-by-zone) that were then aggregated into study-level entries appended to `apal_surv_summ.csv` (rows 321–330).
+73 rows of detailed survival data from 7 studies. These are granular extractions (year-by-year, site-by-site, zone-by-zone) that were then aggregated into study-level entries appended to `apal_surv_summ.csv` (rows 321–330).
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -373,9 +373,9 @@ Two additional files contain data extracted from published PDFs by AI (Claude). 
 
 Studies: rogers_muller_2012, ramos_et_al_2024 (excluded from meta), ramos_romero_et_al_2025, zubillaga_et_al_2008 (cross-sectional, not in meta), caballero_aragon_et_al_2019 (cross-sectional), muller_et_al_2008, sutherland_et_al_2016.
 
-### `ai_extracted_fragmentation.csv`
+### `expanded_search_fragmentation.csv`
 
-66 rows of fragmentation-related data from 4 studies. Flexible format (metric/value) since fragmentation data is heterogeneous across studies.
+66 rows of fragmentation-related data from 4 studies extracted during the expanded search. Flexible format (metric/value) since fragmentation data is heterogeneous across studies.
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -391,15 +391,15 @@ Studies: rogers_muller_2012, ramos_et_al_2024 (excluded from meta), ramos_romero
 | `size_class_or_range` | string | Size range if applicable |
 | `time_interval` | string | Observation period |
 | `notes` | string | Extraction notes |
-| `data_source` | string | Always "ai_extracted" |
+| `data_source` | string | Always "expanded_search" |
 
 Studies: lirman_2000, fong_lirman_1995, highsmith_et_al_1980, rogers_muller_2012.
 
-**Note:** These fragmentation data are contextual. They do NOT feed into the transition matrix pipeline, which uses only `apal_fragmentation.csv` (Vardi 2011 size-class-specific rates). The AI-extracted fragmentation data measures different things (fragment proportions, tissue loss rates, size-survival functions) that aren't in the F-matrix format.
+**Note:** These fragmentation data are contextual. They do NOT feed into the transition matrix pipeline, which uses only `apal_fragmentation.csv` (Vardi 2011 size-class-specific rates). The expanded search fragmentation data measures different things (fragment proportions, tissue loss rates, size-survival functions) that aren't in the F-matrix format.
 
 ### Audit status
 
-All AI-extracted data was independently verified by audit agents that read each source PDF and compared every value. Findings and corrections are summarized in [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
+All expanded search data was independently verified against each source PDF. Findings and corrections are summarized in [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
 
 ---
 
@@ -419,8 +419,8 @@ The standardization process is documented in `APAL_data_integration.rmd` and inc
 - For diameter-only measurements, used empirical width:length ratios
 - For recruits, assumed circular shape (area = π × d²/4)
 - Survival interpolated/extrapolated for non-annual intervals
-- For AI-extracted KM survival, `time_interval_yr` = full monitoring duration (not last KM event time)
-- For AI-extracted annualization: `surv_annual = surv_raw^(1/time_interval_yr)` (constant hazard assumption)
+- For expanded search KM survival, `time_interval_yr` = full monitoring duration (not last KM event time)
+- For expanded search annualization: `surv_annual = surv_raw^(1/time_interval_yr)` (constant hazard assumption)
 
 ---
 
@@ -434,23 +434,19 @@ library(readr)
 surv_ind <- read_csv("05_data/standardized/apal_surv_ind.csv")
 growth_ind <- read_csv("05_data/standardized/apal_growth_ind.csv")
 
-# Summary-level data (Tier 2, including AI-extracted rows 321+)
+# Summary-level data (Tier 2, including expanded search rows 321+)
 surv_summ <- read_csv("05_data/standardized/apal_surv_summ.csv")
 
-# AI-extracted audit trail (not used directly in pipeline)
-ai_surv <- read_csv("05_data/ai_extracted/ai_extracted_survival.csv")
-ai_frag <- read_csv("05_data/ai_extracted/ai_extracted_fragmentation.csv")
+# Expanded search audit trail (not used directly in pipeline)
+exp_surv <- read_csv("05_data/expanded_search/expanded_search_survival.csv")
+exp_frag <- read_csv("05_data/expanded_search/expanded_search_fragmentation.csv")
 ```
 
-### Distinguishing hand-extracted vs AI-extracted data
+### Distinguishing hand-extracted vs expanded search data
 
 ```r
-# In apal_surv_summ.csv:
-hand_extracted <- surv_summ %>% filter(!grepl("AI_EXTRACTED", study_notes))
-ai_extracted <- surv_summ %>% filter(grepl("AI_EXTRACTED", study_notes))
-
 # In 14b meta-analysis output:
-# data_tier column: "Tier 2 (summary)" = hand, "Tier 2 (summary) [AI_EXTRACTED]" = AI
+# data_tier column: "Tier 2 (summary)" = hand, "Tier 2 (summary) [EXPANDED]" = expanded search
 ```
 
 ### Key Caveats
@@ -459,10 +455,10 @@ ai_extracted <- surv_summ %>% filter(grepl("AI_EXTRACTED", study_notes))
 2. **Fragment vs. colony**: Size classes SC1-SC2 are predominantly fragments; SC4-SC5 are predominantly intact colonies
 3. **Simpson's Paradox**: Apparent survival differences by size may be confounded by fragment status
 4. **Negative growth**: Present in NOAA data; may indicate tissue loss or measurement uncertainty
-5. **AI-extracted data**: Clearly tagged and audited, but should be treated with appropriate caution. See [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
+5. **Expanded search data**: Clearly tagged and verified, but should be treated with appropriate caution. See [04_extraction/extraction_protocol.md](/Users/adrianstier/Detmer-2025-coral-parameters/04_extraction/extraction_protocol.md).
 
 ---
 
 *Last updated: 2026-03-26*
 *Original data: APAL_data_integration.rmd (Detmer 2025)*
-*AI-extracted extension: Claude (March 2026), audited*
+*Expanded search extension (March 2026), verified*

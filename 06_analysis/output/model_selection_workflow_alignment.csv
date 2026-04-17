@@ -1,5 +1,5 @@
 "response","workflow","candidate","canonical_for_manuscript","recommended_threshold_cm2","functional_form","gate_passed","supporting_model","gam_k","gam_aic","baseline_glm_aic","note"
-"survival","threshold_gam_workflow","Survival GAM threshold workflow",TRUE,7497.65840191397,"sigmoidal",TRUE,"GLMM_full",10,4542.61263915581,4560.53100091704,"supported"
+"survival","threshold_gam_workflow","Survival GAM threshold workflow",TRUE,7497.65840191397,"sigmoidal",TRUE,"GLMM_full",10,4542.6126391558,4560.53100091704,"supported"
 "absolute_growth","threshold_gam_workflow","Growth threshold workflow: absolute_growth",TRUE,19.261292398433,"sigmoidal",TRUE,"gam",NA,NA,NA,"definition=min_d2; magnitude=169.16%"
 "relative_growth_rate","threshold_gam_workflow","Growth threshold workflow: relative_growth_rate",TRUE,36.8897552972674,"sigmoidal",TRUE,"gam",NA,NA,NA,"definition=min_d2; magnitude=-31.89%"
 "positive_growth_prob","threshold_gam_workflow","Growth threshold workflow: positive_growth_prob",TRUE,410.651020674488,"dome_shaped",TRUE,"gam",NA,NA,NA,"definition=zero_d1; magnitude=-3.61%"

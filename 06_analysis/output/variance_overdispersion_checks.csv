@@ -1,4 +1,4 @@
 model_name,n_obs,n_params,dispersion_ratio,overdispersed
-temporal_trend_glmm,7335,3,1.0086709021255704,FALSE
-size_region_interaction_glmm,7346,26,0.9790421933914283,FALSE
-survival_glmm_size_region,7346,9,0.9616767913816278,FALSE
+temporal_trend_glmm,7335,3,1.0086708251168182,FALSE
+size_region_interaction_glmm,7346,26,0.9790422322111206,FALSE
+survival_glmm_size_region,7346,9,0.9616769897716698,FALSE

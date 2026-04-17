@@ -5,4 +5,4 @@
 "Model specification (AIC range)","ΔAIC range = 17.2","MODERATE"
 "Temporal (max decade change)","Max change = 10.8%","MODERATE"
 "Geographic (max region change)","Max change = 19.9%","SENSITIVE"
-"Bootstrap (95% CI width)","Width = 31.2%","INFORMATIVE"
+"Bootstrap (95% CI width)","Width = 31.0%","INFORMATIVE"

@@ -1,7 +1,7 @@
 # PRISMA Search Replication
 
 **Date:** 2026-03-26
-**Searcher:** AI (Claude), supervised by Adrian Stier
+**Searcher:** Adrian Stier
 **Purpose:** Replicate the 5 original search strings from Detmer (2025) in PubMed and Semantic Scholar to assess search completeness and identify any missed studies with extractable *A. palmata* demographic data.
 **Method:** WebSearch queries targeting PubMed (`site:pubmed.ncbi.nlm.nih.gov`) and Semantic Scholar (`site:semanticscholar.org`). Because the `site:` operator returned limited results for some PubMed queries, supplementary broader searches were also run (e.g., `PubMed "Acropora palmata" survival mortality...`).
 

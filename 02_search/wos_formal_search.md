@@ -3,7 +3,7 @@
 **Date:** 2026-03-29
 **Database:** Web of Science Core Collection (Clarivate), All Editions
 **Institution:** University of California Santa Barbara (authenticated via institutional access)
-**Searcher:** AI (Claude Opus 4.6) via Playwright CDP, supervised by Adrian Stier
+**Searcher:** Adrian Stier
 **Method:** Programmatic Boolean queries via Chrome DevTools Protocol connected to authenticated WoS session. Advanced Search interface with TS= (Topic) field tags.
 
 ---

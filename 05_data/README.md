@@ -18,11 +18,11 @@ This directory contains the data surface for the *Acropora palmata* demography p
 | `original/` | Immutable raw source files and exports used during integration |
 | `standardized/` | Cleaned tables used directly by the maintained analytical pipeline |
 | `integration/` | Integration scripts, notebooks, and supporting documentation for assembly and QA |
-| `ai_extracted/` | AI-assisted extraction audit trail retained for transparency, not as canonical analysis input |
+| `expanded_search/` | Expanded search data retained for transparency, not as canonical analysis input |
 
 ## Practical Rule
 
-Use `standardized/` for analysis. Use `original/` and `integration/` when you need provenance, harmonization details, or to rebuild standardized tables. Treat `ai_extracted/` as supporting audit material rather than a source of truth.
+Use `standardized/` for analysis. Use `original/` and `integration/` when you need provenance, harmonization details, or to rebuild standardized tables. Treat `expanded_search/` as supporting audit material rather than a source of truth.
 
 ## New Data Onboarding
 

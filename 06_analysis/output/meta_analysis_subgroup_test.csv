@@ -1,2 +1,2 @@
 test,Q_between,df_between,p_between,Q_overall,Q_within,n_subgroups,caveat
-Subgroup differences by region,390.7563185020325,0,0,453.44627445244055,62.68995595040805,5,Q decomposition assumes common tau-squared across subgroups
+Subgroup differences by region,386.3359685990015,0,0,453.44627445244055,67.11030585343904,4,Q decomposition assumes common tau-squared across subgroups

@@ -1,6 +1,6 @@
 size_class,data_type,n_reliable,n_uncertain,pct_reliable
-SC1,survival,4,225,1.75
-SC2,survival,8,12,40
+SC1,survival,4,220,1.79
+SC2,survival,8,17,32
 SC3,survival,15,0,100
 SC4,survival,7,0,100
 SC5,survival,5,0,100

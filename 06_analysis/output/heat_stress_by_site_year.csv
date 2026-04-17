@@ -7,80 +7,80 @@ NOAA_survey,Florida Keys,25,-80.3,2005,9,major,original: Literature LUT: Eakin e
 NOAA_survey,Florida Keys,25,-80.4,2005,9,major,original: Literature LUT: Eakin et al. 2010 (re-query failed),error
 NOAA_survey,Florida Keys,25.2,-80.2,2006,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2006,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.4,2006,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2006,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.4,2006,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2007,NA,NA,no_data,error
-NOAA_survey,Curacao,12.3,-69.1,2007,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2007,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2007,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2007,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.4,2007,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2007,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.3,2008,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.4,2007,NA,NA,no_data,error
+NOAA_survey,Curacao,12.3,-69.1,2007,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-68.9,2007,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2008,NA,NA,no_data,error
-NOAA_survey,Curacao,12.3,-69.1,2008,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2008,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2008,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2008,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.3,2008,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2008,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.4,2009,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.3,2009,NA,NA,no_data,error
-NOAA_survey,Navassa,18.4,-75,2009,NA,NA,no_data,error
+NOAA_survey,Curacao,12.3,-69.1,2008,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-68.9,2008,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2009,NA,NA,no_data,error
-NOAA_survey,Curacao,12.3,-69.1,2009,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2009,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2009,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2009,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.4,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
-NOAA_survey,Florida Keys,25.3,-80.2,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
-NOAA_survey,Florida Keys,25,-80.3,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25,-80.3,2009,NA,NA,no_data,error
+NOAA_survey,Navassa,18.4,-75,2009,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.4,2009,NA,NA,no_data,error
+NOAA_survey,Curacao,12.3,-69.1,2009,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-68.9,2009,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2010,5,moderate,original: Literature LUT: Skirving et al. 2019 (re-query failed),error
+NOAA_survey,Florida Keys,25.2,-80.2,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25.1,-80.3,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25,-80.3,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25,-80.4,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
 NOAA_survey,Curacao,12.3,-69.1,2010,5,moderate,original: Literature LUT: Skirving et al. 2019 (re-query failed),error
 NOAA_survey,Curacao,12.1,-68.9,2010,5,moderate,original: Literature LUT: Skirving et al. 2019 (re-query failed),error
-NOAA_survey,Florida Keys,25.1,-80.3,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
-NOAA_survey,Florida Keys,25.2,-80.2,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25.3,-80.2,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
 NOAA_survey,Curacao,12.1,-69,2011,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2011,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2011,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2011,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2011,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2011,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25.3,-80.2,2011,NA,NA,no_data,error
 NOAA_survey,Curacao,12.3,-69.1,2011,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-68.9,2011,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25.3,-80.2,2011,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2012,NA,NA,no_data,error
-NOAA_survey,Curacao,12.3,-69.1,2012,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2012,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2012,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2012,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2012,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.4,2012,NA,NA,no_data,error
 NOAA_survey,Navassa,18.4,-75,2012,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.4,2012,NA,NA,no_data,error
+NOAA_survey,Curacao,12.3,-69.1,2012,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-68.9,2012,NA,NA,no_data,error
+NOAA_survey,Curacao,12.1,-69,2013,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2013,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2013,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2013,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2013,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-69,2013,NA,NA,no_data,error
 NOAA_survey,Curacao,12.3,-69.1,2013,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-68.9,2013,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.3,-80.2,2013,NA,NA,no_data,error
 NOAA_survey,Curacao,12.1,-69,2014,NA,NA,no_data,error
-NOAA_survey,Curacao,12.1,-68.9,2014,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25.1,-80.3,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25,-80.3,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25,-80.4,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+NOAA_survey,Curacao,12.1,-68.9,2014,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.3,-80.2,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Curacao,12.1,-69,2015,4,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25.2,-80.2,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25.1,-80.3,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25,-80.3,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Florida Keys,25,-80.4,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-NOAA_survey,Florida Keys,25.3,-80.2,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 NOAA_survey,Curacao,12.1,-68.9,2015,4,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25.3,-80.2,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+NOAA_survey,Florida Keys,25.2,-80.2,2016,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2016,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2016,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2016,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25.2,-80.2,2016,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.2,-80.2,2017,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2017,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2017,NA,NA,no_data,error
@@ -89,19 +89,19 @@ NOAA_survey,Florida Keys,25.2,-80.2,2018,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2018,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2018,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2018,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25.2,-80.2,2019,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2019,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.3,2019,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2019,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25.2,-80.2,2019,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.3,2022,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25.1,-80.3,2022,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25,-80.3,2022,NA,NA,no_data,error
 NOAA_survey,Florida Keys,25,-80.4,2022,NA,NA,no_data,error
-NOAA_survey,Florida Keys,25,-80.3,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
-NOAA_survey,Florida Keys,25.1,-80.3,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
-NOAA_survey,Florida Keys,25,-80.4,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
 NOAA_survey,Florida Keys,25.2,-80.2,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
-NOAA_survey,Florida Keys,25.2,-80.3,2024,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25.1,-80.3,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
+NOAA_survey,Florida Keys,25,-80.3,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
+NOAA_survey,Florida Keys,25,-80.4,2023,16,major,original: Literature LUT: NOAA/NESDIS 2024 (re-query failed),error
 NOAA_survey,Florida Keys,25.1,-80.3,2024,NA,NA,no_data,error
+NOAA_survey,Florida Keys,25.2,-80.3,2024,NA,NA,no_data,error
 USGS_USVI_exp,US Virgin Islands,17.8,-64.6,2020,NA,NA,no_data,error
 USGS_USVI_exp,US Virgin Islands,17.8,-64.6,2021,NA,NA,no_data,error
 bruckner_bruckner_2001,Puerto Rico,18,-67.9,1999,NA,NA,no_data,error
@@ -115,45 +115,45 @@ forrester_et_al_2013,British Virgin Islands,18.5,-64.6,2012,NA,NA,no_data,error
 fundemar_fragments,Dominican Republic,18.4,-68.8,2021,NA,NA,no_data,error
 fundemar_recruits,Dominican Republic,18.4,-68.8,2020,NA,NA,no_data,error
 garrison_ward_2008,USVI,18.4,-64.7,2000,NA,NA,no_data,error
-kuffner_et_al_2020,Dry Tortugas,24.7,-82.8,2019,NA,NA,no_data,error
-kuffner_et_al_2020,Florida Keys,24.6,-81.1,2019,NA,NA,no_data,error
 kuffner_et_al_2020,Florida Keys,24.9,-80.5,2019,NA,NA,no_data,error
 kuffner_et_al_2020,Florida Keys,25.6,-80.1,2019,NA,NA,no_data,error
+kuffner_et_al_2020,Dry Tortugas,24.7,-82.8,2019,NA,NA,no_data,error
+kuffner_et_al_2020,Florida Keys,24.6,-81.1,2019,NA,NA,no_data,error
 maurer_et_al_2022,Bahamas,26.1,-77.5,2017,NA,NA,no_data,error
 maurer_et_al_2022,Bahamas,26.1,-77.6,2017,NA,NA,no_data,error
-mendoza_quiroz_et_al_2023,Mexican Caribbean,20.9,-86.8,2016,NA,NA,no_data,error
 mendoza_quiroz_et_al_2023,Mexican Caribbean,21.1,-86.7,2016,NA,NA,no_data,error
+mendoza_quiroz_et_al_2023,Mexican Caribbean,20.9,-86.8,2016,NA,NA,no_data,error
 mendoza_quiroz_et_al_2023,Mexican Caribbean,20.9,-86.8,2021,NA,NA,no_data,error
 muller_et_al_2008,US Virgin Islands,18.4,-64.8,2006,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.7,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,24.5,-81.9,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
 neely_et_al_2022,Florida Keys,25.4,-80.2,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.9,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
 neely_et_al_2022,Florida Keys,24.6,-81.1,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.7,2010,7,moderate,original: Literature LUT: Manzello 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.6,-82.9,2011,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.4,2011,NA,NA,no_data,error
 neely_et_al_2022,Florida Keys,25.4,-80.2,2011,NA,NA,no_data,error
 neely_et_al_2022,Florida Keys,24.6,-81.1,2011,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.4,2011,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.6,-82.9,2011,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.7,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.9,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,25.4,-80.2,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.6,-81.1,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.4,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.6,-82.9,2012,NA,NA,no_data,error
 neely_et_al_2022,Florida Keys,25.3,-80.2,2012,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.7,2013,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.9,2013,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,25.4,-80.2,2013,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.6,-81.1,2013,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.4,2013,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.6,-82.9,2012,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.4,2012,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,25.4,-80.2,2012,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.9,2012,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.6,-81.1,2012,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.7,2012,NA,NA,no_data,error
 neely_et_al_2022,Florida Keys,24.6,-82.9,2013,NA,NA,no_data,error
-neely_et_al_2022,Florida Keys,24.5,-81.7,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,24.5,-81.9,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,25.4,-80.2,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,24.6,-81.1,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,24.5,-81.4,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.4,2013,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,25.4,-80.2,2013,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.9,2013,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.6,-81.1,2013,NA,NA,no_data,error
+neely_et_al_2022,Florida Keys,24.5,-81.7,2013,NA,NA,no_data,error
 neely_et_al_2022,Florida Keys,24.6,-82.9,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
-neely_et_al_2022,Florida Keys,25.4,-80.2,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.4,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,25.4,-80.2,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.9,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.6,-81.1,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,24.5,-81.7,2014,5,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 neely_et_al_2022,Florida Keys,24.6,-82.9,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
+neely_et_al_2022,Florida Keys,25.4,-80.2,2015,6,moderate,original: Literature LUT: NOAA CRW 2015 (re-query failed),error
 ortiz_prosper_2005,Puerto Rico,17.9,-67.1,1999,NA,NA,no_data,error
 ortiz_prosper_2005,Puerto Rico,17.9,-67.1,2001,NA,NA,no_data,error
 pausch_et_al_2018,Florida Keys,25.2,-80.3,2016,NA,NA,no_data,error

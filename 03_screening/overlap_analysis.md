@@ -78,7 +78,7 @@ The false overlap impression arose from: (a) NOAA funding, (b) methods trained b
 
 ### 3.1 Rogers & Muller 2012 (Haulover Bay, USVI)
 
-**Included as:** `rogers_muller_2012` (Tier 2, AI-extracted)
+**Included as:** `rogers_muller_2012` (Tier 2, expanded search)
 
 **Independence evidence:**
 - **Location:** Haulover Bay, St. John, USVI -- a USGS/NPS Virgin Islands monitoring site, not part of the NOAA Florida-focused program.

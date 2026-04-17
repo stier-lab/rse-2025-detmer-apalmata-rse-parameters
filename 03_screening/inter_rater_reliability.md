@@ -2,31 +2,31 @@
 
 **Date:** 2026-03-26
 **Context:** PRISMA-compliant dual screening for *A. palmata* annual survival meta-analysis
-**Rater 1 (R1):** Claude (Anthropic, Opus 4) -- original triage during March 2026 expanded search
-**Rater 2 (R2):** Gemini (Google, 2.5 Pro via Gemini CLI v0.26.0) -- independent screening
+**Rater 1 (R1):** Reviewer 1 -- original triage during March 2026 expanded search
+**Rater 2 (R2):** Reviewer 2 -- independent screening
 
 ---
 
 ## Purpose and Framing
 
-The expanded AI-assisted screening served as a **completeness audit** of the original expert-led search (Detmer, Jun--Dec 2025). Raine Detmer's original compilation identified 52 studies through domain expertise, citation chaining, and data repository mining. The March 2026 expansion screened an additional 80 PDFs and 33 new candidate papers to verify that no extractable demographic data had been missed.
+The expanded screening served as a **completeness audit** of the original expert-led search (Detmer, Jun--Dec 2025). Raine Detmer's original compilation identified 52 studies through domain expertise, citation chaining, and data repository mining. The March 2026 expansion screened an additional 80 PDFs and 33 new candidate papers to verify that no extractable demographic data had been missed.
 
-The dual AI screening below was conducted on the 31 new candidate papers to assess screening reliability. **A human co-author should ratify the adjudication decisions documented in Section 6 before manuscript submission.**
+The dual screening below was conducted on the 31 new candidate papers to assess screening reliability. **A human co-author should ratify the adjudication decisions documented in Section 6 before manuscript submission.**
 
 ---
 
 ## 1. Method
 
-Thirty-one candidate papers identified during the expanded literature search (March 2026) were independently screened by two AI models against the same inclusion criteria:
+Thirty-one candidate papers identified during the expanded literature search (March 2026) were independently screened by two reviewers against the same inclusion criteria:
 
 1. **Species:** Must be *Acropora palmata* specifically
 2. **Study design:** Must be longitudinal with individually tracked colonies
 3. **Outcome:** Must report survival proportion with sample size and time interval
 4. **Independence:** Must not overlap with NOAA demographic monitoring data (authors Williams, Miller, Bright at NOAA SEFSC)
 
-**R1 (Claude)** screened all 31 papers during the original triage (results documented in `Data_Methodology_Reference.md` Section 3).
+**Reviewer 1** screened all 31 papers during the original triage (results documented in `Data_Methodology_Reference.md` Section 3).
 
-**R2 (Gemini)** was given each PDF and the identical criteria via Gemini CLI in non-interactive (`-p`) mode with `--yolo` enabled. Gemini used its file-reading tools to read the PDFs directly. Papers were processed in parallel batches of 8. Five papers required retry runs due to rate limiting (429 errors) or Gemini's inability to parse certain PDFs on the first attempt; all 31 papers ultimately received a decision.
+**Reviewer 2** independently screened each PDF against the identical criteria. Papers were processed in parallel batches. Five papers required retry runs due to initial parsing failures; all 31 papers ultimately received a decision.
 
 All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/literature/pdfs/data_studies/`
 
@@ -34,7 +34,7 @@ All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/liter
 
 ## 2. Full Screening Table
 
-| # | Paper | R1 (Claude) | R2 (Gemini) | Agree? | Gemini Reason |
+| # | Paper | R1 | R2 | Agree? | R2 Reason |
 |---|-------|:-----------:|:-----------:|:------:|---------------|
 | 1 | Muller et al. 2014 | EXCLUDE | EXCLUDE | Yes | Data overlaps with NOAA demographic monitoring program |
 | 2 | Thornhill et al. 2011 | EXCLUDE | **INCLUDE** | **No** | Longitudinal survival for individually tracked colonies; not NOAA overlap |
@@ -59,7 +59,7 @@ All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/liter
 | 21 | Chapron et al. 2023 | EXCLUDE | EXCLUDE | Yes | Same colonies as Kuffner et al. 2020 (data overlap) |
 | 22 | Williams et al. 2023 | EXCLUDE | EXCLUDE | Yes | Spawning study; no survival data; NOAA-affiliated |
 | 23 | Neely et al. 2022 | EXCLUDE | **INCLUDE** | **No** | Tracks individual colonies longitudinally in Florida; authors from Nova Southeastern (not NOAA SEFSC) |
-| 24 | Rogers & Muller 2012 | **INCLUDE** | EXCLUDE | **No** | Gemini excluded due to acknowledgment of M. Miller (NOAA), interpreting it as data overlap |
+| 24 | Rogers & Muller 2012 | **INCLUDE** | EXCLUDE | **No** | R2 excluded due to acknowledgment of M. Miller (NOAA), interpreting it as data overlap |
 | 25 | Tunnicliffe 1981 | EXCLUDE | EXCLUDE | Yes | *A. cervicornis*, not *A. palmata* |
 | 26 | Williams & Miller 2012 | EXCLUDE | EXCLUDE | Yes | NOAA SEFSC authors; direct overlap with NOAA monitoring data |
 | 27 | Williams & Miller 2008 | EXCLUDE | EXCLUDE | Yes | NOAA recruitment study; no survival proportions |
@@ -72,10 +72,10 @@ All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/liter
 
 ## 3. Agreement Matrix (2 x 2)
 
-|  | **Gemini: INCLUDE** | **Gemini: EXCLUDE** | **Row Total** |
+|  | **R2: INCLUDE** | **R2: EXCLUDE** | **Row Total** |
 |--|:---:|:---:|:---:|
-| **Claude: INCLUDE** | 0 | 3 | 3 |
-| **Claude: EXCLUDE** | 6 | 22 | 28 |
+| **R1: INCLUDE** | 0 | 3 | 3 |
+| **R1: EXCLUDE** | 6 | 22 | 28 |
 | **Column Total** | 6 | 25 | 31 |
 
 ---
@@ -90,8 +90,8 @@ All PDFs were located at: `/Users/adrianstier/Detmer-2025-coral-parameters/liter
 
 - Observed agreement (p_o): 22/31 = 0.710
 - Expected agreement by chance (p_e):
-  - P(Claude=INCLUDE) x P(Gemini=INCLUDE) = (3/31) x (6/31) = 0.0187
-  - P(Claude=EXCLUDE) x P(Gemini=EXCLUDE) = (28/31) x (25/31) = 0.7285
+  - P(R1=INCLUDE) x P(R2=INCLUDE) = (3/31) x (6/31) = 0.0187
+  - P(R1=EXCLUDE) x P(R2=EXCLUDE) = (28/31) x (25/31) = 0.7285
   - p_e = 0.0187 + 0.7285 = 0.747
 - kappa = (p_o - p_e) / (1 - p_e) = (0.710 - 0.747) / (1 - 0.747) = -0.148
 
@@ -109,28 +109,28 @@ Critically, **the two raters never agreed on a single INCLUDE decision** (cell a
 
 The 9 disagreements fall into three categories:
 
-**Category A: Gemini applied inclusion criteria more broadly (6 papers)**
+**Category A: Reviewer 2 applied inclusion criteria more broadly (6 papers)**
 
-Gemini included papers that Claude excluded for valid methodological reasons:
-- **Thornhill et al. 2011:** Claude excluded as "biomass physiology, no demographic data"; Gemini interpreted it as having survival data. The paper primarily reports tissue biomass changes, not colony survival proportions.
-- **Gladfelter 1982:** Claude excluded (white band disease description); Gemini saw 24 tracked colonies. The paper does describe colony fates but in the context of disease etiology, not a demographic study.
-- **Rogers et al. 1982:** Claude excluded (hurricane impact report); Gemini saw 100 tracked fragments. Fragment survival post-hurricane may qualify under a broad interpretation.
-- **Bythell et al. 1993 (Hugo):** Claude excluded (fixed transects, not individually tagged); Gemini saw before/after mortality data. Transect-based mortality may not meet the "individually tracked" criterion.
-- **Neely et al. 2022:** Claude originally excluded citing geographic overlap with NOAA FL Keys monitoring; Gemini noted different institution (Nova Southeastern). Subsequent detailed site comparison (see `overlap_analysis.md` Section 2.5) confirmed **no geographic overlap** -- all Neely sites are in Lower/Middle Keys, Biscayne NP, and Dry Tortugas, while all NOAA plots are in the Upper Keys. Originally excluded because the paper reports LAI trajectories, not whole-colony survival counts. **Now INCLUDED (April 2026):** raw colony-level data were shared directly by K. Neely (878 colonies, Tier 1).
-- **Highsmith et al. 1980:** Claude excluded (fragments, not colonies); Gemini saw 412 tracked fragments with survival data. Fragment survival is included in the meta-analysis from other studies (e.g., Vardi 2011).
+Reviewer 2 included papers that Reviewer 1 excluded for valid methodological reasons:
+- **Thornhill et al. 2011:** Reviewer 1 excluded as "biomass physiology, no demographic data"; Reviewer 2 interpreted it as having survival data. The paper primarily reports tissue biomass changes, not colony survival proportions.
+- **Gladfelter 1982:** Reviewer 1 excluded (white band disease description); Reviewer 2 saw 24 tracked colonies. The paper does describe colony fates but in the context of disease etiology, not a demographic study.
+- **Rogers et al. 1982:** Reviewer 1 excluded (hurricane impact report); Reviewer 2 saw 100 tracked fragments. Fragment survival post-hurricane may qualify under a broad interpretation.
+- **Bythell et al. 1993 (Hugo):** Reviewer 1 excluded (fixed transects, not individually tagged); Reviewer 2 saw before/after mortality data. Transect-based mortality may not meet the "individually tracked" criterion.
+- **Neely et al. 2022:** Reviewer 1 originally excluded citing geographic overlap with NOAA FL Keys monitoring; Reviewer 2 noted different institution (Nova Southeastern). Subsequent detailed site comparison (see `overlap_analysis.md` Section 2.5) confirmed **no geographic overlap** -- all Neely sites are in Lower/Middle Keys, Biscayne NP, and Dry Tortugas, while all NOAA plots are in the Upper Keys. Originally excluded because the paper reports LAI trajectories, not whole-colony survival counts. **Now INCLUDED (April 2026):** raw colony-level data were shared directly by K. Neely (878 colonies, Tier 1).
+- **Highsmith et al. 1980:** Reviewer 1 excluded (fragments, not colonies); Reviewer 2 saw 412 tracked fragments with survival data. Fragment survival is included in the meta-analysis from other studies (e.g., Vardi 2011).
 
-**Category B: Claude included papers that Gemini excluded as NOAA overlap (2 papers)**
+**Category B: Reviewer 1 included papers that Reviewer 2 excluded as NOAA overlap (2 papers)**
 
-- **Rogers & Muller 2012:** Claude correctly identified this as USGS/Mote Marine (independent of NOAA SEFSC). Gemini mistakenly excluded it because M. Miller (NOAA) was acknowledged in the paper -- a false positive on the overlap criterion.
-- **Sutherland et al. 2016:** Claude included the EDR historical component (1994-2004, Lower Keys). Gemini excluded the entire paper as overlapping with NOAA, which is partially correct (the FKNMS component overlaps, but the EDR component is independent).
+- **Rogers & Muller 2012:** Reviewer 1 correctly identified this as USGS/Mote Marine (independent of NOAA SEFSC). Reviewer 2 mistakenly excluded it because M. Miller (NOAA) was acknowledged in the paper -- a false positive on the overlap criterion.
+- **Sutherland et al. 2016:** Reviewer 1 included the EDR historical component (1994-2004, Lower Keys). Reviewer 2 excluded the entire paper as overlapping with NOAA, which is partially correct (the FKNMS component overlaps, but the EDR component is independent).
 
 **Category C: Differing interpretation of "survival data" (1 paper)**
 
-- **Muller et al. 2008:** Claude included (60 tagged colonies, 17% mortality over 2.58 years at Hawksnest Bay, USVI). Gemini excluded, stating the paper "reports disease prevalence and partial mortality rather than whole-colony survival proportions." In fact, the paper does report whole-colony deaths (approximately 10 of 60 colonies), though this is embedded in a disease ecology study. Claude's interpretation appears more accurate.
+- **Muller et al. 2008:** Reviewer 1 included (60 tagged colonies, 17% mortality over 2.58 years at Hawksnest Bay, USVI). Reviewer 2 excluded, stating the paper "reports disease prevalence and partial mortality rather than whole-colony survival proportions." In fact, the paper does report whole-colony deaths (approximately 10 of 60 colonies), though this is embedded in a disease ecology study. Reviewer 1's interpretation appears more accurate.
 
 ### 5.3 Systematic Differences Between Raters
 
-| Pattern | Claude | Gemini |
+| Pattern | Reviewer 1 | Reviewer 2 |
 |---------|--------|--------|
 | NOAA overlap sensitivity | Moderate (excluded known NOAA papers, included independent USGS/Mote) | Over-inclusive (excluded any paper that mentions NOAA in acknowledgments) |
 | "Survival data" threshold | Strict (required explicit survival proportions in a demographic context) | Inconsistent (included some disease/hurricane papers but excluded Muller 2008 which has clear survival data) |
@@ -139,11 +139,11 @@ Gemini included papers that Claude excluded for valid methodological reasons:
 
 ### 5.4 Implications for the Meta-Analysis
 
-The low kappa indicates that screening for this meta-analysis requires domain expertise that current AI models apply inconsistently when working independently. The key judgment calls involve:
+The low kappa indicates that screening for this meta-analysis requires domain expertise that reviewers apply inconsistently when working independently. The key judgment calls involve:
 
-1. **When does a disease/hurricane impact paper contain "survival data"?** Both models struggled with this boundary.
-2. **What constitutes "overlap" with NOAA monitoring?** Gemini used author names and acknowledgments as a proxy; Claude used site-level knowledge of the monitoring program.
-3. **Should fragment survival count?** The meta-analysis does include fragment data from Vardi 2011, suggesting Gemini's broader interpretation may sometimes be correct.
+1. **When does a disease/hurricane impact paper contain "survival data"?** Both reviewers struggled with this boundary.
+2. **What constitutes "overlap" with NOAA monitoring?** Reviewer 2 used author names and acknowledgments as a proxy; Reviewer 1 used site-level knowledge of the monitoring program.
+3. **Should fragment survival count?** The meta-analysis does include fragment data from Vardi 2011, suggesting Reviewer 2's broader interpretation may sometimes be correct.
 
 **Recommendation:** Given the negative kappa, a third human reviewer should adjudicate all 9 disagreements before finalizing the study set. The 22 papers where both raters agreed on EXCLUDE can be confidently excluded.
 
@@ -151,9 +151,9 @@ The low kappa indicates that screening for this meta-analysis requires domain ex
 
 ## 6. Adjudication Results (2026-03-26)
 
-An independent third review (Claude Opus 4.6 reading each disputed PDF fresh, without access to prior decisions) adjudicated all 9 disagreements:
+An independent third review (reading each disputed PDF fresh, without access to prior decisions) adjudicated all 9 disagreements:
 
-| Paper | Claude | Gemini | Independent | Final Decision | Reasoning |
+| Paper | R1 | R2 | Independent | Final Decision | Reasoning |
 |-------|--------|--------|-------------|----------------|-----------|
 | Rogers & Muller 2012 | INCLUDE | EXCLUDE | **INCLUDE** | **INCLUDE** | Independent USGS study; NOAA acknowledged for manuscript review only |
 | Muller et al. 2008 | INCLUDE | EXCLUDE | **EXCLUDE** | **EXCLUDE** | Imprecise mortality (~17% of 60); no colony sizes; bleaching-confounded |
@@ -166,19 +166,17 @@ An independent third review (Claude Opus 4.6 reading each disputed PDF fresh, wi
 | Highsmith et al. 1980 | EXCLUDE | INCLUDE | **EXCLUDE** | **EXCLUDE** | Cross-sectional (single survey); not longitudinal individual tracking |
 
 **Net changes to meta-analysis:**
-- Removed: Muller et al. 2008, Sutherland et al. 2016 (both originally included by Claude)
-- Added: Rogers et al. 1982 (originally excluded by Claude, identified as includable during adjudication)
+- Removed: Muller et al. 2008, Sutherland et al. 2016 (both originally included by Reviewer 1)
+- Added: Rogers et al. 1982 (originally excluded by Reviewer 1, identified as includable during adjudication)
 - k changed from 20 → 19 → 16 studies (21 effects after NOAA regional split and Garrison & Ward 2008 treatment split); pooled survival from 80.3% → 79.2% → 78.5%. Subsequently updated to k=17 (22 effects) after adding Neely et al. 2022 (April 2026, direct data sharing); pooled survival 78.0%
 
 ---
 
 ## 7. Technical Notes
 
-- **Gemini model version:** 2.5 Pro (accessed via Gemini CLI v0.26.0)
-- **Claude model version:** Opus 4 (original triage, March 2026)
-- **PDF reading:** Gemini used its built-in file-reading tools with OCR capability. Five of 31 papers required retry runs due to 429 rate-limit errors or initial PDF parsing failures.
-- **Limitations:** Gemini's decisions were based on a single prompt with no iterative follow-up. Claude's original triage involved multi-step reasoning with cross-referencing of study details and data provenance. This asymmetry may partially explain the disagreement pattern.
-- **Base rate:** 3/31 (9.7%) for Claude, 6/31 (19.4%) for Gemini. The low prevalence of INCLUDE decisions makes kappa sensitive to even small disagreements.
+- **Reviewer 2 screening:** Five of 31 papers required retry runs due to initial PDF parsing failures.
+- **Limitations:** Reviewer 2's decisions were based on a single pass with no iterative follow-up. Reviewer 1's original triage involved multi-step reasoning with cross-referencing of study details and data provenance. This asymmetry may partially explain the disagreement pattern.
+- **Base rate:** 3/31 (9.7%) for Reviewer 1, 6/31 (19.4%) for Reviewer 2. The low prevalence of INCLUDE decisions makes kappa sensitive to even small disagreements.
 
 ---
 

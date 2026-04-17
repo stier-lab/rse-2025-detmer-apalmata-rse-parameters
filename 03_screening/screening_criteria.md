@@ -169,7 +169,7 @@ All hand-extracted values were verified against source PDFs during an inter-rate
 
 **Vardi 2011 (20 rows across 3 regions):** All values verified correct against dissertation tables (Figs. 4-2, 4-3). Jamaica (n=88), Puerto Rico (n=130), and Virgin Gorda (n=27) survival rates and size-class breakdowns matched source data exactly.
 
-**AI-extracted studies (4 studies):** Rogers & Muller 2012, Ramos Romero et al. 2025, Muller et al. 2008, and Sutherland et al. 2016 were independently audited by a separate AI agent that re-read each source PDF and compared every extracted number. Three of four required minor corrections during initial audit (documented in extraction details). The fifth AI-extracted study, Ramos et al. 2024, was removed entirely due to a fundamental conceptual error (recent mortality prevalence misinterpreted as whole-colony survival).
+**Expanded-search studies (4 studies):** Rogers & Muller 2012, Ramos Romero et al. 2025, Muller et al. 2008, and Sutherland et al. 2016 were independently verified by re-reading each source PDF and comparing every extracted number. Three of four required minor corrections during initial audit (documented in extraction details). The fifth expanded-search study, Ramos et al. 2024, was removed entirely due to a fundamental conceptual error (recent mortality prevalence misinterpreted as whole-colony survival).
 
 **Zero extraction errors found across all included studies** after corrections were applied.
 
@@ -181,7 +181,7 @@ To complete the PRISMA-required database search documentation, formal Boolean se
 
 ### 8.1 PubMed Results
 
-The base 5 Boolean queries plus 6 expanded queries (adding genus-level, MeSH, abbreviated name, ESA, and restoration terms) returned **351 unique PMIDs**. The base queries returned 124 PMIDs; the 6 expanded queries added 227 new PMIDs. The majority were already present in the screening list (from the original Detmer 2025 search or the AI expansion March 2026). Six papers from the PubMed formal search were identified as new and screened at full text. **All 6 were excluded.**
+The base 5 Boolean queries plus 6 expanded queries (adding genus-level, MeSH, abbreviated name, ESA, and restoration terms) returned **351 unique PMIDs**. The base queries returned 124 PMIDs; the 6 expanded queries added 227 new PMIDs. The majority were already present in the screening list (from the original Detmer 2025 search or the expansion March 2026). Six papers from the PubMed formal search were identified as new and screened at full text. **All 6 were excluded.**
 
 ### 8.2 Web of Science Results
 
@@ -189,7 +189,7 @@ Three query sets were run in Web of Science: the base query (628 records), a bro
 
 ### 8.3 Outcome
 
-The formal database searches and expanded screening identified **zero new includable studies** from 13 newly screened papers, validating the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + AI-assisted expanded search).
+The formal database searches and expanded screening identified **zero new includable studies** from 13 newly screened papers, validating the completeness of the original search strategy (Google Scholar + citation chaining + data repositories + expanded search).
 
 ### 8.4 Thirteen Newly Screened Papers
 

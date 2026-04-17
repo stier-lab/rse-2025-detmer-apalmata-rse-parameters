@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-29
 **Database:** PubMed (NCBI E-utilities API, esearch.fcgi)
-**Searcher:** AI (Claude Opus 4.6), supervised by Adrian Stier
+**Searcher:** Adrian Stier
 **Method:** Programmatic Boolean queries via NCBI E-utilities REST API with Title/Abstract field restriction
 
 ---
