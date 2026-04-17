@@ -76,12 +76,16 @@ These are now packaged separately in `recruit_surv_pars.rds` with:
 
 ---
 
-## RSE Repo TODOs
+## RSE Repo Status
 
-The RSE repo (`Detmer-2025-coral-RSE`) still needs:
+Already fixed (pushed to RSE main, April 15):
 
-1. **Update path references**: All Rmd files reference `standardized_data/` — the symlink handles this but the paths should be updated to `05_data/standardized/` for clarity.
-2. **Remove hardcoded absolute paths**: `rse_sensitivity.rmd` has paths to `/Users/rainedetmer/Desktop/...`.
-3. **Update QUICK_START.md**: Documents wrong size class boundaries (1-20, 20-100, etc. instead of 0-10, 10-100, etc.).
-4. **Re-run all scenarios**: With the new lower survival estimates, all RSE projections will show faster decline. Restoration effectiveness comparisons may shift.
-5. **Consider whether lab survival parameters need updating**: The RSE model uses hardcoded `lab_pars$s0 = 0.95` and `lab_pars$s1 = 0.70`. The synthesis repo has `apal_surv_lab_short.csv` (6 rows, 4-30 day intervals) but these are too short-term to directly inform annual lab survival. The current hardcoded values may still be the best available estimates.
+1. ~~**Path references**~~: `standardized_data/` → `05_data/standardized/` in 4 Rmd files
+2. ~~**Hardcoded paths**~~: 9 `/Users/rainedetmer/Desktop/...` paths replaced with relative `DATA_PATH` in `rse_sensitivity.rmd`
+3. ~~**QUICK_START.md**~~: Size class boundaries corrected to 0-10/10-100/100-900/900-4000/>4000
+
+Still needed:
+
+4. **Re-run all scenarios**: Field survival values changed (rma-based, 2000 bootstrap samples). Lambda shifted from 0.986 to 0.961. Restoration effectiveness comparisons may shift.
+5. **Consider `recruit_surv_pars.rds`**: The new `s_recruit = 0.028` parameter is available for recruit-based restoration scenarios. It's a potential alternative to or supplement for the hardcoded `s1 = 0.70` (which applies to nursery fragments, not microscopic settlers).
+6. **Consider whether lab survival parameters need updating**: The RSE model uses hardcoded `lab_pars$s0 = 0.95` and `lab_pars$s1 = 0.70`. The synthesis repo has `apal_surv_lab_short.csv` (6 rows, 4-30 day intervals) but these are too short-term to directly inform annual lab survival. The current hardcoded values may still be the best available estimates.
