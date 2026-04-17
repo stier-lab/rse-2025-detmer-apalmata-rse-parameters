@@ -17,7 +17,7 @@
 #   - 06_analysis/output/study_window_disturbance_summary_by_study.csv
 #   - 06_analysis/output/study_window_disturbance_summary_overall.csv
 #   - 06_analysis/output/study_window_disturbance_rebuild_check.csv
-#   - 07_reporting/tables/study_window_disturbance_audit.md
+#   - 07_reporting/manuscript/tables/study_window_disturbance_audit.md
 ################################################################################
 
 suppressPackageStartupMessages({
@@ -36,7 +36,7 @@ if (file.exists("06_analysis/scripts/utils/shared_utilities.R")) {
 project_root <- get_project_root()
 dirs <- setup_output_dirs(project_root)
 output_dir <- dirs$output
-tables_dir <- file.path(project_root, "07_reporting/tables")
+tables_dir <- file.path(project_root, "07_reporting/manuscript/tables")
 dir.create(tables_dir, showWarnings = FALSE, recursive = TRUE)
 
 print_header("38: STUDY-WINDOW DISTURBANCE COVERAGE AUDIT")
@@ -258,4 +258,4 @@ cat("  - 06_analysis/output/study_window_disturbance_audit.csv\n")
 cat("  - 06_analysis/output/study_window_disturbance_summary_by_study.csv\n")
 cat("  - 06_analysis/output/study_window_disturbance_summary_overall.csv\n")
 cat("  - 06_analysis/output/study_window_disturbance_rebuild_check.csv\n")
-cat("  - 07_reporting/tables/TableS2_study_window_disturbance_audit.md\n")
+cat("  - 07_reporting/manuscript/tables/TableS2_study_window_disturbance_audit.md\n")

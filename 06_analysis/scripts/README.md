@@ -3,10 +3,10 @@
 R analysis pipeline for *Acropora palmata* size-structured demographic parameter estimation. This directory holds the maintained execution surface: standardization helpers, numbered analyses, manuscript figure builders, scenario extensions, advanced dynamic models, and verification utilities.
 
 For directory-level navigation, see [06_analysis/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/README.md).
-For the parent goal, paper goals, and current completeness roadmap, see [paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/paper_scope_and_analysis_roadmap.md).
-For the current core/supporting/exploratory labeling, see [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/analysis_inventory_labels.md).
-For the retained manuscript-facing figure/table set, see [final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
-For the script-by-script diagnostics and outstanding-issues review, see [model_audit/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/model_audit/README.md).
+For the parent goal, paper goals, and current completeness roadmap, see [paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/paper_scope_and_analysis_roadmap.md).
+For the current core/supporting/exploratory labeling, see [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/analysis_inventory_labels.md).
+For the retained manuscript-facing figure/table set, see [figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).
+For the script-by-script diagnostics and outstanding-issues review, see [model_audit/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/model_audit/README.md).
 
 ---
 
@@ -199,12 +199,12 @@ These scripts push beyond the main GLMM + matrix-model surface. They are best tr
 | Script | Description | Key Outputs |
 |--------|-------------|-------------|
 | `41_multistate_transition_model.R` | Interval-adjusted multistate size-class transition model with explicit death state and retrogression summaries | `multistate_*.csv` |
-| `42_joint_longitudinal_survival_model.R` | Two-stage joint approximation linking live-size trajectory to interval mortality hazard | `joint_longitudinal_*.csv`, `joint_longitudinal_risk_curve.png` |
-| `43_stochastic_ipm_disturbance_model.R` | Disturbance-conditioned stochastic IPM / kernel viability projection layer with explicit recruitment scenarios | `stochastic_ipm_*.csv`, `stochastic_ipm_recruitment_scenarios.csv`, `stochastic_ipm_projection_trajectories.*` |
-| `44_regime_switching_model.R` | Hidden-state regime classification of annual survival-condition deviations | `regime_switching_*.csv`, `regime_switching_year_states.*` |
-| `45_distributed_lag_disturbance_model.R` | Distributed-lag disturbance models for survival, positive growth, and RGR | `distributed_lag_*.csv`, `distributed_lag_coefficients.*` |
+| `42_joint_longitudinal_survival_model.R` | Two-stage joint approximation linking live-size trajectory to interval mortality hazard | `joint_longitudinal_*.csv`, `exploratory/joint_longitudinal_risk_curve.png` |
+| `43_stochastic_ipm_disturbance_model.R` | Disturbance-conditioned stochastic IPM / kernel viability projection layer with explicit recruitment scenarios | `stochastic_ipm_*.csv`, `stochastic_ipm_recruitment_scenarios.csv`, `exploratory/stochastic_ipm_projection_trajectories.*` |
+| `44_regime_switching_model.R` | Hidden-state regime classification of annual survival-condition deviations | `regime_switching_*.csv`, `exploratory/regime_switching_year_states.*` |
+| `45_distributed_lag_disturbance_model.R` | Distributed-lag disturbance models for survival, positive growth, and RGR | `distributed_lag_*.csv`, `exploratory/distributed_lag_coefficients.*` |
 | `46_recurrent_event_frailty_model.R` | Colony-history recurrent-event shrinkage and terminal mortality frailty models | `recurrent_event_*.csv` |
-| `47_spatiotemporal_hierarchical_model.R` | Spatiotemporal hierarchical GAMM layer over site coordinates and site-year structure | `spatiotemporal_*.csv`, `spatiotemporal_hierarchical_summary.*` |
+| `47_spatiotemporal_hierarchical_model.R` | Spatiotemporal hierarchical GAMM layer over site coordinates and site-year structure | `spatiotemporal_*.csv`, `exploratory/spatiotemporal_hierarchical_summary.*` |
 
 ### Utilities -- Verification & Shared Code
 
@@ -252,8 +252,8 @@ When `run_all.R` completes successfully, the maintained pipeline is expected to 
 - [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
 - [standardized_data_inventory.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/standardized_data_inventory.csv)
 - [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
-- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
-- [canonical_statistics.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/canonical_statistics.md)
+- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/pipeline_refresh_report.md)
+- [canonical_statistics.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/canonical_statistics.md)
 
 ### Individual scripts
 
@@ -311,20 +311,19 @@ The maintained pattern is:
 │   └── model_selection_*.csv       # Model comparison (from 12)
 │
 ├── figures/
-│   ├── manuscript/                 # Canonical main-text figures + support variants
+│   ├── manuscript/                 # Canonical main-text figures (Fig 1-4)
 │   │   ├── Fig1_*.png/.pdf         # Main text
 │   │   ├── Fig2_*.png/.pdf         # Main text
 │   │   ├── Fig3_*.png/.pdf         # Main text
-│   │   ├── Fig4_*.png/.pdf         # Main text
-│   │   └── support-only variants   # e.g. Fig4_size_class_survival.*, Fig5_*, Fig6_*
+│   │   └── Fig4_*.png/.pdf         # Main text
 │   │
-│   └── supplementary/              # Canonical supplement + support-only variants
+│   └── supplementary/              # Canonical supplement (FigS1-S28)
 │       ├── FigS1_*.png/.pdf        # Size distribution (from 18)
 │       ├── FigS2_*.png/.pdf        # Data gaps heatmap (from 23)
 │       ├── FigS3--S15_*.png/.pdf   # Diagnostics, robustness, and regional survival
 │       ├── FigS16--S20_*.png/.pdf  # Shrinkage, disturbance, restoration, and time series figures
 │       ├── FigS21--S28_*.png/.pdf  # Forest plots, heatwave, disturbance, and context extensions
-│       ├── exploratory/
+│       ├── exploratory/            # Unnumbered support figures (advanced models, diagnostics)
 │       ├── diagnostics/
 │       └── meta_analysis/
 │

@@ -32,8 +32,8 @@
 #   - 06_analysis/output/stochastic_ipm_year_regime_series.csv
 #   - 06_analysis/output/stochastic_ipm_projection_quantiles.csv
 #   - 06_analysis/output/stochastic_ipm_simulation_summary.csv
-#   - 06_analysis/figures/supplementary/stochastic_ipm_projection_trajectories.png
-#   - 06_analysis/figures/supplementary/stochastic_ipm_projection_trajectories.pdf
+#   - 06_analysis/figures/supplementary/exploratory/stochastic_ipm_projection_trajectories.png
+#   - 06_analysis/figures/supplementary/exploratory/stochastic_ipm_projection_trajectories.pdf
 ################################################################################
 
 if (file.exists("06_analysis/scripts/utils/shared_utilities.R")) {
@@ -580,11 +580,11 @@ p <- ggplot(plot_df, aes(x = year, y = median_population, color = scenario_label
   theme_manuscript()
 
 ggsave(
-  file.path(supp_dir, "stochastic_ipm_projection_trajectories.png"),
+  file.path(supp_dir, "exploratory", "stochastic_ipm_projection_trajectories.png"),
   plot = p, width = 180, height = 120, units = "mm", dpi = 300
 )
 ggsave(
-  file.path(supp_dir, "stochastic_ipm_projection_trajectories.pdf"),
+  file.path(supp_dir, "exploratory", "stochastic_ipm_projection_trajectories.pdf"),
   plot = p, width = 180, height = 120, units = "mm"
 )
 
@@ -603,6 +603,6 @@ cat("  - stochastic_ipm_regime_transition_matrix.csv\n")
 cat("  - stochastic_ipm_year_regime_series.csv\n")
 cat("  - stochastic_ipm_projection_quantiles.csv\n")
 cat("  - stochastic_ipm_simulation_summary.csv\n")
-cat("  - stochastic_ipm_projection_trajectories.png/.pdf\n\n")
+cat("  - figures/supplementary/exploratory/stochastic_ipm_projection_trajectories.png/.pdf\n\n")
 
 cat("Done.\n")

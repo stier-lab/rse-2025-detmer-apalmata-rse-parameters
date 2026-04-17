@@ -2,7 +2,7 @@
 
 This directory contains both the canonical manuscript-facing figure set and a wider layer of support-only or exploratory figure outputs.
 
-Use [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md) and [07_reporting/figure_table_build_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/figure_table_build_map.md) as the authoritative sources for what is part of the final numbered build.
+Use [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md) as the authoritative source for what is part of the final numbered build.
 
 ## Canonical Main-Text Figures (`manuscript/`)
 
@@ -46,19 +46,45 @@ Use [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-cora
 | Fig. S27 Disturbance summary | (orphan) | `FigS27_disturbance_summary.*` |
 | Fig. S28 Temporal synthesis | `50_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis.*` |
 
-## Support-Only And Deprecated Figure Variants
+## Exploratory And Support-Only Figures (`supplementary/exploratory/`)
 
-These files remain useful for traceability or revision support, but they are **not** part of the final numbered manuscript build:
+These files are not part of the final numbered manuscript build. They live in `supplementary/exploratory/` and include advanced dynamic model outputs and internal support diagnostics:
 
-- `manuscript/Fig2_vital_rates.*`
-- `manuscript/Fig3_natural_vs_restoration.png`
-- `manuscript/Fig4_size_class_survival.*`
-- `manuscript/Fig5_expanded_forest_plot.png`
-- `manuscript/Fig6_population_model.png`
-- `supplementary/disturbance_timeline_highres.*`
-- `supplementary/disturbance_regional_severity.*`
-- advanced-model figures such as `distributed_lag_coefficients.*`, `joint_longitudinal_risk_curve.png`, `regime_switching_year_states.*`, `spatiotemporal_hierarchical_summary.*`, and `stochastic_ipm_projection_trajectories.*`
+- `disturbance_timeline_highres.*` -- detailed disturbance timeline (from `34_disturbance_summaries.R`)
+- `disturbance_regional_severity.*` -- regional severity heatmap (from `34_disturbance_summaries.R`)
+- `distributed_lag_coefficients.*` -- distributed-lag disturbance model (from `45`)
+- `regime_switching_year_states.*` -- HMM regime classification (from `44`)
+- `spatiotemporal_hierarchical_summary.*` -- spatiotemporal GAMM (from `47`)
+- `stochastic_ipm_projection_trajectories.*` -- stochastic IPM projections (from `43`)
+- `joint_longitudinal_risk_curve.png` -- joint longitudinal-survival model (from `42`)
+- `model_selection_survival.png`, `model_selection_growth.png`, `survival_coefficients.png` -- model comparison diagnostics (from `12`)
+- `allometry_analysis.png` -- allometric analysis (from `04`)
 
-## Output Format
+## Model Diagnostics (`supplementary/diagnostics/`)
 
-Canonical manuscript and supplementary figures are written as both PNG and PDF when the generating script supports both formats. Support-only outputs vary by script.
+Base R diagnostic plots (residuals, Q-Q, DHARMa):
+
+- `survival_model_diagnostics.png` -- from `02`
+- `growth_model_diagnostics.png` -- from `03`
+
+## Meta-Analysis Diagnostics (`supplementary/meta_analysis/`)
+
+Internal diagnostic figures from scripts 14 and 14b:
+
+- `Fig_meta_*` -- k=5 meta-analysis (forest, funnel, heterogeneity, stratified)
+- `expanded_*` -- k=17/22 expanded meta-analysis (forest, funnel, tier comparison, regional, trim-and-fill)
+- `leave_one_out_analysis.png` -- LOSO sensitivity
+
+## Naming Convention
+
+| Directory | Pattern | Example |
+|-----------|---------|---------|
+| `manuscript/` | `Fig{N}_{snake_case}.{pdf,png}` | `Fig1_study_landscape.pdf` |
+| `supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | `FigS12_sensitivity.pdf` |
+| `supplementary/exploratory/` | `{snake_case}.{pdf,png}` | `power_curves.png` |
+| `supplementary/diagnostics/` | `{snake_case}.png` | `survival_model_diagnostics.png` |
+| `supplementary/meta_analysis/` | `{prefix}_{snake_case}.{pdf,png}` | `expanded_forest_plot.pdf` |
+
+- Manuscript and supplementary figures are always saved as both PNG and PDF via `save_manuscript_fig()`
+- Exploratory figures may be PNG-only when they are internal diagnostics
+- Figure numbering is defined in `utils/01_functions.R` (canonical registry)

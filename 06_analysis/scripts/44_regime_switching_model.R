@@ -21,7 +21,7 @@
 #   - 06_analysis/output/regime_switching_state_parameters.csv
 #   - 06_analysis/output/regime_switching_transition_matrix.csv
 #   - 06_analysis/output/regime_switching_fit_summary.csv
-#   - 06_analysis/figures/supplementary/regime_switching_year_states.png/.pdf
+#   - 06_analysis/figures/supplementary/exploratory/regime_switching_year_states.png/.pdf
 ################################################################################
 
 suppressPackageStartupMessages({
@@ -532,16 +532,16 @@ p <- ggplot(year_states, aes(x = survey_yr, y = year_effect_logit)) +
   theme_manuscript()
 
 ggsave(
-  file.path(fig_dir, "regime_switching_year_states.png"),
+  file.path(fig_dir, "exploratory", "regime_switching_year_states.png"),
   p, width = 180, height = 110, units = "mm", dpi = 300
 )
 pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
 ggsave(
-  file.path(fig_dir, "regime_switching_year_states.pdf"),
+  file.path(fig_dir, "exploratory", "regime_switching_year_states.pdf"),
   p, width = 180, height = 110, units = "mm", device = pdf_device
 )
 
-cat("  Saved: regime_switching_year_states.png/.pdf\n")
+cat("  Saved: exploratory/regime_switching_year_states.png/.pdf\n")
 
 print_subheader("Section 5: Key Diagnostics")
 cat(sprintf("  HMM logLik: %.3f | AIC: %.2f | BIC: %.2f\n",

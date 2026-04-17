@@ -29,7 +29,7 @@
 #   - 06_analysis/output/distributed_lag_growth_model_terms.csv
 #   - 06_analysis/output/distributed_lag_effect_summary.csv
 #   - 06_analysis/output/distributed_lag_prediction_grid.csv
-#   - 06_analysis/figures/supplementary/distributed_lag_coefficients.png (+ .pdf)
+#   - 06_analysis/figures/supplementary/exploratory/distributed_lag_coefficients.png (+ .pdf)
 #
 # AUTHOR: Detmer & Stier Lab
 # DATE: 2026-04
@@ -480,9 +480,9 @@ p <- ggplot(plot_terms, aes(x = term, y = estimate, ymin = estimate - 1.96 * std
   theme_manuscript() +
   theme(legend.position = "bottom")
 
-ggsave(file.path(fig_dir, "distributed_lag_coefficients.png"), p,
+ggsave(file.path(fig_dir, "exploratory", "distributed_lag_coefficients.png"), p,
        width = 200, height = 130, units = "mm", dpi = 300)
-ggsave(file.path(fig_dir, "distributed_lag_coefficients.pdf"), p,
+ggsave(file.path(fig_dir, "exploratory", "distributed_lag_coefficients.pdf"), p,
        width = 200, height = 130, units = "mm")
 
 cat("\nModel comparison (lower AIC is better):\n")
@@ -497,4 +497,4 @@ cat("  - distributed_lag_survival_model_terms.csv\n")
 cat("  - distributed_lag_growth_model_terms.csv\n")
 cat("  - distributed_lag_effect_summary.csv\n")
 cat("  - distributed_lag_prediction_grid.csv\n")
-cat("  - figures/supplementary/distributed_lag_coefficients.{png,pdf}\n\n")
+cat("  - figures/supplementary/exploratory/distributed_lag_coefficients.{png,pdf}\n\n")

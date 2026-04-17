@@ -34,8 +34,8 @@
 #   - 06_analysis/output/spatiotemporal_site_year_summary.csv
 #   - 06_analysis/output/spatiotemporal_spatial_predictions.csv
 #   - 06_analysis/output/spatiotemporal_data_coverage.csv
-#   - 06_analysis/figures/supplementary/spatiotemporal_hierarchical_summary.png
-#   - 06_analysis/figures/supplementary/spatiotemporal_hierarchical_summary.pdf
+#   - 06_analysis/figures/supplementary/exploratory/spatiotemporal_hierarchical_summary.png
+#   - 06_analysis/figures/supplementary/exploratory/spatiotemporal_hierarchical_summary.pdf
 ################################################################################
 
 suppressPackageStartupMessages({
@@ -923,14 +923,14 @@ spatiotemporal_fig <- p_year / p_space +
   )
 
 ggsave(
-  filename = file.path(fig_dir, "spatiotemporal_hierarchical_summary.png"),
+  filename = file.path(fig_dir, "exploratory", "spatiotemporal_hierarchical_summary.png"),
   plot = spatiotemporal_fig,
   width = 13,
   height = 10,
   dpi = 300
 )
 ggsave(
-  filename = file.path(fig_dir, "spatiotemporal_hierarchical_summary.pdf"),
+  filename = file.path(fig_dir, "exploratory", "spatiotemporal_hierarchical_summary.pdf"),
   plot = spatiotemporal_fig,
   width = 13,
   height = 10
@@ -954,4 +954,4 @@ cat("  - spatiotemporal_spatial_predictions.csv\n")
 cat("  - spatiotemporal_spatial_residual_check.csv\n")
 cat("  - spatiotemporal_region_blocked_cv.csv\n")
 cat("  - spatiotemporal_data_coverage.csv\n")
-cat("  - figures/supplementary/spatiotemporal_hierarchical_summary.png/.pdf\n")
+cat("  - figures/supplementary/exploratory/spatiotemporal_hierarchical_summary.png/.pdf\n")

@@ -1,7 +1,7 @@
 # Consolidated Review 2026-04-06
 
 This document supersedes the raw spawned note in
-[04_spawn_review_2026-04-06.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/model_audit/04_spawn_review_2026-04-06.md)
+[04_spawn_review_2026-04-06.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/model_audit/04_spawn_review_2026-04-06.md)
 for current-state review. It reflects the post-fix repo state after targeted
 script reruns and refresh-audit regeneration.
 
@@ -80,7 +80,7 @@ script reruns and refresh-audit regeneration.
 
 8. **Traceability docs were corrected for dead-path drift.**
    File:
-   [claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md)
+   [claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/claim_output_crosswalk.md)
    Outcome:
    the dead `publication/allometry_analysis.png` reference was removed, and `recommend_studies.csv` was corrected to
    [recommended_studies.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/recommended_studies.csv).
@@ -90,7 +90,7 @@ script reruns and refresh-audit regeneration.
    [48_pipeline_refresh_audit.R](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/scripts/48_pipeline_refresh_audit.R)
    Refreshed outputs:
    [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv),
-   [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
+   [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/pipeline_refresh_report.md)
 
 10. **The disturbance sensitivity summary now uses the intended no-context Neely subset.**
     File:
@@ -126,7 +126,7 @@ script reruns and refresh-audit regeneration.
     [01_functions.R](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/scripts/utils/01_functions.R)
     Refreshed outputs:
     [canonical_artifact_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_registry.csv),
-    [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
+    [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/pipeline_refresh_report.md)
     Outcome:
     the registry now includes the new diagnostics outputs (`77` artifacts total), and the generated refresh report shows a dedicated `diagnostics` category with no stale or missing artifacts.
 

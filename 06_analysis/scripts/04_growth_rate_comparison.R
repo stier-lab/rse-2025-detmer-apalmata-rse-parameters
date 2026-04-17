@@ -89,9 +89,7 @@ if (file.exists("05_data/standardized")) {
 output_dir <- file.path(project_root, "06_analysis/output")
 fig_dir <- file.path(project_root, "06_analysis/figures")
 fig_dir_supp <- file.path(fig_dir, "supplementary/exploratory")
-pub_fig_dir <- file.path(fig_dir, "publication")
 dir.create(fig_dir_supp, showWarnings = FALSE, recursive = TRUE)
-dir.create(pub_fig_dir, showWarnings = FALSE, recursive = TRUE)
 
 # =============================================================================
 # 1. LOAD AND PREPARE DATA
@@ -2214,9 +2212,9 @@ if (has_patchwork) {
       )
     )
 
-  ggsave(file.path(pub_fig_dir, "allometry_analysis.png"),
+  ggsave(file.path(fig_dir_supp, "allometry_analysis.png"),
          allometry_combined, width = 16, height = 18, dpi = 300)
-  cat("  ✓ Saved: publication/allometry_analysis.png\n")
+  cat("  ✓ Saved: supplementary/exploratory/allometry_analysis.png\n")
 
   # Also save key individual panels
   ggsave(file.path(fig_dir_supp, "initial_vs_final_size.png"),

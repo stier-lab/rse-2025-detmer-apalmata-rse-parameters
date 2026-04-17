@@ -13,9 +13,9 @@ This pass did not re-run the full pipeline. Findings below therefore distinguish
 
 ## Applied fixes in this pass
 
-- Updated [43_stochastic_ipm_disturbance_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/advanced_models/43_stochastic_ipm_disturbance_model.md) so it now reflects the explicit recruitment scenarios already present in code and outputs.
-- Updated [46_recurrent_event_frailty_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/advanced_models/46_recurrent_event_frailty_model.md) to surface the PH diagnostics output and frame the frailty-based `cox.zph` results more carefully.
-- Updated [47_spatiotemporal_hierarchical_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/advanced_models/47_spatiotemporal_hierarchical_model.md) to mention the exported `k.check` diagnostics and the remaining survey-year smooth warning.
+- Updated [43_stochastic_ipm_disturbance_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/advanced_models/43_stochastic_ipm_disturbance_model.md) so it now reflects the explicit recruitment scenarios already present in code and outputs.
+- Updated [46_recurrent_event_frailty_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/advanced_models/46_recurrent_event_frailty_model.md) to surface the PH diagnostics output and frame the frailty-based `cox.zph` results more carefully.
+- Updated [47_spatiotemporal_hierarchical_model.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/advanced_models/47_spatiotemporal_hierarchical_model.md) to mention the exported `k.check` diagnostics and the remaining survey-year smooth warning.
 
 ## Findings
 
@@ -82,9 +82,9 @@ Recommended fix:
 ### 4. The advanced-model reporting layer had drifted behind the current code and outputs
 
 Files:
-- `07_reporting/advanced_models/43_stochastic_ipm_disturbance_model.md`
-- `07_reporting/advanced_models/46_recurrent_event_frailty_model.md`
-- `07_reporting/advanced_models/47_spatiotemporal_hierarchical_model.md`
+- `07_reporting/internal/advanced_models/43_stochastic_ipm_disturbance_model.md`
+- `07_reporting/internal/advanced_models/46_recurrent_event_frailty_model.md`
+- `07_reporting/internal/advanced_models/47_spatiotemporal_hierarchical_model.md`
 - `06_analysis/output/stochastic_ipm_simulation_summary.csv`
 - `06_analysis/output/recurrent_event_ph_diagnostics.csv`
 - `06_analysis/output/spatiotemporal_survival_kcheck.csv`
@@ -100,7 +100,7 @@ Fix applied:
 ### 5. The freshness machinery correctly detects stale artifacts, but the generated prose summary is not specific enough to tell the reader which ones
 
 Files:
-- `07_reporting/generated/pipeline_refresh_report.md`
+- `07_reporting/internal/generated/pipeline_refresh_report.md`
 - `06_analysis/output/canonical_artifact_status.csv`
 - `06_analysis/output/pipeline_artifact_freshness.csv`
 
@@ -120,7 +120,7 @@ Recommended fix:
 
 Files:
 - `06_analysis/output/spatiotemporal_survival_kcheck.csv`
-- `07_reporting/advanced_models/47_spatiotemporal_hierarchical_model.md`
+- `07_reporting/internal/advanced_models/47_spatiotemporal_hierarchical_model.md`
 
 Evidence:
 - `spatiotemporal_survival_kcheck.csv` reports `p = 0.0425` for `s(survey_year_num)` in the spatiotemporal survival fit

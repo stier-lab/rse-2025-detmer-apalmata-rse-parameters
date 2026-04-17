@@ -296,7 +296,7 @@ if ("time_interval_yr" %in% names(surv_data)) {
 # class, then fits a random-effects meta-analysis (rma, REML) per size class.
 # This is methodologically consistent with script 14b's meta-analysis and avoids
 # the cell-level n=1 pathology that biased the previous logit IV approach.
-# See 07_reporting/methodology_critique_2026-04-14.md for rationale.
+# See 07_reporting/internal/methodology_critique_2026-04-14.md for rationale.
 
 cat("\n")
 cat("═══════════════════════════════════════════════════════════════\n")

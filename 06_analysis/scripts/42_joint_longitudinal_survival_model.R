@@ -29,7 +29,7 @@
 #   - 06_analysis/output/joint_longitudinal_calibration_by_decile.csv
 #   - 06_analysis/output/joint_longitudinal_key_results.csv
 #   - 06_analysis/output/joint_longitudinal_interval_predictions.csv
-#   - 06_analysis/figures/supplementary/joint_longitudinal_risk_curve.png
+#   - 06_analysis/figures/supplementary/exploratory/joint_longitudinal_risk_curve.png
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-04-03
@@ -451,7 +451,7 @@ p <- ggplot(risk_grid, aes(x = z_pred_log_live, y = pred_dead, color = disturban
   theme_bw(base_size = 12)
 
 ggsave(
-  filename = file.path(fig_dir, "joint_longitudinal_risk_curve.png"),
+  filename = file.path(fig_dir, "exploratory", "joint_longitudinal_risk_curve.png"),
   plot = p,
   width = 9,
   height = 5.5,
@@ -464,5 +464,5 @@ cat("  - joint_longitudinal_fit_metrics.csv\n")
 cat("  - joint_longitudinal_calibration_by_decile.csv\n")
 cat("  - joint_longitudinal_key_results.csv\n")
 cat("  - joint_longitudinal_interval_predictions.csv\n")
-cat("  - joint_longitudinal_risk_curve.png\n")
+cat("  - figures/supplementary/exploratory/joint_longitudinal_risk_curve.png\n")
 cat("\nDone.\n")

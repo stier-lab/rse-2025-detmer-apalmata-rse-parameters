@@ -25,7 +25,7 @@ Your question from April 7: *"how do we weight proportions from studies with ver
 | Cell-level logit IV | 0.888 | Turned out to be biased — lots of NOAA cells had n=1 |
 | **Study-level rma()** | **0.961** | **This is what we're using** |
 
-The details are in `07_reporting/methodology_critique_2026-04-14.md` if you want the full argument. Short version: aggregating to study-level first and then pooling with rma() avoids treating individual colony fates as if they were independent studies.
+The details are in `07_reporting/internal/methodology_critique_2026-04-14.md` if you want the full argument. Short version: aggregating to study-level first and then pooling with rma() avoids treating individual colony fates as if they were independent studies.
 
 ## How the FUNDEMAR data flows
 
@@ -70,7 +70,7 @@ These are decisions I made that I want you to sanity-check. None of them are urg
 
 | If you're wondering about... | Look here |
 |------------------------------|-----------|
-| Why lambda changed | `07_reporting/methodology_critique_2026-04-14.md` |
+| Why lambda changed | `07_reporting/internal/methodology_critique_2026-04-14.md` |
 | How data flows through the pipeline | `04_extraction/data_flow_diagram.md` |
 | The sample-size weighting details | `04_extraction/data_integration_issues.md` |
 | What the RSE model needs from this repo | `parameter_lists/RSE_COMPATIBILITY.md` |

@@ -26,7 +26,7 @@
 #   - 06_analysis/output/disturbance_size_model_comparison.csv
 #   - 06_analysis/output/disturbance_size_model_diagnostics.csv
 #   - 06_analysis/output/disturbance_size_prediction_grid.csv
-#   - 06_analysis/figures/supplementary/disturbance_size_interaction.png (+ .pdf)
+#   - 06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png (+ .pdf)
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-04

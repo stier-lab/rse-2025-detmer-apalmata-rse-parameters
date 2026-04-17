@@ -67,7 +67,7 @@ The following additions are now implemented in the repo:
    Delivered via `39_restoration_subtype_sensitivity.R` and `restoration_subtype_mapping.csv`, replacing the single broad restoration-fragment grouping with defensible subtypes.
 
 5. **Manuscript claim-to-output crosswalk and build map**
-   Delivered via `claim_output_crosswalk.md` and `figure_table_build_map.md`.
+   Delivered via `07_reporting/internal/claim_output_crosswalk.md` and `07_reporting/manuscript/figure_table_map.md`.
 
 6. **Transferability summary and recruitment/fecundity scope note**
    Delivered via `transferability_summary.md` and `recruitment_fecundity_scope_note.md`.
@@ -94,13 +94,8 @@ The following additions are now implemented in the repo:
    Concrete addition:
    Keep the survival interaction as a main finding and present the growth-side result as supportive but not equally definitive.
 
-3. **Archive or relocate internal figure variants**
-   Current state:
-   The repo still contains useful but non-final files such as `Fig6_population_model.png`, `Fig4_size_class_survival.*`, and other manuscript-candidate variants. (Former `FigSXX_*` placeholders have been assigned proper numbers S23-S28.)
-   Why it matters:
-   The numbering is now clarified in reporting docs, but the figure directories still contain historical clutter.
-   Concrete addition:
-   In a later cleanup pass, archive or relocate clearly non-final figure variants without removing traceability.
+3. **Archive or relocate internal figure variants** -- DONE
+   Old archive figures (`Fig2_vital_rates.*`, `Fig3_natural_vs_restoration.png`, `Fig5_expanded_forest_plot.png`, `Fig6_population_model.png`, `support_size_class_survival.*`) have been removed. Unnumbered exploratory figures have been moved to `supplementary/exploratory/`. The `publication/` directory has been deleted.
 
 ### Medium Priority
 

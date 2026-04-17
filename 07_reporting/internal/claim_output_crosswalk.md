@@ -27,5 +27,5 @@ This document links the manuscript-level claims for the *Acropora palmata* synth
 The major analytical gaps are now closed. The remaining work is release assembly rather than unresolved statistical or reporting bugs:
 
 - run one coherent end-to-end freeze only if a release-grade single-provenance snapshot is required
-- keep manuscript-facing numbering consistent with `figure_legends.txt`, `final_figure_table_set.md`, and `figure_table_build_map.md`
+- keep manuscript-facing numbering consistent with `07_reporting/manuscript/figure_legends.txt` and `07_reporting/manuscript/figure_table_map.md`
 - decide whether any internal support figures should be archived out of the main figure directories in a later cleanup pass

@@ -54,7 +54,7 @@ setup_output_dirs <- function(project_root = NULL) {
     figures_manuscript  = file.path(project_root, "06_analysis/figures/manuscript"),
     figures_supp        = file.path(project_root, "06_analysis/figures/supplementary"),
     figures_exp         = file.path(project_root, "06_analysis/figures/supplementary/exploratory"),
-    reporting_generated = file.path(project_root, "07_reporting/generated")
+    reporting_generated = file.path(project_root, "07_reporting/internal/generated")
   )
 
   for (dir in dirs) dir.create(dir, showWarnings = FALSE, recursive = TRUE)
@@ -1032,12 +1032,12 @@ canonical_artifact_registry <- function(project_root = NULL) {
       "06_analysis/figures/supplementary/FigS26_natural_vs_restoration_comparison.png",
       "06_analysis/figures/supplementary/FigS27_disturbance_summary.png",
       "06_analysis/figures/supplementary/FigS28_temporal_synthesis.png",
-      "07_reporting/tables/TableS1_disturbance_chronology.md",
-      "07_reporting/tables/TableS2_study_window_disturbance_audit.md",
-      "07_reporting/generated/standardized_data_inventory.md",
-      "07_reporting/generated/canonical_statistics.md",
-      "07_reporting/generated/canonical_artifact_status.md",
-      "07_reporting/generated/pipeline_refresh_report.md"
+      "07_reporting/manuscript/tables/TableS1_disturbance_chronology.md",
+      "07_reporting/manuscript/tables/TableS2_study_window_disturbance_audit.md",
+      "07_reporting/internal/generated/standardized_data_inventory.md",
+      "07_reporting/internal/generated/canonical_statistics.md",
+      "07_reporting/internal/generated/canonical_artifact_status.md",
+      "07_reporting/internal/generated/pipeline_refresh_report.md"
     ),
     stringsAsFactors = FALSE
   )

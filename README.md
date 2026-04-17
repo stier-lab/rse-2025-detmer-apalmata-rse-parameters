@@ -33,7 +33,7 @@ Build a Caribbean-wide, size-structured understanding of *Acropora palmata* demo
 8. Quantify heterogeneity and transferability across studies, regions, and years so pooled estimates are interpreted with appropriate caution.
 9. Make uncertainty and data gaps explicit, especially for recruitment, fecundity, chronic stress, and large-adult dynamics outside Florida.
 
-For a more detailed goal-to-analysis roadmap, see [07_reporting/paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/paper_scope_and_analysis_roadmap.md).
+For a more detailed goal-to-analysis roadmap, see [07_reporting/internal/paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/paper_scope_and_analysis_roadmap.md).
 
 ---
 
@@ -72,7 +72,7 @@ This organization ensures every step from literature search to final analysis is
 | **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
 | **Zero fecundity assumption** | λ = 0.961 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ above 1.0. |
 
-> For manuscript-facing interpretation, use [07_reporting/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript_narrative_integration.md), [07_reporting/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md), and [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
+> For manuscript-facing interpretation, use [07_reporting/manuscript/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/manuscript_narrative_integration.md), [07_reporting/internal/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/claim_output_crosswalk.md), and [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).
 
 ---
 
@@ -112,28 +112,29 @@ Detmer-2025-coral-parameters/
 │   │   ├── 24-28_*.R                   # Supplementary figures
 │   │   ├── run_all.R                   # Pipeline orchestrator
 │   │   └── utils/                      # Shared utilities (theme, palette, constants)
-│   ├── output/                       # 286 generated CSV/RDS result files
+│   ├── output/                       # 318 CSV + 10 RDS result files
 │   └── figures/                      # Publication figures (generated)
+│       ├── manuscript/                 # Fig1-Fig4 (PDF + PNG)
+│       └── supplementary/              # FigS1-FigS28, exploratory/, diagnostics/, meta_analysis/
 ├── 07_reporting/                   # Manuscript outputs
 │   ├── README.md
-│   ├── manuscript_methods_draft.md
-│   ├── manuscript_narrative_integration.md
-│   ├── figure_legends.txt
-│   ├── paper_scope_and_analysis_roadmap.md
-│   ├── claim_output_crosswalk.md
-│   ├── consistency_audit.md
-│   ├── figure_table_build_map.md
-│   ├── final_figure_table_set.md
-│   ├── final_filename_normalization_plan.md
-│   ├── analysis_inventory_labels.md
-│   ├── transferability_summary.md
-│   ├── recruitment_fecundity_scope_note.md
-│   ├── conceptual_summary_figure.md
-│   ├── conceptual_summary.svg
-│   └── tables/
+│   ├── manuscript/                   # Submission-ready content
+│   │   ├── manuscript_methods_draft.md
+│   │   ├── manuscript_narrative_integration.md
+│   │   ├── figure_legends.txt
+│   │   ├── figure_table_map.md
+│   │   ├── prisma_flow_diagram.md
+│   │   ├── conceptual_summary.svg
+│   │   └── tables/
+│   └── internal/                     # Process docs, audits, working notes
+│       ├── claim_output_crosswalk.md
+│       ├── paper_scope_and_analysis_roadmap.md
+│       ├── model_audit/
+│       ├── advanced_models/
+│       └── generated/
 ├── literature/                     # 145 PDFs organized by role
 │   └── pdfs/{data_studies,context,methods,restoration,preprints}/
-├── parameter_lists/                # 6 RDS model parameter outputs
+├── parameter_lists/                # 7 RDS model parameter outputs
 ├── CLAUDE.md
 └── README.md
 ```
@@ -188,7 +189,7 @@ After rerun, check these canonical refresh artifacts:
 - [canonical_statistics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_statistics.csv)
 - [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
 - [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
-- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
+- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/pipeline_refresh_report.md)
 
 ### Verify Script Syntax
 
@@ -312,7 +313,7 @@ Rscript 13_transition_matrix.R      # Population model (slow: 2000 bootstrap ite
 Rscript 14b_expanded_meta_analysis.R  # Meta-analysis k=17 (22 effects)
 ```
 
-For figure numbering and manuscript-facing build targets, use [07_reporting/figure_table_build_map.md](07_reporting/figure_table_build_map.md) and [07_reporting/final_figure_table_set.md](07_reporting/final_figure_table_set.md).
+For figure numbering and manuscript-facing build targets, use [07_reporting/manuscript/figure_table_map.md](07_reporting/manuscript/figure_table_map.md).
 
 ---
 
@@ -333,8 +334,8 @@ For figure numbering and manuscript-facing build targets, use [07_reporting/figu
 | [06_analysis/figures/README.md](06_analysis/figures/README.md) | Canonical manuscript/supplement figure set plus support-only figure variants |
 | [05_data/original/README.md](05_data/original/README.md) | Column definitions for all 14 raw data files |
 | [05_data/standardized/README.md](05_data/standardized/README.md) | Column definitions for all standardized datasets, size conversion methods |
-| [07_reporting/README.md](07_reporting/README.md) | Reporting directory index: active manuscript docs, build maps, and support notes |
-| [07_reporting/figure_legends.txt](07_reporting/figure_legends.txt) | Figure legends, methods, results text |
+| [07_reporting/README.md](07_reporting/README.md) | Reporting directory index: manuscript/ and internal/ |
+| [07_reporting/manuscript/figure_legends.txt](07_reporting/manuscript/figure_legends.txt) | Figure legends, methods, results text |
 | [CLAUDE.md](CLAUDE.md) | Project guide and conventions |
 
 ---

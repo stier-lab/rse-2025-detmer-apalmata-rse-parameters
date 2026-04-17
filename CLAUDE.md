@@ -182,6 +182,46 @@ if (ratio > 1.5) warning("Potential overdispersion")
 
 ---
 
+## Output Naming Convention
+
+All outputs follow consistent naming patterns. See `06_analysis/output/README.md` and `06_analysis/figures/README.md` for full details.
+
+### Figures
+
+| Directory | Pattern | Use |
+|-----------|---------|-----|
+| `figures/manuscript/` | `Fig{N}_{snake_case}.{pdf,png}` | Main text (Fig1-Fig4) |
+| `figures/supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | Numbered supplementary (FigS1-FigS28) |
+| `figures/supplementary/exploratory/` | `{snake_case}.{pdf,png}` | Unnumbered exploratory/diagnostic |
+| `figures/supplementary/diagnostics/` | `{snake_case}.png` | Base R model diagnostics |
+| `figures/supplementary/meta_analysis/` | `{prefix}_{snake_case}.{pdf,png}` | Meta-analysis diagnostics |
+
+- Use `save_manuscript_fig()` for all numbered figures (saves both PDF + PNG)
+- Use raw `ggsave()` for exploratory figures, always to `exploratory/` subdirectory
+
+### Data Outputs
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| CSV | `{domain}_{descriptive_name}.csv` | `survival_thresholds.csv`, `meta_analysis_results.csv` |
+| RDS | `{descriptive_name}.rds` | `transition_matrix.rds`, `prepared_survival_cells.rds` |
+| Parameter lists | `{context}_{type}_pars.rds` | `field_surv_pars.rds`, `nurs_growth_pars.rds` |
+
+Domain prefixes: `survival_`, `growth_`, `meta_analysis_`, `expanded_meta_`, `sensitivity_`, `transition_`, `context_`, `climate_`, `cv_`, `heterogeneity_`, `heatwave_`, `manzello_`, `multistate_`, `stochastic_ipm_`, `distributed_lag_`, `canonical_`, `pipeline_`.
+
+### Directory Variables in Scripts
+
+| Variable | Points to |
+|----------|-----------|
+| `output_dir` | `06_analysis/output/` |
+| `fig_dir` | `06_analysis/figures/` |
+| `fig_dir_supp` / `fig_dir_supp_exploratory` | `figures/supplementary/exploratory/` |
+| `fig_dir_supp_diagnostics` | `figures/supplementary/diagnostics/` |
+| `supp_dir` / `fig_supp_dir` | `figures/supplementary/` |
+| `param_dir` | `parameter_lists/` |
+
+---
+
 ## Common Pitfalls
 
 1. **Size labels**: Use `"SC1"`-`"SC5"` everywhere. The elasticity CSV uses `SC1_recruit` format — convert on load.
@@ -216,4 +256,4 @@ Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
 | `04_extraction/raine_working_notes/Detmer_APAL_meta_analysis_notes.docx` | Raine's original working notes: per-study extraction decisions and assumptions |
 | `04_extraction/data_integration_issues.md` | Individual vs. summary data integration: issues, resolution, comparison |
 | `04_extraction/data_flow_diagram.md` | Mermaid diagram of the full data pipeline (individual + summary survival) |
-| `07_reporting/figure_legends.txt` | Figure legends, methods, results text |
+| `07_reporting/manuscript/figure_legends.txt` | Figure legends, methods, results text |

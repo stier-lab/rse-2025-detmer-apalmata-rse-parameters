@@ -19,7 +19,7 @@
 
 ### 2. Manuscript methods says publication bias "not formally assessed" — but it was
 
-- **File:** `07_reporting/manuscript_methods_draft.md`, line 65
+- **File:** `07_reporting/manuscript/manuscript_methods_draft.md`, line 65
 - **Claim:** "Publication bias: not formally assessed via funnel plot"
 - **Actual:** Funnel plot, Egger's test, and trim-and-fill were added to script 14b and produce output files and figures
 - **Fix:** Update methods draft to reference the formal assessment (Egger's p=0.655 independent, trim-and-fill imputes 3 studies)

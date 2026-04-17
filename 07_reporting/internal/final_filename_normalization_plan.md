@@ -7,9 +7,9 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 | Final canonical filename | Current conflict to resolve | Action |
 |---|---|---|
 | `06_analysis/figures/manuscript/Fig1_study_landscape.png` and `.pdf` | none | Leave as is. |
-| `06_analysis/figures/manuscript/Fig2_demographic_rates.png` and `.pdf` | `Fig2_vital_rates.*` | Use `Fig2_demographic_rates.*` as canonical; treat `Fig2_vital_rates.*` as legacy naming only. |
+| `06_analysis/figures/manuscript/Fig2_demographic_rates.png` and `.pdf` | `Fig2_vital_rates.*` (removed) | Use `Fig2_demographic_rates.*` as canonical. Legacy files deleted. |
 | `06_analysis/figures/manuscript/Fig3_caribbean_synthesis.png` and `.pdf` | none in the current main figure plan | Leave as is. |
-| `06_analysis/figures/manuscript/Fig4_population_model.png` and `.pdf` | `Fig6_population_model.png` and the separate `Fig4_size_class_survival.*` asset | Use `Fig4_population_model.*` as the manuscript figure; retain the others as internal support outputs only. |
+| `06_analysis/figures/manuscript/Fig4_population_model.png` and `.pdf` | `Fig6_population_model.png` (removed) | Use `Fig4_population_model.*` as the manuscript figure. Legacy file deleted. |
 
 ## 2. Canonical Supplementary Filenames
 
@@ -30,17 +30,17 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 | `06_analysis/figures/supplementary/FigS13_cross_validation.png` and `.pdf` | `FigS13_sensitivity.*` | Keep `FigS13_cross_validation.*` as canonical. |
 | `06_analysis/figures/supplementary/FigS14_population_projections.png` and `.pdf` | `FigS14_context_comparison.*` | Keep `FigS14_population_projections.*` as canonical. |
 | `06_analysis/figures/supplementary/FigS15_regional_survival.png` and `.pdf` | none | Leave as is. |
-| `06_analysis/figures/supplementary/FigS16_shrinkage_retrogression_summary.png` and `.pdf` | `shrinkage_retrogression_summary.*` | Promote S16 as the numbered canonical output. |
-| `06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png` and `.pdf` | `disturbance_size_interaction.*` | Promote S17 as the numbered canonical output. |
-| `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` | `disturbance_timeline_highres.*`, `disturbance_regional_severity.*` | S18 is the numbered combined summary. Former `FigSXX_disturbance_summary.*` is now `FigS27_disturbance_summary.*`. |
-| `06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png` and `.pdf` | `restoration_subtype_sensitivity.*` | Promote S19 as the numbered canonical output. |
+| `06_analysis/figures/supplementary/FigS16_shrinkage_retrogression_summary.png` and `.pdf` | `shrinkage_retrogression_summary.*` (removed) | S16 is the numbered canonical output. Unnumbered duplicates deleted. |
+| `06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png` and `.pdf` | `disturbance_size_interaction.*` (removed) | S17 is the numbered canonical output. Unnumbered duplicates deleted. |
+| `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` | `disturbance_timeline_highres.*`, `disturbance_regional_severity.*` (moved to `exploratory/`) | S18 is the numbered combined summary. Support figures moved to `exploratory/`. |
+| `06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png` and `.pdf` | `restoration_subtype_sensitivity.*` (removed) | S19 is the numbered canonical output. Unnumbered duplicates deleted. |
 
 ## 3. Canonical Supplementary Tables
 
 | Final canonical filename | Current conflict to resolve | Action |
 |---|---|---|
-| `07_reporting/tables/TableS1_disturbance_chronology.md` and `.csv` | `disturbance_summary_table.*` | Use Table S1 as the manuscript-facing filename. |
-| `07_reporting/tables/TableS2_study_window_disturbance_audit.md` | `study_window_disturbance_audit.md` | Use Table S2 as the manuscript-facing filename. |
+| `07_reporting/manuscript/tables/TableS1_disturbance_chronology.md` and `.csv` | `disturbance_summary_table.*` | Use Table S1 as the manuscript-facing filename. |
+| `07_reporting/manuscript/tables/TableS2_study_window_disturbance_audit.md` | `study_window_disturbance_audit.md` | Use Table S2 as the manuscript-facing filename. |
 
 ## 4. Renaming / Regeneration Order
 
@@ -52,11 +52,10 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 ## 5. Keep But Do Not Treat As Final Manuscript Items
 
 - `06_analysis/figures/manuscript/Fig4_size_class_survival.*`
-- `06_analysis/figures/manuscript/Fig5_expanded_forest_plot.png`
-- `06_analysis/figures/manuscript/Fig6_population_model.png`
-- `06_analysis/figures/supplementary/disturbance_timeline_highres.*`
-- `06_analysis/figures/supplementary/disturbance_regional_severity.*`
+- `06_analysis/figures/supplementary/exploratory/disturbance_timeline_highres.*`
+- `06_analysis/figures/supplementary/exploratory/disturbance_regional_severity.*`
+- Advanced dynamic model outputs in `supplementary/exploratory/`
 
-Note: Former `FigS8_forest_plots.*`, `FigSXX_disturbance_sensitivity.*`, `FigSXX_heat_stress_survival.*`, and `FigSXX_natural_vs_restoration_comparison.*` have been assigned proper numbers (S21, S25, S24, S26 respectively) and are now part of the formal numbered set.
+Note: Former `FigS8_forest_plots.*`, `FigSXX_disturbance_sensitivity.*`, `FigSXX_heat_stress_survival.*`, and `FigSXX_natural_vs_restoration_comparison.*` have been assigned proper numbers (S21, S25, S24, S26 respectively) and are now part of the formal numbered set. Old archive figures (`Fig2_vital_rates.*`, `Fig3_natural_vs_restoration.png`, `Fig5_expanded_forest_plot.png`, `Fig6_population_model.png`) have been deleted.
 
 These remain useful for internal checking and revision support, but they are not part of the final numbered figure/table surface.

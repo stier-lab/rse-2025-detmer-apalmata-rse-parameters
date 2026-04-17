@@ -12,11 +12,11 @@
 #   - 05_data/standardized/apal_disturbance_stressor_timeline.csv (curated timeline)
 #
 # OUTPUTS:
-#   - 07_reporting/tables/disturbance_catalog.csv (full annotated catalog)
-#   - 07_reporting/tables/disturbance_summary_by_type.csv
-#   - 07_reporting/tables/disturbance_summary_by_region.csv
-#   - 07_reporting/tables/disturbance_summary_by_tier.csv
-#   - 07_reporting/tables/disturbance_summary_by_decade.csv
+#   - 07_reporting/manuscript/tables/disturbance_catalog.csv (full annotated catalog)
+#   - 07_reporting/manuscript/tables/disturbance_summary_by_type.csv
+#   - 07_reporting/manuscript/tables/disturbance_summary_by_region.csv
+#   - 07_reporting/manuscript/tables/disturbance_summary_by_tier.csv
+#   - 07_reporting/manuscript/tables/disturbance_summary_by_decade.csv
 #   - 06_analysis/figures/supplementary/FigS18_disturbance_summary.{png,pdf}
 #
 # Author: Detmer & Stier Lab
@@ -26,7 +26,7 @@ source("06_analysis/scripts/utils/shared_utilities.R")
 
 project_root <- get_project_root()
 dirs <- setup_output_dirs(project_root)
-tables_dir <- file.path(project_root, "07_reporting/tables")
+tables_dir <- file.path(project_root, "07_reporting/manuscript/tables")
 dir.create(tables_dir, showWarnings = FALSE, recursive = TRUE)
 
 pal <- MANUSCRIPT_PALETTE
@@ -370,24 +370,24 @@ p_combined <- p_timeline / (p_heatmap_compact | p_decade_compact) +
 pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
 
 ggsave(
-  file.path(dirs$figures_supp, "disturbance_timeline_highres.png"),
+  file.path(dirs$figures_supp, "exploratory", "disturbance_timeline_highres.png"),
   p_timeline,
   width = 210, height = 170, units = "mm", dpi = 300, bg = "white"
 )
 ggsave(
-  file.path(dirs$figures_supp, "disturbance_timeline_highres.pdf"),
+  file.path(dirs$figures_supp, "exploratory", "disturbance_timeline_highres.pdf"),
   p_timeline,
   width = 210, height = 170, units = "mm", bg = "white",
   device = pdf_device
 )
 
 ggsave(
-  file.path(dirs$figures_supp, "disturbance_regional_severity.png"),
+  file.path(dirs$figures_supp, "exploratory", "disturbance_regional_severity.png"),
   p_heatmap,
   width = 185, height = 110, units = "mm", dpi = 300, bg = "white"
 )
 ggsave(
-  file.path(dirs$figures_supp, "disturbance_regional_severity.pdf"),
+  file.path(dirs$figures_supp, "exploratory", "disturbance_regional_severity.pdf"),
   p_heatmap,
   width = 185, height = 110, units = "mm", bg = "white",
   device = pdf_device
@@ -464,8 +464,8 @@ print_success("Saved: 06_analysis/output/disturbance_summary_by_type.csv")
 print_success("Saved: 06_analysis/output/disturbance_summary_by_region.csv")
 print_success("Saved: 06_analysis/output/disturbance_summary_by_tier.csv")
 print_success("Saved: 06_analysis/output/disturbance_summary_by_decade.csv")
-print_success("Saved: 07_reporting/tables/TableS1_disturbance_chronology.csv")
-print_success("Saved: 07_reporting/tables/TableS1_disturbance_chronology.md")
-print_success("Saved: 06_analysis/figures/supplementary/disturbance_timeline_highres.png/.pdf")
-print_success("Saved: 06_analysis/figures/supplementary/disturbance_regional_severity.png/.pdf")
+print_success("Saved: 07_reporting/manuscript/tables/TableS1_disturbance_chronology.csv")
+print_success("Saved: 07_reporting/manuscript/tables/TableS1_disturbance_chronology.md")
+print_success("Saved: 06_analysis/figures/supplementary/exploratory/disturbance_timeline_highres.png/.pdf")
+print_success("Saved: 06_analysis/figures/supplementary/exploratory/disturbance_regional_severity.png/.pdf")
 print_success("Saved: 06_analysis/figures/supplementary/FigS18_disturbance_summary.png/.pdf")

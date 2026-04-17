@@ -155,7 +155,7 @@ SC1 shifted modestly because cell-level aggregation weights NOAA plot-years by s
 | P(decline) | — | — | — | **94.3%** |
 | Survival studies in bootstrap | 3 | 5 | 5 | 5 |
 
-**Note (2026-04-14):** The cell-weighted logit IV approach was identified as downward-biased due to three compounding errors: n=1 cell pathology (32.4% of NOAA cells), logit transformation upweighting rare mortality, and wrong variance formula for annualized survival. See `07_reporting/methodology_critique_2026-04-14.md` for full analysis. The study-level rma() approach (current) treats each study as the unit of analysis with proper random-effects pooling (REML), matching the methodology in script 14b's expanded meta-analysis.
+**Note (2026-04-14):** The cell-weighted logit IV approach was identified as downward-biased due to three compounding errors: n=1 cell pathology (32.4% of NOAA cells), logit transformation upweighting rare mortality, and wrong variance formula for annualized survival. See `07_reporting/internal/methodology_critique_2026-04-14.md` for full analysis. The study-level rma() approach (current) treats each study as the unit of analysis with proper random-effects pooling (REML), matching the methodology in script 14b's expanded meta-analysis.
 
 ### Diagram
 

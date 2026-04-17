@@ -760,9 +760,9 @@ p1 <- survival_stats %>%
   theme_minimal() +
   theme(plot.title = element_text(face = "bold"))
 
-ggsave(file.path(fig_supp_dir, "model_selection_survival.png"), p1,
+ggsave(file.path(fig_supp_dir, "exploratory", "model_selection_survival.png"), p1,
        width = 8, height = 5, dpi = 150)
-cat("  ✓ Saved: model_selection_survival.png\n")
+cat("  ✓ Saved: exploratory/model_selection_survival.png\n")
 
 # AIC comparison plot - Growth
 p2 <- growth_stats %>%
@@ -782,9 +782,9 @@ p2 <- growth_stats %>%
   theme_minimal() +
   theme(plot.title = element_text(face = "bold"))
 
-ggsave(file.path(fig_supp_dir, "model_selection_growth.png"), p2,
+ggsave(file.path(fig_supp_dir, "exploratory", "model_selection_growth.png"), p2,
        width = 8, height = 5, dpi = 150)
-cat("  ✓ Saved: model_selection_growth.png\n")
+cat("  ✓ Saved: exploratory/model_selection_growth.png\n")
 
 # Coefficient plot for best survival model
 if (nrow(best_surv_coefs) > 1) {
@@ -804,9 +804,9 @@ if (nrow(best_surv_coefs) > 1) {
     theme_minimal() +
     theme(plot.title = element_text(face = "bold"))
 
-  ggsave(file.path(fig_supp_dir, "survival_coefficients.png"), p3,
+  ggsave(file.path(fig_supp_dir, "exploratory", "survival_coefficients.png"), p3,
          width = 8, height = 5, dpi = 150)
-  cat("  ✓ Saved: survival_coefficients.png\n")
+  cat("  ✓ Saved: exploratory/survival_coefficients.png\n")
 }
 
 # =============================================================================

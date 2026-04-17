@@ -1,48 +1,37 @@
 # Reporting Directory
 
-This directory holds the manuscript-facing documentation surface for the project.
+Manuscript-ready content and internal process docs, separated into two subdirectories.
 
-## Start Here
+## `manuscript/` — Submission-ready content
 
-- [manuscript_methods_draft.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript_methods_draft.md)
-  Current methods draft.
-- [manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript_narrative_integration.md)
-  Results and discussion integration notes.
-- [figure_legends.txt](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/figure_legends.txt)
-  Canonical figure legends and manuscript-facing figure text.
+| File | Description |
+|------|-------------|
+| `manuscript_methods_draft.md` | Current methods section draft |
+| `manuscript_narrative_integration.md` | Results and discussion integration notes |
+| `figure_legends.txt` | Canonical figure legends and manuscript-facing text |
+| `figure_table_map.md` | Script-to-figure/table mapping (single source of truth) |
+| `prisma_flow_diagram.md` | PRISMA 2020 flow diagram |
+| `conceptual_summary.svg` | Conceptual summary figure |
+| `conceptual_summary_figure.md` | Notes for the conceptual summary |
+| `tables/` | Supplementary tables (TableS1--S3) and support tables |
 
-## Build And Traceability Docs
+## `internal/` — Process docs, audits, working notes
 
-| File | Role |
-|---|---|
-| [final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md) | Final recommended manuscript/supplement figure and table set |
-| [figure_table_build_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/figure_table_build_map.md) | Script-to-output map for numbered manuscript items |
-| [claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/claim_output_crosswalk.md) | Links manuscript claims to scripts, outputs, and figures |
-| [consistency_audit.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/consistency_audit.md) | Cross-check notes for key values and labels |
-| [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/analysis_inventory_labels.md) | Core vs supporting vs exploratory labeling |
-| [model_audit/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/model_audit/README.md) | Script-by-script statistical QA and diagnostics audit |
-
-## Generated Reporting Surface
-
-The generated reporting surface lives under [generated/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/README.md). Those files are rebuilt by the maintained pipeline and should be treated as the canonical machine-written source for refreshed manuscript numbers and pipeline freshness:
-
-- [canonical_statistics.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/canonical_statistics.md)
-- [standardized_data_inventory.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/standardized_data_inventory.md)
-- [canonical_artifact_status.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/canonical_artifact_status.md)
-- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/pipeline_refresh_report.md)
-
-## Support Notes
-
-| File / folder | Role |
-|---|---|
-| [advanced_models/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/advanced_models/README.md) | Index to the advanced dynamic-model reports |
-| [tables/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/tables/README.md) | Index to manuscript-support tables and numbered supplementary tables |
-| [transferability_summary.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/transferability_summary.md) | What generalizes and what does not |
-| [recruitment_fecundity_scope_note.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/recruitment_fecundity_scope_note.md) | Known unknowns and non-estimable demographic components |
-| [paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/paper_scope_and_analysis_roadmap.md) | Parent goal, paper goals, and remaining roadmap |
-
-## Practical Rule
-
-If a document is needed to write or defend the manuscript, it belongs here. If it is primarily an analysis product or generated file, it should live under `06_analysis/`.
-
-For refreshed numeric claims after a rerun, prefer the generated reporting files above over hand-maintained prose notes.
+| File | Description |
+|------|-------------|
+| `claim_output_crosswalk.md` | Links manuscript claims to scripts and outputs |
+| `paper_scope_and_analysis_roadmap.md` | Parent goal, paper goals, remaining roadmap |
+| `analysis_inventory_labels.md` | Core vs supporting vs exploratory labeling |
+| `consistency_audit.md` | Cross-check notes for key values and labels |
+| `methodology_critique_2026-04-14.md` | Sample-size weighting methodology critique |
+| `newcomer_review_2026-04-08.md` | Newcomer review notes |
+| `pre_publication_audit_2026-04-16.md` | Pre-publication audit checklist |
+| `final_filename_normalization_plan.md` | Filename normalization decisions |
+| `transferability_summary.md` | What generalizes and what does not |
+| `recruitment_fecundity_scope_note.md` | Known unknowns and non-estimable parameters |
+| `data_acquisition_plan.md` | Data acquisition priorities and contacts |
+| `email_draft_neely_data_request.md` | Neely data request email |
+| `email_drafts_data_requests.md` | Batch data request emails |
+| `model_audit/` | Script-by-script statistical QA and diagnostics |
+| `advanced_models/` | Advanced dynamic-model reports (scripts 41--47) |
+| `generated/` | Pipeline-generated reporting (canonical statistics, artifact status) |

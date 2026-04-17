@@ -89,7 +89,7 @@ assertion_checks <- data.frame(
   details = character(),
   stringsAsFactors = FALSE
 )
-reporting_generated_dir <- file.path(project_root, "07_reporting/generated")
+reporting_generated_dir <- file.path(project_root, "07_reporting/internal/generated")
 dir.create(reporting_generated_dir, recursive = TRUE, showWarnings = FALSE)
 
 if (file.exists(file.path(project_root, "06_analysis/scripts/utils/shared_utilities.R"))) {

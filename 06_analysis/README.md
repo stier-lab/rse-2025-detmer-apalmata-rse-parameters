@@ -21,4 +21,4 @@ This directory contains the maintained analytical surface for the *Acropora palm
 
 ## Practical Rule
 
-Use `scripts/` to understand what was run, `output/` to inspect numerical results, and `figures/` only after checking whether a given file is part of the canonical manuscript-facing build in [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/final_figure_table_set.md).
+Use `scripts/` to understand what was run, `output/` to inspect numerical results, and `figures/` only after checking whether a given file is part of the canonical manuscript-facing build in [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).

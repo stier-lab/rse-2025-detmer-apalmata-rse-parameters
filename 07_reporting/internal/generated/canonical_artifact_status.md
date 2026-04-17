@@ -77,9 +77,9 @@ Canonical outputs, figures, and reporting artifacts with presence and same-run r
 | supplementary_figures | FigS17_disturbance_size_interaction | 37_disturbance_size_interaction.R | 06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png | yes | yes | 2026-04-06 12:22:23 |
 | supplementary_figures | FigS18_disturbance_summary | 34_disturbance_summaries.R | 06_analysis/figures/supplementary/FigS18_disturbance_summary.png | yes | yes | 2026-04-05 09:45:45 |
 | supplementary_figures | FigS19_restoration_subtype_sensitivity | 39_restoration_subtype_sensitivity.R | 06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png | yes | yes | 2026-04-05 09:46:09 |
-| supplementary_tables | TableS1_disturbance_chronology | 34_disturbance_summaries.R | 07_reporting/tables/TableS1_disturbance_chronology.md | yes | yes | 2026-04-05 09:45:45 |
-| supplementary_tables | TableS2_study_window_disturbance_audit | 38_study_window_disturbance_audit.R | 07_reporting/tables/TableS2_study_window_disturbance_audit.md | yes | yes | 2026-04-05 09:46:07 |
-| generated_reporting | generated_standardized_data_inventory | 48_pipeline_refresh_audit.R | 07_reporting/generated/standardized_data_inventory.md | yes | yes | 2026-04-06 15:23:39 |
-| generated_reporting | generated_canonical_statistics | 48_pipeline_refresh_audit.R | 07_reporting/generated/canonical_statistics.md | yes | yes | 2026-04-06 15:23:39 |
-| generated_reporting | generated_canonical_artifact_status | 48_pipeline_refresh_audit.R | 07_reporting/generated/canonical_artifact_status.md | yes | yes | 2026-04-06 15:23:39 |
-| generated_reporting | generated_pipeline_refresh_report | 48_pipeline_refresh_audit.R | 07_reporting/generated/pipeline_refresh_report.md | yes | yes | 2026-04-06 15:23:39 |
+| supplementary_tables | TableS1_disturbance_chronology | 34_disturbance_summaries.R | 07_reporting/manuscript/tables/TableS1_disturbance_chronology.md | yes | yes | 2026-04-05 09:45:45 |
+| supplementary_tables | TableS2_study_window_disturbance_audit | 38_study_window_disturbance_audit.R | 07_reporting/manuscript/tables/TableS2_study_window_disturbance_audit.md | yes | yes | 2026-04-05 09:46:07 |
+| generated_reporting | generated_standardized_data_inventory | 48_pipeline_refresh_audit.R | 07_reporting/internal/generated/standardized_data_inventory.md | yes | yes | 2026-04-06 15:23:39 |
+| generated_reporting | generated_canonical_statistics | 48_pipeline_refresh_audit.R | 07_reporting/internal/generated/canonical_statistics.md | yes | yes | 2026-04-06 15:23:39 |
+| generated_reporting | generated_canonical_artifact_status | 48_pipeline_refresh_audit.R | 07_reporting/internal/generated/canonical_artifact_status.md | yes | yes | 2026-04-06 15:23:39 |
+| generated_reporting | generated_pipeline_refresh_report | 48_pipeline_refresh_audit.R | 07_reporting/internal/generated/pipeline_refresh_report.md | yes | yes | 2026-04-06 15:23:39 |

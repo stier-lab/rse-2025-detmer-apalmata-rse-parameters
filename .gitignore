@@ -1,86 +1,74 @@
-# R artifacts
-.Rhistory
-# add Rapp history
+
+._*
+.claude/
+.DS_Store
+.DS_Store?
+.env
+.idea/
+.ipynb_checkpoints/
+.mcp.json
+.playwright-mcp/
 .Rapp.history 
 .Rdata
 .RData
-.Ruserdata
-Rplots.pdf
-*.Rproj.user/
-# add R project
-*.Rproj 
-
-# R package cache
-packrat/
-renv/
+.Renviron 
+.Rhistory
 .Rproj.user/
-
-# Compiled R files
-*.Rcheck/
-
-# R Markdown artifacts
-*_cache/
-*_files/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-.DS_Store?
-._*
+.Ruserdata
+.serena/
 .Spotlight-V100
 .Trashes
-Thumbs.db
-
-# Environment files
-.env
+.vscode/
+*_cache/
+*_files/
 *.env
-# add R environment
-.Renviron 
-
-# Logs
-logs/
-*.log
-
-# IDE / tool config
-.claude/
-
-# MCP artifacts
-.mcp.json
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# Jupyter
-.ipynb_checkpoints/
 *.ipynb_checkpoints
-
+*.log
+*.Rcheck/
+*.Rproj 
+*.Rproj.user/
+*.swo
+*.swp
+*.temp
+*.tmp
+*~
+# add R environment
+# add R project
+# add Rapp history
 # Analysis ephemera
-analysis/output/pipeline_log_*.csv
-analysis/output/baseline/
-
+# Compiled R files
+# Environment files
 # Generated exploratory/diagnostic figures (superseded by manuscript/ and supplementary/)
+# IDE
+# IDE / tool config
+# Jupyter
+# Logs
+# MCP artifacts
+# OS
+# Papers accidentally placed in scripts dir
+# Playwright MCP artifacts (web platform moved to separate repo)
+# R artifacts
+# R Markdown artifacts
+# R package cache
+# Serena plugin cache
+# Temporary files
+06_analysis/scripts/*.pdf
+# Compatibility symlink for integration .rmd (../../standardized_data/ -> 05_data/standardized/)
+standardized_data
+analysis/figures/publication/
 analysis/figures/supplementary/diagnostics/
 analysis/figures/supplementary/exploratory/
 analysis/figures/supplementary/meta_analysis/
-analysis/figures/publication/
-
-# Playwright MCP artifacts (web platform moved to separate repo)
-.playwright-mcp/
-literature/pdfs/restoration/Goergen_etal_2025_coral_restoration_guide.pdf
+analysis/output/baseline/
+analysis/output/pipeline_log_*.csv
 literature/notebooklm_upload/Goergen 2025 - restoration guide.pdf
-literature/pdfs/data_studies/Vardi_2011_dissertation.pdf
 literature/notebooklm_upload/Vardi 2011 - dissertation fragmentation.pdf
-
-# Serena plugin cache
-.serena/
-# Papers accidentally placed in scripts dir
-06_analysis/scripts/*.pdf
+literature/pdfs/data_studies/Vardi_2011_dissertation.pdf
+literature/pdfs/restoration/Goergen_etal_2025_coral_restoration_guide.pdf
+logs/
+packrat/
+renv/
+Rplots.pdf
+temp/
+Thumbs.db
+tmp/

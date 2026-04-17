@@ -65,7 +65,7 @@ The refresh layer will rebuild:
 - [canonical_statistics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_statistics.csv)
 - [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
 - [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
-- generated markdown under [07_reporting/generated](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/generated/README.md)
+- generated markdown under [07_reporting/internal/generated](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/README.md)
 
 ---
 
