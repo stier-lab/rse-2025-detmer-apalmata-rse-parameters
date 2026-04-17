@@ -19,7 +19,7 @@ and cross-references. See the Notes column for naming quirks.
 
 ---
 
-## Supplementary Figures (FigS1--FigS20)
+## Supplementary Figures (FigS1--FigS28)
 
 | Script | Supp Figure | Output Filename | Notes |
 |--------|------------|-----------------|-------|
@@ -31,7 +31,6 @@ and cross-references. See the Notes column for naming quirks.
 | 25_supp_S5_S6_S7_thresholds_growth.R | FigS6 | FigS6_agr_vs_rgr | |
 | 25_supp_S5_S6_S7_thresholds_growth.R | FigS7 | FigS7_allometry | |
 | 21_fig3_natural_vs_restoration.R | FigS8 | FigS8_natural_vs_restoration | **Filename says "fig3" but output is FigS8** |
-| 26_supp_S8_S9.R | FigS8 | FigS8_forest_plots | **NUMBER COLLISION with FigS8 above** |
 | 26_supp_S8_S9.R | FigS9 | FigS9_heterogeneity | |
 | 27_supp_S10_S11.R | FigS10 | FigS10_context_comparison | |
 | 27_supp_S10_S11.R | FigS11 | FigS11_climate_demography | |
@@ -39,26 +38,19 @@ and cross-references. See the Notes column for naming quirks.
 | 28_supp_S12_S13_S14.R | FigS13 | FigS13_cross_validation | |
 | 28_supp_S12_S13_S14.R | FigS14 | FigS14_population_projections | |
 | 20c_fig_regional_survival.R | FigS15 | FigS15_regional_survival | |
-| 40_manzello_heatwave_scenarios.R | FigS15 | FigS15_heatwave_scenarios | **NUMBER COLLISION with FigS15 above** |
 | 36_shrinkage_retrogression_summary.R | FigS16 | FigS16_shrinkage_retrogression_summary | Also saves unnumbered duplicate `shrinkage_retrogression_summary` |
 | 37_disturbance_size_interaction.R | FigS17 | FigS17_disturbance_size_interaction | Also saves unnumbered duplicate `disturbance_size_interaction` |
 | 34_disturbance_summaries.R | FigS18 | FigS18_disturbance_summary | Also saves `disturbance_timeline_highres` and `disturbance_regional_severity` |
 | 39_restoration_subtype_sensitivity.R | FigS19 | FigS19_restoration_subtype_sensitivity | Also saves unnumbered duplicate `restoration_subtype_sensitivity` |
 | 49_annual_survival_timeseries.R | FigS20 | FigS20_annual_survival_timeseries | |
-
----
-
-## Unnumbered Supplementary Figures (FigSXX_*)
-
-These figures exist on disk but have not been assigned final supplementary numbers.
-
-| Script | Output Filename | Content |
-|--------|-----------------|---------|
-| 29_natural_vs_restoration.R | FigSXX_natural_vs_restoration_comparison | Extended natural vs restoration within-region comparison |
-| 30_disturbance_sensitivity.R | FigSXX_disturbance_sensitivity | Disturbance sensitivity scenarios |
-| 31_heat_stress_overlay.R | FigSXX_heat_stress_survival | Heat stress (DHW) overlay on survival |
-| 32_disturbance_survival_analysis.R | FigSXX_disturbance_timeline | Disturbance event timeline |
-| 50_temporal_synthesis_figure.R | FigSXX_temporal_synthesis | Stochastic projections + regime + heatwave lambda (3 panels) |
+| 26_supp_S8_S9.R | FigS21 | FigS21_forest_plots | Meta-analysis forest plots (overall + stratified) |
+| 40_manzello_heatwave_scenarios.R | FigS22 | FigS22_heatwave_scenarios | Manzello 2025 heatwave scenario projections |
+| 32_disturbance_survival_analysis.R | FigS23 | FigS23_disturbance_timeline | Disturbance event timeline |
+| 31_heat_stress_overlay.R | FigS24 | FigS24_heat_stress_survival | Heat stress (DHW) overlay on survival |
+| 30_disturbance_sensitivity.R | FigS25 | FigS25_disturbance_sensitivity | Disturbance sensitivity scenarios |
+| 29_natural_vs_restoration.R | FigS26 | FigS26_natural_vs_restoration_comparison | Extended natural vs restoration within-region comparison |
+| (orphan) | FigS27 | FigS27_disturbance_summary | Disturbance summary (no generating script found) |
+| 50_temporal_synthesis_figure.R | FigS28 | FigS28_temporal_synthesis | Stochastic projections + regime + heatwave lambda (3 panels) |
 
 ---
 
@@ -127,7 +119,6 @@ Note: Scripts 12_model_selection.R produces PNG-only exploratory plots (model_se
 2. **Script 21 filename ("fig3") vs output (FigS8)**: Historical artifact from earlier numbering.
 3. **Script 20 output ("Fig4_size_class_survival")**: Collides with real manuscript Fig 4. This is a working figure whose content was absorbed into Fig 2c.
 4. **Script 23 number collision**: `23_figS2_data_gaps.R` (figure) and `23_verification.R` (verification) share number 23.
-5. **FigS8 number collision**: `FigS8_natural_vs_restoration` (script 21) and `FigS8_forest_plots` (script 26) both use FigS8.
-6. **FigS15 number collision**: `FigS15_regional_survival` (script 20c) and `FigS15_heatwave_scenarios` (script 40) both use FigS15.
-
-None of these are renamed to avoid breaking the pipeline. Headers have been annotated with NOTE comments instead.
+5. ~~**FigS8 number collision**~~: Resolved. `FigS8_forest_plots` renamed to `FigS21_forest_plots`.
+6. ~~**FigS15 number collision**~~: Resolved. `FigS15_heatwave_scenarios` renamed to `FigS22_heatwave_scenarios`.
+7. All former `FigSXX_*` placeholders have been assigned numbers (FigS23--FigS28).

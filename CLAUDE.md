@@ -53,8 +53,8 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
 | Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=17/22 effects), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
-| Supp Figures | 20, 20c, 21, 23-28 | FigS1-S16 |
-| Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS15) |
+| Supp Figures | 20, 20c, 21, 23-28 | FigS1-S20 |
+| Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS22) |
 | Verification | 23_verification | Pipeline integrity checks |
 | Orchestrator | run_all | Runs everything in sequence |
 
@@ -126,9 +126,9 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 
 | Study | Type | Region | n | Key Issue |
 |-------|------|--------|---|-----------|
-| NOAA_survey | Natural | FL, Curacao, Navassa | ~4,000 | Largest dataset; large colonies; n varies by filtering stage |
+| NOAA_survey | Natural | FL, Curacao, Navassa | 4,048 | Largest dataset; large colonies |
 | neely_et_al_2022 | Natural | FL Keys | 878 | 2014 disease catastrophe (53% surv); disturbance-flagged |
-| pausch_et_al_2018 | Restoration | Florida | 966 | Fragment experiments |
+| pausch_et_al_2018 | Restoration | Florida | 969 | Fragment experiments |
 | USGS_USVI_exp | Restoration | USVI | 46 | Outplanted 2019 |
 | kuffner_et_al_2020 | Restoration | Florida | 52 | Mortality = >=50% tissue loss |
 | mendoza_quiroz_et_al_2023 | Natural | Mexico | 52 | Some sizes from diameter only |

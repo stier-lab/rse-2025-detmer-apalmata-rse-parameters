@@ -36,6 +36,15 @@ Use [07_reporting/final_figure_table_set.md](/Users/adrianstier/Detmer-2025-cora
 | Fig. S17 Disturbance-by-size interaction | `37_disturbance_size_interaction.R` | `FigS17_disturbance_size_interaction.*` |
 | Fig. S18 Disturbance summary | `34_disturbance_summaries.R` | `FigS18_disturbance_summary.*` |
 | Fig. S19 Restoration subtype sensitivity | `39_restoration_subtype_sensitivity.R` | `FigS19_restoration_subtype_sensitivity.*` |
+| Fig. S20 Annual survival time series | `49_annual_survival_timeseries.R` | `FigS20_annual_survival_timeseries.*` |
+| Fig. S21 Forest plots | `26_supp_S8_S9.R` | `FigS21_forest_plots.*` |
+| Fig. S22 Heatwave scenarios | `40_manzello_heatwave_scenarios.R` | `FigS22_heatwave_scenarios.*` |
+| Fig. S23 Disturbance timeline | `32_disturbance_survival_analysis.R` | `FigS23_disturbance_timeline.*` |
+| Fig. S24 Heat stress survival | `31_heat_stress_overlay.R` | `FigS24_heat_stress_survival.*` |
+| Fig. S25 Disturbance sensitivity | `30_disturbance_sensitivity.R` | `FigS25_disturbance_sensitivity.*` |
+| Fig. S26 Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison.*` |
+| Fig. S27 Disturbance summary | (orphan) | `FigS27_disturbance_summary.*` |
+| Fig. S28 Temporal synthesis | `50_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis.*` |
 
 ## Support-Only And Deprecated Figure Variants
 
@@ -46,8 +55,6 @@ These files remain useful for traceability or revision support, but they are **n
 - `manuscript/Fig4_size_class_survival.*`
 - `manuscript/Fig5_expanded_forest_plot.png`
 - `manuscript/Fig6_population_model.png`
-- `supplementary/FigS8_forest_plots.*`
-- `supplementary/FigSXX_*`
 - `supplementary/disturbance_timeline_highres.*`
 - `supplementary/disturbance_regional_severity.*`
 - advanced-model figures such as `distributed_lag_coefficients.*`, `joint_longitudinal_risk_curve.png`, `regime_switching_year_states.*`, `spatiotemporal_hierarchical_summary.*`, and `stochastic_ipm_projection_trajectories.*`

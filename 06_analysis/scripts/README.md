@@ -170,7 +170,7 @@ These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, an
 | `23_figS2_data_gaps.R` | Figure S2: Data gaps heatmap | `figures/supplementary/FigS2_*` |
 | `24_supp_S3_S4.R` | Figure S3: Survival coefficients; Figure S4: Growth coefficients | `figures/supplementary/FigS3_*`, `FigS4_*` |
 | `25_supp_S5_S6_S7_thresholds_growth.R` | Figure S5--S7: Threshold detection, growth diagnostics | `figures/supplementary/FigS5_*`, `FigS6_*`, `FigS7_*` |
-| `26_supp_S8_S9.R` | Figure S8--S9: Meta-analysis forest plots and heterogeneity decomposition | `figures/supplementary/FigS8_*`, `FigS9_*` |
+| `26_supp_S8_S9.R` | Figure S21 & S9: Meta-analysis forest plots and heterogeneity decomposition | `figures/supplementary/FigS21_*`, `FigS9_*` |
 | `27_supp_S10_S11.R` | Figure S10--S11: Model selection comparison | `figures/supplementary/FigS10_*`, `FigS11_*` |
 | `28_supp_S12_S13_S14.R` | Figure S12--S14: Diagnostics, residuals, additional robustness | `figures/supplementary/FigS12_*`, `FigS13_*`, `FigS14_*` |
 
@@ -190,7 +190,7 @@ These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, an
 | `37_disturbance_size_interaction.R` | Disturbance × size interaction analysis for survival and positive growth | `disturbance_size_*.csv`, `FigS17_disturbance_size_interaction.*` |
 | `38_study_window_disturbance_audit.R` | Rebuild and audit study-window overlaps with the curated disturbance timeline | `study_window_disturbance_*.csv`, `TableS2_study_window_disturbance_audit.md` |
 | `39_restoration_subtype_sensitivity.R` | Reclassify broad restoration fragments into defensible subtypes and summarize subtype-specific demography | `restoration_subtype_*.csv`, `FigS19_restoration_subtype_sensitivity.*` |
-| `40_manzello_heatwave_scenarios.R` | Layer catastrophic heatwave mortality thresholds onto the chronic demographic regime via scenario projections | `manzello_dose_response.csv`, `heatwave_scenario_*.csv`, `FigS15_heatwave_scenarios.*` |
+| `40_manzello_heatwave_scenarios.R` | Layer catastrophic heatwave mortality thresholds onto the chronic demographic regime via scenario projections | `manzello_dose_response.csv`, `heatwave_scenario_*.csv`, `FigS22_heatwave_scenarios.*` |
 
 ### 41--47 -- Advanced Dynamic Model Extensions
 
@@ -322,7 +322,8 @@ The maintained pattern is:
 │       ├── FigS1_*.png/.pdf        # Size distribution (from 18)
 │       ├── FigS2_*.png/.pdf        # Data gaps heatmap (from 23)
 │       ├── FigS3--S15_*.png/.pdf   # Diagnostics, robustness, and regional survival
-│       ├── FigS16--S19_*.png/.pdf  # Shrinkage, disturbance, and restoration completeness figures
+│       ├── FigS16--S20_*.png/.pdf  # Shrinkage, disturbance, restoration, and time series figures
+│       ├── FigS21--S28_*.png/.pdf  # Forest plots, heatwave, disturbance, and context extensions
 │       ├── exploratory/
 │       ├── diagnostics/
 │       └── meta_analysis/

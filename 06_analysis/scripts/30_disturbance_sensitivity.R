@@ -37,7 +37,7 @@
 #     - 06_analysis/output/disturbance_sensitivity_scenario_status.csv
 #     - 06_analysis/output/disturbance_sensitivity_influence.csv
 #   Figure:
-#     - 06_analysis/figures/supplementary/FigSXX_disturbance_sensitivity.png
+#     - 06_analysis/figures/supplementary/FigS25_disturbance_sensitivity.png
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-03
@@ -999,8 +999,8 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
     theme(legend.position = "bottom")
 
   # Save figure
-  fig_path_png <- file.path(supp_dir, "FigSXX_disturbance_sensitivity.png")
-  fig_path_pdf <- file.path(supp_dir, "FigSXX_disturbance_sensitivity.pdf")
+  fig_path_png <- file.path(supp_dir, "FigS25_disturbance_sensitivity.png")
+  fig_path_pdf <- file.path(supp_dir, "FigS25_disturbance_sensitivity.pdf")
 
   ggsave(fig_path_png, plot = p_combined,
          width = 174, height = 200, units = "mm", dpi = 300, bg = "white")
@@ -1010,7 +1010,7 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
          width = 174, height = 200, units = "mm",
          bg = "white", device = pdf_device)
 
-  print_success(sprintf("Saved: FigSXX_disturbance_sensitivity.png/pdf (%d x %d mm)", 174, 200))
+  print_success(sprintf("Saved: FigS25_disturbance_sensitivity.png/pdf (%d x %d mm)", 174, 200))
   figure_saved <- TRUE
 
 } else {
@@ -1270,7 +1270,7 @@ cat("    - disturbance_sensitivity_scenario_status.csv\n")
 cat("    - disturbance_sensitivity_influence.csv\n")
 if (figure_saved) {
   cat("  Figure saved to 06_analysis/figures/supplementary/:\n")
-  cat("    - FigSXX_disturbance_sensitivity.png/pdf\n\n")
+  cat("    - FigS25_disturbance_sensitivity.png/pdf\n\n")
 } else {
   cat("  Figure not regenerated because the comparison meta-analysis was unavailable.\n\n")
 }

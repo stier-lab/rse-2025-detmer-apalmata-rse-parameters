@@ -59,7 +59,7 @@ Published *A. palmata* population models (Vardi et al. 2012) do not exclude dist
    - Excluding Neely disease intervals only
    - Excluding all flagged disturbance (Neely disease + NOAA storm)
    - Neely non-disturbance intervals only
-4. **Methods text**: "All observation intervals were included regardless of disturbance exposure, as catastrophic events (disease, storms) are an integral component of the demographic regime. Disturbance-flagged intervals are identified in the data and a sensitivity analysis excluding them is provided (Supplementary Fig. SXX)."
+4. **Methods text**: "All observation intervals were included regardless of disturbance exposure, as catastrophic events (disease, storms) are an integral component of the demographic regime. Disturbance-flagged intervals are identified in the data and a sensitivity analysis excluding them is provided (Supplementary Fig. S25)."
 5. **Discussion text**: Note that estimates represent average conditions including disturbance events, not baseline conditions, and that this is appropriate for population viability assessment.
 
 ---

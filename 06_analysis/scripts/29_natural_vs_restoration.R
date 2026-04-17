@@ -32,7 +32,7 @@
 # OUTPUTS:
 #   CSVs: natural_vs_restoration_*.csv (4 files)
 #         natural_vs_restoration_model_diagnostics.csv
-#   Figure: FigSXX_natural_vs_restoration_comparison.{png,pdf}
+#   Figure: FigS26_natural_vs_restoration_comparison.{png,pdf}
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-03
@@ -896,7 +896,7 @@ fig_combined <- p_a / p_b +
 # Save
 save_manuscript_fig(
   fig_combined,
-  "FigSXX_natural_vs_restoration_comparison",
+  "FigS26_natural_vs_restoration_comparison",
   width_mm = 174,
   height_mm = 180,
   fig_dir = fig_dir
@@ -1122,6 +1122,6 @@ cat("  - Random effect (1|study) poorly estimated with 2 studies in FL Keys\n")
 cat("  - Results should be interpreted as descriptive, not causal\n\n")
 
 cat("OUTPUTS:\n")
-cat(sprintf("  Figures: %s/FigSXX_natural_vs_restoration_comparison.{png,pdf}\n", fig_dir))
+cat(sprintf("  Figures: %s/FigS26_natural_vs_restoration_comparison.{png,pdf}\n", fig_dir))
 cat(sprintf("  Tables:  %s/natural_vs_restoration_*.csv (4 files)\n", output_dir))
 cat("\nDone.\n")

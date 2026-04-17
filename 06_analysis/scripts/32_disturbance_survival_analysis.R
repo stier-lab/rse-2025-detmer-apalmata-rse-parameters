@@ -30,7 +30,7 @@
 # OUTPUTS:
 #   - 06_analysis/output/disturbance_survival_glmm.csv
 #   - 06_analysis/output/disturbance_frequency.csv
-#   - 06_analysis/figures/supplementary/FigSXX_disturbance_timeline.png (+.pdf)
+#   - 06_analysis/figures/supplementary/FigS23_disturbance_timeline.png (+.pdf)
 #
 # CRITICAL NOTES:
 #   - survey_yr = START of observation interval. A colony surveyed in 2014
@@ -576,13 +576,13 @@ p_combined <- p_combined +
 # --- Save figure ---
 save_manuscript_fig(
   p_combined,
-  "FigSXX_disturbance_timeline",
+  "FigS23_disturbance_timeline",
   width_mm = 174,
   height_mm = 160,
   fig_dir = dirs$figures_supp
 )
 
-print_success("Saved FigSXX_disturbance_timeline (.png + .pdf)")
+print_success("Saved FigS23_disturbance_timeline (.png + .pdf)")
 
 # ==============================================================================
 # SECTION 4: STATISTICAL ANALYSIS
@@ -979,7 +979,7 @@ cat("\n  Outputs:\n")
 cat("    - 06_analysis/output/disturbance_survival_glmm.csv\n")
 cat("    - 06_analysis/output/disturbance_dhw_coverage.csv\n")
 cat("    - 06_analysis/output/disturbance_frequency.csv\n")
-cat("    - 06_analysis/figures/supplementary/FigSXX_disturbance_timeline.png (+.pdf)\n")
+cat("    - 06_analysis/figures/supplementary/FigS23_disturbance_timeline.png (+.pdf)\n")
 
 cat("\n  CAVEATS:\n")
 cat("    - Disturbance database is literature-compiled, not exhaustive\n")

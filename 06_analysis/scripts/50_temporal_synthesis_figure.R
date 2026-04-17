@@ -18,7 +18,7 @@
 #   - 06_analysis/output/heatwave_scenario_summary.csv
 #
 # OUTPUTS:
-#   - 06_analysis/figures/supplementary/FigSXX_temporal_synthesis.png + .pdf
+#   - 06_analysis/figures/supplementary/FigS28_temporal_synthesis.png + .pdf
 #
 # Author: Detmer & Stier Lab
 # Date: 2026-04
@@ -241,10 +241,10 @@ fig_temporal <- panel_a / panel_b / panel_c +
 # SAVE
 # =============================================================================
 
-save_manuscript_fig(fig_temporal, "FigSXX_temporal_synthesis",
+save_manuscript_fig(fig_temporal, "FigS28_temporal_synthesis",
                     width_mm = 174, height_mm = 210, fig_dir = supp_dir)
 
 cat("\nDone. Temporal synthesis figure saved to:\n")
-cat("  ", file.path(supp_dir, "FigSXX_temporal_synthesis.png"), "\n")
-cat("  ", file.path(supp_dir, "FigSXX_temporal_synthesis.pdf"), "\n")
+cat("  ", file.path(supp_dir, "FigS28_temporal_synthesis.png"), "\n")
+cat("  ", file.path(supp_dir, "FigS28_temporal_synthesis.pdf"), "\n")
 cat("================================================================\n")

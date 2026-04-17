@@ -9,7 +9,7 @@ flowchart TB
     subgraph raw["Raw Data (05_data/original)"]
         NOAA["NOAA survey<br/>4,031 colonies"]
         Neely["Neely et al. 2022<br/>878 colonies"]
-        Pausch["Pausch et al. 2018<br/>966 colonies"]
+        Pausch["Pausch et al. 2018<br/>969 colonies"]
         USGS["USGS USVI<br/>46 colonies"]
         Kuffner["Kuffner et al. 2020<br/>52 colonies"]
         Mendoza["Mendoza-Quiroz 2023<br/>52 colonies"]

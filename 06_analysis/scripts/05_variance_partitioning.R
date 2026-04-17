@@ -630,6 +630,19 @@ m_size_region <- glm(survived ~ log_size + region, data = surv_data, family = bi
 # Full model
 m_full <- glm(survived ~ log_size + region + survey_yr, data = surv_data, family = binomial)
 
+# Overdispersion checks for all binomial GLMs
+for (mod_info in list(
+  list(m = m_size, name = "Size-only"),
+  list(m = m_region, name = "Region-only"),
+  list(m = m_year, name = "Year-only"),
+  list(m = m_size_region, name = "Size+Region"),
+  list(m = m_full, name = "Full")
+)) {
+  pr <- residuals(mod_info$m, type = "pearson")
+  odr <- sum(pr^2) / df.residual(mod_info$m)
+  if (odr > 1.5) cat(sprintf("  WARNING: Potential overdispersion in %s model (ratio = %.2f)\n", mod_info$name, odr))
+}
+
 # Multicollinearity assessment
 if (requireNamespace("car", quietly = TRUE)) {
   cat("\n--- MULTICOLLINEARITY CHECK (VIF) ---\n")

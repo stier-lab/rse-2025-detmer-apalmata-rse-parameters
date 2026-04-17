@@ -26,7 +26,7 @@
 #   - 06_analysis/output/heat_stress_by_site_year.csv
 #   - 06_analysis/output/heat_stress_survival_analysis.csv
 #   - 06_analysis/output/heat_stress_model_diagnostics.csv
-#   - 06_analysis/figures/supplementary/FigSXX_heat_stress_survival.png
+#   - 06_analysis/figures/supplementary/FigS24_heat_stress_survival.png
 #
 # NOTES:
 #   - CRW 5km product starts in 1985; pre-1985 studies get NA
@@ -919,7 +919,7 @@ write_csv(analysis_summary, file.path(output_dir, "heat_stress_survival_analysis
 cat(sprintf("  Saved: heat_stress_survival_analysis.csv (%d rows)\n", nrow(analysis_summary)))
 
 # ==============================================================================
-# SECTION 7: FIGURE -- FigSXX_heat_stress_survival
+# SECTION 7: FIGURE -- FigS24_heat_stress_survival
 # ==============================================================================
 
 print_header("7. Creating heat stress figure")
@@ -1044,7 +1044,7 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
     theme(plot.tag = element_text(face = "bold", size = 12))
 
   # Save figure
-  fig_path <- file.path(fig_dir, "FigSXX_heat_stress_survival")
+  fig_path <- file.path(fig_dir, "FigS24_heat_stress_survival")
   ggsave(paste0(fig_path, ".png"), plot = fig_combined,
          width = 174, height = 180, units = "mm", dpi = 300, bg = "white")
 
@@ -1054,7 +1054,7 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
          width = 174, height = 180, units = "mm", bg = "white",
          device = pdf_device)
 
-  cat(sprintf("  Saved: FigSXX_heat_stress_survival (.png + .pdf) -- 174 x 180 mm\n"))
+  cat(sprintf("  Saved: FigS24_heat_stress_survival (.png + .pdf) -- 174 x 180 mm\n"))
 
 } else {
   cat("  Insufficient DHW-matched data for figure (need >= 20 observations)\n")
@@ -1114,5 +1114,5 @@ cat("\nOutputs:\n")
 cat("  - heat_stress_by_site_year.csv\n")
 cat("  - heat_stress_survival_analysis.csv\n")
 cat("  - heat_stress_model_diagnostics.csv\n")
-cat("  - FigSXX_heat_stress_survival.png/.pdf\n")
+cat("  - FigS24_heat_stress_survival.png/.pdf\n")
 cat("\n")

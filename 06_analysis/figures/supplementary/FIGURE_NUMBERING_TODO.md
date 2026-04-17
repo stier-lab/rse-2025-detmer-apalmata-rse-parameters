@@ -1,6 +1,9 @@
 # Supplementary Figure Numbering TODO
 
+**STATUS: RESOLVED** (2026-04-14). All collisions fixed, all FigSXX placeholders assigned numbers.
+
 Generated: 2026-04-07
+Updated: 2026-04-14
 
 ## Current Numbered Figures (FigS1--FigS19)
 
@@ -14,7 +17,7 @@ Generated: 2026-04-07
 | FigS6 | FigS6_agr_vs_rgr | Absolute vs relative growth rate comparison | 25_supp_S5_S6_S7_thresholds_growth.R |
 | FigS7 | FigS7_allometry | Allometric relationships | 25_supp_S5_S6_S7_thresholds_growth.R |
 | FigS8 | FigS8_natural_vs_restoration | Natural vs restoration comparison (4-panel) | 21_fig3_natural_vs_restoration.R |
-| FigS8 | FigS8_forest_plots **(NUMBER COLLISION)** | Forest plots: overall + stratified (2 panels) | 26_supp_S8_S9.R |
+| ~~FigS8~~ FigS21 | FigS21_forest_plots **(COLLISION RESOLVED)** | Forest plots: overall + stratified (2 panels) | 26_supp_S8_S9.R |
 | FigS9 | FigS9_heterogeneity | Heterogeneity analysis | 26_supp_S8_S9.R |
 | FigS10 | FigS10_context_comparison | Context (region/method) comparison | 27_supp_S10_S11.R |
 | FigS11 | FigS11_climate_demography | Climate-demography relationships | 27_supp_S10_S11.R |
@@ -22,7 +25,7 @@ Generated: 2026-04-07
 | FigS13 | FigS13_cross_validation | Cross-validation results | 28_supp_S12_S13_S14.R |
 | FigS14 | FigS14_population_projections | Population projection trajectories | 28_supp_S12_S13_S14.R |
 | FigS15 | FigS15_regional_survival | Regional survival estimates | 20c_fig_regional_survival.R |
-| FigS15 | FigS15_heatwave_scenarios **(NUMBER COLLISION)** | Manzello 2025 heatwave scenario projections | 40_manzello_heatwave_scenarios.R |
+| ~~FigS15~~ FigS22 | FigS22_heatwave_scenarios **(COLLISION RESOLVED)** | Manzello 2025 heatwave scenario projections | 40_manzello_heatwave_scenarios.R |
 | FigS16 | FigS16_shrinkage_retrogression_summary | Size-class shrinkage & retrogression | 36_shrinkage_retrogression_summary.R |
 | FigS17 | FigS17_disturbance_size_interaction | Disturbance x size interaction on survival/growth | 37_disturbance_size_interaction.R |
 | FigS18 | FigS18_disturbance_summary | Disturbance event catalog summary | 34_disturbance_summaries.R |
@@ -42,15 +45,16 @@ Generated: 2026-04-07
 
 ---
 
-## Unnumbered Figures (FigSXX_*) -- Need Numbers Assigned
+## Formerly Unnumbered Figures (FigSXX_*) -- NOW ASSIGNED
 
-| Filename | Content | Script | Has PDF? |
-|----------|---------|--------|----------|
-| FigSXX_disturbance_timeline | Disturbance event timeline | 32_disturbance_survival_analysis.R | Yes |
-| FigSXX_heat_stress_survival | Heat stress overlay on survival | 31_heat_stress_overlay.R | Yes |
-| FigSXX_natural_vs_restoration_comparison | Extended natural vs restoration analysis | 29_natural_vs_restoration.R | Yes |
-| FigSXX_disturbance_sensitivity | Disturbance sensitivity scenarios | 30_disturbance_sensitivity.R | Yes |
-| FigSXX_disturbance_summary | Disturbance summary (orphaned -- no script reference found) | **ORPHAN** | Yes |
+| New Number | Old Filename | Content | Script | Has PDF? |
+|------------|-------------|---------|--------|----------|
+| FigS23 | FigSXX_disturbance_timeline | Disturbance event timeline | 32_disturbance_survival_analysis.R | Yes |
+| FigS24 | FigSXX_heat_stress_survival | Heat stress overlay on survival | 31_heat_stress_overlay.R | Yes |
+| FigS25 | FigSXX_disturbance_sensitivity | Disturbance sensitivity scenarios | 30_disturbance_sensitivity.R | Yes |
+| FigS26 | FigSXX_natural_vs_restoration_comparison | Extended natural vs restoration analysis | 29_natural_vs_restoration.R | Yes |
+| FigS27 | FigSXX_disturbance_summary | Disturbance summary (orphaned -- no script reference found) | **ORPHAN** | Yes |
+| FigS28 | FigSXX_temporal_synthesis | Temporal synthesis (3 panels) | 50_temporal_synthesis_figure.R | Yes |
 
 ---
 

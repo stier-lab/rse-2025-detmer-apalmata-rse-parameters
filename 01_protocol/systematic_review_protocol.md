@@ -439,7 +439,7 @@ No formal assessment of publication bias (e.g., funnel plot, Egger's test) has b
 
 ### 7.5 NOAA Data Dominance
 
-The NOAA Acropora Demographic Monitoring Program is the largest single contributor to individual-level observations (4,025 colonies). With the addition of Neely et al. 2022 (878 colonies), NOAA dominance is reduced but remains substantial. Results are assessed for robustness via leave-one-study-out (LOSO) sensitivity analysis (Script 15), which removes NOAA data entirely and re-estimates all vital rates.
+The NOAA Acropora Demographic Monitoring Program is the largest single contributor to individual-level observations (4,048 observations). With the addition of Neely et al. 2022 (878 colonies), NOAA dominance is reduced but remains substantial. Results are assessed for robustness via leave-one-study-out (LOSO) sensitivity analysis (Script 15), which removes NOAA data entirely and re-estimates all vital rates.
 
 ---
 

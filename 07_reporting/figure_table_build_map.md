@@ -34,6 +34,15 @@ This file records the current manuscript-facing build surface after the latest c
 | Fig. S17 Disturbance-by-size interaction | `37_disturbance_size_interaction.R` | `06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png` and `.pdf` |
 | Fig. S18 Disturbance summary | `34_disturbance_summaries.R` | `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` |
 | Fig. S19 Restoration subtype sensitivity | `39_restoration_subtype_sensitivity.R` | `06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png` and `.pdf` |
+| Fig. S20 Annual survival time series | `49_annual_survival_timeseries.R` | `06_analysis/figures/supplementary/FigS20_annual_survival_timeseries.png` and `.pdf` |
+| Fig. S21 Forest plots | `26_supp_S8_S9.R` | `06_analysis/figures/supplementary/FigS21_forest_plots.png` and `.pdf` |
+| Fig. S22 Heatwave scenarios | `40_manzello_heatwave_scenarios.R` | `06_analysis/figures/supplementary/FigS22_heatwave_scenarios.png` and `.pdf` |
+| Fig. S23 Disturbance timeline | `32_disturbance_survival_analysis.R` | `06_analysis/figures/supplementary/FigS23_disturbance_timeline.png` and `.pdf` |
+| Fig. S24 Heat stress survival | `31_heat_stress_overlay.R` | `06_analysis/figures/supplementary/FigS24_heat_stress_survival.png` and `.pdf` |
+| Fig. S25 Disturbance sensitivity | `30_disturbance_sensitivity.R` | `06_analysis/figures/supplementary/FigS25_disturbance_sensitivity.png` and `.pdf` |
+| Fig. S26 Natural vs restoration comparison | `29_natural_vs_restoration.R` | `06_analysis/figures/supplementary/FigS26_natural_vs_restoration_comparison.png` and `.pdf` |
+| Fig. S27 Disturbance summary | (orphan) | `06_analysis/figures/supplementary/FigS27_disturbance_summary.png` and `.pdf` |
+| Fig. S28 Temporal synthesis | `50_temporal_synthesis_figure.R` | `06_analysis/figures/supplementary/FigS28_temporal_synthesis.png` and `.pdf` |
 
 ## Supplementary Tables
 
@@ -50,15 +59,11 @@ These remain valuable but are not part of the formal numbered build surface:
 - `06_analysis/figures/manuscript/Fig4_size_class_survival.*`
 - `06_analysis/figures/manuscript/Fig5_expanded_forest_plot.png`
 - `06_analysis/figures/manuscript/Fig6_population_model.png`
-- `06_analysis/figures/supplementary/FigS8_forest_plots.*`
-- `06_analysis/figures/supplementary/FigSXX_disturbance_sensitivity.*`
-- `06_analysis/figures/supplementary/FigSXX_heat_stress_survival.*`
-- `06_analysis/figures/supplementary/FigSXX_natural_vs_restoration_comparison.*`
 - `06_analysis/figures/supplementary/disturbance_timeline_highres.*`
 - `06_analysis/figures/supplementary/disturbance_regional_severity.*`
 
 ## Manual Checks After Regeneration
 
 1. Confirm the main-text figure numbers in `07_reporting/figure_legends.txt` still match the actual retained figure set.
-2. Confirm `Fig2_demographic_rates.*`, `FigS16_*`, `FigS17_*`, `FigS18_*`, `FigS19_*`, `TableS1_*`, and `TableS2_*` are regenerated under the canonical names.
+2. Confirm `Fig2_demographic_rates.*`, `FigS16_*`--`FigS28_*`, `TableS1_*`, and `TableS2_*` are regenerated under the canonical names.
 3. Keep `claim_output_crosswalk.md`, `final_figure_table_set.md`, and this build map in sync whenever the manuscript-facing set changes.

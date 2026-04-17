@@ -573,6 +573,9 @@ model_specs <- list()
 # Linear logistic
 model_specs$linear <- tryCatch({
   m <- glm(survived ~ log(size_cm2), data = survival_data, family = binomial)
+  pr <- residuals(m, type = "pearson")
+  odr <- sum(pr^2) / df.residual(m)
+  if (odr > 1.5) cat(sprintf("  WARNING: Potential overdispersion in Linear model (ratio = %.2f)\n", odr))
   list(
     model = "Linear (log size)",
     aic = AIC(m),
@@ -586,6 +589,9 @@ model_specs$quadratic <- tryCatch({
   survival_data$log_size <- log(survival_data$size_cm2)
   survival_data$log_size_sq <- survival_data$log_size^2
   m <- glm(survived ~ log_size + log_size_sq, data = survival_data, family = binomial)
+  pr <- residuals(m, type = "pearson")
+  odr <- sum(pr^2) / df.residual(m)
+  if (odr > 1.5) cat(sprintf("  WARNING: Potential overdispersion in Quadratic model (ratio = %.2f)\n", odr))
   list(
     model = "Quadratic (log size + log size²)",
     aic = AIC(m),
@@ -597,6 +603,9 @@ model_specs$quadratic <- tryCatch({
 # Categorical
 model_specs$categorical <- tryCatch({
   m <- glm(survived ~ size_class, data = survival_data, family = binomial)
+  pr <- residuals(m, type = "pearson")
+  odr <- sum(pr^2) / df.residual(m)
+  if (odr > 1.5) cat(sprintf("  WARNING: Potential overdispersion in Categorical model (ratio = %.2f)\n", odr))
   list(
     model = "Categorical (5 size classes)",
     aic = AIC(m),
@@ -623,6 +632,9 @@ model_specs$threshold <- tryCatch({
   }
   survival_data$size_above_thresh <- pmax(0, log(survival_data$size_cm2) - thresh_log)
   m <- glm(survived ~ log(size_cm2) + size_above_thresh, data = survival_data, family = binomial)
+  pr <- residuals(m, type = "pearson")
+  odr <- sum(pr^2) / df.residual(m)
+  if (odr > 1.5) cat(sprintf("  WARNING: Potential overdispersion in Threshold model (ratio = %.2f)\n", odr))
   list(
     model = sprintf("Threshold (breakpoint at %d cm2)", thresh_cm2_label),
     aic = AIC(m),

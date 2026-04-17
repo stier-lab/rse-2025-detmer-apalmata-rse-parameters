@@ -11,7 +11,7 @@
 
 The NOAA Acropora Demographic Monitoring Program (operated by NOAA Southeast Fisheries Science Center, principally by M. Williams, D. Williams, and M. Miller) is the largest long-term monitoring effort for *Acropora palmata* in the Caribbean. The program has produced multiple publications, data releases, and reports that draw on the same pool of individually tagged colonies at Florida Keys reef sites plus Curacao and Navassa.
 
-The core dataset -- `NOAA_Tagged_Colony_Data.csv` (NCEI Accession 0142175) -- contains 4,025 individually tracked colonies and represents 78% of all individual-level observations in this synthesis. Because multiple papers analyze overlapping subsets of these colonies, including any NOAA-derived publication as a separate study would double-count data.
+The core dataset -- `NOAA_Tagged_Colony_Data.csv` (NCEI Accession 0142175) -- contains 4,048 individual-level survival observations and represents 78% of all individual-level observations in this synthesis. Because multiple papers analyze overlapping subsets of these colonies, including any NOAA-derived publication as a separate study would double-count data.
 
 **Resolution:** The raw tagged colony dataset is included once as `NOAA_survey`. All publications that analyze subsets of this dataset are excluded as independent studies.
 
@@ -131,7 +131,7 @@ The false overlap impression arose from: (a) NOAA funding, (b) methods trained b
 
 | Study | # Colonies | Decision | Reason |
 |-------|-----------|----------|--------|
-| NOAA_survey (Williams et al.) | 4,025 | **INCLUDED** (Tier 1) | Primary dataset |
+| NOAA_survey (Williams et al.) | 4,048 | **INCLUDED** (Tier 1) | Primary dataset |
 | Williams & Miller 2008 | -- | EXCLUDED (E4) | IS the NOAA dataset |
 | Williams & Miller 2012 | -- | EXCLUDED (E4) | IS the NOAA dataset |
 | Williams et al. 2024 | -- | EXCLUDED (E4) | Same NOAA colonies |

@@ -32,7 +32,7 @@ This inventory labels the major analysis threads relative to the paper goals so 
 | Scripts / analysis thread | Label | Why it is exploratory |
 |---|---|---|
 | `41_multistate_transition_model.R`, `42_joint_longitudinal_survival_model.R`, `43_stochastic_ipm_disturbance_model.R`, `44_regime_switching_model.R`, `45_distributed_lag_disturbance_model.R`, `46_recurrent_event_frailty_model.R`, `47_spatiotemporal_hierarchical_model.R` | Exploratory advanced | High-value dynamic extensions that materially deepen the repo, but they are not yet frozen into the manuscript claim structure or canonical figure/table set. |
-| Deprecated `FigSXX_*` variants and archived exploratory figure outputs | Exploratory | Retained for traceability, but excluded from the canonical build surface documented in `final_figure_table_set.md`. |
+| Former `FigSXX_*` variants (now assigned proper numbers FigS23--FigS28) and archived exploratory figure outputs | Exploratory | Now numbered and included in the canonical build surface. See `final_figure_table_set.md`. |
 | Any side comparisons not carried into `claim_output_crosswalk.md` | Exploratory | If they do not map to a paper claim, they should remain background only. |
 
 ## Practical Rule

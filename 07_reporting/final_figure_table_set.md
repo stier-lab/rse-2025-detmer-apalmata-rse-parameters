@@ -38,6 +38,15 @@ This is the current recommended final manuscript/supplement set for the paper. T
 | Fig. S17 | Disturbance-by-size interaction | `06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png` and `.pdf` | `37_disturbance_size_interaction.R` | Keep. Strong survival interaction support. |
 | Fig. S18 | Disturbance chronology / summary | `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` | `34_disturbance_summaries.R` | Keep. This is the formal disturbance-context figure. |
 | Fig. S19 | Restoration subtype sensitivity | `06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png` and `.pdf` | `39_restoration_subtype_sensitivity.R` | Keep. This is the main subtype-specific restoration support figure. |
+| Fig. S20 | Annual survival time series | `06_analysis/figures/supplementary/FigS20_annual_survival_timeseries.png` and `.pdf` | `49_annual_survival_timeseries.R` | Keep. |
+| Fig. S21 | Forest plots | `06_analysis/figures/supplementary/FigS21_forest_plots.png` and `.pdf` | `26_supp_S8_S9.R` | Keep. Meta-analysis forest plots (overall + stratified). Formerly FigS8_forest_plots (collision resolved). |
+| Fig. S22 | Heatwave scenarios | `06_analysis/figures/supplementary/FigS22_heatwave_scenarios.png` and `.pdf` | `40_manzello_heatwave_scenarios.R` | Keep. Manzello 2025 heatwave scenario projections. Formerly FigS15_heatwave_scenarios (collision resolved). |
+| Fig. S23 | Disturbance timeline | `06_analysis/figures/supplementary/FigS23_disturbance_timeline.png` and `.pdf` | `32_disturbance_survival_analysis.R` | Keep. Formerly FigSXX_disturbance_timeline. |
+| Fig. S24 | Heat stress survival | `06_analysis/figures/supplementary/FigS24_heat_stress_survival.png` and `.pdf` | `31_heat_stress_overlay.R` | Keep. Formerly FigSXX_heat_stress_survival. |
+| Fig. S25 | Disturbance sensitivity | `06_analysis/figures/supplementary/FigS25_disturbance_sensitivity.png` and `.pdf` | `30_disturbance_sensitivity.R` | Keep. Formerly FigSXX_disturbance_sensitivity. |
+| Fig. S26 | Natural vs restoration comparison | `06_analysis/figures/supplementary/FigS26_natural_vs_restoration_comparison.png` and `.pdf` | `29_natural_vs_restoration.R` | Keep. Formerly FigSXX_natural_vs_restoration_comparison. |
+| Fig. S27 | Disturbance summary | `06_analysis/figures/supplementary/FigS27_disturbance_summary.png` and `.pdf` | (orphan) | Keep. Formerly FigSXX_disturbance_summary. |
+| Fig. S28 | Temporal synthesis | `06_analysis/figures/supplementary/FigS28_temporal_synthesis.png` and `.pdf` | `50_temporal_synthesis_figure.R` | Keep. Formerly FigSXX_temporal_synthesis. |
 
 ## Formal Supplementary Tables
 
@@ -54,10 +63,7 @@ This is the current recommended final manuscript/supplement set for the paper. T
 | `06_analysis/figures/manuscript/Fig4_size_class_survival.*` | Useful as a standalone bridge figure, but panel c of Fig. 2 and Table S3 already cover the size-class synthesis in the current paper structure. |
 | `06_analysis/figures/manuscript/Fig5_expanded_forest_plot.png` | Useful internal or revision-support asset, but not part of the current numbered main-text set. |
 | `06_analysis/figures/manuscript/Fig6_population_model.png` | Legacy duplicate naming branch relative to `Fig4_population_model.*`. |
-| `06_analysis/figures/supplementary/FigS8_forest_plots.*` | Keep as an internal heterogeneity companion, but the current numbered S8 in the manuscript-facing set is the shared-range natural vs restoration figure. |
-| `06_analysis/figures/supplementary/FigSXX_disturbance_sensitivity.*` | Useful sensitivity support output, but no longer needed as a numbered figure once S17, S18, Table S1, and Table S2 are in place. |
-| `06_analysis/figures/supplementary/FigSXX_heat_stress_survival.*` | Exploratory context figure. |
-| `06_analysis/figures/supplementary/FigSXX_natural_vs_restoration_comparison.*` | Superseded by Fig. S8 plus Fig. S19. |
+| (All former FigS8_forest_plots and FigSXX files have been assigned proper numbers S20-S28.) | |
 | `06_analysis/figures/supplementary/disturbance_timeline_highres.*` and `disturbance_regional_severity.*` | Keep as build components / internal reporting assets rather than numbered final figures. |
 
 ## Bottom Line
@@ -69,4 +75,4 @@ The final manuscript-facing set is now organized around four main threads:
 3. Caribbean-wide synthesis and heterogeneity
 4. population viability under a disturbance-shaped demographic regime
 
-The new completeness work lands in the supplement as S16-S19 plus Tables S1-S2, which is where it can strengthen the paper without forcing a disruptive rewrite of the current main-text figure sequence.
+The new completeness work lands in the supplement as S16-S28 plus Tables S1-S2, which is where it can strengthen the paper without forcing a disruptive rewrite of the current main-text figure sequence.

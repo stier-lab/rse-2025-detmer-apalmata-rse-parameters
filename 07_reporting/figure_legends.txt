@@ -519,6 +519,32 @@ the survival estimates in panel a.
 
 
 ================================================================================
+SUPPLEMENTARY FIGURE S21
+================================================================================
+
+LEGEND:
+Fig. S21 Meta-analysis forest plots for Acropora palmata annual survival.
+(a) Overall forest plot from the expanded random-effects meta-analysis
+(k = 17 studies, 22 effects). Point size is proportional to random-effects
+weight. The diamond shows the pooled estimate and the shaded band indicates the
+95% prediction interval. (b) Stratified forest plot separating natural colony
+and restoration fragment effects, with subgroup pooled estimates.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S22
+================================================================================
+
+LEGEND:
+Fig. S22 Heatwave scenario projections for Acropora palmata based on
+Manzello et al. (2025). (a) Dose-response curve relating degree heating weeks
+(DHW) to colony mortality. (b) 50-year population trajectories under chronic
+and acute heatwave scenarios. (c) Effective population growth rate (lambda)
+across heatwave intensity scenarios, with the dotted line marking the
+stable-population threshold (lambda = 1).
+
+
+================================================================================
 METHODOLOGICAL LIMITATIONS
 ================================================================================
 

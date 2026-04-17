@@ -40,12 +40,12 @@
 - **Risk:** Pipeline may produce different results with different package versions (especially metafor, lme4, mgcv)
 - **Fix:** Run `renv::init()` and commit `renv.lock` before archiving to Zenodo/BCO-DMO
 
-### 5. Supplementary figure numbering collisions
+### 5. ~~Supplementary figure numbering collisions~~ RESOLVED
 
-- **FigS8** has TWO files: `FigS8_forest_plots` AND `FigS8_natural_vs_restoration`
-- **FigS15** has TWO files: `FigS15_heatwave_scenarios` AND `FigS15_regional_survival`
-- **FigSXX_** placeholder names still exist (6 files): disturbance_sensitivity, disturbance_summary, disturbance_timeline, heat_stress_survival, natural_vs_restoration_comparison, temporal_synthesis
-- **Fix:** Renumber supplementary figures to be contiguous with no collisions
+- ~~**FigS8** collision~~: `FigS8_forest_plots` renamed to `FigS21_forest_plots`; `FigS8_natural_vs_restoration` kept as S8.
+- ~~**FigS15** collision~~: `FigS15_heatwave_scenarios` renamed to `FigS22_heatwave_scenarios`; `FigS15_regional_survival` kept as S15.
+- ~~**FigSXX_** placeholders~~: All assigned proper numbers (FigS23--FigS28).
+- All R scripts, canonical registry, and documentation updated.
 
 ### 6. Script 13 rma() does not use test="knha" (Knapp-Hartung)
 
@@ -142,7 +142,7 @@
 - Size class `cut()` uses `include.lowest=TRUE` — 10 cm² goes to SC1 (confirmed by test)
 - Causal language is appropriately hedged throughout manuscript docs
 - Figures 1-4 exist in manuscript/ directory
-- FigS1-S20 exist in supplementary/ directory (with numbering collisions noted above)
+- FigS1-S28 exist in supplementary/ directory (numbering collisions resolved)
 
 ## E. Not Verifiable From This Pass
 

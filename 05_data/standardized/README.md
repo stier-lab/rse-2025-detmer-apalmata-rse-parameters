@@ -157,8 +157,8 @@ Survival records for individually tracked corals over ~1-year intervals.
 
 | Study | n | Region(s) | Data Type |
 |-------|---|-----------|-----------|
-| NOAA_survey | 4,025 | Florida Keys, Curacao, Navassa | field |
-| pausch_2018 | 789 | Florida Keys | nursery_in |
+| NOAA_survey | 4,048 | Florida Keys, Curacao, Navassa | field |
+| pausch_2018 | 969 | Florida Keys | nursery_in |
 | kuffner_et_al_2020 | 106 | Florida Keys | field |
 | USGS_USVI | 92 | USVI | field |
 | fundemar_fragments | 156 | Dominican Republic | nursery_in |

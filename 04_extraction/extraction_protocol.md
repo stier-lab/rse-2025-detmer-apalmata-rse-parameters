@@ -174,8 +174,8 @@ Because multiple studies from the same monitoring programs exist, the following 
 
 | Study | Source | n | Region | Data Type | Raw Data |
 |-------|--------|---|--------|-----------|----------|
-| NOAA_survey | NOAA NCEI 0142175 | 4,025 | FL Keys, Curacao, Navassa | field | `NOAA_Tagged_Colony_Data.csv` |
-| pausch_et_al_2018 | NOAA InPort 26790 | 789 | FL Keys | nursery_in | `Pausch_2018_Data_Table_*.csv` |
+| NOAA_survey | NOAA NCEI 0142175 | 4,048 | FL Keys, Curacao, Navassa | field | `NOAA_Tagged_Colony_Data.csv` |
+| pausch_et_al_2018 | NOAA InPort 26790 | 969 | FL Keys | nursery_in | `Pausch_2018_Data_Table_*.csv` |
 | kuffner_et_al_2020 | USGS Data Release | 106 | FL Keys | field | `Kuffner_et_al_2020_*.csv` |
 | USGS_USVI_exp | USGS CMGDS | 92 | USVI | field | `USGS_Palmata_growth_VI_USA.csv` |
 | fundemar_fragments | Fundemar (shared) | 156 | Dominican Republic | nursery_in | `Fundemar_*.xlsx` |

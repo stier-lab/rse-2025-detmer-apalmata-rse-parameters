@@ -22,7 +22,7 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 | `06_analysis/figures/supplementary/FigS5_threshold_analysis.png` and `.pdf` | none | Leave as is. |
 | `06_analysis/figures/supplementary/FigS6_agr_vs_rgr.png` and `.pdf` | none | Leave as is. |
 | `06_analysis/figures/supplementary/FigS7_allometry.png` and `.pdf` | none | Leave as is. |
-| `06_analysis/figures/supplementary/FigS8_natural_vs_restoration.png` and `.pdf` | `FigS8_forest_plots.*` | Use the natural-vs-restoration shared-range figure as the manuscript-facing S8; keep `FigS8_forest_plots.*` as internal support only. |
+| `06_analysis/figures/supplementary/FigS8_natural_vs_restoration.png` and `.pdf` | (collision resolved: former `FigS8_forest_plots.*` renamed to `FigS21_forest_plots.*`) | Leave as is. |
 | `06_analysis/figures/supplementary/FigS9_heterogeneity.png` and `.pdf` | none | Leave as is. |
 | `06_analysis/figures/supplementary/FigS10_context_comparison.png` and `.pdf` | none | Leave as is. |
 | `06_analysis/figures/supplementary/FigS11_climate_demography.png` and `.pdf` | none | Leave as is. |
@@ -32,7 +32,7 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 | `06_analysis/figures/supplementary/FigS15_regional_survival.png` and `.pdf` | none | Leave as is. |
 | `06_analysis/figures/supplementary/FigS16_shrinkage_retrogression_summary.png` and `.pdf` | `shrinkage_retrogression_summary.*` | Promote S16 as the numbered canonical output. |
 | `06_analysis/figures/supplementary/FigS17_disturbance_size_interaction.png` and `.pdf` | `disturbance_size_interaction.*` | Promote S17 as the numbered canonical output. |
-| `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` | `FigSXX_disturbance_summary.*`, `disturbance_timeline_highres.*`, `disturbance_regional_severity.*` | Use S18 as the numbered combined summary; retain the others as build/support assets only. |
+| `06_analysis/figures/supplementary/FigS18_disturbance_summary.png` and `.pdf` | `disturbance_timeline_highres.*`, `disturbance_regional_severity.*` | S18 is the numbered combined summary. Former `FigSXX_disturbance_summary.*` is now `FigS27_disturbance_summary.*`. |
 | `06_analysis/figures/supplementary/FigS19_restoration_subtype_sensitivity.png` and `.pdf` | `restoration_subtype_sensitivity.*` | Promote S19 as the numbered canonical output. |
 
 ## 3. Canonical Supplementary Tables
@@ -54,11 +54,9 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 - `06_analysis/figures/manuscript/Fig4_size_class_survival.*`
 - `06_analysis/figures/manuscript/Fig5_expanded_forest_plot.png`
 - `06_analysis/figures/manuscript/Fig6_population_model.png`
-- `06_analysis/figures/supplementary/FigS8_forest_plots.*`
-- `06_analysis/figures/supplementary/FigSXX_disturbance_sensitivity.*`
-- `06_analysis/figures/supplementary/FigSXX_heat_stress_survival.*`
-- `06_analysis/figures/supplementary/FigSXX_natural_vs_restoration_comparison.*`
 - `06_analysis/figures/supplementary/disturbance_timeline_highres.*`
 - `06_analysis/figures/supplementary/disturbance_regional_severity.*`
+
+Note: Former `FigS8_forest_plots.*`, `FigSXX_disturbance_sensitivity.*`, `FigSXX_heat_stress_survival.*`, and `FigSXX_natural_vs_restoration_comparison.*` have been assigned proper numbers (S21, S25, S24, S26 respectively) and are now part of the formal numbered set.
 
 These remain useful for internal checking and revision support, but they are not part of the final numbered figure/table surface.

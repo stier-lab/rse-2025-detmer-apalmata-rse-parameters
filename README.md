@@ -3,7 +3,7 @@
 [![R Analysis](https://img.shields.io/badge/R-4.3+-blue.svg)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **~14,100 individual-level observations** from **7 studies** (including the Neely et al. 2022 FKNMS dataset) and **10 additional summary-level studies** (17 unique studies contributing 22 study-level effects; NOAA split into FL Keys/Curacao/Navassa, Vardi 2011 split into Jamaica/Puerto Rico/Virgin Gorda, Garrison & Ward 2008 split into control/relocated, and Neely 2022 as a single FL Keys effect) across **13 Caribbean regions**. The analytical focus is size-dependent demography, population viability, disturbance regime context, and restoration implications. Manuscript targeting *Coral Reefs*.
+R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **14,160 individual-level observations** from **7 studies** (including the Neely et al. 2022 FKNMS dataset) and **10 additional summary-level studies** (17 unique studies contributing 22 study-level effects; NOAA split into FL Keys/Curacao/Navassa, Vardi 2011 split into Jamaica/Puerto Rico/Virgin Gorda, Garrison & Ward 2008 split into control/relocated, and Neely 2022 as a single FL Keys effect) across **13 Caribbean regions**. The analytical focus is size-dependent demography, population viability, disturbance regime context, and restoration implications. Manuscript targeting *Coral Reefs*.
 
 **Central question:** How do *Acropora palmata* survival and growth vary with colony size across the Caribbean, and what does this mean for population viability under chronic disturbance and restoration?
 
@@ -244,9 +244,9 @@ What was removed in cleanup was the ad hoc thresholding that had been bolted ont
 
 | Study | Type | Region | n | Notes |
 |-------|------|--------|---|-------|
-| NOAA NCRMP | Natural | FL, Curacao, Navassa | 4,025 | Largest dataset |
+| NOAA NCRMP | Natural | FL, Curacao, Navassa | 4,048 | Largest dataset |
 | Neely et al. 2022 | Natural | FL Keys | 878 | 2014 disease catastrophe flagged |
-| Pausch et al. 2018 | Restoration | Florida | 789 | Fragment experiments |
+| Pausch et al. 2018 | Restoration | Florida | 969 | Fragment experiments |
 | USGS USVI | Restoration | USVI | 92 | Outplanted 2019 |
 | Kuffner et al. 2020 | Restoration | Florida | 106 | Outplanted 2018 |
 | Mendoza-Quiroz et al. 2023 | Natural | Mexico | 45 | Caribbean coast |

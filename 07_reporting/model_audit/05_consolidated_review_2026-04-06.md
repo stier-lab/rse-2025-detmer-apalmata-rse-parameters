@@ -66,7 +66,7 @@ script reruns and refresh-audit regeneration.
    File:
    [32_disturbance_survival_analysis.R](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/scripts/32_disturbance_survival_analysis.R)
    Refreshed figure:
-   [FigSXX_disturbance_timeline.png](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/supplementary/FigSXX_disturbance_timeline.png)
+   [FigS23_disturbance_timeline.png](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/supplementary/FigS23_disturbance_timeline.png)
    Outcome:
    the current disturbance timeline and DHW outputs now reflect the patched figure builder and the sparse-support DHW framing.
 
@@ -203,7 +203,7 @@ script reruns and refresh-audit regeneration.
     File:
     [26_supp_S8_S9.R](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/scripts/26_supp_S8_S9.R)
     Refreshed figures:
-    [FigS8_forest_plots.png](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/supplementary/FigS8_forest_plots.png),
+    [FigS21_forest_plots.png](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/supplementary/FigS21_forest_plots.png),
     [FigS9_heterogeneity.png](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/supplementary/FigS9_heterogeneity.png)
     Outcome:
     the supplementary meta-analysis figure script now fails fast if the expanded moderator surface is missing instead of silently falling back to the legacy moderator file.

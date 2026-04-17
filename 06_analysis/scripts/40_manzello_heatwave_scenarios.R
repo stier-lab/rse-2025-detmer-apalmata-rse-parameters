@@ -47,7 +47,7 @@
 #   - 06_analysis/output/manzello_dose_response.csv
 #   - 06_analysis/output/heatwave_scenario_projections.csv
 #   - 06_analysis/output/heatwave_scenario_summary.csv
-#   - 06_analysis/figures/supplementary/FigS15_heatwave_scenarios.png + .pdf
+#   - 06_analysis/figures/supplementary/FigS22_heatwave_scenarios.png + .pdf
 #
 # REFERENCES:
 #   Manzello DP et al. (2025) Heat-driven functional extinction of Caribbean
@@ -421,10 +421,10 @@ for (i in 1:nrow(scenario_summary)) {
 }
 
 # ==============================================================================
-# SECTION 6: SUPPLEMENTARY FIGURE S15 — HEATWAVE SCENARIOS
+# SECTION 6: SUPPLEMENTARY FIGURE S22 — HEATWAVE SCENARIOS
 # ==============================================================================
 
-print_subheader("Section 6: Figure S15 — Heatwave Scenario Projections")
+print_subheader("Section 6: Figure S22 — Heatwave Scenario Projections")
 
 # Panel (a): Dose-response curve from Manzello et al. (2025)
 p_dose <- ggplot(dose_response_df, aes(x = dhw, y = mortality * 100)) +
@@ -535,21 +535,21 @@ p_lambda <- ggplot(lambda_data, aes(x = severity, y = effective_lambda,
         legend.title = element_text(size = 7))
 
 # Combine panels
-fig_s15 <- (p_dose | p_traj) / p_lambda +
+fig_s22 <- (p_dose | p_traj) / p_lambda +
   plot_layout(heights = c(1, 0.9)) +
   plot_annotation(tag_levels = "a") &
   theme(plot.tag = element_text(size = 10, face = "bold"))
 
 # Save
 save_manuscript_fig(
-  fig_s15,
-  "FigS15_heatwave_scenarios",
+  fig_s22,
+  "FigS22_heatwave_scenarios",
   width_mm = 174,
   height_mm = 200,
   fig_dir = supp_dir
 )
 
-cat("  FigS15 saved to supplementary/\n")
+cat("  FigS22 saved to supplementary/\n")
 
 # ==============================================================================
 # SECTION 7: KEY FINDINGS SUMMARY

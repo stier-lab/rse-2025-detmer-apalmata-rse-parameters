@@ -7,7 +7,7 @@
 #
 # PURPOSE:
 #   Generate journal-ready supplementary figures for Coral Reefs (Springer):
-#     FigS8 — Forest plots: (a) overall, (b) stratified by natural vs restoration
+#     FigS21 — Forest plots: (a) overall, (b) stratified by natural vs restoration
 #     FigS9 — Heterogeneity: (a) I-squared gauge, (b) variance decomposition,
 #              (c) CI vs PI comparison, (d) moderator effects
 #
@@ -27,7 +27,7 @@
 #   - 06_analysis/output/expanded_meta_analysis_moderators.csv
 #
 # OUTPUTS:
-#   - 06_analysis/figures/supplementary/FigS8_forest_plots.png  (+ .pdf)
+#   - 06_analysis/figures/supplementary/FigS21_forest_plots.png  (+ .pdf)
 #   - 06_analysis/figures/supplementary/FigS9_heterogeneity.png (+ .pdf)
 #
 # Author: Detmer & Stier Lab
@@ -264,8 +264,8 @@ p_S8 <- p_forest_a / p_forest_b +
   plot_annotation(tag_levels = "a") &
   theme(plot.tag = element_text(size = 12, face = "bold"))
 
-# Save FigS8
-save_manuscript_fig(p_S8, "FigS8_forest_plots",
+# Save FigS21
+save_manuscript_fig(p_S8, "FigS21_forest_plots",
                     width_mm = 174, height_mm = 185,
                     fig_dir = supp_dir)
 
@@ -446,8 +446,8 @@ save_manuscript_fig(p_S9, "FigS9_heterogeneity",
 # ==============================================================================
 
 cat("\n")
-print_header("SUPPLEMENTARY FIGURES S8 & S9 COMPLETE")
-cat("  FigS8_forest_plots -- 2 panels: (a) overall, (b) stratified\n")
+print_header("SUPPLEMENTARY FIGURES S21 & S9 COMPLETE")
+cat("  FigS21_forest_plots -- 2 panels: (a) overall, (b) stratified\n")
 cat("  FigS9_heterogeneity -- 4 panels: (a) I-squared, (b) variance,\n")
 cat("                         (c) CI vs PI, (d) moderators\n")
 cat(sprintf("  Journal specs: 174 mm width, 300 DPI, sans font\n"))

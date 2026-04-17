@@ -96,7 +96,7 @@ The following additions are now implemented in the repo:
 
 3. **Archive or relocate internal figure variants**
    Current state:
-   The repo still contains useful but non-final files such as `FigSXX_*`, `Fig6_population_model.png`, `Fig4_size_class_survival.*`, and other manuscript-candidate variants.
+   The repo still contains useful but non-final files such as `Fig6_population_model.png`, `Fig4_size_class_survival.*`, and other manuscript-candidate variants. (Former `FigSXX_*` placeholders have been assigned proper numbers S23-S28.)
    Why it matters:
    The numbering is now clarified in reporting docs, but the figure directories still contain historical clutter.
    Concrete addition:

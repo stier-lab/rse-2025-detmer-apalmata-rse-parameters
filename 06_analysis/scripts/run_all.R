@@ -213,7 +213,7 @@ script_descriptions <- c(
   # 24-28: Supplementary figures (S3-S14)
   "Supplementary S3-S4: Model diagnostics & selection",
   "Supplementary S5-S7: Thresholds & growth",
-  "Supplementary S8-S9: Heterogeneity and comparison layer",
+  "Supplementary S21 & S9: Forest plots and heterogeneity",
   "Supplementary S10-S11: Context and climate layer",
   "Supplementary S12-S14: Sensitivity and projections",
   # 29-40: Context, disturbance, completeness, and scenario extensions
