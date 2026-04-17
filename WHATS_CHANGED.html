@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Changed — March 26 → April 16</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --ink-faint: #767676;
+    --rule: #e4e4e4;
+    --rule-strong: #cfcfcf;
+    --accent: #0f5f7f;
+    --accent-soft: #e8f1f5;
+    --bg: #fbfaf7;
+    --card: #ffffff;
+    --warn-bg: #fdf6e3;
+    --warn-border: #d9c58a;
+    --code-bg: #f4f2ed;
+    --highlight-row: #f7f3e8;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: "Charter", "Iowan Old Style", "Palatino", "Palatino Linotype",
+                 "Baskerville", "Georgia", serif;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--bg);
+    margin: 0;
+    padding: 0;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+
+  header.pageheader {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+
+  header.pageheader .eyebrow {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: "Charter", "Iowan Old Style", "Palatino", "Georgia", serif;
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0;
+  }
+
+  h2 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 22px;
+    line-height: 1.25;
+    margin: 52px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule-strong);
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-weight: 600;
+    margin: 28px 0 10px;
+    color: var(--ink);
+  }
+
+  p { margin: 0 0 16px; }
+
+  ul { padding-left: 22px; margin: 0 0 20px; }
+  li { margin-bottom: 10px; }
+
+  strong { font-weight: 600; }
+
+  em { font-style: italic; color: var(--ink-soft); }
+
+  code {
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #5a3a1a;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15, 95, 127, 0.3);
+    transition: border-color 0.12s ease;
+  }
+  a:hover { border-bottom-color: var(--accent); }
+
+  .lede {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    margin-bottom: 36px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* "Big moves" list */
+  .moves li { margin-bottom: 14px; }
+  .moves li strong { color: var(--ink); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  thead th {
+    background: #f1ede4;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--rule-strong);
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  tbody td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  .highlight-row {
+    background: var(--highlight-row);
+    font-weight: 600;
+  }
+
+  /* Numbers table (two-column, key-value) */
+  table.numbers {
+    max-width: 520px;
+  }
+  table.numbers td:first-child {
+    width: 50%;
+    color: var(--ink-soft);
+  }
+  table.numbers td:last-child {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  /* Where-to-find table */
+  table.find td:first-child {
+    width: 45%;
+    color: var(--ink-soft);
+  }
+  table.find td code {
+    font-size: 0.82em;
+    word-break: break-word;
+  }
+
+  /* Todo boxes (input items) */
+  .todo {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--warn-border);
+    border-radius: 0 3px 3px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 15.5px;
+  }
+
+  .todo .box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--ink-soft);
+    margin-right: 10px;
+    position: relative;
+    top: 2px;
+    border-radius: 2px;
+  }
+
+  /* "What you need to do" callouts */
+  .action-block {
+    background: var(--accent-soft);
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    border: 1px solid #d0e1ea;
+  }
+  .action-block h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--accent);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .action-block ul { margin-bottom: 0; }
+
+  /* Footer */
+  footer.pagefoot {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; font-size: 11pt; }
+    .wrap { max-width: none; padding: 0.5in; }
+    a { color: var(--ink); border: none; }
+    .lede, .action-block, table, .todo {
+      break-inside: avoid;
+      background: white !important;
+    }
+    h2 { break-after: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .wrap { padding: 28px 20px 60px; }
+    h1 { font-size: 26px; }
+    h2 { font-size: 19px; margin-top: 40px; }
+    table { font-size: 14px; }
+    thead th, tbody td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="pageheader">
+  <div class="eyebrow">Acropora palmata demographic synthesis · update for Raine</div>
+  <h1>What Changed</h1>
+  <p class="subtitle">March 26 → April 16, 2026 · 50 commits</p>
+</header>
+
+<p class="lede">
+  Raine — I got into a groove working on this while you were on the RSE side and made a
+  lot of changes. <strong>Nothing touches your working notes or extraction decisions</strong>
+  — those are exactly where you left them. I want to walk through all of this together
+  whenever works for you, but here's the overview so you're not flying blind.
+</p>
+
+<h2>The big moves</h2>
+
+<ul class="moves">
+  <li>
+    <strong>Added Neely et al. 2022</strong> — 878 FL Keys colonies, 2010–2016,
+    including the 2014 bleaching event. Meta-analysis is now k=17 studies,
+    22 effects. This was a big add.
+  </li>
+  <li>
+    <strong>Solved the sample-size weighting question you raised</strong> —
+    remember our April 7 conversation about how to combine proportions from
+    studies with really different sample sizes? That turned out to be more
+    important than either of us expected. I went through a few iterations and
+    landed on study-level <code>rma()</code> per size class, which uses the same
+    methodology as the expanded meta-analysis in script 14b. Lambda = 0.961 now,
+    right in line with Vardi's 0.96. The full story is below if you're curious.
+  </li>
+  <li>
+    <strong>Packaged the FUNDEMAR recruit data for you</strong> — the ~16,700
+    microscopic settlers from FUNDEMAR, Chamberland, and Mendoza-Quiroz are now
+    in <code>recruit_surv_pars.rds</code> with an <code>s_recruit</code> parameter
+    (0.028 annualized) you can plug into the RSE. It's way lower than s1 = 0.70
+    because these are tiny settlers, not nursery fragments — which makes sense
+    given the size-survival relationship we're seeing.
+  </li>
+  <li>
+    <strong>Wired script 17 to read directly from script 13</strong> — field
+    survival parameters for the RSE now come from the same bootstrap as the
+    transition matrix. No more two different estimates of the same thing.
+  </li>
+  <li>
+    <strong>Cleaned up a bunch of other things</strong> — publication bias
+    assessment (funnel plot, Egger's test, trim-and-fill), mortality-definition
+    sensitivity analysis, Caribbean disturbance database (93 events, 13 regions),
+    PRISMA compliance, standardized all the script headers so every file has
+    PURPOSE/INPUTS/OUTPUTS at the top. Also re-ran the stochastic IPM.
+  </li>
+</ul>
+
+<h2>The sample-size weighting story</h2>
+
+<p>
+  Your question from April 7: <em>"how do we weight proportions from studies
+  with very different sample sizes?"</em>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>What we tried</th>
+      <th>Lambda</th>
+      <th>What happened</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Individual-only (before)</td>
+      <td>0.986</td>
+      <td>Only used 3 studies, ignored the rest</td>
+    </tr>
+    <tr>
+      <td>Cell-weighted, your option 2</td>
+      <td>0.959</td>
+      <td>Better, but didn't handle between-study heterogeneity</td>
+    </tr>
+    <tr>
+      <td>Cell-level logit IV</td>
+      <td>0.888</td>
+      <td>Turned out to be biased — lots of NOAA cells had n=1</td>
+    </tr>
+    <tr class="highlight-row">
+      <td>Study-level rma()</td>
+      <td>0.961</td>
+      <td>This is what we're using</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  The details are in
+  <code>07_reporting/internal/methodology_critique_2026-04-14.md</code>
+  if you want the full argument. Short version: aggregating to study-level
+  first and then pooling with <code>rma()</code> avoids treating individual
+  colony fates as if they were independent studies.
+</p>
+
+<h2>How the FUNDEMAR data flows</h2>
+
+<ul>
+  <li><strong>44 fragments</strong> go into <code>nurs_surv_pars.rds</code> as
+      "Restoration fragment" alongside 10 other nursery studies</li>
+  <li><strong>14,271 recruits</strong> go into their own file
+      <code>recruit_surv_pars.rds</code> as "Restoration recruit" with
+      <code>s_recruit</code></li>
+  <li><strong>Neither</strong> enters the natural-colony transition matrix or
+      field survival parameters</li>
+  <li>The classification logic is in script 01, Section 8b — I'd love your
+      eyes on whether I got it right</li>
+</ul>
+
+<h2>What you need to do</h2>
+
+<div class="action-block">
+  <h3>In the parameters repo</h3>
+  <ul>
+    <li>Pull the <code>codex-pipeline-refresh-automation</code> branch —
+        all parameter files are updated</li>
+  </ul>
+</div>
+
+<div class="action-block">
+  <h3>In the RSE repo</h3>
+  <ul>
+    <li>Pull main — I already fixed the hardcoded paths in
+        <code>rse_sensitivity.rmd</code> (replaced your
+        <code>/Users/rainedetmer/Desktop/...</code> paths with relative ones),
+        updated <code>standardized_data/</code> to
+        <code>05_data/standardized/</code> everywhere, and corrected the size
+        class boundaries in QUICK_START.md. I only touched paths, nothing else.</li>
+    <li>Re-run your scenarios — field survival now has 2000 bootstrap samples
+        (was 1000) and comes from <code>rma()</code> instead of the old
+        cell-level weighting</li>
+  </ul>
+</div>
+
+<div class="action-block">
+  <h3>For us to discuss</h3>
+  <ul>
+    <li>Whether <code>s_recruit</code> (0.028) maps onto anything useful in the
+        RSE — could it replace or supplement <code>s1</code> for recruit-based
+        scenarios?</li>
+  </ul>
+</div>
+
+<h2>Things I need your input on</h2>
+
+<p>
+  These are decisions I made that I want you to sanity-check. None of them
+  are urgent but I want to make sure I didn't get anything wrong:
+</p>
+
+<div class="todo"><span class="box"></span>
+  <strong>Population type classification</strong> — does the Natural/Fragment/Recruit
+  split look right for all studies? I'm least sure about Garrison &amp; Ward 2008.
+</div>
+
+<div class="todo"><span class="box"></span>
+  <strong>Fragmentation SC1 split rule</strong> — I used 10%/90% by range width
+  based on your notes. Does that match what you intended?
+</div>
+
+<div class="todo"><span class="box"></span>
+  <strong>Neely 2014 disturbance intervals</strong> are included in the primary
+  analysis (not excluded). LOSO shows removing Neely pushes lambda to 0.993.
+  Does that seem right to you?
+</div>
+
+<div class="todo"><span class="box"></span>
+  <strong>RSE parameter format compatibility</strong> — is there anything about
+  the RSE parameter format that doesn't work with the new structure? The column
+  names and element names should be the same.
+</div>
+
+<h2>Current numbers</h2>
+
+<table class="numbers">
+  <tbody>
+    <tr><td>Lambda</td><td>0.961 (CI: 0.816–1.010)</td></tr>
+    <tr><td>P(decline)</td><td>94.3%</td></tr>
+    <tr><td>SC5 stasis elasticity</td><td>58.9%</td></tr>
+    <tr><td>Meta-analysis</td><td>k=17, 22 effects, pooled 78.0%, I²=97.2%</td></tr>
+    <tr><td>LOSO range</td><td>0.882–0.993</td></tr>
+    <tr><td>s_recruit</td><td>0.028 (annualized)</td></tr>
+  </tbody>
+</table>
+
+<h2>Where to find things</h2>
+
+<table class="find">
+  <thead>
+    <tr>
+      <th>If you're wondering about…</th>
+      <th>Look here</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Why lambda changed</td>
+      <td><code>07_reporting/internal/methodology_critique_2026-04-14.md</code></td>
+    </tr>
+    <tr>
+      <td>How data flows through the pipeline</td>
+      <td><code>04_extraction/data_flow_diagram.md</code></td>
+    </tr>
+    <tr>
+      <td>The sample-size weighting details</td>
+      <td><code>04_extraction/data_integration_issues.md</code></td>
+    </tr>
+    <tr>
+      <td>What the RSE model needs from this repo</td>
+      <td><code>parameter_lists/RSE_COMPATIBILITY.md</code></td>
+    </tr>
+    <tr>
+      <td>Your original extraction notes</td>
+      <td><code>04_extraction/raine_working_notes/</code> (unchanged)</td>
+    </tr>
+    <tr>
+      <td>How FUNDEMAR recruits are classified</td>
+      <td>Script 01, Section 8b</td>
+    </tr>
+    <tr>
+      <td>The recruit parameter details</td>
+      <td><code>parameter_lists/recruit_surv_pars.rds</code>
+          (check <code>$note</code> and <code>$comparison</code>)</td>
+    </tr>
+  </tbody>
+</table>
+
+<footer class="pagefoot">
+  Generated from <code>WHATS_CHANGED.md</code> on the
+  <code>codex-pipeline-refresh-automation</code> branch.
+  Adrian Stier · Ocean Recoveries Lab, UC Santa Barbara.
+</footer>
+
+</div>
+</body>
+</html>
