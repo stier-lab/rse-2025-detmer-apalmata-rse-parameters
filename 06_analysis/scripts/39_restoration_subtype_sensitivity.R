@@ -258,95 +258,116 @@ surv_sensitivity <- bind_rows(
 
 write_csv(surv_sensitivity, file.path(output_dir, "restoration_subtype_sensitivity.csv"))
 
+# Shared factor ordering: descending n_records so largest bucket sits at top
+subtype_order <- surv_summary %>% arrange(n_records) %>% pull(subtype_label)
+
 plot_survival <- surv_summary %>%
-  mutate(subtype_label = factor(subtype_label, levels = subtype_label[order(n_records)]))
+  mutate(subtype_label = factor(subtype_label, levels = subtype_order))
 
 plot_growth <- growth_summary %>%
-  mutate(subtype_label = factor(subtype_label, levels = unique(plot_survival$subtype_label)))
+  mutate(subtype_label = factor(subtype_label, levels = subtype_order))
 
 surv_points <- surv_study_summary %>%
-  mutate(subtype_label = factor(subtype_label, levels = levels(plot_survival$subtype_label)))
+  mutate(subtype_label = factor(subtype_label, levels = subtype_order))
 
 growth_points <- growth_study_summary %>%
-  mutate(subtype_label = factor(subtype_label, levels = levels(plot_survival$subtype_label)))
+  mutate(subtype_label = factor(subtype_label, levels = subtype_order))
+
+# Unified size scale breaks so the two panels can share a single legend.
+size_breaks <- c(50, 200, 500, 1000, 3000)
+size_limits <- c(
+  min(c(surv_points$n, growth_points$n), na.rm = TRUE),
+  max(c(surv_points$n, growth_points$n), na.rm = TRUE)
+)
 
 p_surv <- ggplot() +
   geom_segment(
     data = plot_survival,
-    aes(x = weighted_survival, xend = weighted_survival, y = subtype_label, yend = subtype_label),
-    linewidth = 3.2,
+    aes(x = ci_lower, xend = ci_upper, y = subtype_label, yend = subtype_label),
+    linewidth = 0.8,
     color = "#1F4E79"
   ) +
-  geom_segment(
+  geom_point(
     data = plot_survival,
-    aes(x = ci_lower, xend = ci_upper, y = subtype_label, yend = subtype_label),
-    linewidth = 1.0,
-    color = "#1F4E79"
+    aes(x = weighted_survival, y = subtype_label),
+    shape = 18, size = 3.2, color = "#1F4E79"
   ) +
   geom_point(
     data = surv_points,
     aes(x = mean_survival, y = subtype_label, size = n),
     shape = 21,
     fill = "white",
-    color = "#D95F02",
-    stroke = 0.8,
+    color = "grey25",
+    stroke = 0.6,
     alpha = 0.9,
-    position = position_jitter(height = 0.08, width = 0)
+    position = position_jitter(height = 0.12, width = 0, seed = 39)
   ) +
-  scale_size_continuous(name = "Study-level n", range = c(1.5, 5)) +
-  scale_x_continuous(labels = scales::percent_format(accuracy = 1), limits = c(0, 1)) +
-  labs(
-    title = "Restoration subtype survival comparison",
-    subtitle = "Points are study-level means; bars show bootstrap-weighted subtype means",
-    x = "Annual survival",
-    y = NULL
+  scale_size_continuous(
+    name = "Study-level n",
+    range = c(1.2, 4.5),
+    breaks = size_breaks,
+    limits = size_limits
   ) +
+  scale_x_continuous(
+    labels = scales::percent_format(accuracy = 1),
+    limits = c(0, 1),
+    breaks = seq(0, 1, 0.25),
+    expand = expansion(mult = c(0.02, 0.02))
+  ) +
+  labs(x = "Annual survival", y = NULL, tag = "a") +
   theme_manuscript() +
-  theme(legend.position = "bottom")
+  theme(
+    legend.position = "bottom",
+    plot.margin = margin(4, 6, 2, 2, "mm")
+  )
 
 p_growth <- ggplot() +
-  geom_segment(
+  geom_point(
     data = plot_growth,
-    aes(x = weighted_mean_rgr, xend = weighted_mean_rgr, y = subtype_label, yend = subtype_label),
-    linewidth = 3.2,
-    color = "#2C7FB8"
+    aes(x = weighted_mean_rgr, y = subtype_label),
+    shape = 18, size = 3.2, color = "#2C7FB8"
   ) +
   geom_point(
     data = growth_points,
     aes(x = mean_rgr, y = subtype_label, size = n),
     shape = 21,
     fill = "white",
-    color = "#238B45",
-    stroke = 0.8,
+    color = "grey25",
+    stroke = 0.6,
     alpha = 0.9,
-    position = position_jitter(height = 0.08, width = 0)
+    position = position_jitter(height = 0.12, width = 0, seed = 39)
   ) +
-  scale_size_continuous(name = "Study-level n", range = c(1.5, 5)) +
+  scale_size_continuous(
+    name = "Study-level n",
+    range = c(1.2, 4.5),
+    breaks = size_breaks,
+    limits = size_limits
+  ) +
+  scale_x_continuous(
+    limits = c(0, max(c(growth_points$mean_rgr, plot_growth$weighted_mean_rgr), na.rm = TRUE) * 1.1),
+    expand = expansion(mult = c(0.02, 0.02))
+  ) +
   labs(
-    title = "Restoration subtype relative growth comparison",
-    subtitle = "Study-level means of relative growth rate (RGR)",
-    x = "Mean RGR (yr^-1)",
-    y = NULL
+    x = expression("Mean relative growth rate (yr"^-1*")"),
+    y = NULL,
+    tag = "b"
   ) +
   theme_manuscript() +
+  theme(
+    legend.position = "bottom",
+    plot.margin = margin(2, 6, 4, 2, "mm")
+  )
+
+p <- p_surv / p_growth +
+  plot_layout(guides = "collect", heights = c(1, 1)) &
   theme(legend.position = "bottom")
 
-p <- p_surv / p_growth + plot_layout(guides = "collect")
-
-ggsave(
-  file.path(fig_dir, "FigS19_restoration_subtype_sensitivity.png"),
+save_manuscript_fig(
   p,
-  width = 180,
-  height = 180,
-  units = "mm",
-  dpi = 300
-)
-ggsave(
-  file.path(fig_dir, "FigS19_restoration_subtype_sensitivity.pdf"),
-  p,
-  width = 180,
-  height = 180,
-  units = "mm"
+  "FigS19_restoration_subtype_sensitivity",
+  width_mm = 174,
+  height_mm = 150,
+  fig_dir = fig_dir
 )
 
 cat("\nSubtype mapping written to:\n")

@@ -163,14 +163,12 @@ fig2a <- ggplot() +
   annotate("text", x = 1.5, y = 0.95,
            label = sprintf("R\u00B2 = %.1f%%", surv_r2 * 100),
            hjust = 0, size = 2.5, color = "grey50") +
-  theme_manuscript() +
+  theme_manuscript(base_size = 10) +
   theme(
     text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 10, family = "Helvetica"),
-    axis.text    = element_text(size = 9, family = "Helvetica", color = "grey30"),
     axis.text.x  = element_blank(),
     axis.ticks.x = element_blank(),
-    plot.margin  = margin(6, 8, 2, 6, "mm")
+    plot.margin  = margin(4, 8, 0, 6, "mm")
   )
 
 cat("  Panel a complete.\n")
@@ -306,14 +304,12 @@ fig2b <- ggplot() +
   labs(x = expression("Colony size (cm"^2*")"),
        y = expression("Relative growth rate (yr"^-1*")"),
        tag = "b") +
-  theme_manuscript() +
+  theme_manuscript(base_size = 10) +
   theme(
     text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 10, family = "Helvetica"),
-    axis.text    = element_text(size = 9, family = "Helvetica", color = "grey30"),
     legend.position = "none",
     panel.grid.major.x = element_blank(),
-    plot.margin  = margin(6, 8, 4, 6, "mm")
+    plot.margin  = margin(2, 8, 2, 6, "mm")
   )
 
 cat("  Panel b complete.\n")
@@ -361,13 +357,14 @@ if (file.exists(synth_file) && file.exists(pooled_file)) {
   pooled_data$ci_lo_clamp <- pmax(pooled_data$ci_lo, y_min_c)
   pooled_data$ci_hi_clamp <- pmin(pooled_data$ci_hi, y_max_c)
 
-  # Size class labels
+  # Size class labels — derived from canonical SIZE_BREAKS
+  # SIZE_BREAKS = c(0, 10, 100, 900, 4000, Inf); SIZE_LABELS = c("SC1"-"SC5")
   sc_labels_expr <- c(
-    expression(atop("SC1", "0\u201325")),
-    expression(atop("SC2", "25\u2013100")),
-    expression(atop("SC3", "100\u2013500")),
-    expression(atop("SC4", "500\u20132k")),
-    expression(atop("SC5", ">2k cm"^2))
+    expression(atop("SC1", "0\u201310")),
+    expression(atop("SC2", "10\u2013100")),
+    expression(atop("SC3", "100\u2013900")),
+    expression(atop("SC4", "900\u20134000")),
+    expression(atop("SC5", ">4000 cm"^2))
   )
 
   fig2c <- ggplot() +
@@ -394,7 +391,7 @@ if (file.exists(synth_file) && file.exists(pooled_file)) {
              y = rep(y_max_c - 0.005, nrow(pooled_data)),
              label = paste0("italic(k)==", pooled_data$k),
              parse = TRUE, size = 2.5, color = "grey30", vjust = 1) +
-    scale_size_continuous(name = "Sample size", range = c(1.2, 6),
+    scale_size_continuous(name = "n", range = c(1.2, 6),
                           breaks = sqrt(c(50, 500)), labels = c("50", "500")) +
     scale_color_manual(name = "Population type", values = pop_colors) +
     scale_shape_manual(name = "Data tier", values = tier_shapes) +
@@ -404,19 +401,19 @@ if (file.exists(synth_file) && file.exists(pooled_file)) {
                        breaks = seq(0.4, 1.0, 0.1),
                        labels = scales::label_number(accuracy = 0.1)) +
     labs(x = expression("Size class (cm"^2*")"), y = "Annual survival rate", tag = "c") +
-    theme_manuscript() +
+    theme_manuscript(base_size = 10) +
     theme(
       text = element_text(family = "Helvetica"),
-      axis.title = element_text(size = 10, family = "Helvetica"),
-      axis.text = element_text(size = 8, family = "Helvetica", color = "grey30"),
       axis.text.x = element_text(lineheight = 0.85),
       legend.position = "bottom",
       legend.box = "horizontal",
-      legend.text = element_text(size = 7),
-      legend.title = element_text(size = 8, face = "bold"),
+      legend.text = element_text(size = rel(0.85)),
+      legend.title = element_text(size = rel(0.9), face = "bold"),
       legend.key.size = unit(3, "mm"),
+      legend.spacing.x = unit(2, "mm"),
+      legend.margin = margin(0, 0, 0, 0, "mm"),
       panel.grid.major.x = element_blank(),
-      plot.margin = margin(6, 8, 4, 6, "mm")
+      plot.margin = margin(2, 8, 2, 6, "mm")
     ) +
     guides(
       color = guide_legend(order = 1, override.aes = list(size = 3, alpha = 1)),

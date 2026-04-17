@@ -367,20 +367,16 @@ plot_surv <- surv_summary %>%
   geom_tile(color = "white", linewidth = 0.6) +
   geom_text(aes(label = fill_label, color = text_col), size = 3.1, fontface = "bold") +
   scale_color_identity() +
-  scale_fill_gradient(low = "#dbeafe", high = pal$surv_dark, limits = c(0, 1), labels = label_percent(accuracy = 1)) +
-  labs(
-    title = "Survival",
-    subtitle = "Natural colonies only",
-    x = NULL,
-    y = "Size class",
-    fill = "Annual survival"
-  ) +
-  theme_manuscript() +
+  scale_fill_gradient(low = "#dbeafe", high = pal$surv_dark, limits = c(0, 1),
+                      labels = label_percent(accuracy = 1),
+                      name = "Annual survival") +
+  labs(x = NULL, y = "Size class") +
+  theme_manuscript(base_size = 9) +
   theme(
-    axis.text.x = element_text(angle = 20, hjust = 1),
-    plot.title = element_text(face = "bold", size = 12),
-    plot.subtitle = element_text(size = 9),
-    legend.position = "right"
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "right",
+    plot.margin = margin(2, 4, 2, 4, "mm")
   )
 
 plot_growth <- growth_summary %>%
@@ -392,43 +388,39 @@ plot_growth <- growth_summary %>%
   geom_tile(color = "white", linewidth = 0.6) +
   geom_text(aes(label = fill_label, color = text_col), size = 3.1, fontface = "bold") +
   scale_color_identity() +
-  scale_fill_gradient(low = "#fef3c7", high = pal$accent, limits = c(0, 1), labels = label_percent(accuracy = 1)) +
-  labs(
-    title = "Positive growth",
-    subtitle = "Natural colonies only; growth-side summary",
-    x = NULL,
-    y = "Size class",
-    fill = "P(growth > 0)"
-  ) +
-  theme_manuscript() +
+  scale_fill_gradient(low = "#fef3c7", high = pal$accent, limits = c(0, 1),
+                      labels = label_percent(accuracy = 1),
+                      name = "P(growth > 0)") +
+  labs(x = NULL, y = "Size class") +
+  theme_manuscript(base_size = 9) +
   theme(
     axis.text.x = element_text(angle = 20, hjust = 1),
-    plot.title = element_text(face = "bold", size = 12),
-    plot.subtitle = element_text(size = 9),
-    legend.position = "right"
+    legend.position = "right",
+    plot.margin = margin(2, 4, 2, 4, "mm")
   )
 
 interaction_fig <- plot_surv / plot_growth +
-  plot_annotation(
-    title = "Disturbance-by-size interaction",
-    subtitle = "Natural colonies only; acute baseline-exclusion events are separated from context-only pressure.",
-    caption = "Observed size-class summaries are shown here. Model coefficients, contrasts, and predictions are saved separately."
-  )
+  plot_layout(heights = c(1, 1)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(face = "bold"))
 
 ggsave(
   file.path(fig_dir, "FigS17_disturbance_size_interaction.png"),
   interaction_fig,
-  width = 190,
-  height = 190,
+  width = 174,
+  height = 140,
   units = "mm",
-  dpi = 300
+  dpi = 300,
+  bg = "white"
 )
 ggsave(
   file.path(fig_dir, "FigS17_disturbance_size_interaction.pdf"),
   interaction_fig,
-  width = 190,
-  height = 190,
-  units = "mm"
+  width = 174,
+  height = 140,
+  units = "mm",
+  bg = "white",
+  device = if (capabilities("cairo")) cairo_pdf else "pdf"
 )
 
 print_success("Saved: FigS17_disturbance_size_interaction.png")

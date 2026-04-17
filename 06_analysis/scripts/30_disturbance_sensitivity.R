@@ -831,13 +831,27 @@ figure_saved <- FALSE
 
 if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
 
+  # Human-readable study label map
+  study_label_map <- c(
+    "fundemar_fragments"         = "FUNDEMAR",
+    "kuffner_et_al_2020"         = "Kuffner et al. 2020",
+    "neely_et_al_2022"           = "Neely et al. 2022",
+    "NOAA_survey"                = "NOAA Survey",
+    "pausch_et_al_2018"          = "Pausch et al. 2018",
+    "USGS_USVI_exp"              = "USGS USVI",
+    "mendoza_quiroz_et_al_2023"  = "Mendoza-Quiroz et al. 2023"
+  )
+  humanize_study <- function(s) {
+    ifelse(s %in% names(study_label_map), unname(study_label_map[s]), s)
+  }
+
   # Build forest data for both scenarios
   build_forest_df <- function(meta_result, scenario_label) {
     se <- meta_result$study_effects
     se %>%
       arrange(desc(survival_rate)) %>%
       mutate(
-        study_label = paste0(study, " (", region, ")"),
+        study_label = paste0(humanize_study(study), " (", region, ")"),
         scenario = scenario_label,
         surv_text = sprintf("%.1f%% [%.1f, %.1f]",
                             survival_rate * 100, surv_lower * 100, surv_upper * 100)
@@ -845,7 +859,7 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
   }
 
   forest_full <- build_forest_df(meta_full, "All data")
-  forest_excl <- build_forest_df(meta_no_baseline_exclusion, "Excl. baseline-exclusion events")
+  forest_excl <- build_forest_df(meta_no_baseline_exclusion, "Excl. disturbance")
 
   # Combine into a single plot-ready data frame
   # Use study as the y-axis, dodged by scenario
@@ -853,16 +867,16 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
 
   forest_combined <- bind_rows(forest_full, forest_excl) %>%
       mutate(
-        study_label = paste0(study, " (", region, ")"),
+        study_label = paste0(humanize_study(study), " (", region, ")"),
         study_label = factor(study_label,
                            levels = rev(sort(unique(study_label)))),
-      scenario = factor(scenario, levels = c("All data", "Excl. baseline-exclusion events"))
+      scenario = factor(scenario, levels = c("All data", "Excl. disturbance"))
     )
 
   # Pooled estimates as summary rows
   pooled_df <- data.frame(
-    scenario = factor(c("All data", "Excl. baseline-exclusion events"),
-                      levels = c("All data", "Excl. baseline-exclusion events")),
+    scenario = factor(c("All data", "Excl. disturbance"),
+                      levels = c("All data", "Excl. disturbance")),
     pooled_surv = c(meta_full$pooled_surv, meta_no_baseline_exclusion$pooled_surv),
     pooled_lower = c(meta_full$pooled_lower, meta_no_baseline_exclusion$pooled_lower),
     pooled_upper = c(meta_full$pooled_upper, meta_no_baseline_exclusion$pooled_upper)
@@ -899,17 +913,20 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
       expand = c(0.02, 0)
     ) +
     scale_color_manual(
-      values = c("All data" = pal$surv_dark, "Excl. baseline-exclusion events" = pal$accent),
+      values = c("All data" = pal$surv_dark, "Excl. disturbance" = pal$accent),
       name = NULL
     ) +
     scale_size_continuous(range = c(2, 6), guide = "none") +
+    guides(color = guide_legend(
+      override.aes = list(shape = 16, size = 3, linetype = 1, linewidth = 0.8, alpha = 1, fill = NA))) +
     labs(x = "Annual survival", y = NULL) +
     theme_manuscript(base_size = 10) +
     theme(
       panel.grid.major.y = element_blank(),
       legend.position = "bottom",
       legend.margin = margin(0, 0, 0, 0),
-      plot.tag = element_text(size = 12, face = "bold")
+      legend.box.margin = margin(-4, 0, 0, 0),
+      plot.margin = margin(2, 4, 2, 2)
     )
 
   # --------------------------------------------------------------------------
@@ -934,8 +951,22 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
   }
 
   bins_full <- make_bins(surv_natural, "All data")
-  bins_excl <- make_bins(surv_natural_no_disease, "Excluding baseline-exclusion events")
+  bins_excl <- make_bins(surv_natural_no_disease, "Excl. disturbance")
   bins_combined <- bind_rows(bins_full, bins_excl)
+
+  # Rename scenarios in pred_combined to match shorter labels used in legend.
+  # Drop the third scenario so the legend collects into a single row of two
+  # entries shared across panels.
+  pred_combined <- pred_combined %>%
+    mutate(scenario = dplyr::recode(scenario,
+      "All data" = "All data",
+      "Excluding baseline-exclusion events" = "Excl. disturbance",
+      "Excluding all timeline context" = "Excl. disturbance + context"
+    )) %>%
+    dplyr::filter(scenario %in% c("All data", "Excl. disturbance"))
+
+  bins_combined <- bins_combined %>%
+    dplyr::filter(scenario %in% c("All data", "Excl. disturbance"))
 
   p_gam <- ggplot() +
     # Size class boundaries
@@ -970,14 +1001,17 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
       labels = scales::percent_format(accuracy = 1)
     ) +
     scale_color_manual(
-      values = c("All data" = pal$surv_dark, "Excluding baseline-exclusion events" = pal$accent, "Excluding all timeline context" = pal$slate_mid),
+      values = c("All data" = pal$surv_dark, "Excl. disturbance" = pal$accent),
       name = NULL
     ) +
     scale_fill_manual(
-      values = c("All data" = pal$surv_dark, "Excluding baseline-exclusion events" = pal$accent, "Excluding all timeline context" = pal$slate_mid),
-      name = NULL
+      values = c("All data" = pal$surv_dark, "Excl. disturbance" = pal$accent),
+      name = NULL,
+      guide = "none"
     ) +
     scale_size_continuous(range = c(1, 4), guide = "none") +
+    guides(color = guide_legend(
+      override.aes = list(shape = 16, size = 3, linetype = 1, linewidth = 0.8, alpha = 1, fill = NA))) +
     labs(
       x = expression("Colony size (cm"^2*")"),
       y = "Survival probability"
@@ -986,29 +1020,29 @@ if (!is.null(meta_full) && !is.null(meta_no_baseline_exclusion)) {
     theme(
       legend.position = "bottom",
       legend.margin = margin(0, 0, 0, 0),
-      plot.tag = element_text(size = 12, face = "bold")
+      legend.box.margin = margin(-4, 0, 0, 0),
+      plot.margin = margin(2, 4, 2, 2)
     )
 
   # --------------------------------------------------------------------------
   # Combine panels
   # --------------------------------------------------------------------------
 
-  p_combined <- (p_forest + labs(tag = "a")) /
-    (p_gam + labs(tag = "b")) +
-    plot_layout(heights = c(1, 1), guides = "collect") &
-    theme(legend.position = "bottom")
+  p_combined <- (p_forest / p_gam) +
+    plot_layout(heights = c(0.95, 1), guides = "collect") +
+    plot_annotation(tag_levels = "a") &
+    theme(
+      legend.position = "bottom",
+      plot.tag = element_text(face = "bold"),
+      plot.margin = margin(2, 4, 2, 2)
+    )
 
-  # Save figure
-  fig_path_png <- file.path(supp_dir, "FigS25_disturbance_sensitivity.png")
-  fig_path_pdf <- file.path(supp_dir, "FigS25_disturbance_sensitivity.pdf")
-
-  ggsave(fig_path_png, plot = p_combined,
-         width = 174, height = 200, units = "mm", dpi = 300, bg = "white")
-
-  pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
-  ggsave(fig_path_pdf, plot = p_combined,
-         width = 174, height = 200, units = "mm",
-         bg = "white", device = pdf_device)
+  save_manuscript_fig(
+    p_combined,
+    filename = "FigS25_disturbance_sensitivity",
+    width_mm = 174, height_mm = 200,
+    fig_dir = supp_dir
+  )
 
   print_success(sprintf("Saved: FigS25_disturbance_sensitivity.png/pdf (%d x %d mm)", 174, 200))
   figure_saved <- TRUE

@@ -102,29 +102,36 @@ tmat_long$value <- as.vector(tmat[cbind(
   match(tmat_long$from, colnames(tmat))
 )])
 
+# Adaptive text color: viridis "D" is dark at low values and bright (yellow) at high values.
+# Use white text on dark cells (value < 0.55) and dark text on bright cells (>= 0.55).
+tmat_long$label_color <- ifelse(tmat_long$value < 0.55, "white", "grey10")
+
 fig4a <- ggplot(tmat_long, aes(x = from, y = to, fill = value)) +
   geom_tile(color = "white", linewidth = 0.6) +
-  geom_text(aes(label = ifelse(value >= 0.005, sprintf("%.2f", value), "")),
-            size = 2.5, color = ifelse(tmat_long$value > 0.5, "white", "grey20"),
-            fontface = "bold") +
+  geom_text(aes(label = ifelse(value >= 0.005, sprintf("%.2f", value), ""),
+                color = label_color),
+            size = 2.5, fontface = "bold") +
+  scale_color_identity() +
   scale_fill_viridis_c(
-    name = "Transition\nprobability",
+    name = "Transition probability",
     option = "D", limits = c(0, 1),
-    breaks = c(0, 0.25, 0.5, 0.75, 1)
+    breaks = c(0, 0.25, 0.5, 0.75, 1),
+    guide = guide_colorbar(
+      barwidth = unit(40, "mm"),
+      barheight = unit(3, "mm"),
+      title.position = "top",
+      title.hjust = 0.5,
+      ticks = TRUE
+    )
   ) +
   labs(x = "From size class (t)", y = "To size class (t+1)", tag = "a") +
   coord_equal() +
-  theme_manuscript() +
+  theme_manuscript(base_size = 10) +
   theme(
-    text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 10, family = "Helvetica"),
-    axis.text    = element_text(size = 9, family = "Helvetica", color = "grey30"),
     plot.margin  = margin(6, 6, 4, 6, "mm"),
-    legend.position = "right",
-    legend.key.height = unit(12, "mm"),
-    legend.key.width = unit(3, "mm"),
-    legend.text = element_text(size = 7),
-    legend.title = element_text(size = 8)
+    legend.position = "bottom",
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 9)
   )
 
 cat("  Panel a complete.\n")
@@ -227,35 +234,27 @@ fig4b <- ggplot(elast_core, aes(x = size_class, y = elasticity, fill = vital_rat
     size = 2.6,
     stroke = 0.4
   ) +
-  # SC5 stasis annotation arrow
-  annotate("segment",
-           x = 4.6, xend = 4.85,
-           y = sc5_stasis * 0.5, yend = sc5_stasis * 0.45,
-           arrow = arrow(length = unit(1.5, "mm"), type = "closed"),
-           color = "grey30", linewidth = 0.4) +
+  # SC5 stasis annotation — place in upper-left corner, away from bars
   annotate("text",
-           x = 4.55, y = sc5_stasis * 0.55,
-           label = sprintf("SC5 stasis\n%.1f%%", sc5_pct),
-           hjust = 1, size = 2.5, color = "grey30", lineheight = 0.9) +
+           x = 1, y = sc5_stasis * 1.02,
+           label = sprintf("SC5 stasis: %.1f%%", sc5_pct),
+           hjust = 0, vjust = 1, size = 2.6, color = "grey25",
+           fontface = "italic", lineheight = 0.9) +
   scale_fill_manual(values = vr_colors, name = "Vital rate") +
   scale_color_manual(values = vr_colors["Fragmentation"], name = "Fragmentation",
                      guide = "none") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
   labs(
     x = "Size class",
     y = "Elasticity",
     tag = "b"
   ) +
-  theme_manuscript() +
+  theme_manuscript(base_size = 10) +
   theme(
-    text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 10, family = "Helvetica"),
-    axis.text    = element_text(size = 9, family = "Helvetica", color = "grey30"),
     plot.margin  = margin(6, 12, 4, 6, "mm"),
     legend.position = "bottom",
-    legend.key.size = unit(3, "mm"),
     legend.text = element_text(size = 8),
-    legend.title = element_text(size = 8.5, face = "bold")
+    legend.title = element_text(size = 9, face = "bold")
   )
 
 cat("  Panel b complete.\n")
@@ -300,6 +299,13 @@ cat(sprintf("  P(decline): %.1f%%\n", p_decline * 100))
 boot_df <- data.frame(lambda = boot_vals) %>%
   mutate(status = ifelse(lambda < 1, "decline", "growth"))
 
+# Use subtitle below the panel for summary stats instead of in-panel text box.
+# Split into two lines so the text fits within the half-panel width.
+stats_subtitle <- sprintf("\u03BB = %.3f; 95%% CI [%.3f, %.3f]; P(decline) = %.1f%%\nSC5 support %.1f%% NOAA; %s of %s valid",
+                         det_lambda, ci_95[1], ci_95[2], p_decline * 100,
+                         sc5_noaa_share,
+                         comma(length(boot_vals)), comma(n_boot_total))
+
 fig4c <- ggplot(boot_df, aes(x = lambda, fill = status)) +
   geom_histogram(bins = 40, color = "white", linewidth = 0.2,
                  boundary = 1) +
@@ -311,33 +317,25 @@ fig4c <- ggplot(boot_df, aes(x = lambda, fill = status)) +
              color = pal$surv_dark, linewidth = 0.8) +
   scale_fill_manual(
     values = c("decline" = pal$accent, "growth" = pal$surv_mid),
-    labels = c("decline" = expression(lambda < 1 ~ "(decline)"),
-                "growth" = expression(lambda >= 1 ~ "(growth)")),
+    labels = c("decline" = expression(lambda < 1),
+                "growth" = expression(lambda >= 1)),
     name = NULL
   ) +
-  annotate("label", x = min(boot_vals) + 0.01, y = Inf,
-           label = sprintf("\u03BB = %.3f\n95%% CI: [%.3f, %.3f]\nP(decline) = %.1f%%\nSC5 support %.1f%% NOAA\n%s of %s valid",
-                           det_lambda, ci_95[1], ci_95[2], p_decline * 100,
-                           sc5_noaa_share,
-                           comma(length(boot_vals)), comma(n_boot_total)),
-           vjust = 1.2, hjust = 0, size = 2.3,
-           fill = alpha("white", 0.9), color = pal$slate_dark,
-           label.padding = unit(0.4, "lines")) +
-  annotate("text", x = 1.02, y = Inf,
+  annotate("text", x = 1.015, y = Inf,
            label = "Replacement", vjust = 1.5, hjust = 0,
-           size = 2.0, color = "grey40", fontface = "italic") +
+           size = 2.2, color = "grey40", fontface = "italic") +
   labs(x = expression(lambda ~ "(population growth rate)"),
-       y = "Bootstrap replicates", tag = "c") +
+       y = "Bootstrap replicates",
+       tag = "c",
+       subtitle = stats_subtitle) +
   coord_cartesian(clip = "off") +
-  theme_manuscript() +
+  theme_manuscript(base_size = 10) +
   theme(
-    text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 9, family = "Helvetica"),
-    axis.text    = element_text(size = 8, family = "Helvetica", color = "grey30"),
     plot.margin  = margin(6, 10, 4, 6, "mm"),
+    plot.subtitle = element_text(size = 7.5, color = "grey25", hjust = 0,
+                                 margin = margin(b = 4), lineheight = 1.1),
     legend.position = "bottom",
-    legend.key.size = unit(3, "mm"),
-    legend.text = element_text(size = 7)
+    legend.text = element_text(size = 8)
   )
 
 cat("  Panel c complete.\n")
@@ -371,13 +369,11 @@ loso_data$study_label <- factor(loso_data$study_label,
 noaa_lambda <- loso_data$lambda[loso_data$is_noaa]
 if (length(noaa_lambda) == 0) noaa_lambda <- NA_real_
 
-# Build NOAA annotation conditionally
-noaa_annotation <- if (!is.na(noaa_lambda)) {
-  annotate("label", x = 0.69, y = 1.7,
-           label = sprintf("SC5 survival = %.1f%% NOAA\n\u03BB drops %.3f \u2192 %.3f\nFragmentation = %.0f%% Vardi",
-                           sc5_noaa_share, det_lambda, noaa_lambda, frag_vardi_share),
-           size = 2.1, color = pal$accent, fontface = "italic",
-           hjust = 0, vjust = 0, fill = alpha("white", 0.85), linewidth = 0)
+# Build NOAA callout as a subtitle line instead of in-panel text to avoid collisions.
+# Split into two short lines so the text fits within the half-panel width.
+loso_subtitle <- if (!is.na(noaa_lambda)) {
+  sprintf("SC5 %.1f%% NOAA; frag. %.0f%% Vardi\nExcluding NOAA: \u03BB %.3f \u2192 %.3f",
+          sc5_noaa_share, frag_vardi_share, det_lambda, noaa_lambda)
 } else {
   NULL
 }
@@ -395,19 +391,17 @@ fig4d <- ggplot(loso_data, aes(x = lambda, y = study_label)) +
                      guide = "none") +
   # Lambda value labels
   geom_text(aes(label = sprintf("%.3f", lambda)),
-            hjust = -0.3, size = 2.1, color = pal$slate_mid) +
-  # NOAA callout — highlights NOAA-conditional nature of lambda estimate
-  noaa_annotation +
-  scale_x_continuous(limits = c(0.68, 1.05),
+            hjust = -0.3, size = 2.3, color = pal$slate_mid) +
+  scale_x_continuous(limits = c(0.68, 1.08),
                      breaks = seq(0.7, 1.0, 0.1),
                      name = expression("Population growth rate (" * lambda * ")")) +
-  labs(y = "Study excluded", tag = "d") +
-  theme_manuscript() +
+  labs(y = "Study excluded", tag = "d", subtitle = loso_subtitle) +
+  theme_manuscript(base_size = 10) +
   theme(
-    text         = element_text(family = "Helvetica"),
-    axis.title   = element_text(size = 9, family = "Helvetica"),
-    axis.text    = element_text(size = 8, family = "Helvetica", color = "grey30"),
     plot.margin  = margin(6, 10, 4, 6, "mm"),
+    plot.subtitle = element_text(size = 7.5, color = pal$accent,
+                                 face = "italic", hjust = 0,
+                                 margin = margin(b = 4), lineheight = 1.1),
     panel.grid.major.y = element_blank()
   )
 

@@ -311,9 +311,26 @@ plot_size <- size_class_summary %>%
   filter(analysis_subset == "matrix_compatible") %>%
   mutate(size_class = factor(size_class, levels = size_class_levels))
 
+# Humanize raw snake_case study names for display in Panel D
+humanize_study <- function(x) {
+  dplyr::recode(x,
+    "NOAA_survey"              = "NOAA survey",
+    "neely_et_al_2022"         = "Neely et al. 2022",
+    "fundemar_fragments"       = "FUNDEMAR fragments",
+    "mendoza_quiroz_et_al_2023" = "Mendoza-Quiroz et al. 2023",
+    "pausch_et_al_2018"        = "Pausch et al. 2018",
+    "kuffner_et_al_2020"       = "Kuffner et al. 2020",
+    "USGS_USVI_exp"            = "USGS USVI",
+    .default = x
+  )
+}
+
 plot_studies <- study_summary %>%
   filter(analysis_subset == "matrix_compatible") %>%
-  mutate(study = fct_reorder(study, shrinkage_frequency))
+  mutate(
+    study_label = humanize_study(study),
+    study_label = fct_reorder(study_label, shrinkage_frequency)
+  )
 
 plot_transitions <- transition_cell_summary %>%
   mutate(
@@ -331,85 +348,121 @@ pal <- if (exists("MANUSCRIPT_PALETTE")) MANUSCRIPT_PALETTE else list(
 
 p_a <- ggplot(plot_size, aes(x = size_class, y = shrinkage_frequency_pct)) +
   geom_col(fill = pal$surv_dark, width = 0.72) +
-  geom_text(aes(label = sprintf("%.1f%%", shrinkage_frequency_pct)), vjust = -0.4, size = 3.2) +
-  scale_y_continuous(labels = label_number(suffix = "%"), expand = expansion(mult = c(0, 0.14))) +
-  labs(
-    title = "A. Shrinkage frequency by size class",
-    x = NULL,
-    y = "Shrinkage frequency"
-  ) +
-  theme_manuscript() +
-  theme(plot.title = element_text(face = "bold", size = 10))
+  geom_text(aes(label = sprintf("%.1f%%", shrinkage_frequency_pct)),
+            vjust = -0.4, size = 2.6, color = "grey20") +
+  scale_y_continuous(labels = label_number(suffix = "%"),
+                     expand = expansion(mult = c(0, 0.14))) +
+  labs(x = NULL, y = "Shrinkage frequency") +
+  theme_manuscript(base_size = 9) +
+  theme(plot.margin = margin(3, 4, 3, 4, "mm"))
 
 p_b <- ggplot(plot_size, aes(x = size_class, y = mean_tissue_loss_cm2_yr)) +
   geom_col(fill = pal$grow_dark, width = 0.72) +
-  geom_text(aes(label = ifelse(is.na(mean_tissue_loss_cm2_yr), "", comma(round(mean_tissue_loss_cm2_yr, 1)))), vjust = -0.4, size = 3.2) +
+  geom_text(aes(label = ifelse(is.na(mean_tissue_loss_cm2_yr), "",
+                               comma(round(mean_tissue_loss_cm2_yr, 0)))),
+            vjust = -0.4, size = 2.6, color = "grey20") +
   scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.14))) +
-  labs(
-    title = "B. Mean tissue loss among shrinking colonies",
-    x = NULL,
-    y = "Mean tissue loss (cm² yr⁻¹)"
-  ) +
-  theme_manuscript() +
-  theme(plot.title = element_text(face = "bold", size = 10))
+  labs(x = NULL, y = expression(paste("Mean tissue loss (cm"^2, " yr"^-1, ")"))) +
+  theme_manuscript(base_size = 9) +
+  theme(plot.margin = margin(3, 4, 3, 4, "mm"))
 
-p_c <- ggplot(plot_transitions, aes(x = from_class, y = transition_prob, fill = transition_state)) +
+# Panel c: retrogression percentage placed INSIDE the retrogression segment
+# (top of stack) to avoid the overlapping mess above the bars. For classes
+# where the retrogression slice is too small, label is omitted (NA).
+retro_labels <- retrogression_summary %>%
+  mutate(
+    from_class = factor(from_class, levels = size_class_levels),
+    # position label inside retrogression segment (top portion of bar)
+    label_y = 1 - (retrogression_probability / 2),
+    label   = ifelse(retrogression_probability >= 0.03,
+                     sprintf("%.1f%%", retrogression_probability_pct),
+                     NA_character_)
+  )
+
+p_c <- ggplot(plot_transitions, aes(x = from_class, y = transition_prob,
+                                     fill = transition_state)) +
   geom_col(width = 0.72, color = "white", linewidth = 0.3) +
   geom_text(
-    data = retrogression_summary %>% mutate(from_class = factor(from_class, levels = size_class_levels)),
-    aes(x = from_class, y = 1.02, label = sprintf("retrogression %.1f%%", retrogression_probability_pct)),
+    data = retro_labels,
+    aes(x = from_class, y = label_y, label = label),
     inherit.aes = FALSE,
-    size = 3,
-    fontface = "bold"
+    size = 2.4, color = "white", fontface = "bold",
+    na.rm = TRUE
   ) +
-  scale_y_continuous(labels = label_percent(accuracy = 1), limits = c(0, 1.1), expand = expansion(mult = c(0, 0.03))) +
+  scale_y_continuous(labels = label_percent(accuracy = 1),
+                     limits = c(0, 1.001),
+                     expand = expansion(mult = c(0, 0.02))) +
   scale_fill_manual(
     values = c(
       "Retrogression" = pal$restoration,
-      "Stasis" = pal$slate_mid,
-      "Growth" = pal$surv_dark
+      "Stasis"        = pal$slate_mid,
+      "Growth"        = pal$surv_dark
     ),
-    name = "Observed transitions"
+    name = "Transition"
   ) +
-  labs(
-    title = "C. Retrogression, stasis, and growth from observed transitions",
-    x = "From size class",
-    y = "Transition probability"
-  ) +
-  theme_manuscript() +
-  theme(plot.title = element_text(face = "bold", size = 10))
+  labs(x = "From size class", y = "Transition probability") +
+  theme_manuscript(base_size = 9) +
+  theme(
+    plot.margin = margin(3, 4, 3, 4, "mm"),
+    legend.position = "bottom",
+    legend.key.size = unit(3.5, "mm")
+  )
 
-p_d <- ggplot(plot_studies, aes(x = shrinkage_frequency_pct, y = study)) +
-  geom_segment(aes(x = 0, xend = shrinkage_frequency_pct, y = study, yend = study), linewidth = 0.7, color = "grey80") +
+p_d <- ggplot(plot_studies, aes(x = shrinkage_frequency_pct, y = study_label)) +
+  geom_segment(aes(x = 0, xend = shrinkage_frequency_pct,
+                   y = study_label, yend = study_label),
+               linewidth = 0.6, color = "grey80") +
   geom_point(aes(size = n_records, color = mean_tissue_loss_cm2_yr)) +
-  geom_text(aes(label = sprintf("%.1f%%", shrinkage_frequency_pct)), hjust = -0.1, size = 2.8) +
-  scale_x_continuous(labels = label_number(suffix = "%"), expand = expansion(mult = c(0, 0.22))) +
-  scale_size_continuous(name = "Records", range = c(2.5, 7)) +
+  geom_text(aes(label = sprintf("%.1f%%", shrinkage_frequency_pct)),
+            hjust = -0.25, size = 2.4, color = "grey20") +
+  scale_x_continuous(labels = label_number(suffix = "%"),
+                     expand = expansion(mult = c(0, 0.32)),
+                     breaks = c(0, 20, 40)) +
+  scale_size_continuous(name = "Records",
+                        range = c(2.5, 5.5),
+                        breaks = c(500, 1500),
+                        guide = guide_legend(order = 2,
+                                             title.position = "top",
+                                             title.hjust = 0,
+                                             nrow = 1,
+                                             override.aes = list(color = "grey40"))) +
   scale_color_gradient(
     low = pal$natural,
     high = pal$restoration,
-    name = "Mean loss\n(cm² yr⁻¹)"
+    name = expression(paste("Mean loss (cm"^2, " yr"^-1, ")")),
+    guide = guide_colorbar(barwidth = unit(22, "mm"),
+                           barheight = unit(2.5, "mm"),
+                           title.position = "top",
+                           title.hjust = 0,
+                           order = 1)
   ) +
-  labs(
-    title = "D. Study-level shrinkage frequency",
-    x = "Shrinkage frequency",
-    y = NULL
-  ) +
-  theme_manuscript() +
-  theme(plot.title = element_text(face = "bold", size = 10))
+  labs(x = "Shrinkage frequency", y = NULL) +
+  theme_manuscript(base_size = 9) +
+  theme(
+    plot.margin      = margin(3, 4, 3, 4, "mm"),
+    legend.position  = "bottom",
+    legend.box       = "horizontal",
+    legend.spacing.x = unit(3, "mm"),
+    legend.title     = element_text(size = 7),
+    legend.text      = element_text(size = 7),
+    legend.margin    = margin(t = 0, r = 0, b = 0, l = 0),
+    legend.box.margin = margin(t = -4, r = 0, b = 0, l = 0)
+  )
 
 figure <- (p_a | p_b) / (p_c | p_d) +
-  plot_annotation(
-    title = "Shrinkage and retrogression in Acropora palmata",
-    subtitle = "Matrix-compatible subset for shrinkage summaries; observed transition counts for retrogression",
-    theme = theme_manuscript()
-  )
+  plot_layout(heights = c(1, 1.15)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(face = "bold", size = 10,
+                                 color = MANUSCRIPT_PALETTE$slate_dark))
 
 png_file <- file.path(fig_dir, "FigS16_shrinkage_retrogression_summary.png")
 pdf_file <- file.path(fig_dir, "FigS16_shrinkage_retrogression_summary.pdf")
 
-ggsave(png_file, figure, width = 183, height = 180, units = "mm", dpi = 320, bg = "white")
-ggsave(pdf_file, figure, width = 183, height = 180, units = "mm", device = grDevices::cairo_pdf, bg = "white")
+ggsave(png_file, figure, width = 174, height = 170, units = "mm",
+       dpi = 320, bg = "white")
+pdf_device <- if (capabilities("cairo")) grDevices::cairo_pdf else "pdf"
+ggsave(pdf_file, figure, width = 174, height = 170, units = "mm",
+       device = pdf_device, bg = "white")
 
 # -----------------------------------------------------------------------------
 # Console summary

@@ -65,6 +65,11 @@ if (!file.exists(data_path)) {
 }
 
 study_data <- read_csv(data_path, show_col_types = FALSE)
+
+# Normalize region spellings (USVI -> US Virgin Islands) to match script 20b
+study_data <- study_data %>%
+  mutate(region = ifelse(region == "USVI", "US Virgin Islands", region))
+
 cat(sprintf("  Loaded %d study-level estimates across %d regions\n",
             nrow(study_data), n_distinct(study_data$region)))
 

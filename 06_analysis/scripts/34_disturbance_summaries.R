@@ -256,23 +256,30 @@ p_timeline <- ggplot(
     expand = expansion(mult = c(0.01, 0.01))
   ) +
   labs(
-    title = "Documented disturbance regime affecting Acropora palmata",
-    subtitle = "Event spans show the documented timing window; line thickness tracks inferred severity.",
     x = "Year",
-    y = NULL,
-    caption = "Multi-region events retain their original geography labels in the event catalog."
+    y = NULL
   ) +
-  theme_manuscript(base_size = 10) +
+  theme_manuscript(base_size = 9) +
   theme(
-    plot.title = element_text(face = "bold", size = 13),
-    plot.subtitle = element_text(size = 10, margin = margin(b = 8)),
-    plot.caption = element_text(size = 8, color = pal$slate_mid, hjust = 0),
-    axis.text.y = element_text(size = 8.5),
+    axis.text.y = element_text(size = 7.5),
     legend.position = "bottom",
     legend.box = "vertical",
+    legend.box.just = "left",
+    legend.margin = margin(0, 0, 0, 0),
+    legend.spacing.x = unit(1.5, "mm"),
+    legend.spacing.y = unit(0, "mm"),
+    legend.title = element_text(size = 8, face = "bold"),
+    legend.text = element_text(size = 7.5),
+    legend.key.size = unit(3, "mm"),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.x = element_blank(),
-    plot.margin = margin(8, 10, 6, 6, "mm")
+    plot.margin = margin(2, 4, 2, 4, "mm")
+  ) +
+  guides(
+    color = guide_legend(nrow = 2, order = 1, title.position = "top"),
+    fill = guide_legend(nrow = 1, order = 2, title.position = "top"),
+    linetype = guide_legend(nrow = 1, order = 3, title.position = "top"),
+    size = guide_legend(nrow = 1, order = 4, title.position = "top")
   )
 
 heatmap_data <- region_long %>%
@@ -305,19 +312,12 @@ p_heatmap <- ggplot(
     breaks = c(0, 1, 3, 5),
     name = "Events"
   ) +
-  labs(
-    title = "Regional burden by type",
-    subtitle = "Counts split multi-region events across the affected broad regions.",
-    x = NULL,
-    y = NULL
-  ) +
-  theme_manuscript(base_size = 10) +
+  labs(x = NULL, y = NULL) +
+  theme_manuscript(base_size = 9) +
   theme(
-    plot.title = element_text(face = "bold", size = 12),
-    plot.subtitle = element_text(size = 9.5, margin = margin(b = 8)),
-    axis.text.x = element_text(angle = 25, hjust = 1),
+    axis.text.x = element_text(angle = 45, hjust = 1),
     legend.position = "right",
-    plot.margin = margin(8, 8, 6, 6, "mm")
+    plot.margin = margin(2, 4, 2, 4, "mm")
   )
 
 decade_plot_data <- timeline %>%
@@ -335,37 +335,21 @@ p_decade <- ggplot(
   scale_fill_manual(values = type_palette, name = "Event type") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05)),
                      breaks = pretty_breaks()) +
-  labs(
-    title = "Events by decade",
-    subtitle = "Documented events rise after 2000 as thermal and chronic stressors accumulate.",
-    x = NULL,
-    y = "Documented events"
-  ) +
-  theme_manuscript(base_size = 10) +
+  labs(x = NULL, y = "Documented events") +
+  theme_manuscript(base_size = 9) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
   theme(
-    plot.title = element_text(face = "bold", size = 12),
-    plot.subtitle = element_text(size = 9.5, margin = margin(b = 8)),
     legend.position = "none",
-    plot.margin = margin(8, 8, 6, 6, "mm")
+    plot.margin = margin(2, 4, 2, 4, "mm")
   )
 
-p_heatmap_compact <- p_heatmap +
-  labs(subtitle = NULL) +
-  theme(
-    plot.subtitle = element_blank(),
-    plot.title = element_text(size = 11)
-  )
-
-p_decade_compact <- p_decade +
-  labs(subtitle = NULL) +
-  theme(
-    plot.subtitle = element_blank(),
-    plot.title = element_text(size = 11)
-  )
+p_heatmap_compact <- p_heatmap
+p_decade_compact <- p_decade
 
 p_combined <- p_timeline / (p_heatmap_compact | p_decade_compact) +
   patchwork::plot_layout(heights = c(2.2, 1.2), widths = c(1.1, 0.9)) +
-  patchwork::plot_annotation(tag_levels = "A")
+  patchwork::plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(face = "bold"))
 
 pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
 
@@ -396,12 +380,12 @@ ggsave(
 ggsave(
   file.path(dirs$figures_supp, "FigS18_disturbance_summary.png"),
   p_combined,
-  width = 210, height = 230, units = "mm", dpi = 300, bg = "white"
+  width = 174, height = 230, units = "mm", dpi = 300, bg = "white"
 )
 ggsave(
   file.path(dirs$figures_supp, "FigS18_disturbance_summary.pdf"),
   p_combined,
-  width = 210, height = 230, units = "mm", bg = "white",
+  width = 174, height = 230, units = "mm", bg = "white",
   device = pdf_device
 )
 

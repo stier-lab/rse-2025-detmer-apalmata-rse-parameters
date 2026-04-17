@@ -933,10 +933,10 @@ heat_colors <- c(
 )
 
 heat_labels <- c(
-  "none"     = "No stress\n(DHW = 0)",
-  "minor"    = "Minor\n(0 < DHW < 4)",
-  "moderate" = "Moderate\n(4 \u2264 DHW < 8)",
-  "major"    = "Major\n(DHW \u2265 8)"
+  "none"     = "None\n(0)",
+  "minor"    = "Minor\n(<4)",
+  "moderate" = "Moderate\n(4-8)",
+  "major"    = "Major\n(\u22658)"
 )
 
 # Only create figure if we have data
@@ -958,9 +958,10 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
       scale_fill_manual(values = heat_colors, guide = "none") +
       scale_x_discrete(labels = heat_labels) +
       scale_y_continuous(limits = c(0, 1), expand = expansion(mult = c(0, 0.02))) +
-      labs(x = "Heat stress category", y = "Annual survival rate") +
+      labs(x = "Heat stress category (DHW, \u00B0C-weeks)",
+           y = "Annual survival rate") +
       theme_manuscript(base_size = 10) +
-      theme(axis.text.x = element_text(size = 8))
+      theme(axis.text.x = element_text(size = 8, lineheight = 0.85))
   } else {
     p_a <- ggplot() + annotate("text", x = 0.5, y = 0.5, label = "Insufficient data") +
       theme_void()
@@ -968,14 +969,26 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
 
   # --- Panel b: DHW vs survival (scatter with study-level points) ---
   if (nrow(study_level_dhw) >= 3) {
+    # Use a small number of compact breaks for the sample-size legend
+    # and cap upper break so it stays inside the plot area.
+    n_breaks <- pretty(study_level_dhw$n, n = 3)
+    n_breaks <- n_breaks[n_breaks > 0]
+    if (length(n_breaks) > 3) n_breaks <- n_breaks[seq(1, length(n_breaks), length.out = 3)]
+
     p_b <- ggplot(study_level_dhw,
                   aes(x = mean_dhw, y = survival_rate)) +
       geom_point(aes(size = n), alpha = 0.7, color = MANUSCRIPT_PALETTE$surv_mid) +
       geom_smooth(method = "lm", se = TRUE, color = MANUSCRIPT_PALETTE$accent,
                   linewidth = 0.8, alpha = 0.15) +
-      scale_size_continuous(range = c(2, 8), name = "Sample size") +
+      scale_size_continuous(
+        range = c(2, 6), name = "Sample size (n)",
+        breaks = n_breaks,
+        guide = guide_legend(
+          title.position = "top", nrow = 1, override.aes = list(alpha = 1)
+        )
+      ) +
       scale_y_continuous(limits = c(0, 1)) +
-      labs(x = "Mean annual max DHW",
+      labs(x = "Mean annual max DHW (\u00B0C-weeks)",
            y = "Annual survival rate") +
       theme_manuscript(base_size = 10) +
       theme(legend.position = "bottom",
@@ -1001,6 +1014,8 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
   # --- Panel c: DHW timeline for major sites ---
   dhw_timeline <- site_years_all %>%
     dplyr::filter(!is.na(max_dhw)) %>%
+    # Normalize USVI -> US Virgin Islands for legend consistency with FigS15/Fig3
+    dplyr::mutate(region = ifelse(region == "USVI", "US Virgin Islands", region)) %>%
     dplyr::group_by(study, region, lat_round, lon_round, survey_yr) %>%
     dplyr::summarise(
       max_dhw = if (all(is.na(max_dhw))) NA_real_ else max(max_dhw, na.rm = TRUE),
@@ -1009,6 +1024,17 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
     )
 
   if (nrow(dhw_timeline) >= 5) {
+    # Drop any unused region levels before mapping; assign a named palette to
+    # ensure scale_color_manual has enough colors for the present regions
+    dhw_timeline <- dhw_timeline %>%
+      dplyr::mutate(region = as.character(region)) %>%
+      dplyr::mutate(region = factor(region))
+    n_regions <- dplyr::n_distinct(dhw_timeline$region)
+    region_palette <- setNames(
+      rep(OKABE_ITO, length.out = n_regions),
+      levels(dhw_timeline$region)
+    )
+
     p_c <- ggplot(dhw_timeline,
                   aes(x = survey_yr, y = max_dhw, color = region, group = interaction(study, lat_round))) +
       # Stress threshold bands
@@ -1020,13 +1046,17 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
                  color = "grey60", linewidth = 0.3) +
       geom_point(size = 2.5, alpha = 0.8) +
       geom_line(alpha = 0.4, linewidth = 0.4) +
-      scale_color_manual(values = OKABE_ITO[seq_len(min(length(OKABE_ITO),
-                                                        dplyr::n_distinct(dhw_timeline$region)))],
-                         name = "Region") +
+      scale_color_manual(
+        values = region_palette,
+        name = "Region",
+        guide = guide_legend(title.position = "top", nrow = 2, byrow = TRUE)
+      ) +
       annotate("text", x = min(dhw_timeline$survey_yr) - 0.5, y = 6,
-               label = "Bleaching\nlikely", size = 2.5, hjust = 0, color = "grey40") +
+               label = "Bleaching likely", size = 2.5, hjust = 0,
+               fontface = "italic", color = "grey40") +
       annotate("text", x = min(dhw_timeline$survey_yr) - 0.5, y = 10,
-               label = "Mass bleaching\nexpected", size = 2.5, hjust = 0, color = "grey40") +
+               label = "Mass bleaching expected", size = 2.5, hjust = 0,
+               fontface = "italic", color = "grey40") +
       labs(x = "Year", y = "Max annual DHW (\u00B0C-weeks)") +
       theme_manuscript(base_size = 10) +
       theme(legend.position = "bottom",
@@ -1038,23 +1068,32 @@ if (sum(!is.na(surv_with_dhw$heat_stress_category)) >= 20) {
   }
 
   # --- Combine panels ---
+  # Tighten the vertical gap by collecting legends and giving panel c a bit
+  # less height than the top row, and reduce plot margins so the subplots
+  # are not visually separated by large whitespace.
   fig_combined <- (p_a | p_b) / p_c +
-    plot_layout(heights = c(1, 1)) +
+    plot_layout(heights = c(1, 1.05), guides = "collect") +
     plot_annotation(tag_levels = "a") &
-    theme(plot.tag = element_text(face = "bold", size = 12))
+    theme(
+      plot.tag = element_text(face = "bold", size = 12),
+      plot.margin = margin(2, 2, 2, 2, "mm"),
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      legend.margin = margin(t = 0, b = 0)
+    )
 
   # Save figure
   fig_path <- file.path(fig_dir, "FigS24_heat_stress_survival")
   ggsave(paste0(fig_path, ".png"), plot = fig_combined,
-         width = 174, height = 180, units = "mm", dpi = 300, bg = "white")
+         width = 174, height = 170, units = "mm", dpi = 300, bg = "white")
 
   # PDF with fallback device
   pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
   ggsave(paste0(fig_path, ".pdf"), plot = fig_combined,
-         width = 174, height = 180, units = "mm", bg = "white",
+         width = 174, height = 170, units = "mm", bg = "white",
          device = pdf_device)
 
-  cat(sprintf("  Saved: FigS24_heat_stress_survival (.png + .pdf) -- 174 x 180 mm\n"))
+  cat(sprintf("  Saved: FigS24_heat_stress_survival (.png + .pdf) -- 174 x 170 mm\n"))
 
 } else {
   cat("  Insufficient DHW-matched data for figure (need >= 20 observations)\n")

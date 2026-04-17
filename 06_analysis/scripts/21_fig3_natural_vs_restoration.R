@@ -120,16 +120,20 @@ cat(sprintf("  Growth records (full, cleaned): %s\n", comma(nrow(growth_data))))
 # Clean study names
 study_names <- c(
   "NOAA_survey"                = "NOAA NCRMP",
-  "mendoza_quiroz_et_al_2023"  = "Mend.-Quiroz",
-  "pausch_et_al_2018"          = "Pausch",
-  "kuffner_et_al_2020"         = "Kuffner",
+  "neely_et_al_2022"           = "Neely 2022",
+  "mendoza_quiroz_et_al_2023"  = "Mendoza-Quiroz",
+  "pausch_et_al_2018"          = "Pausch 2018",
+  "kuffner_et_al_2020"         = "Kuffner 2020",
   "USGS_USVI_exp"              = "USGS USVI",
   "fundemar_fragments"         = "FUNDEMAR"
 )
 
+# Drop studies not in the name map (keeps the figure aligned with study_order)
 surv_data <- surv_data %>%
+  filter(study %in% names(study_names)) %>%
   mutate(study_label = recode(study, !!!study_names))
 growth_data <- growth_data %>%
+  filter(study %in% names(study_names)) %>%
   mutate(study_label = recode(study, !!!study_names))
 
 # =============================================================================
@@ -172,20 +176,21 @@ cat(sprintf("  Growth in overlap zone: %s\n", comma(nrow(growth_overlap))))
 
 # Cool tones = natural studies, warm tones = restoration studies
 study_colors <- c(
-  "NOAA NCRMP"   = "#0072B2",  # Okabe-Ito blue
-  "Mend.-Quiroz" = "#56B4E9",  # Okabe-Ito sky blue
-  "Pausch"       = "#D55E00",  # Okabe-Ito vermillion
-  "FUNDEMAR"     = "#E69F00",  # Okabe-Ito amber
-  "Kuffner"      = "#CC79A7",  # Okabe-Ito reddish purple
-  "USGS USVI"    = "#009E73"   # Okabe-Ito bluish green
+  "NOAA NCRMP"     = "#0072B2",  # Okabe-Ito blue
+  "Neely 2022"     = "#000000",  # Black (natural, FL Keys)
+  "Mendoza-Quiroz" = "#56B4E9",  # Okabe-Ito sky blue
+  "Pausch 2018"    = "#D55E00",  # Okabe-Ito vermillion
+  "FUNDEMAR"       = "#E69F00",  # Okabe-Ito amber
+  "Kuffner 2020"   = "#CC79A7",  # Okabe-Ito reddish purple
+  "USGS USVI"      = "#009E73"   # Okabe-Ito bluish green
 )
 
 type_shapes <- c("Natural colony" = 16, "Restoration fragment" = 17)
 type_lines  <- c("Natural colony" = "solid", "Restoration fragment" = "dashed")
 
 # Study ordering: natural first, then restoration
-study_order <- c("NOAA NCRMP", "Mend.-Quiroz",
-                 "Pausch", "FUNDEMAR", "Kuffner", "USGS USVI")
+study_order <- c("NOAA NCRMP", "Neely 2022", "Mendoza-Quiroz",
+                 "Pausch 2018", "FUNDEMAR", "Kuffner 2020", "USGS USVI")
 
 surv_overlap <- surv_overlap %>%
   mutate(study_label = factor(study_label, levels = study_order))
@@ -303,9 +308,11 @@ surv_row <- ggplot() +
     axis.text.y  = element_text(size = 7, color = "grey30"),
     axis.text.x  = element_blank(),
     axis.ticks.x = element_blank(),
-    strip.text   = element_text(size = 8, face = "bold", family = "Helvetica"),
+    strip.text   = element_text(size = 7, face = "bold", family = "Helvetica",
+                                 margin = margin(2, 1, 2, 1, "mm")),
     strip.background = element_rect(fill = "grey96", color = NA),
-    panel.spacing.x  = unit(1.5, "mm"),
+    strip.clip       = "off",
+    panel.spacing.x  = unit(1.2, "mm"),
     panel.grid.major.y = element_line(color = "grey92", linewidth = 0.25),
     plot.margin  = margin(4, 4, 0, 4, "mm")
   )

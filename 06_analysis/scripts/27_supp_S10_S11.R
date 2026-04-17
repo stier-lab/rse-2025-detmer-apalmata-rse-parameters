@@ -225,28 +225,44 @@ effect_colors <- c(
   "large"      = "#CC79A7"
 )
 
+# Compute data-driven x limits so the plot doesn't have huge empty space
+# when all comparisons have the same sign (e.g. all positive).
+h_vals <- pairwise_plot$cohens_h
+h_min  <- min(h_vals, na.rm = TRUE)
+h_max  <- max(h_vals, na.rm = TRUE)
+xlim_lo <- if (h_min >= 0) 0 else floor(h_min * 10) / 10 - 0.1
+xlim_hi <- ceiling(h_max * 10) / 10 + 0.25  # headroom for sig stars
+
+# Only draw Cohen's-h reference lines that fall inside the data range so
+# we don't leave an orphan dashed line hanging below zero when all
+# comparisons are positive.
+ref_dashed <- c(-0.2, 0.2)
+ref_dotted <- c(-0.8, 0.8)
+ref_dashed <- ref_dashed[ref_dashed >= xlim_lo & ref_dashed <= xlim_hi]
+ref_dotted <- ref_dotted[ref_dotted >= xlim_lo & ref_dotted <= xlim_hi]
+
 p_s10c <- ggplot(pairwise_plot,
                   aes(x = comparison, y = cohens_h)) +
   geom_col(aes(fill = bar_color), width = 0.6, show.legend = TRUE) +
   geom_hline(yintercept = 0, color = "grey30", linewidth = 0.4) +
-  geom_hline(yintercept = c(-0.2, 0.2), linetype = "dashed",
+  geom_hline(yintercept = ref_dashed, linetype = "dashed",
              color = "grey60", linewidth = 0.3) +
-  geom_hline(yintercept = c(-0.8, 0.8), linetype = "dotted",
+  geom_hline(yintercept = ref_dotted, linetype = "dotted",
              color = "grey60", linewidth = 0.3) +
   geom_text(aes(label = sig_label),
             hjust = ifelse(pairwise_plot$cohens_h >= 0, -0.15, 1.15),
             size = 2.2, color = "grey30") +
-  coord_flip(clip = "off") +
+  coord_flip(clip = "off", ylim = c(xlim_lo, xlim_hi)) +
   scale_y_continuous(
     breaks = seq(-1, 2, 0.5),
-    limits = c(-0.6, 2.1),
-    expand = expansion(mult = c(0.02, 0.08))
+    expand = expansion(mult = c(0.02, 0.04))
   ) +
   scale_fill_manual(
     values = effect_colors,
-    name = "Effect",
+    name = "Effect size",
     breaks = c("negligible", "small", "medium", "large"),
-    labels = c("Neg.", "Small", "Med.", "Large")
+    labels = c("Neg.", "Small", "Med.", "Large"),
+    drop = FALSE
   ) +
   labs(x = NULL, y = "Cohen's h") +
   theme_manuscript(base_size = 9) +
@@ -262,14 +278,22 @@ p_s10c <- ggplot(pairwise_plot,
   )
 
 # --- Assemble S10 ---
-# Layout: (a | b) on top row, (c) spanning full width on bottom row
+# Layout: (a | b) on top row, (c) spanning full width on bottom row.
+# Collect guides so the Field/Laboratory (from panel b) and Effect-size
+# (from panel c) legends are pooled at the bottom of the full figure
+# rather than appearing twice under individual panels.
 fig_s10 <- (p_s10a | p_s10b) / p_s10c +
-  plot_layout(heights = c(1, 0.8)) +
+  plot_layout(heights = c(1, 0.7), guides = "collect") +
   plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 10, face = "bold"))
+  theme(
+    plot.tag = element_text(size = 10, face = "bold"),
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    legend.margin = margin(0, 0, 0, 0)
+  )
 
 save_manuscript_fig(fig_s10, "FigS10_context_comparison",
-                    width_mm = 174, height_mm = 160,
+                    width_mm = 174, height_mm = 140,
                     fig_dir = supp_dir)
 
 cat("  Figure S10 assembled and saved.\n")
@@ -354,12 +378,16 @@ p_s11b <- ggplot(disturbance_df,
     aes(ymin = pmax(0, ci_lower), ymax = pmin(1, ci_upper)),
     width = 0.15, linewidth = 0.4
   ) +
-  geom_text(aes(label = paste0("n = ", format(n, big.mark = ","))),
-            y = 0.03, size = 2.5, color = "white", fontface = "bold") +
-  geom_text(aes(label = paste0("k = ", n_studies)),
-            y = 0.10, size = 2.3, color = "white") +
+  # Place n/k labels ABOVE the error-bar caps so they are never
+  # clipped by the plotting area.
+  geom_text(aes(y = pmin(1, ci_upper) + 0.04,
+                label = paste0("n = ", format(n, big.mark = ","))),
+            size = 2.4, color = "grey25", fontface = "bold") +
+  geom_text(aes(y = pmin(1, ci_upper) + 0.10,
+                label = paste0("k = ", n_studies)),
+            size = 2.3, color = "grey40") +
   scale_y_continuous(
-    limits = c(0, 1.05),
+    limits = c(0, 1.18),
     breaks = seq(0, 1, 0.2),
     labels = scales::percent_format(accuracy = 1),
     expand = expansion(mult = c(0, 0.02))
@@ -378,19 +406,41 @@ size_climate_vuln <- size_climate_vuln %>%
 
 mean_cv <- mean(size_climate_vuln$cv_survival, na.rm = TRUE)
 
+# Place n-year labels above the TALLER of (bar top, mean-CV reference line)
+# so they never sit on top of the red dashed line. Also annotate the
+# reference line directly so the reader knows what it represents.
+cv_max    <- max(size_climate_vuln$cv_survival, na.rm = TRUE)
+cv_offset <- cv_max * 0.05
+
+# Give every n-label enough vertical headroom above BOTH its own bar and
+# the mean-CV line; ensures SC3-SC5 labels (below the line) don't sit on
+# the red dashed reference. Label the reference line at the far left, well
+# clear of the size-class bars.
+size_climate_vuln <- size_climate_vuln %>%
+  mutate(label_y = pmax(cv_survival, mean_cv) + cv_offset * 2)
+
 p_s11c <- ggplot(size_climate_vuln,
                   aes(x = size_class, y = cv_survival)) +
+  geom_col(aes(fill = size_class), width = 0.6, show.legend = FALSE) +
   geom_hline(yintercept = mean_cv, linetype = "dashed",
              color = MANUSCRIPT_PALETTE$accent, linewidth = 0.4) +
-  geom_col(aes(fill = size_class), width = 0.6, show.legend = FALSE) +
-  geom_text(aes(label = paste0("n = ", n_years, " yr")),
-            vjust = -0.5, size = 2.3, color = "grey40") +
+  geom_text(aes(y = label_y,
+                label = paste0("n = ", n_years, " yr")),
+            size = 2.3, color = "grey30") +
+  annotate("text",
+           x = 0.55,
+           y = mean_cv,
+           label = "mean",
+           hjust = 0, vjust = -0.5,
+           size = 2.3, color = MANUSCRIPT_PALETTE$accent,
+           fontface = "italic") +
   scale_y_continuous(
-    limits = c(0, max(size_climate_vuln$cv_survival, na.rm = TRUE) * 1.25),
+    limits = c(0, cv_max * 1.35),
     expand = expansion(mult = c(0, 0.02))
   ) +
   scale_fill_manual(values = SIZE_CLASS_COLORS) +
   labs(x = "Size class", y = "CV of annual survival") +
+  coord_cartesian(clip = "off") +
   theme_manuscript(base_size = 9) +
   theme(plot.margin = margin(5, 5, 5, 5, "mm"))
 
@@ -403,20 +453,22 @@ regional_var <- regional_var %>%
     region_wrap = stringr::str_wrap(region, width = 12)
   )
 
+reg_max <- max(regional_var$cv_survival, na.rm = TRUE)
+
 p_s11d <- ggplot(regional_var,
                   aes(x = reorder(region_wrap, cv_survival), y = cv_survival)) +
   geom_col(fill = MANUSCRIPT_PALETTE$surv_mid, width = 0.55) +
   geom_text(aes(label = paste0("n = ", n_years, " yr")),
             hjust = -0.15, size = 2.3, color = "grey40") +
-  coord_flip(clip = "off") +
+  coord_flip(clip = "off", ylim = c(0, reg_max * 1.18)) +
   scale_y_continuous(
-    expand = expansion(mult = c(0, 0.25))
+    expand = expansion(mult = c(0, 0))
   ) +
   labs(x = NULL, y = "CV of annual survival") +
   theme_manuscript(base_size = 9) +
   theme(
     axis.text.y = element_text(size = 8),
-    plot.margin = margin(5, 12, 5, 5, "mm")
+    plot.margin = margin(5, 5, 5, 5, "mm")
   )
 
 # --- Assemble S11 (2x2 grid) ---
@@ -440,7 +492,7 @@ cat("================================================================\n")
 cat("  SUPPLEMENTARY FIGURES S10 & S11 COMPLETE\n")
 cat("================================================================\n\n")
 cat("Outputs:\n")
-cat(sprintf("  - %s/FigS10_context_comparison.png  (174 x 160 mm)\n", supp_dir))
+cat(sprintf("  - %s/FigS10_context_comparison.png  (174 x 140 mm)\n", supp_dir))
 cat(sprintf("  - %s/FigS10_context_comparison.pdf\n", supp_dir))
 cat(sprintf("  - %s/FigS11_climate_demography.png  (174 x 170 mm)\n", supp_dir))
 cat(sprintf("  - %s/FigS11_climate_demography.pdf\n", supp_dir))

@@ -315,25 +315,32 @@ flk_events <- disturbance_db %>%
     severity_numeric = severity_map[tolower(severity)]
   )
 
-# Define disturbance type colors
+# Define disturbance type colors (drop "other" from legend: not used in FL Keys)
 disturbance_colors <- c(
   "hurricane"  = "#0072B2",   # blue
   "bleaching"  = "#D55E00",   # red/vermillion
   "disease"    = "#E69F00",   # yellow/amber
-  "cold_snap"  = "#56B4E9",   # cyan/light blue
-  "other"      = "#999999"    # grey
+  "cold_snap"  = "#56B4E9"    # cyan/light blue
 )
 
 disturbance_labels <- c(
   "hurricane"  = "Hurricane",
   "bleaching"  = "Bleaching",
   "disease"    = "Disease",
-  "cold_snap"  = "Cold snap",
-  "other"      = "Other"
+  "cold_snap"  = "Cold snap"
+)
+
+# Shared size breaks so both panels can share a single "n colonies" legend.
+shared_size_breaks <- c(50, 150, 300, 600)
+shared_size_limits <- c(
+  min(annual_surv$n, na.rm = TRUE),
+  max(annual_surv$n, na.rm = TRUE)
 )
 
 # --- Helper function: build one panel ---
-build_timeline_panel <- function(study_name, study_label, annual_data, events_data) {
+build_timeline_panel <- function(study_name, annual_data, events_data,
+                                 x_breaks = seq(2004, 2024, by = 2),
+                                 show_x_axis = TRUE) {
 
   study_annual <- annual_data %>%
     dplyr::filter(study == study_name) %>%
@@ -346,9 +353,7 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
     )
 
   if (nrow(study_annual) == 0) {
-    return(ggplot2::ggplot() + ggplot2::theme_void() +
-             ggplot2::annotate("text", x = 0.5, y = 0.5,
-                               label = paste("No data for", study_label)))
+    return(ggplot2::ggplot() + ggplot2::theme_void())
   }
 
   yr_range <- range(study_annual$survey_yr)
@@ -366,98 +371,23 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
     ) %>%
     dplyr::filter(is.finite(year))
 
-  # Assign y-position for event bars at the bottom of the panel
-  # Stack events within the same year
+  # Stack events within the same year at the bottom of the panel
   if (nrow(panel_events) > 0) {
     panel_events <- panel_events %>%
       dplyr::group_by(year) %>%
       dplyr::mutate(event_rank = dplyr::row_number()) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(
-        event_y = -0.02 - (event_rank - 1) * 0.035
+        event_y = -0.04 - (event_rank - 1) * 0.055
       )
   }
 
   y_lower_limit <- if (nrow(panel_events) > 0) {
-    min(-0.25, min(panel_events$event_y, na.rm = TRUE) - 0.03)
+    min(-0.18, min(panel_events$event_y, na.rm = TRUE) - 0.03)
   } else {
-    -0.25
+    -0.18
   }
 
-  p <- ggplot2::ggplot() +
-    # Disturbance event bars at the bottom
-    {if (nrow(panel_events) > 0) {
-      list(
-        ggplot2::geom_segment(
-          data = panel_events,
-          ggplot2::aes(x = year - 0.3, xend = year + 0.3,
-                       y = event_y, yend = event_y,
-                       color = event_type),
-          linewidth = 2.5, lineend = "round",
-          show.legend = TRUE
-        ),
-        # Severity markers: larger point for more severe events
-        ggplot2::geom_point(
-          data = panel_events %>% dplyr::filter(severity_numeric >= 3),
-          ggplot2::aes(x = year, y = event_y),
-          shape = 8, size = 1.5, color = "black", stroke = 0.5
-        )
-      )
-    }} +
-    # Survival line + points
-    ggplot2::geom_ribbon(
-      data = study_annual,
-      ggplot2::aes(x = survey_yr, ymin = ci_lower, ymax = ci_upper),
-      fill = MANUSCRIPT_PALETTE$slate_light, alpha = 0.3
-    ) +
-    ggplot2::geom_line(
-      data = study_annual,
-      ggplot2::aes(x = survey_yr, y = survival_rate),
-      color = MANUSCRIPT_PALETTE$surv_dark, linewidth = 0.6
-    ) +
-    ggplot2::geom_point(
-      data = study_annual,
-      ggplot2::aes(x = survey_yr, y = survival_rate, size = n),
-      color = MANUSCRIPT_PALETTE$surv_dark, shape = 16
-    ) +
-    # Scales
-    ggplot2::scale_color_manual(
-      values = disturbance_colors,
-      labels = disturbance_labels,
-      name = "Disturbance type",
-      drop = FALSE
-    ) +
-    ggplot2::scale_size_continuous(
-      range = c(1.5, 4),
-      name = "n colonies",
-      breaks = c(50, 200, 500, 1000)
-    ) +
-    ggplot2::scale_x_continuous(
-      breaks = seq(2004, 2024, by = 2),
-      limits = c(yr_range[1] - 0.5, yr_range[2] + 0.5)
-    ) +
-    ggplot2::scale_y_continuous(
-      limits = c(y_lower_limit, 1.05),
-      breaks = seq(0, 1, by = 0.2),
-      labels = scales::number_format(accuracy = 0.1)
-    ) +
-    ggplot2::labs(
-      x = "Year",
-      y = "Annual survival"
-    ) +
-    # Strip label for study
-    ggplot2::facet_wrap(~ study_label, ncol = 1) +
-    theme_manuscript(base_size = 9) +
-    ggplot2::theme(
-      legend.position = "none",
-      strip.text = ggplot2::element_text(size = 9, face = "bold", hjust = 0)
-    )
-
-  # Add the facet label by creating a dummy column
-  study_annual$study_label <- study_label
-  panel_events$study_label <- study_label
-
-  # Rebuild with facet data
   p <- ggplot2::ggplot() +
     {if (nrow(panel_events) > 0) {
       ggplot2::geom_segment(
@@ -465,14 +395,15 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
         ggplot2::aes(x = year - 0.3, xend = year + 0.3,
                      y = event_y, yend = event_y,
                      color = event_type),
-        linewidth = 2.5, lineend = "round"
+        linewidth = 2.2, lineend = "round"
       )
     }} +
     {if (nrow(panel_events) > 0) {
       ggplot2::geom_point(
         data = panel_events %>% dplyr::filter(severity_numeric >= 3),
         ggplot2::aes(x = year, y = event_y),
-        shape = 8, size = 1.5, color = "black", stroke = 0.5
+        shape = 8, size = 1.2, color = "black", stroke = 0.4,
+        show.legend = FALSE
       )
     }} +
     ggplot2::geom_ribbon(
@@ -493,83 +424,87 @@ build_timeline_panel <- function(study_name, study_label, annual_data, events_da
     ggplot2::scale_color_manual(
       values = disturbance_colors,
       labels = disturbance_labels,
-      name = "Disturbance type"
+      name = "Disturbance",
+      breaks = names(disturbance_colors),
+      drop = TRUE
     ) +
     ggplot2::scale_size_continuous(
-      range = c(1.5, 4),
+      range = c(1.2, 3.2),
       name = "n colonies",
-      breaks = c(50, 200, 500, 1000)
+      breaks = shared_size_breaks,
+      limits = shared_size_limits
     ) +
     ggplot2::scale_x_continuous(
-      breaks = seq(2004, 2024, by = 2),
+      breaks = x_breaks,
       limits = c(yr_range[1] - 0.5, yr_range[2] + 0.5)
     ) +
     ggplot2::scale_y_continuous(
       limits = c(y_lower_limit, 1.05),
-      breaks = seq(0, 1, by = 0.2),
+      breaks = seq(0, 1, by = 0.25),
       labels = scales::number_format(accuracy = 0.1)
     ) +
-    ggplot2::labs(x = "Year", y = "Annual survival") +
+    ggplot2::labs(x = if (show_x_axis) "Year" else NULL, y = "Annual survival") +
     theme_manuscript(base_size = 9) +
-    ggplot2::theme()
+    ggplot2::theme(
+      plot.margin = ggplot2::margin(2, 4, 2, 2, "mm"),
+      legend.key.width = grid::unit(8, "mm")
+    )
+
+  if (!show_x_axis) {
+    p <- p + ggplot2::theme(
+      axis.text.x = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank()
+    )
+  }
 
   return(p)
 }
 
 # --- Build panels ---
 p_noaa <- build_timeline_panel(
-  "NOAA_survey", "NOAA FL Keys (2004-2024)",
-  annual_surv, flk_events
+  "NOAA_survey", annual_surv, flk_events,
+  x_breaks = seq(2004, 2024, by = 2),
+  show_x_axis = TRUE
 )
 
 p_neely <- build_timeline_panel(
-  "neely_et_al_2022", "Neely et al. FL Keys (2010-2015)",
-  annual_surv, flk_events
+  "neely_et_al_2022", annual_surv, flk_events,
+  x_breaks = seq(2010, 2015, by = 1),
+  show_x_axis = TRUE
 )
-
-# --- Build shared legend ---
-# Create a dummy plot for extracting the legend
-legend_data <- data.frame(
-  x = rep(1, 4), y = rep(1, 4),
-  event_type = factor(
-    c("hurricane", "bleaching", "disease", "cold_snap"),
-    levels = names(disturbance_colors)
-  )
-)
-
-p_legend <- ggplot2::ggplot(legend_data, ggplot2::aes(x = x, y = y, color = event_type)) +
-  ggplot2::geom_point(size = 3) +
-  ggplot2::scale_color_manual(
-    values = disturbance_colors[c("hurricane", "bleaching", "disease", "cold_snap")],
-    labels = disturbance_labels[c("hurricane", "bleaching", "disease", "cold_snap")],
-    name = "Disturbance type",
-    drop = FALSE
-  ) +
-  ggplot2::theme(legend.position = "bottom")
 
 # --- Compose figure ---
-p_combined <- (p_noaa + ggplot2::labs(tag = "a")) /
-  (p_neely + ggplot2::labs(tag = "b")) +
+p_combined <- (p_noaa + ggplot2::labs(tag = "a", subtitle = "NOAA FL Keys (2004-2024)")) /
+  (p_neely + ggplot2::labs(tag = "b", subtitle = "Neely et al. FL Keys (2010-2015)")) +
   patchwork::plot_layout(
-    heights = c(1, 0.7),
+    heights = c(1, 0.75),
     guides = "collect"
   ) &
   ggplot2::theme(
     legend.position = "bottom",
-    legend.box = "horizontal"
+    legend.box = "vertical",
+    legend.margin = ggplot2::margin(0, 2, 0, 2, "mm"),
+    legend.box.margin = ggplot2::margin(0, 0, 0, 0, "mm"),
+    legend.spacing.y = grid::unit(0, "mm"),
+    legend.key.height = grid::unit(3.5, "mm"),
+    legend.key.width = grid::unit(5, "mm"),
+    plot.subtitle = ggplot2::element_text(size = 8, face = "italic", hjust = 0,
+                                           margin = ggplot2::margin(0, 0, 1, 0, "mm")),
+    plot.tag = ggplot2::element_text(face = "bold"),
+    plot.margin = ggplot2::margin(2, 4, 1, 2, "mm")
   )
 
-# Manually add the disturbance color legend by making it visible
-# (the size legend is secondary; disturbance type is the key message)
 p_combined <- p_combined +
   patchwork::plot_annotation(
-    caption = paste0(
-      "Points = annual survival (size proportional to sample size). ",
-      "Shading = 95% CI. ",
-      "Colored bars = disturbance events; stars (*) mark major/catastrophic events."
+    caption = paste(
+      "Points: annual survival (size ~ n). Shading: 95% CI.",
+      "Colored bars mark disturbance events; asterisks (*) flag major/catastrophic."
     ),
     theme = ggplot2::theme(
-      plot.caption = ggplot2::element_text(size = 7, hjust = 0, color = "grey40")
+      plot.caption = ggplot2::element_text(size = 7, hjust = 0, color = "grey40",
+                                             margin = ggplot2::margin(2, 0, 0, 0, "mm")),
+      plot.margin = ggplot2::margin(3, 4, 3, 3, "mm")
     )
   )
 
@@ -578,7 +513,7 @@ save_manuscript_fig(
   p_combined,
   "FigS23_disturbance_timeline",
   width_mm = 174,
-  height_mm = 160,
+  height_mm = 140,
   fig_dir = dirs$figures_supp
 )
 

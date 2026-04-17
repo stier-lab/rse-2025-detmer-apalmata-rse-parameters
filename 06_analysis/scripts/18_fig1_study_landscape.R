@@ -183,34 +183,52 @@ tier1_regions <- tier1_regions %>%
 region_data <- bind_rows(tier1_regions, tier2_only)
 
 # --- Nudge values for label placement ---
+# Strategy: spread overlapping Florida-region labels into the ocean (south/SW),
+# spread Virgin Islands cluster into the ocean (east/SE), keep other labels nearby.
 region_data <- region_data %>%
   mutate(
     nudge_x = case_when(
-      region == "Florida"              ~ -3.5,
-      region == "Mexico"               ~  3.0,
-      region == "Navassa"              ~ -3.0,
-      region == "Dominican Republic"   ~  2.5,
-      region == "USVI"                 ~ -3.5,
-      region == "Curacao"              ~  3.0,
-      region == "Jamaica"              ~ -3.5,
-      region == "Puerto Rico"          ~  3.5,
-      region == "Virgin Gorda"         ~  3.5,
-      region == "British Virgin Islands" ~ 3.5,
-      region == "Bahamas"              ~ -3.0,
+      # Florida cluster — push apart horizontally
+      region == "Florida Keys"         ~ -7.5,   # NW into ocean
+      region == "Florida"              ~ -4.5,   # west of peninsula
+      region == "Bahamas"              ~  1.5,   # east, off north coast
+      region == "Dry Tortugas"         ~ -6.0,   # west
+      region == "Cuba"                 ~ -2.0,
+      # Virgin Islands cluster — spread east into ocean
+      region == "Virgin Gorda"         ~  5.5,
+      region == "British Virgin Islands" ~  6.5,
+      region == "US Virgin Islands"    ~  6.0,
+      region == "USVI"                 ~  6.0,
+      # Other regions
+      region == "Mexican Caribbean"    ~ -4.0,
+      region == "Mexico"               ~ -3.5,
+      region == "Navassa"              ~ -3.5,
+      region == "Dominican Republic"   ~  0.5,
+      region == "Puerto Rico"          ~ -2.5,
+      region == "Curacao"              ~  2.5,
+      region == "Jamaica"              ~ -3.0,
       TRUE ~ 0
     ),
     nudge_y = case_when(
-      region == "Florida"              ~  1.5,
-      region == "Mexico"               ~  1.5,
-      region == "Navassa"              ~ -1.5,
+      # Florida cluster — stagger vertically too
+      region == "Florida Keys"         ~ -0.5,
+      region == "Florida"              ~  2.8,
+      region == "Bahamas"              ~  1.2,
+      region == "Dry Tortugas"         ~ -1.2,
+      region == "Cuba"                 ~ -1.5,
+      # Virgin Islands cluster — stagger vertically
+      region == "Virgin Gorda"         ~  1.8,
+      region == "British Virgin Islands" ~  0.0,
+      region == "US Virgin Islands"    ~ -1.8,
+      region == "USVI"                 ~ -1.8,
+      # Other regions
+      region == "Mexican Caribbean"    ~  1.2,
+      region == "Mexico"               ~  1.2,
+      region == "Navassa"              ~ -1.8,
       region == "Dominican Republic"   ~  2.0,
-      region == "USVI"                 ~ -2.5,
-      region == "Curacao"              ~  1.5,
-      region == "Jamaica"              ~  1.5,
-      region == "Puerto Rico"          ~  1.8,
-      region == "Virgin Gorda"         ~  0.0,
-      region == "British Virgin Islands" ~ -2.0,
-      region == "Bahamas"              ~  1.5,
+      region == "Puerto Rico"          ~  2.0,
+      region == "Curacao"              ~ -1.5,
+      region == "Jamaica"              ~ -1.8,
       TRUE ~ 1.2
     ),
     label = sprintf("%s\n(n = %s)", region, comma(n))
@@ -242,15 +260,18 @@ fig1 <- ggplot() +
   ) +
   geom_text_repel(data = region_data,
                   aes(x = lon, y = lat, label = label),
-                  size = 2.8, color = pal$slate_dark, lineheight = 0.85,
+                  size = 2.5, color = pal$slate_dark, lineheight = 0.85,
                   fontface = "plain",
                   nudge_x = region_data$nudge_x,
                   nudge_y = region_data$nudge_y,
-                  segment.color = pal$slate_light,
-                  segment.size = 0.3,
-                  box.padding = 0.3,
-                  point.padding = 0.3,
+                  segment.color = pal$slate_dark,
+                  segment.size = 0.25,
+                  segment.alpha = 0.6,
+                  box.padding = 0.45,
+                  point.padding = 0.35,
                   min.segment.length = 0,
+                  force = 2,
+                  force_pull = 0.5,
                   max.overlaps = Inf,
                   seed = 42) +
   scale_size_area(
@@ -279,16 +300,19 @@ fig1 <- ggplot() +
     axis.ticks       = element_blank(),
     axis.title       = element_blank(),
     axis.line        = element_blank(),
-    plot.margin      = margin(5, 12, 4, 8),
+    plot.margin      = margin(2, 6, 0, 4),
     legend.position  = "top",
     legend.direction = "horizontal",
     legend.box       = "vertical",
     legend.key       = element_blank(),
-    legend.key.size  = unit(0.7, "lines"),
-    legend.spacing.y = unit(0.5, "lines"),
-    legend.margin    = margin(2, 0, 0, 0),
-    legend.title     = element_text(size = 8, face = "bold"),
-    legend.text      = element_text(size = 8)
+    legend.key.size  = unit(0.6, "lines"),
+    legend.spacing.x = unit(0.3, "lines"),
+    legend.spacing.y = unit(0, "lines"),
+    legend.box.spacing = unit(0.1, "lines"),
+    legend.margin    = margin(0, 0, -2, 0),
+    legend.box.margin = margin(0, 0, 0, 0),
+    legend.title     = element_text(size = 7.5, face = "bold"),
+    legend.text      = element_text(size = 7.5)
   ) +
   guides(
     size = guide_legend(
@@ -358,19 +382,20 @@ fig1b <- ggplot(avail_data, aes(x = region, y = size_class, fill = n)) +
     axis.text.y = element_text(size = 8, color = "grey30"),
     axis.title.y = element_text(size = 9),
     legend.position = "right",
-    legend.key.height = unit(12, "mm"),
+    legend.key.height = unit(14, "mm"),
     legend.key.width = unit(3, "mm"),
-    legend.title = element_text(size = 8),
+    legend.title = element_text(size = 8, margin = margin(b = 2)),
     legend.text = element_text(size = 7),
-    plot.margin = margin(4, 8, 4, 8, "mm"),
+    legend.title.align = 0.5,
+    plot.margin = margin(1, 3, 2, 3, "mm"),
     panel.grid = element_blank()
   )
 
 # Combine a (map) and b (heatmap) vertically
 fig1_combined <- fig1a / fig1b +
-  plot_layout(heights = c(1.3, 1))
+  plot_layout(heights = c(1.5, 1))
 
-save_manuscript_fig(fig1_combined, "Fig1_study_landscape", 174, 170)
+save_manuscript_fig(fig1_combined, "Fig1_study_landscape", 174, 175)
 
 # =============================================================================
 # SUPPLEMENTARY: SIZE DISTRIBUTION
@@ -393,26 +418,30 @@ fig_size_dist <- ggplot(size_data, aes(x = size_cm2)) +
   geom_rug(alpha = 0.08, color = pal$slate_mid, linewidth = 0.2, sides = "b") +
   geom_vline(xintercept = median_size, color = "#D55E00",
              linewidth = 0.7, linetype = "solid") +
-  annotate("text", x = median_size * 0.42, y = 420,
+  # Median label: placed ABOVE the histogram peak, well clear of the vertical
+  # line; an arrow points from the label down to the line.
+  annotate("text", x = median_size * 0.28, y = 560,
            label = sprintf("Median = %s cm\u00B2", comma(round(median_size))),
-           hjust = 1, vjust = 0.5, size = 2.85, color = "#D55E00",
+           hjust = 0.5, vjust = 0.5, size = 2.85, color = "#D55E00",
            fontface = "bold") +
-  annotate("segment", x = median_size * 0.46, xend = median_size * 0.94,
-           y = 420, yend = 420,
-           color = "#D55E00", linewidth = 0.3,
+  annotate("curve", x = median_size * 0.42, xend = median_size * 0.98,
+           y = 540, yend = 440,
+           color = "#D55E00", linewidth = 0.35, curvature = -0.25,
            arrow = arrow(length = unit(0.06, "inches"), type = "closed")) +
-  annotate("text", x = 30000, y = Inf,
+  # Sample size annotation: placed at lower-left of the plot (SC1-SC2 region,
+  # low frequency area) to avoid collision with the SC5 boundary label.
+  annotate("text", x = 1.1, y = 520,
            label = sprintf("N = %s\n%d studies, %d regions",
                            comma(nrow(size_data)), n_studies_ind,
                            n_distinct(surv_data$region)),
-           hjust = 1, vjust = 1.4, size = 3.0, color = pal$slate_dark,
-           lineheight = 0.9) +
+           hjust = 0, vjust = 1, size = 3.0, color = pal$slate_dark,
+           lineheight = 0.95, fontface = "plain") +
   scale_x_log10(
     breaks = c(1, 10, 100, 1000, 10000),
     labels = comma,
     limits = c(0.8, 40000)
   ) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.12)), labels = comma) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.18)), labels = comma) +
   labs(x = expression(paste("Colony live tissue area (cm"^2, ")")),
        y = "Frequency") +
   theme_manuscript() +

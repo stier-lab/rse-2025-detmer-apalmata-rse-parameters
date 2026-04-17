@@ -171,8 +171,7 @@ p_s12a <- ggplot(sensitivity_all, aes(x = lambda, y = label, color = category)) 
   ) +
   labs(
     x = expression(lambda),
-    y = NULL,
-    tag = "a"
+    y = NULL
   ) +
   annotate("text", x = lambda_det, y = n_labels + 0.4,
            label = paste0("baseline (", sprintf("%.3f", lambda_det), ")"),
@@ -186,7 +185,7 @@ p_s12a <- ggplot(sensitivity_all, aes(x = lambda, y = label, color = category)) 
     legend.text = element_text(size = 8),
     legend.key.size = unit(3, "mm"),
     axis.text.y = element_text(size = 8),
-    plot.margin = margin(8, 8, 5, 5, "mm")
+    plot.margin = margin(4, 6, 1, 4, "mm")
   )
 
 # --- Panel (b): Bootstrap CIs by size class ---
@@ -218,20 +217,23 @@ p_s12b <- ggplot(boot_ci_plot, aes(x = size_class, y = mean)) +
            hjust = 0, size = 2.8, color = pal$slate_mid, fontface = "italic") +
   labs(
     x = "Size class",
-    y = "Survival probability (95% CI)",
-    tag = "b"
+    y = "Survival probability (95% CI)"
   ) +
   theme_manuscript(base_size = 10) +
   theme(
     axis.text.x = element_text(size = 7.5, angle = 25, hjust = 1),
-    plot.margin = margin(5, 5, 5, 8, "mm")
+    axis.title.y = element_text(margin = margin(r = 4)),
+    plot.margin = margin(1, 6, 4, 14, "mm")
   )
 
 # --- Compose S12 ---
 fig_s12 <- p_s12a / p_s12b +
-  plot_layout(heights = c(1.3, 1)) +
+  plot_layout(heights = c(1, 1)) +
   plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 12, face = "bold"))
+  theme(
+    plot.tag = element_text(size = 12, face = "bold"),
+    plot.tag.position = c(0.01, 0.98)
+  )
 
 save_manuscript_fig(fig_s12, "FigS12_sensitivity",
                     width_mm = 174, height_mm = 160, fig_dir = supp_dir)

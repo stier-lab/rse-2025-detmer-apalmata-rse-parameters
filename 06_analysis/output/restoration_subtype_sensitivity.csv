@@ -1,5 +1,5 @@
 scenario,n_records,n_studies,mean_survival
-All subtype-coded records,5079,5,0.8117739712541849
+All subtype-coded records,5079,5,0.8117739712541846
 Exclude natural fragments,1111,4,0.6003600360036008
 Nursery outplants only,1065,3,0.5981220657277
 All restoration subtypes,1111,4,0.6003600360036008

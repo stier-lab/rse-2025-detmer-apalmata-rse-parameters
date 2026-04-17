@@ -109,22 +109,51 @@ cat(sprintf("  k = %d studies, I^2 = %.1f%%, pooled survival = %.1f%%\n",
 # STUDY NAME MAPPING (code names -> proper citations)
 # ==============================================================================
 
-# FIX: Added NOAA regional splits after meta-analysis restructure (critique audit 2026-03-29)
+# FIX (2026-04-17): Expanded mapping to cover all 22 study-level effects in
+# the k=17 meta-analysis (previously only ~8 were mapped, leaving raw
+# snake_case labels in the forest plot).
 study_name_map <- c(
   "NOAA_survey"                  = "NOAA NCRMP",
-  "NOAA_survey_florida_keys"     = "NOAA (Florida Keys)",
-  "NOAA_survey_curacao"          = "NOAA (Curacao)",
-  "NOAA_survey_navassa"          = "NOAA (Navassa)",
-  "kuffner_et_al_2020"           = "Kuffner et al. (2020)",
-  "pausch_et_al_2018"            = "Pausch et al. (2018)",
+  "NOAA_survey_florida_keys"     = "NOAA NCRMP (Florida Keys)",
+  "NOAA_survey_curacao"          = "NOAA NCRMP (Curacao)",
+  "NOAA_survey_navassa"          = "NOAA NCRMP (Navassa)",
+  "kuffner_et_al_2020"           = "Kuffner et al. 2020",
+  "pausch_et_al_2018"            = "Pausch et al. 2018",
   "fundemar_fragments"           = "FUNDEMAR",
-  "USGS_USVI_exp"                = "USGS USVI"
+  "USGS_USVI_exp"                = "USGS USVI",
+  "neely_et_al_2022"             = "Neely et al. 2022",
+  "vardi_2011_jamaica"           = "Vardi 2011 (Jamaica)",
+  "vardi_2011_puerto_rico"       = "Vardi 2011 (Puerto Rico)",
+  "vardi_2011_virgin_gorda"      = "Vardi 2011 (Virgin Gorda)",
+  "bruckner_bruckner_2001"       = "Bruckner & Bruckner 2001",
+  "ortiz_prosper_2005"           = "Ortiz-Prosper 2005",
+  "forrester_et_al_2013"         = "Forrester et al. 2013",
+  "rosales_et_al_2024"           = "Rosales et al. 2024",
+  "maurer_et_al_2022"            = "Maurer et al. 2022",
+  "williams_miller_2010"         = "Williams & Miller 2010",
+  "garrison_ward_2008_control"   = "Garrison & Ward 2008 \u2014 Control",
+  "garrison_ward_2008_relocated" = "Garrison & Ward 2008 \u2014 Relocated",
+  "rogers_muller_2012"           = "Rogers & Muller 2012",
+  "ramos_romero_et_al_2025"      = "Ramos-Romero et al. 2025",
+  "rogers_et_al_1982"            = "Rogers et al. 1982"
 )
+
+# Helper: prettify any leftover snake_case study label as a safety net.
+prettify_study_label <- function(x) {
+  # Replace underscores with spaces and capitalize words after simple rules:
+  # - "_et_al_" -> " et al. "
+  # - trailing year preserved as year
+  x <- gsub("_et_al_", " et al. ", x, fixed = TRUE)
+  x <- gsub("_", " ", x, fixed = TRUE)
+  # Title-case the first letter of each whitespace-separated word, except
+  # "et al." fragments already handled above.
+  tools::toTitleCase(x)
+}
 
 study_effects <- study_effects %>%
   mutate(
     study_cite = ifelse(study %in% names(study_name_map),
-                        study_name_map[study], study)
+                        study_name_map[study], prettify_study_label(study))
   )
 
 # ==============================================================================
@@ -159,7 +188,7 @@ p_forest_a <- ggplot(forest_a, aes(y = study_label)) +
   # Prediction interval shading (behind everything)
   annotate("rect",
            xmin = pred_surv_lower, xmax = pred_surv_upper,
-           ymin = 0.4, ymax = n_studies + 0.6,
+           ymin = 0.3, ymax = n_studies + 0.6,
            fill = pal$surv_light, alpha = 0.12) +
   # Pooled estimate vertical line
   geom_vline(xintercept = pooled_surv, linetype = "dashed",
@@ -171,22 +200,6 @@ p_forest_a <- ggplot(forest_a, aes(y = study_label)) +
   # Study point estimates (sized by RE weight)
   geom_point(aes(x = survival_rate, size = weight_re_pct),
              color = pal$surv_mid, shape = 15) +
-  # Separator line above pooled row
-  annotate("segment", x = 0.15, xend = 0.95, y = 0.6, yend = 0.6,
-           color = pal$slate_light, linewidth = 0.3) +
-  # Pooled diamond below study rows
-  annotate("point", x = pooled_surv, y = 0.3,
-           shape = 23, size = 3.5, fill = pal$accent, color = pal$accent) +
-  annotate("errorbar", xmin = pooled_surv_lower, xmax = pooled_surv_upper,
-           y = 0.3, width = 0.12, color = pal$accent, linewidth = 0.7,
-           orientation = "y") +
-  # Pooled label above the diamond
-  annotate("text", x = pooled_surv, y = 0.05,
-           label = sprintf("Pooled: %.0f%% [%.0f, %.0f]",
-                           pooled_surv * 100,
-                           pooled_surv_lower * 100,
-                           pooled_surv_upper * 100),
-           size = 2.3, color = pal$accent, fontface = "bold", hjust = 0.5) +
   # Scales
   scale_x_continuous(
     limits = c(0, 1),
@@ -196,12 +209,26 @@ p_forest_a <- ggplot(forest_a, aes(y = study_label)) +
   ) +
   scale_size_continuous(range = c(2.5, 7), guide = "none") +
   coord_cartesian(clip = "off") +
-  labs(x = "Annual survival", y = NULL) +
+  labs(
+    x = "Annual survival",
+    y = NULL,
+    # FIX (2026-04-17): moved the "Pooled: ..." text out of the panel data
+    # area and into the caption to prevent collision with the x-axis title.
+    caption = sprintf("Pooled: %.0f%% [%.0f, %.0f]  |  Prediction interval: %.0f%%\u2013%.0f%%",
+                      pooled_surv * 100,
+                      pooled_surv_lower * 100,
+                      pooled_surv_upper * 100,
+                      pred_surv_lower * 100,
+                      pred_surv_upper * 100)
+  ) +
   theme_manuscript() +
   theme(
-    axis.text.y  = element_text(size = 9),
+    axis.text.y  = element_text(size = 7.5),
     panel.grid.major.y = element_blank(),
-    plot.margin = margin(8, 12, 14, 4, "mm")
+    plot.caption = element_text(size = 8, color = pal$accent,
+                                face = "bold", hjust = 0.5,
+                                margin = margin(t = 3, b = 0)),
+    plot.margin = margin(6, 10, 4, 4, "mm")
   )
 
 # --- Panel (b): Stratified forest plot (natural vs restoration) ---
@@ -249,12 +276,12 @@ p_forest_b <- ggplot(forest_b, aes(y = study_label)) +
   labs(x = "Annual survival", y = NULL) +
   theme_manuscript() +
   theme(
-    axis.text.y  = element_text(size = 9),
+    axis.text.y  = element_text(size = 7.5),
     panel.grid.major.y = element_blank(),
     legend.position = "bottom",
     legend.text = element_text(size = 9),
     legend.margin = margin(0, 0, 0, 0),
-    plot.margin = margin(4, 12, 8, 4, "mm")
+    plot.margin = margin(4, 10, 4, 4, "mm")
   )
 
 # --- Combine S8 panels vertically ---
@@ -265,8 +292,10 @@ p_S8 <- p_forest_a / p_forest_b +
   theme(plot.tag = element_text(size = 12, face = "bold"))
 
 # Save FigS21
+# FIX (2026-04-17): height increased from 185->230 mm to de-crowd 22 study
+# rows per panel and give room for the pooled caption without clipping.
 save_manuscript_fig(p_S8, "FigS21_forest_plots",
-                    width_mm = 174, height_mm = 185,
+                    width_mm = 174, height_mm = 230,
                     fig_dir = supp_dir)
 
 # ==============================================================================
@@ -322,7 +351,8 @@ p_a <- ggplot(i_sq_bars) +
     axis.ticks.y = element_blank(),
     axis.line.y  = element_blank(),
     panel.grid   = element_blank(),
-    plot.margin  = margin(8, 8, 14, 8, "mm")
+    # FIX (2026-04-17): tightened margins to remove huge row gap in 2x2 grid
+    plot.margin  = margin(2, 3, 2, 3, "mm")
   )
 
 # --- Panel (b): Variance decomposition ---
@@ -354,7 +384,7 @@ p_b <- ggplot(var_data, aes(x = pct, y = component, fill = fill_col)) +
   theme(
     panel.grid.major.y = element_blank(),
     axis.text.y = element_text(size = 9),
-    plot.margin = margin(8, 8, 8, 8, "mm")
+    plot.margin = margin(2, 3, 2, 3, "mm")
   )
 
 # --- Panel (c): CI vs PI comparison ---
@@ -396,7 +426,7 @@ p_c <- ggplot(interval_data, aes(y = type)) +
   theme(
     panel.grid.major.y = element_blank(),
     axis.text.y = element_text(size = 9),
-    plot.margin = margin(10, 8, 8, 8, "mm")
+    plot.margin = margin(2, 3, 2, 3, "mm")
   )
 
 # --- Panel (d): Moderator effects ---
@@ -427,18 +457,31 @@ p_d <- ggplot(mod_plot, aes(y = moderator)) +
   theme(
     panel.grid.major.y = element_blank(),
     axis.text.y = element_text(size = 8),
-    plot.margin = margin(10, 10, 8, 8, "mm")
+    plot.margin = margin(2, 3, 2, 3, "mm")
   )
 
 # --- Combine S9 panels in 2x2 grid ---
 
+# FIX (2026-04-17): heights=c(1,1) + shared tight margins via `&` theme.
+# Previously each panel carried theme_manuscript()'s default 10 mm plot.margin,
+# which patchwork stacks, creating a ~30 mm gap between rows. Overriding with
+# `&` theme collapses the gap uniformly.
 p_S9 <- (p_a + p_b) / (p_c + p_d) +
+  plot_layout(heights = c(1, 1)) +
   plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 12, face = "bold"))
+  theme(
+    plot.tag    = element_text(size = 12, face = "bold"),
+    plot.margin = margin(2, 3, 2, 3, "mm")
+  )
 
 # Save FigS9
+# FIX (2026-04-17): height lowered from 174->120 mm. Panels a and d hold
+# only 1 gauge bar and 4 coefficient rows respectively; when the figure is
+# tall, those panels leave large vertical voids in their grid cells while
+# patchwork allocates them full row height. 120 mm keeps rows proportional
+# to their visual content.
 save_manuscript_fig(p_S9, "FigS9_heterogeneity",
-                    width_mm = 174, height_mm = 174,
+                    width_mm = 174, height_mm = 120,
                     fig_dir = supp_dir)
 
 # ==============================================================================

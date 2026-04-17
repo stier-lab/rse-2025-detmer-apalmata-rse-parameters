@@ -428,23 +428,24 @@ print_subheader("Section 6: Figure S22 — Heatwave Scenario Projections")
 
 # Panel (a): Dose-response curve from Manzello et al. (2025)
 p_dose <- ggplot(dose_response_df, aes(x = dhw, y = mortality * 100)) +
+  # Mark the 2023 FL Keys DHW range first (background)
+  annotate("rect", xmin = 16, xmax = 20.5, ymin = 0, ymax = 100,
+           alpha = 0.15, fill = "red") +
   geom_line(linewidth = 1.2, color = pal$surv_dark) +
   geom_vline(xintercept = ED50, linetype = "dashed", color = "grey50") +
   geom_vline(xintercept = ED95, linetype = "dashed", color = "grey50") +
   geom_hline(yintercept = 50, linetype = "dotted", color = "grey70") +
   geom_hline(yintercept = 95, linetype = "dotted", color = "grey70") +
-  annotate("text", x = ED50 + 0.5, y = 15,
+  # Separate y-positions to prevent overlap
+  annotate("text", x = ED50 + 0.4, y = 42,
            label = paste0("ED50 = ", ED50, " DHW"),
-           hjust = 0, size = 2.8, color = "grey40") +
-  annotate("text", x = ED95 + 0.5, y = 15,
+           hjust = 0, size = 2.6, color = "grey30") +
+  annotate("text", x = ED95 + 0.4, y = 88,
            label = paste0("ED95 = ", ED95, " DHW"),
-           hjust = 0, size = 2.8, color = "grey40") +
-  # Mark the 2023 FL Keys DHW range
-  annotate("rect", xmin = 16, xmax = 20.5, ymin = 0, ymax = 100,
-           alpha = 0.15, fill = "red") +
-  annotate("text", x = 18.2, y = 8,
+           hjust = 0, size = 2.6, color = "grey30") +
+  annotate("text", x = 18.2, y = 22,
            label = "2023 FL Keys\n(16-20 DHW)",
-           size = 2.5, color = "red4") +
+           size = 2.4, color = "red4", lineheight = 0.9) +
   scale_x_continuous(breaks = seq(0, 25, 5)) +
   scale_y_continuous(breaks = seq(0, 100, 25)) +
   labs(x = "Degree Heating Weeks (DHW, °C-weeks)",
@@ -459,23 +460,23 @@ catastrophic_data <- projection_trajectories %>%
   mutate(
     label_short = case_when(
       scenario == "baseline" ~ "No heatwave",
-      return_interval == 5 ~ "Every 5 yr",
-      return_interval == 10 ~ "Every 10 yr",
-      return_interval == 20 ~ "Every 20 yr",
-      return_interval == 50 ~ "Every 50 yr"
+      return_interval == 5 ~ "5 yr",
+      return_interval == 10 ~ "10 yr",
+      return_interval == 20 ~ "20 yr",
+      return_interval == 50 ~ "50 yr"
     ),
     label_short = factor(label_short,
-                         levels = c("No heatwave", "Every 50 yr", "Every 20 yr",
-                                    "Every 10 yr", "Every 5 yr"))
+                         levels = c("No heatwave", "50 yr", "20 yr",
+                                    "10 yr", "5 yr"))
   )
 
 # Color palette for return intervals
 ri_colors <- c(
   "No heatwave" = "grey40",
-  "Every 50 yr" = "#56B4E9",
-  "Every 20 yr" = "#E69F00",
-  "Every 10 yr" = "#D55E00",
-  "Every 5 yr"  = "#CC79A7"
+  "50 yr" = "#56B4E9",
+  "20 yr" = "#E69F00",
+  "10 yr" = "#D55E00",
+  "5 yr"  = "#CC79A7"
 )
 
 p_traj <- ggplot(catastrophic_data, aes(x = year, y = pct_initial_median,
@@ -492,13 +493,19 @@ p_traj <- ggplot(catastrophic_data, aes(x = year, y = pct_initial_median,
   scale_y_continuous(breaks = seq(0, 200, 25)) +
   labs(x = "Year",
        y = "Population (% of initial)",
-       color = "Catastrophic\nheatwave\nreturn interval",
-       fill = "Catastrophic\nheatwave\nreturn interval") +
+       color = "Heatwave return interval",
+       fill = "Heatwave return interval") +
   coord_cartesian(ylim = c(0, max(catastrophic_data$ci_upper / sum(initial_pop) * 100,
                                    na.rm = TRUE) * 1.05)) +
+  guides(color = guide_legend(nrow = 2, byrow = TRUE),
+         fill = guide_legend(nrow = 2, byrow = TRUE)) +
   theme_manuscript() +
   theme(legend.position = "bottom",
-        legend.title = element_text(size = 7))
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7.5),
+        legend.key.width = unit(5, "mm"),
+        legend.key.height = unit(3, "mm"),
+        legend.box.margin = margin(0, 0, 0, 0, "mm"))
 
 # Panel (c): Effective lambda by severity and return interval
 # Exclude baseline from this panel
@@ -517,26 +524,38 @@ p_lambda <- ggplot(lambda_data, aes(x = severity, y = effective_lambda,
   geom_col(position = position_dodge(0.8), width = 0.7) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "grey50") +
   geom_hline(yintercept = lambda_det, linetype = "dotted", color = pal$surv_dark) +
-  annotate("text", x = 0.5, y = lambda_det + 0.008,
+  annotate("text", x = 0.55, y = lambda_det,
            label = sprintf("Baseline lambda = %.3f", lambda_det),
-           hjust = 0, size = 2.5, color = pal$surv_dark) +
+           hjust = 0, vjust = -0.6, size = 2.5, color = pal$surv_dark,
+           fontface = "italic") +
+  annotate("text", x = 3.45, y = 1,
+           label = "stable",
+           hjust = 1, vjust = -0.6, size = 2.5, color = "grey40",
+           fontface = "italic") +
   scale_fill_manual(
     values = c("5" = "#CC79A7", "10" = "#D55E00", "20" = "#E69F00", "50" = "#56B4E9"),
-    name = "Return\ninterval (yr)"
+    name = "Heatwave return interval (yr)"
   ) +
   labs(x = "Heatwave severity",
        y = expression("Effective " * lambda)) +
   coord_cartesian(ylim = c(
     min(lambda_data$effective_lambda, na.rm = TRUE) * 0.95,
-    max(lambda_data$effective_lambda, lambda_det, na.rm = TRUE) * 1.02
+    1.03
   )) +
   theme_manuscript() +
   theme(legend.position = "bottom",
-        legend.title = element_text(size = 7))
+        legend.title = element_text(size = 8),
+        legend.text = element_text(size = 7.5),
+        legend.key.size = unit(3.5, "mm"),
+        plot.margin = margin(6, 6, 4, 6, "mm"))
 
-# Combine panels
-fig_s22 <- (p_dose | p_traj) / p_lambda +
-  plot_layout(heights = c(1, 0.9)) +
+# Combine panels: pull panel b legend to the bottom of the top row (shared)
+top_row <- (p_dose + p_traj) +
+  plot_layout(widths = c(1, 1.15), guides = "collect") &
+  theme(legend.position = "bottom")
+
+fig_s22 <- top_row / p_lambda +
+  plot_layout(heights = c(1, 1)) +
   plot_annotation(tag_levels = "a") &
   theme(plot.tag = element_text(size = 10, face = "bold"))
 
@@ -545,7 +564,7 @@ save_manuscript_fig(
   fig_s22,
   "FigS22_heatwave_scenarios",
   width_mm = 174,
-  height_mm = 200,
+  height_mm = 180,
   fig_dir = supp_dir
 )
 
