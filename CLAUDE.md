@@ -19,9 +19,9 @@ The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform
 
 These apply to **every** analysis change:
 
-- **I^2 = 96.6%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
+- **I^2 = 97.2%** — extreme heterogeneity across studies. Any bootstrap must use **hierarchical resampling** (study -> observation).
 - **NOAA = 78%** of individual-level data. Results may not generalize. Always check LOSO sensitivity.
-- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are mostly NOAA + Neely. The expanded meta (k=17, 22 effects) has 10 natural + 12 restoration effects; difference not significant (p=0.153).
+- **Natural vs restoration confounded with study identity** — in individual-level data, natural colonies are mostly NOAA + Neely. The expanded meta (k=17, 22 effects) has 10 natural + 12 restoration effects; difference not significant (p=0.238).
 - **Neely 2014 disturbance event** — Neely et al. 2022 includes a catastrophic mortality event (53% surv in 2014 vs 88% in non-disturbance intervals). Disturbance intervals are flagged; sensitivity analysis shows excluding them shifts pooled survival by +2.7 pp.
 - **Fragmentation data from one study** (Vardi 2011, 13 rows). Cannot be improved without new data.
 - **All Florida vital rates are pre-2023 collapse.** Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida after the 2023 heatwave (97.8-100% mortality at 16-20 DHW). Our transition matrix describes the chronic demographic regime that operated before this event. Heatwave scenario analysis (Script 40) layers Manzello's dose-response onto the population model.
@@ -190,7 +190,7 @@ if (ratio > 1.5) warning("Potential overdispersion")
 4. **NOAA dominance**: 78% of data. Always run LOSO to check if results hold without it.
 5. **Year column**: Use `survey_yr`, not `year` (conflicts with `base::year` in dplyr context).
 6. **cairo_pdf**: Fails on some systems. `save_manuscript_fig()` has a fallback PDF device.
-7. **Natural vs restoration**: NOT significant (p=0.153 at k=17, 22 effects). Study identity confounded with population type. Don't overinterpret.
+7. **Natural vs restoration**: NOT significant (p=0.238 at k=17, 22 effects). Study identity confounded with population type. Don't overinterpret.
 
 ---
 

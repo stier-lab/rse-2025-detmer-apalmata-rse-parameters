@@ -39,7 +39,7 @@ NOAA storm-flagged intervals show 85.1% survival vs 86.2% non-storm — a 1.1 pp
 
 Excluding all flagged disturbance intervals shifts the Tier 1 pooled survival by +2.7 pp (75.9% → 78.6%). This is small relative to:
 - The 95% prediction interval (39-95%)
-- Between-study heterogeneity (I² = 96.6%)
+- Between-study heterogeneity (I² = 97.2%)
 - The confidence interval width (~15 pp)
 
 The synthesis is robust to the inclusion or exclusion of known disturbance events.

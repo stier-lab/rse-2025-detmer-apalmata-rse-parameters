@@ -67,7 +67,7 @@ This organization ensures every step from literature search to final analysis is
 | **Disturbance × Size** | Survival interaction `p = 6.93e-4` | Disturbance modifies the size-survival relationship rather than acting as background noise |
 | **Study Heterogeneity (I²)** | 97.2% (expanded meta-analysis, k=17) | Extreme between-study variation |
 | **Expanded Meta-Analysis** | k=17 (22 effects), 78.0% | CI: 70.1–84.3% pooled annual survival |
-| **Natural vs Restoration** | 84.1% vs 74.5% | 9.5 pp difference, p=0.153 |
+| **Natural vs Restoration** | 84.1% vs 74.5% | 9.5 pp difference, p=0.238 |
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
 | **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
 | **Zero fecundity assumption** | λ = 0.961 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ above 1.0. |
