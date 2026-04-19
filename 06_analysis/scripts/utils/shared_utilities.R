@@ -11,6 +11,8 @@
 #   00b_color_palette.R    — color definitions
 #   00c_analysis_constants.R — size classes, study metadata
 #   01_functions.R         — all shared functions
+#   02_threshold_functions.R — Detmer 2025 threshold framework
+#   03_matrix_functions.R  — Lefkovitch / scenario helpers
 ################################################################################
 
 # Resolve path to utils directory (works from project root or scripts dir)
@@ -31,5 +33,6 @@ source(file.path(.utils_dir, "00b_color_palette.R"))
 source(file.path(.utils_dir, "00c_analysis_constants.R"))
 source(file.path(.utils_dir, "01_functions.R"))
 source(file.path(.utils_dir, "02_threshold_functions.R"))
+source(file.path(.utils_dir, "03_matrix_functions.R"))
 
 cat("Loaded shared_utilities.R (all modules)\n")
