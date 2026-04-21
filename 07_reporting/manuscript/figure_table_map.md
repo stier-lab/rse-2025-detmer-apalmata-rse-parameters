@@ -17,7 +17,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 
 ---
 
-## Supplementary Figures (FigS1--FigS28)
+## Supplementary Figures (FigS1--FigS29)
 
 | Figure | Script | Output filename | Notes |
 |--------|--------|-----------------|-------|
@@ -49,8 +49,9 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 | FigS26 — Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison` | |
 | FigS27 — Disturbance summary | (orphan — no generating script) | `FigS27_disturbance_summary` | |
 | FigS28 — Temporal synthesis | `50_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis` | |
+| FigS29 — Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism` | 9-scenario sensitivity framework: tornado plot of Δλ, sexual vs fragmentation pathway share, 50-yr projection trajectories |
 
-All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S28) and are saved as both PNG and PDF.
+All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S29) and are saved as both PNG and PDF.
 
 ---
 

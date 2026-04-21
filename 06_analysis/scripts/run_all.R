@@ -170,6 +170,19 @@ scripts <- c(
   "45_distributed_lag_disturbance_model.R",
   "46_recurrent_event_frailty_model.R",
   "47_spatiotemporal_hierarchical_model.R",
+  # 50-61: Biological realism scenario framework
+  "50_derive_outplant_age.R",
+  "51_winter_sst_anomalies.R",
+  "52_colony_lesion_state.R",
+  "53_sexual_fecundity_layer.R",
+  "54_sterility_lag_layer.R",
+  "55_lesion_fecundity_penalty.R",
+  "56_outplant_age_model.R",
+  "57_winter_sst_survival_model.R",
+  "58_depensatory_corallivory_layer.R",
+  "59_microhabitat_depth_model.R",
+  "60_scenario_comparison.R",
+  "61_fig_biological_realism.R",
   # Verification
   "23_verification.R",
   # Reporting refresh
@@ -239,6 +252,19 @@ script_descriptions <- c(
   "Advanced distributed-lag disturbance model",
   "Advanced recurrent-event frailty model",
   "Advanced spatiotemporal hierarchical model",
+  # 50-61: Biological realism scenario framework
+  "Derive outplant age per colony (restoration studies)",
+  "Winter SST anomalies per region-year (ERDDAP or placeholder)",
+  "Per-colony lesion state from tissue-loss intervals",
+  "Build F_sex matrix: size-threshold sexual fecundity layer",
+  "Apply 4-yr post-disturbance sterility lag to F_sex",
+  "Apply 20% partial-mortality fecundity penalty to F_sex",
+  "Fit outplant-age survival GLMM (Boisvert 2024 decay)",
+  "Fit winter-SST survival GLMM (disease epizootic proxy)",
+  "Build depensatory corallivory hazard layer (SC1-SC2)",
+  "Fit depth covariate survival GLMM (microhabitat refugia)",
+  "9-scenario comparison (S0-S8): lambda + sexual/asexual share",
+  "FigS29: tornado plot + pathway share + 50-yr projection",
   # Verification
   "Pipeline verification",
   # Reporting refresh

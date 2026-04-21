@@ -45,6 +45,7 @@ Use [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025
 | Fig. S26 Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison.*` |
 | Fig. S27 Disturbance summary | (orphan) | `FigS27_disturbance_summary.*` |
 | Fig. S28 Temporal synthesis | `50_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis.*` |
+| Fig. S29 Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism.*` |
 
 ## Exploratory And Support-Only Figures (`supplementary/exploratory/`)
 

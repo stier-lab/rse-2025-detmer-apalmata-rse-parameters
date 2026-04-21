@@ -55,6 +55,7 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
 | Supp Figures | 20, 20c, 21, 23-28 | FigS1-S20 |
 | Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS22) |
+| Biological Realism | 50-61 | 9-scenario sensitivity framework: sexual fecundity (Vardi 2011, Mendoza-Quiroz 2023), sterility lag (Lirman 2000a), lesion penalty (Piñón-González 2018), outplant decay (Boisvert 2024), winter SST, depensatory corallivory (Williams 2012), depth refugia → FigS29 |
 | Verification | 23_verification | Pipeline integrity checks |
 | Orchestrator | run_all | Runs everything in sequence |
 
