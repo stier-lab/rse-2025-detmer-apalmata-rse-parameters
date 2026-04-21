@@ -43,6 +43,7 @@ if (is.data.frame(S_base_raw)) {
 }
 F_mat  <- tm$fragmentation
 lambda_base <- tm$lambda
+G_published <- tm$growth_transitions   # anchor to published baseline
 
 cat(sprintf("  Baseline lambda: %.3f\n", lambda_base))
 cat(sprintf("  Baseline survival: %s\n",
@@ -52,6 +53,23 @@ growth_data <- read.csv("05_data/standardized/apal_growth_ind.csv",
                         stringsAsFactors = FALSE)
 growth_data <- growth_data[!is.na(growth_data$size_cm2) &
                            !is.na(growth_data$growth_cm2_yr), ]
+
+# --- Match script 13 transition-matrix filters (critical for S0 reproduction) ---
+# (1) Natural colonies only (fragment == "N")
+if ("fragment" %in% names(growth_data)) {
+  growth_data <- growth_data[growth_data$fragment == "N" | is.na(growth_data$fragment), ]
+  growth_data <- growth_data[!is.na(growth_data$fragment) & growth_data$fragment == "N", ]
+}
+# (2) Near-annual intervals only (0.5-1.5 yr)
+if ("time_interval_yr" %in% names(growth_data)) {
+  growth_data <- growth_data[!is.na(growth_data$time_interval_yr) &
+                             growth_data$time_interval_yr >= 0.5 &
+                             growth_data$time_interval_yr <= 1.5, ]
+}
+# (3) Remove top-1% absolute growth outliers (script 13 line 475)
+q99 <- quantile(abs(growth_data$growth_cm2_yr), 0.99, na.rm = TRUE)
+growth_data <- growth_data[abs(growth_data$growth_cm2_yr) < q99, ]
+cat(sprintf("  Growth data (post-filter): %d rows\n", nrow(growth_data)))
 
 # --- Load F_sex variants (scripts 53-55) ---
 # Scripts save lists; unwrap the correct matrix member from each
@@ -92,18 +110,27 @@ depth_obj <- readRDS("06_analysis/output/microhabitat_depth_survival.rds")
 # S7: midpoint between shallow (2m) and deep (10m) predictions
 S_depth <- (depth_obj$shallow + depth_obj$deep) / 2
 
+# S5: winter SST mild-winter (+1 C anomaly) survival
+sst_obj <- if (file.exists("06_analysis/output/winter_sst_survival.rds")) {
+  readRDS("06_analysis/output/winter_sst_survival.rds")
+} else NULL
+S_winter_sst <- if (!is.null(sst_obj) && "mild_winter" %in% names(sst_obj)) {
+  sst_obj$mild_winter
+} else S_base
+
 # Guard: ensure name order matches SIZE_LABELS
 align_S <- function(s) {
   if (is.null(names(s))) { names(s) <- SIZE_LABELS; return(s) }
   s[SIZE_LABELS]
 }
-S_base     <- align_S(S_base)
-S_outplant <- align_S(S_outplant)
-S_dep      <- align_S(S_dep)
-S_depth    <- align_S(S_depth)
+S_base       <- align_S(S_base)
+S_outplant   <- align_S(S_outplant)
+S_dep        <- align_S(S_dep)
+S_depth      <- align_S(S_depth)
+S_winter_sst <- align_S(S_winter_sst)
 
 cat("\n  Loaded modifier survival vectors:\n")
-for (nm in c("S_outplant", "S_dep", "S_depth")) {
+for (nm in c("S_outplant", "S_dep", "S_depth", "S_winter_sst")) {
   v <- get(nm)
   cat(sprintf("    %s: %s\n", nm,
               paste(names(v), round(v, 3), sep = "=", collapse = ", ")))
@@ -115,7 +142,8 @@ run_one <- function(name, label, S, F_sex_use = NULL) {
     survival_by_class = S,
     growth_data       = growth_data,
     frag_matrix       = F_mat,
-    F_sex             = F_sex_use
+    F_sex             = F_sex_use,
+    G_override        = G_published
   )
   list(scenario = name, label = label, result = res,
        S = S, F_sex = F_sex_use)
@@ -128,7 +156,7 @@ scenarios <- list(
   run_one("S2", "+Sterility lag",            S_base,     F_sex_s2),
   run_one("S3", "+Lesion penalty",           S_base,     F_sex_s3),
   run_one("S4", "+Outplant age",             S_outplant),
-  run_one("S5", "+Winter SST",               S_base),  # placeholder (data unavailable)
+  run_one("S5", "+Winter SST",               S_winter_sst),
   run_one("S6", "+Depensatory (corallivory)", S_dep),
   run_one("S7", "+Microhabitat (depth)",     S_depth),
   run_one("S8", "All combined",              S_depth,   F_sex_s3)

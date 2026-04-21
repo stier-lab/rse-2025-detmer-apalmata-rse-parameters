@@ -1,10 +1,10 @@
 "scenario","label","lambda","delta_lambda","sc5_elasticity","sexual_contribution_pct"
-"S0","Baseline",0.9816,0.0202,0.5452,0
-"S1","+Sexual (size threshold)",1.0023,0.041,0.4807,97.86
-"S2","+Sterility lag",0.9963,0.035,0.4973,96.92
-"S3","+Lesion penalty",1.0017,0.0403,0.4825,97.78
-"S4","+Outplant age",0.8254,-0.136,0.1187,0
-"S5","+Winter SST",0.9816,0.0202,0.5452,0
-"S6","+Depensatory (corallivory)",0.9709,0.0096,0.5989,0
-"S7","+Microhabitat (depth)",1.0508,0.0895,0.3687,0
-"S8","All combined",1.0926,0.1313,0.3106,97.67
+"S0","Baseline",0.9613,0,0.5887,0
+"S1","+Sexual (size threshold)",0.9725,0.0112,0.5409,97.92
+"S2","+Sterility lag",0.9691,0.0078,0.5542,96.98
+"S3","+Lesion penalty",0.9721,0.0108,0.5424,97.84
+"S4","+Outplant age",0.8356,-0.1257,0.0681,0
+"S5","+Winter SST",0.9475,-0.0138,0.4903,0
+"S6","+Depensatory (corallivory)",0.9533,-0.008,0.633,0
+"S7","+Microhabitat (depth)",1.0257,0.0644,0.4061,0
+"S8","All combined",1.0554,0.094,0.3422,97.74

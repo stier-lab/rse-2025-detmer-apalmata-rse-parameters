@@ -42,31 +42,36 @@
 compute_lambda_from_survival <- function(survival_by_class, growth_data, frag_matrix,
                                          custom_breaks = NULL,
                                          full_data_survival = NULL,
-                                         F_sex = NULL) {
+                                         F_sex = NULL,
+                                         G_override = NULL) {
   size_breaks <- if (!is.null(custom_breaks)) custom_breaks else SIZE_BREAKS
   size_labels <- SIZE_LABELS
   n_sc <- length(size_labels)
 
-  if (is.null(growth_data) || nrow(growth_data) == 0) {
-    return(list(lambda = NA, note = "No growth data"))
-  }
-
-  # Transition probabilities from growth
-  growth_data$initial_sc <- cut(growth_data$size_cm2, breaks = size_breaks,
+  # G_override short-circuits the growth-data recomputation so callers can pass
+  # the canonical growth_transitions from transition_matrix.rds. This keeps the
+  # scenario framework anchored to the published baseline lambda = 0.961.
+  if (!is.null(G_override)) {
+    G <- G_override
+  } else {
+    if (is.null(growth_data) || nrow(growth_data) == 0) {
+      return(list(lambda = NA, note = "No growth data"))
+    }
+    growth_data$initial_sc <- cut(growth_data$size_cm2, breaks = size_breaks,
+                                   labels = size_labels, include.lowest = TRUE)
+    growth_data$final_size <- pmax(growth_data$size_cm2 + growth_data$growth_cm2_yr, 0.1)
+    growth_data$final_sc <- cut(growth_data$final_size, breaks = size_breaks,
                                  labels = size_labels, include.lowest = TRUE)
-  growth_data$final_size <- pmax(growth_data$size_cm2 + growth_data$growth_cm2_yr, 0.01)
-  growth_data$final_sc <- cut(growth_data$final_size, breaks = size_breaks,
-                               labels = size_labels, include.lowest = TRUE)
-
-  G <- matrix(0, n_sc, n_sc)
-  for (i in 1:n_sc) {
-    from_data <- growth_data[growth_data$initial_sc == size_labels[i], ]
-    if (nrow(from_data) > 0) {
-      for (j in 1:n_sc) {
-        G[j, i] <- sum(from_data$final_sc == size_labels[j], na.rm = TRUE) / nrow(from_data)
+    G <- matrix(0, n_sc, n_sc)
+    for (i in 1:n_sc) {
+      from_data <- growth_data[growth_data$initial_sc == size_labels[i], ]
+      if (nrow(from_data) > 0) {
+        for (j in 1:n_sc) {
+          G[j, i] <- sum(from_data$final_sc == size_labels[j], na.rm = TRUE) / nrow(from_data)
+        }
+      } else {
+        G[i, i] <- 1
       }
-    } else {
-      G[i, i] <- 1
     }
   }
 
@@ -262,7 +267,8 @@ run_scenario <- function(config) {
     survival_by_class = S,
     growth_data = config$growth,
     frag_matrix = config$F_mat,
-    F_sex = F_sex
+    F_sex = F_sex,
+    G_override = config$G_override
   )
 
   result$scenario <- config$name

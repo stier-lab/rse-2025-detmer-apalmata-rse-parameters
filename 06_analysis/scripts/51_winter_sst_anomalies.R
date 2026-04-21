@@ -132,11 +132,18 @@ print_subheader("2. Fetching NOAA OI SST v2 monthly at each centroid")
 
 YEAR_MIN       <- 2000L
 YEAR_MAX       <- 2024L
-BASELINE_MIN   <- 1981L
+BASELINE_MIN   <- 1982L
 BASELINE_MAX   <- 2010L
 WINTER_MONTHS  <- 1:3
-DATASET_ID     <- "ncdcOisst21Agg"
+# NOAA ERSST v5 — monthly, 2-deg grid, 1854-present. The daily OISST
+# (ncdcOisst21Agg) repeatedly times out at the ERDDAP endpoint when pulling
+# multi-year windows; ERSST v5 returns the full 1982-2024 monthly series in
+# ~6 seconds per site and the 2-deg resolution is appropriate for regional
+# winter anomalies. Winter SST coverage is still via NOAA/NCEI with the same
+# 1981-2010 climatology convention.
+DATASET_ID     <- "nceiErsstv5"
 ERDDAP_URL     <- "https://coastwatch.pfeg.noaa.gov/erddap/"
+RERDDAP_TIMEOUT <- 240
 
 cat(sprintf("  rerddap available: %s\n", has_rerddap))
 cat(sprintf("  Date range: %d-%d (winter = Jan-Mar)\n", BASELINE_MIN, YEAR_MAX))
@@ -158,15 +165,22 @@ fetch_region_monthly <- function(region, lat, lon) {
 
   if (!has_rerddap) return(NULL)
 
-  # NOAA OISST ERDDAP uses 0-360 longitude convention; convert if needed
-  lon_360 <- if (lon < 0) lon + 360 else lon
+  options(timeout = RERDDAP_TIMEOUT)
 
-  # NOAA OISST dataset begins 1981-09-01T12:00:00Z; use 1981-09-02 to avoid boundary issue
-  start_date <- if (BASELINE_MIN <= 1981) "1981-09-02" else sprintf("%d-01-01", BASELINE_MIN)
-  end_date   <- sprintf("%d-12-30", YEAR_MAX)
+  # ERSST v5 uses 0-360 longitude convention
+  lon_360 <- if (lon < 0) lon + 360 else lon
+  start_date <- sprintf("%d-01-01", BASELINE_MIN)
+  end_date   <- sprintf("%d-12-15", YEAR_MAX)
+
+  info_obj <- tryCatch(rerddap::info(DATASET_ID, url = ERDDAP_URL),
+                       error = function(e) {
+                         print_warn(sprintf("info() failed for %s: %s", region,
+                                            conditionMessage(e)))
+                         NULL
+                       })
+  if (is.null(info_obj)) return(NULL)
 
   result <- tryCatch({
-    info_obj <- rerddap::info(DATASET_ID, url = ERDDAP_URL)
     grid <- rerddap::griddap(
       info_obj,
       time      = c(start_date, end_date),
@@ -174,18 +188,17 @@ fetch_region_monthly <- function(region, lat, lon) {
       longitude = c(lon_360, lon_360),
       fields    = "sst"
     )
-    df <- grid$data
-    if (is.null(df) || nrow(df) == 0 || !"sst" %in% names(df)) return(NULL)
-    df$time  <- as.Date(substr(df$time, 1, 10))
-    df$year  <- as.integer(format(df$time, "%Y"))
-    df$month <- as.integer(format(df$time, "%m"))
-    df <- df %>%
+    gd <- grid$data
+    if (is.null(gd) || nrow(gd) == 0 || !"sst" %in% names(gd)) return(NULL)
+    gd$time  <- as.Date(substr(gd$time, 1, 10))
+    gd$year  <- as.integer(format(gd$time, "%Y"))
+    gd$month <- as.integer(format(gd$time, "%m"))
+    gd %>%
       filter(!is.na(sst)) %>%
       group_by(year, month) %>%
       summarise(sst = mean(sst, na.rm = TRUE), .groups = "drop")
-    df
   }, error = function(e) {
-    print_warn(sprintf("ERDDAP fetch failed for %s: %s", region,
+    print_warn(sprintf("ERSST fetch failed for %s: %s", region,
                        conditionMessage(e)))
     NULL
   })
@@ -193,7 +206,7 @@ fetch_region_monthly <- function(region, lat, lon) {
   if (!is.null(result) && nrow(result) > 0) {
     saveRDS(result, cache_file)
   }
-  return(result)
+  result
 }
 
 monthly_list <- list()
@@ -255,7 +268,7 @@ compute_winter_table <- function(monthly_df, region) {
       winter_sst_c     = round(winter_sst_c, 3),
       winter_anomaly_c = round(winter_sst_c - baseline_mean, 3),
       baseline_mean_c  = round(baseline_mean, 3),
-      data_source      = "noaa_oi_sst_v2"
+      data_source      = "noaa_ersst_v5"
     )
 }
 
@@ -317,7 +330,7 @@ print_subheader("4. Writing output CSV")
 
 n_regions_out <- dplyr::n_distinct(out_df$region)
 n_years_out   <- dplyr::n_distinct(out_df$year)
-n_real        <- sum(out_df$data_source == "noaa_oi_sst_v2", na.rm = TRUE)
+n_real        <- sum(out_df$data_source == "noaa_ersst_v5", na.rm = TRUE)
 n_synth       <- sum(out_df$data_source == "synthetic_placeholder", na.rm = TRUE)
 
 cat(sprintf("  Rows (region x year): %d (%d regions x %d years)\n",
