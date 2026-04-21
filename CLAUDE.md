@@ -1,7 +1,7 @@
 # Project Guide
 
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis
-**Tech:** R 4.3+ | 33 analysis scripts | Target journal: *Coral Reefs* (Springer)
+**Tech:** R 4.3+ | 69 analysis scripts | Target journal: *Coral Reefs* (Springer)
 
 ---
 
@@ -82,6 +82,7 @@ All scripts source `utils/shared_utilities.R`, which loads these modules in orde
 | `00c_analysis_constants.R` | `SIZE_BREAKS`, `SIZE_LABELS` ("SC1"-"SC5") |
 | `01_functions.R` | `get_project_root()`, `save_manuscript_fig()`, `theme_manuscript()`, `wilson_ci()`, `print_header()`, etc. |
 | `02_threshold_functions.R` | Detmer et al. (2025) threshold detection framework |
+| `03_matrix_functions.R` | Scenario framework helpers: `compute_lambda_from_survival()`, `build_F_sex()`, `apply_disturbance_lag()`, `apply_lesion_penalty()`, `apply_density_dep_SC12()`, `run_scenario()` |
 
 ### Size Classes (canonical — use these everywhere)
 
@@ -120,6 +121,17 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | `06_analysis/output/manzello_dose_response.csv` | Script 40 | Manzello 2025 dose-response curve (DHW vs mortality) |
 | `06_analysis/output/heatwave_scenario_summary.csv` | Script 40 | Effective lambda and quasi-extinction by scenario |
 | `06_analysis/output/heatwave_scenario_projections.csv` | Script 40 | Full 50-year projection trajectories by scenario |
+| `06_analysis/output/sexual_fecundity_matrix.rds` | Script 53 | F_sex size-threshold sexual fecundity matrix (Vardi 2011 × Mendoza-Quiroz 2023) |
+| `06_analysis/output/sterility_lag_F_sex.rds` | Script 54 | F_sex with Lirman 2000a 4-yr sterility applied |
+| `06_analysis/output/lesion_penalty_F_sex.rds` | Script 55 | F_sex with Piñón-González 2018 20% penalty |
+| `06_analysis/output/outplant_age_survival.rds` | Script 56 | Boisvert 2024 outplant-age survival GLMM predictions |
+| `06_analysis/output/winter_sst_survival.rds` | Script 57 | Winter SST × size survival GLMM (ERSST v5 anomalies) |
+| `06_analysis/output/depensatory_corallivory.rds` | Script 58 | Density-dependent SC1/SC2 survival (Williams 2012) |
+| `06_analysis/output/microhabitat_depth_survival.rds` | Script 59 | Depth covariate survival GLMM |
+| `06_analysis/output/biological_realism_scenarios.csv` | Script 60 | 9-scenario summary: lambda, delta_lambda, elasticity, sexual contribution % |
+| `05_data/standardized/apal_outplant_age.csv` | Script 50 | years_since_outplant per coral_id |
+| `05_data/standardized/apal_lesion_state.csv` | Script 52 | Per-colony lesion flag from tissue-loss intervals |
+| `05_data/standardized/winter_sst_anomalies.csv` | Script 51 | Winter SST anomalies per region × year (ERSST v5) |
 
 ---
 
@@ -232,6 +244,9 @@ Domain prefixes: `survival_`, `growth_`, `meta_analysis_`, `expanded_meta_`, `se
 5. **Year column**: Use `survey_yr`, not `year` (conflicts with `base::year` in dplyr context).
 6. **cairo_pdf**: Fails on some systems. `save_manuscript_fig()` has a fallback PDF device.
 7. **Natural vs restoration**: NOT significant (p=0.238 at k=17, 22 effects). Study identity confounded with population type. Don't overinterpret.
+8. **Biological realism S0 reproduction**: Script 60 passes `G_override = tm$growth_transitions` to `compute_lambda_from_survival()` so S0 reproduces the published λ = 0.9613 exactly. Do NOT recompute G from the current growth data file — it has drifted since the validated matrix was built.
+9. **F_sex calibration**: Script 60 applies `SETTLEMENT_EFFICIENCY = 1e-4` to rescale Chamberland 2015 nursery recruit survival (0.028) down to wild broadcast-spawning rates. This is the only non-literal-from-literature parameter choice in the scenario framework — mention in Methods.
+10. **Winter SST**: Script 51 uses NOAA ERSST v5 (monthly, 2° grid) via `rerddap::griddap()`. The daily OISST (`ncdcOisst21Agg`) repeatedly times out at ERDDAP for multi-year windows. Do NOT switch back.
 
 ---
 
@@ -239,9 +254,23 @@ Domain prefixes: `survival_`, `growth_`, `meta_analysis_`, `expanded_meta_`, `se
 
 ```bash
 cd 06_analysis/scripts
-Rscript run_all.R              # Full pipeline (~45-60 min)
+Rscript run_all.R              # Full pipeline (~60-75 min with biological-realism framework)
 Rscript 01_data_preparation.R  # Individual script
 Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
+
+# Biological-realism scenario framework (isolated rerun ~5-10 min)
+Rscript 50_derive_outplant_age.R
+Rscript 51_winter_sst_anomalies.R   # ~45s via NOAA ERSST v5 ERDDAP
+Rscript 52_colony_lesion_state.R
+Rscript 53_sexual_fecundity_layer.R
+Rscript 54_sterility_lag_layer.R
+Rscript 55_lesion_fecundity_penalty.R
+Rscript 56_outplant_age_model.R
+Rscript 57_winter_sst_survival_model.R
+Rscript 58_depensatory_corallivory_layer.R
+Rscript 59_microhabitat_depth_model.R
+Rscript 60_scenario_comparison.R    # Emits biological_realism_scenarios.csv
+Rscript 61_fig_biological_realism.R # Emits FigS29
 ```
 
 ---
@@ -258,3 +287,5 @@ Rscript -e "parse('13_transition_matrix.R')"  # Syntax check
 | `04_extraction/data_integration_issues.md` | Individual vs. summary data integration: issues, resolution, comparison |
 | `04_extraction/data_flow_diagram.md` | Mermaid diagram of the full data pipeline (individual + summary survival) |
 | `07_reporting/manuscript/figure_legends.txt` | Figure legends, methods, results text |
+| `07_reporting/manuscript/figure_table_map.md` | Script → figure filename map (FigS1–FigS29) |
+| `07_reporting/internal/biological_realism_PRD.md` | Biological-realism scenario framework PRD: 9 scenarios, hypothesis-to-citation map, acceptance criteria |

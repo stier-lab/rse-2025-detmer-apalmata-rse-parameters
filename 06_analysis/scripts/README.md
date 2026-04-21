@@ -12,12 +12,13 @@ For the script-by-script diagnostics and outstanding-issues review, see [model_a
 
 ## Numbering Scheme
 
-There are currently **54 top-level R scripts** in this directory. The numbered scripts define the main analytical surface; `00_*` helpers and `23_verification.R` sit around that numbered core.
+There are currently **69 top-level R scripts** in this directory. The numbered scripts define the main analytical surface; `00_*` helpers, `23_verification.R`, and `48_pipeline_refresh_audit.R` sit around that numbered core.
 
-Scripts are numbered sequentially (01--47, with 14b, 20b, 20c, 31b variants) in pipeline execution order:
+Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b variants) in pipeline execution order:
 
 | Range | Category | Description |
 |-------|----------|-------------|
+| **00** | Standardization helpers | Site-specific raw→standardized (`00_standardize_neely.R`) |
 | **01** | Data preparation | Loading, cleaning, standardizing raw data |
 | **02--07** | Core analysis | Survival, growth, variance, gaps, integration |
 | **08--12** | Robustness & supplementary | Climate, power, cross-validation, context, model selection |
@@ -25,8 +26,11 @@ Scripts are numbered sequentially (01--47, with 14b, 20b, 20c, 31b variants) in 
 | **18--22** | Main figures & candidates | Publication-ready figures plus manuscript-candidate support figures |
 | **23** | Data gaps + verification | Fig S2 data gaps heatmap; end-to-end output checks |
 | **24--28** | Supplementary figures | Publication-ready supplementary figures (Fig S3--S14) |
-| **29--40** | Context + disturbance | Natural/restoration sensitivity, disturbance overlays, audit products, completeness extensions, and scenario layers |
+| **29--40** | Context + disturbance | Natural/restoration sensitivity, disturbance overlays, audit products, completeness extensions, and Manzello-heatwave scenario layer |
 | **41--47** | Advanced dynamic models | Multistate, joint longitudinal-survival, stochastic IPM, regime-switching, distributed-lag, recurrent-event, and spatiotemporal extensions |
+| **48** | Pipeline audit | Refresh pipeline manifests and generated reporting artifacts |
+| **49--50** | Temporal synthesis | Annual survival time series (49); temporal synthesis figure (50_temporal_synthesis_figure.R — FigS28) |
+| **50--61** | Biological realism framework | 9-scenario sensitivity analysis (S0–S8) integrating sexual fecundity, sterility lag, lesion penalty, outplant-age decay, winter SST, depensatory corallivory, depth refugia → FigS29 |
 
 ## Canonical Entry Points
 
@@ -206,6 +210,33 @@ These scripts push beyond the main GLMM + matrix-model surface. They are best tr
 | `46_recurrent_event_frailty_model.R` | Colony-history recurrent-event shrinkage and terminal mortality frailty models | `recurrent_event_*.csv` |
 | `47_spatiotemporal_hierarchical_model.R` | Spatiotemporal hierarchical GAMM layer over site coordinates and site-year structure | `spatiotemporal_*.csv`, `exploratory/spatiotemporal_hierarchical_summary.*` |
 
+### 48--50 -- Pipeline Audit & Temporal Synthesis
+
+| Script | Description | Key Outputs |
+|--------|-------------|-------------|
+| `48_pipeline_refresh_audit.R` | Refresh pipeline manifests and generated reporting artifacts; writes pipeline_context snapshots | `pipeline_context_*.csv`, `pipeline_refresh_report.md` |
+| `49_annual_survival_timeseries.R` | Annual survival time series by study and region | `FigS20_annual_survival_timeseries.*` |
+| `50_temporal_synthesis_figure.R` | Cross-study temporal synthesis figure | `FigS28_temporal_synthesis.*` |
+
+### 50--61 -- Biological Realism Scenario Framework
+
+A 9-scenario sensitivity analysis (S0–S8) layering literature-sourced biological mechanisms onto the baseline Lefkovitch matrix. Scripts are independent of the core manuscript pipeline and produce **FigS29** plus a summary CSV. See `07_reporting/internal/biological_realism_PRD.md` for the hypothesis-to-citation map.
+
+| Script | Description | Key Outputs |
+|--------|-------------|-------------|
+| `50_derive_outplant_age.R` | Compute `years_since_outplant` per coral_id for restoration studies | `apal_outplant_age.csv` |
+| `51_winter_sst_anomalies.R` | Winter (Jan-Mar) SST anomalies per Caribbean region-year from NOAA ERSST v5 via ERDDAP | `winter_sst_anomalies.csv`, cached `noaa_oi_sst/region_*_monthly.rds` |
+| `52_colony_lesion_state.R` | Per-colony lesion state from tissue-loss intervals (>10% loss = lesioned) | `apal_lesion_state.csv`, `apal_lesion_population_fraction.csv` |
+| `53_sexual_fecundity_layer.R` | Build F_sex matrix: size-threshold sexual fecundity (Vardi 2011 × Mendoza-Quiroz 2023) | `sexual_fecundity_matrix.rds` |
+| `54_sterility_lag_layer.R` | Apply Lirman 2000a 4-yr post-disturbance sterility to F_sex | `sterility_lag_F_sex.rds` |
+| `55_lesion_fecundity_penalty.R` | Apply Piñón-González 2018 20% fecundity penalty for lesioned colonies | `lesion_penalty_F_sex.rds` |
+| `56_outplant_age_model.R` | GLMM: survival ~ log_size + years_since_outplant + (1|study) (Boisvert 2024 decay) | `outplant_age_survival.rds` |
+| `57_winter_sst_survival_model.R` | GLMM: survival ~ log_size × winter_anomaly + (1|study) (Rodriguez-Martinez 2014) | `winter_sst_survival.rds` |
+| `58_depensatory_corallivory_layer.R` | Density-dependent SC1-SC2 hazard (Williams 2012 Coralliophila rate) | `depensatory_corallivory.rds` |
+| `59_microhabitat_depth_model.R` | GLMM: survival ~ log_size + depth_m + (1|study) (Ramos-Romero 2025 refugia) | `microhabitat_depth_survival.rds` |
+| `60_scenario_comparison.R` | Run all 9 scenarios (S0–S8), compute lambda + sexual/asexual share + elasticity | `biological_realism_scenarios.csv/.rds` |
+| `61_fig_biological_realism.R` | FigS29: tornado plot + reproductive pathway share + 50-yr projection | `FigS29_biological_realism.*` |
+
 ### Utilities -- Verification & Shared Code
 
 | Script | Description |
@@ -218,6 +249,7 @@ These scripts push beyond the main GLMM + matrix-model surface. They are best tr
 | `utils/00c_analysis_constants.R` | Constants: `SIZE_BREAKS`, `SIZE_LABELS`, `N_STUDIES` |
 | `utils/01_functions.R` | All shared functions: `theme_manuscript()`, `overdisp_test()`, `save_manuscript_fig()`, `geom_sc_boundaries()`, etc. |
 | `utils/02_threshold_functions.R` | Detmer et al. (2025) threshold detection: `gratia` derivatives, nonlinearity gate, LOSO jackknife, 4 threshold definitions |
+| `utils/03_matrix_functions.R` | Scenario framework helpers: `compute_lambda_from_survival()`, `build_F_sex()`, `apply_disturbance_lag()`, `apply_lesion_penalty()`, `apply_density_dep_SC12()`, `run_scenario()` |
 
 ---
 
@@ -376,4 +408,4 @@ library(caret)
 
 ---
 
-*Last updated: 2026-04-07*
+*Last updated: 2026-04-21*

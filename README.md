@@ -48,7 +48,7 @@ This repository follows a **PRISMA-first layout** where top-level directories ma
 | `03_screening/` | Screening | Full-text screening decisions (104 data rows, 101 unique assessments), IRR assessment |
 | `04_extraction/` | Data extraction | Extraction protocol, study characteristics, risk of bias, original researcher notes |
 | `05_data/` | Data | Original (14 raw files), standardized (analysis-ready CSVs), integration artifacts, and expanded search data |
-| `06_analysis/` | Analysis | 54 top-level R scripts, generated outputs, figures, and directory indexes |
+| `06_analysis/` | Analysis | 69 top-level R scripts, generated outputs, figures, and directory indexes |
 | `07_reporting/` | Reporting | Manuscript methods + narrative drafts, figure legends, build maps, crosswalks, advanced-model reports, and support tables |
 
 This organization ensures every step from literature search to final analysis is traceable and reproducible, consistent with PRISMA 2020 guidelines. For data-surface navigation, start with [05_data/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/README.md).
@@ -71,6 +71,7 @@ This organization ensures every step from literature search to final analysis is
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
 | **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
 | **Zero fecundity assumption** | λ = 0.961 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ above 1.0. |
+| **Biological-realism framework (FigS29)** | 9-scenario sensitivity analysis | Layered seven literature-sourced mechanisms (Vardi 2011 size threshold; Mendoza-Quiroz 2023 oocyte density; Lirman 2000a sterility lag; Piñón-González 2018 lesion penalty; Boisvert 2024 outplant decay; Rodriguez-Martinez 2014 winter SST; Williams 2012 depensatory corallivory; depth refugia). Biggest driver: outplant-age penalty Δλ = −0.126; depth refugia +0.064; "all combined" Δλ = +0.094. |
 
 > For manuscript-facing interpretation, use [07_reporting/manuscript/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/manuscript_narrative_integration.md), [07_reporting/internal/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/claim_output_crosswalk.md), and [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).
 
@@ -103,19 +104,24 @@ Detmer-2025-coral-parameters/
 │   ├── expanded_search/              # Expanded search data
 │   └── integration/                  # APAL_data_integration.rmd
 ├── 06_analysis/                    # Statistical analysis
-│   ├── scripts/                      # 54 top-level R scripts + utils/
+│   ├── scripts/                      # 69 top-level R scripts + utils/
+│   │   ├── 00_standardize_*.R         # Site-specific standardization helpers
 │   │   ├── 01_data_preparation.R
 │   │   ├── 02-07_*.R                   # Core analysis
 │   │   ├── 08-12_*.R                   # Robustness & evaluation
 │   │   ├── 13-17_*.R, 14b_*.R          # Synthesis (matrix, meta-analysis k=17/22 effects)
-│   │   ├── 18-23_*.R, 20b/c_*.R        # Manuscript figures
-│   │   ├── 24-28_*.R                   # Supplementary figures
+│   │   ├── 18-22_*.R, 20b/c_*.R        # Manuscript figures (Fig 1-4)
+│   │   ├── 23-28_*.R                   # Supplementary figures S2-S14
+│   │   ├── 29-40_*.R, 31b, 49_*.R      # Context, disturbance, completeness, temporal scenarios
+│   │   ├── 41-47_*.R                   # Advanced dynamic model extensions
+│   │   ├── 48_pipeline_refresh_audit.R # Pipeline manifest refresh
+│   │   ├── 50-61_*.R                   # Biological realism scenario framework + FigS29
 │   │   ├── run_all.R                   # Pipeline orchestrator
-│   │   └── utils/                      # Shared utilities (theme, palette, constants)
-│   ├── output/                       # 318 CSV + 10 RDS result files
+│   │   └── utils/                      # Shared utilities (theme, palette, constants, matrix helpers)
+│   ├── output/                       # ~320 CSV + ~18 RDS result files
 │   └── figures/                      # Publication figures (generated)
 │       ├── manuscript/                 # Fig1-Fig4 (PDF + PNG)
-│       └── supplementary/              # FigS1-FigS28, exploratory/, diagnostics/, meta_analysis/
+│       └── supplementary/              # FigS1-FigS29, exploratory/, diagnostics/, meta_analysis/
 ├── 07_reporting/                   # Manuscript outputs
 │   ├── README.md
 │   ├── manuscript/                   # Submission-ready content
@@ -201,18 +207,23 @@ Rscript -e "tryCatch({parse('06_analysis/scripts/01_data_preparation.R'); cat('O
 
 ## Analysis Pipeline
 
-The maintained analysis surface currently contains **54 top-level R scripts** in `06_analysis/scripts/`, including standardization helpers, numbered analyses, advanced dynamic extensions, and verification utilities.
+The maintained analysis surface currently contains **69 top-level R scripts** in `06_analysis/scripts/`, including standardization helpers, numbered analyses, advanced dynamic extensions, biological-realism scenario layers, and verification utilities.
 
 | Phase | Scripts | Purpose |
 |-------|---------|---------|
+| **Standardization** | 00 | Site-specific raw→standardized helpers |
 | **Data Prep** | 01 | Load, clean, standardize, define size classes |
 | **Core Analysis** | 02–07 | Survival/growth thresholds, variance partitioning, data gaps |
 | **Robustness** | 08–12 | Climate, power, cross-validation, model selection |
 | **Synthesis** | 13–17, 14b | Transition matrix, meta-analysis (k=17, 22 effects), sensitivity |
 | **Main Figures** | 18–22, 20b/c | 4 manuscript figures |
 | **Supp Figures** | 23–28 | Data gaps heatmap, supplementary S3–S14 |
-| **Context & Disturbance** | 29–40, 31b | Natural/restoration sensitivity, disturbance overlays, audits, subtype decomposition, completeness products, and scenario extensions |
+| **Context & Disturbance** | 29–40, 31b | Natural/restoration sensitivity, disturbance overlays, audits, subtype decomposition, completeness products |
+| **Heatwave Scenarios** | 40 | Manzello 2025 dose-response + catastrophic-heatwave projections (FigS22) |
 | **Advanced Dynamic Models** | 41–47 | Multistate, joint, stochastic-IPM, regime-switching, distributed-lag, frailty, and spatiotemporal extensions |
+| **Pipeline Audit** | 48 | Refresh pipeline manifests and generated reporting artifacts |
+| **Temporal Synthesis** | 49–50 | Annual survival time series; temporal synthesis figure |
+| **Biological Realism** | 50–61 | 9-scenario sensitivity framework: sexual fecundity (Vardi 2011, Mendoza-Quiroz 2023), sterility lag (Lirman 2000a), lesion penalty (Piñón-González 2018), outplant-age decay (Boisvert 2024), winter SST (Rodriguez-Martinez 2014), depensatory corallivory (Williams 2012), depth refugia → FigS29 |
 
 ### Core Nonlinearity Analyses Retained
 
