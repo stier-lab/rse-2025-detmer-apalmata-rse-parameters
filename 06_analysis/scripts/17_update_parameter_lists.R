@@ -597,6 +597,8 @@ field_growth_pars <- list(
   size_class_breaks = size_class_breaks,
   n_observations = nrow(growth_data),
   n_studies = n_distinct(growth_data$study),
+  n_bootstrap = N_BOOT_PARAMS,
+  data_integration = "cluster_bootstrap (study -> observation); natural colonies only, fragment=='N'",
   generation_date = Sys.time(),
   ci_type = "cluster_bootstrap_percentile",
   ci_interpretation = "Confidence interval for population mean, not prediction interval for individual outcome",
@@ -846,6 +848,8 @@ if (nrow(lab_surv) > 0) {
     raw_data = lab_surv,
     n_observations = nrow(lab_surv),
     n_studies = n_lab_studies,
+    n_bootstrap = N_BOOT_PARAMS,
+    data_integration = "cluster_bootstrap (study -> observation)",
     note = "Short-term lab/settler survival rates",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
@@ -860,6 +864,7 @@ if (nrow(lab_surv) > 0) {
     survival_boot = rep(0.5, N_BOOT_PARAMS),  # Uninformative prior
     n_observations = 0,
     n_studies = 0,
+    n_bootstrap = N_BOOT_PARAMS,
     note = "No lab survival data; using uninformative prior",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
@@ -911,6 +916,8 @@ if (nrow(lab_growth_by_sc) > 0) {
     growth_summary = lab_growth_by_sc,
     n_observations = nrow(sc1_growth),
     n_studies = n_sc1_studies,
+    n_bootstrap = N_BOOT_PARAMS,
+    data_integration = "cluster_bootstrap (study -> observation); SC1 field growth as lab proxy",
     note = "Lab growth estimated from SC1 (recruit) field growth rates",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
@@ -923,9 +930,10 @@ if (nrow(lab_growth_by_sc) > 0) {
 } else {
   cat("  No SC1 growth data, using prior\n")
   lab_growth_pars <- list(
-    growth_boot = rnorm(500, 10, 5),
+    growth_boot = rnorm(N_BOOT_PARAMS, 10, 5),
     n_observations = 0,
     n_studies = 0,
+    n_bootstrap = N_BOOT_PARAMS,
     note = "No SC1 data; using prior (mean=10, sd=5 cm²/yr)",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
@@ -1085,6 +1093,7 @@ if (nrow(recruit_cells) > 0) {
       )
     ),
     data_integration = "cell-level n-weighted (restoration recruits only)",
+    n_bootstrap = N_BOOT_PARAMS,
     generation_date = Sys.time()
   )
 
@@ -1101,6 +1110,7 @@ if (nrow(recruit_cells) > 0) {
     survival_boot = rep(NA_real_, N_BOOT_PARAMS),
     n_observations = 0,
     n_studies = 0,
+    n_bootstrap = N_BOOT_PARAMS,
     note = "No restoration recruit data available",
     generation_date = Sys.time()
   )
