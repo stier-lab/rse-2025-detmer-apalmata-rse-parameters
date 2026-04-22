@@ -88,6 +88,13 @@ for (i in 1:5) {
 }
 cat("\n")
 
+# Canonical bootstrap sample size used across all RSE parameter estimates.
+# Matches script 13's transition-matrix bootstrap so field survival (which
+# now flows from script 13's output) and growth/nursery/lab parameters
+# share identical uncertainty resolution.
+N_BOOT_PARAMS <- 2000L
+cat(sprintf("Bootstrap replicates (all parameter estimates): %d\n\n", N_BOOT_PARAMS))
+
 # =============================================================================
 # LOAD PREPARED DATA
 # =============================================================================
@@ -503,6 +510,15 @@ growth_data <- growth_data %>%
 growth_data <- growth_data %>%
   mutate(growth_rate = growth_cm2_yr)  # Standardize column name
 
+# Preserve the full growth panel for the nursery branch, then restrict field
+# growth parameters to natural colonies only — fragmentation events and
+# outplant/nursery fragments do not represent natural somatic growth.
+growth_data_all <- growth_data
+growth_data <- growth_data %>%
+  filter(!is.na(fragment), fragment == "N")
+cat(sprintf("  Field growth (natural colonies only, fragment=='N'): %d records\n",
+            nrow(growth_data)))
+
 growth_by_sc <- growth_data %>%
   group_by(size_class) %>%
   summarise(
@@ -524,12 +540,12 @@ cat("\n")
 
 # Bootstrap growth means (hierarchical: studies then observations)
 set.seed(42)
-SC_growth_results <- bootstrap_growth(growth_data, n_boot = 1000, study_col = "study",
+SC_growth_results <- bootstrap_growth(growth_data, n_boot = N_BOOT_PARAMS, study_col = "study",
                                        growth_col = "growth_rate")
 
 # Bootstrap growth transition probabilities
 set.seed(42)
-growth_trans_df <- bootstrap_growth_transitions(growth_data, n_boot = 1000)
+growth_trans_df <- bootstrap_growth_transitions(growth_data, n_boot = N_BOOT_PARAMS)
 
 # Calculate transition matrix summary
 trans_summary <- growth_trans_df %>%
@@ -622,7 +638,7 @@ if (nrow(nurs_cells) > 0) {
     )
 
   set.seed(42)
-  nurs_SC_surv_results <- bootstrap_survival_cells(nurs_cells, n_boot = 500, study_col = "study")
+  nurs_SC_surv_results <- bootstrap_survival_cells(nurs_cells, n_boot = N_BOOT_PARAMS, study_col = "study")
 
   # RSE-compatible elements for nursery survival
   nurs_SC_surv_summ_df <- do.call(rbind, lapply(seq_along(nurs_SC_surv_results), function(i) {
@@ -649,9 +665,11 @@ if (nrow(nurs_cells) > 0) {
     surv_summary = nurs_surv_by_sc,
     SC_surv_summ_df = nurs_SC_surv_summ_df,
     SC_surv_df = nurs_SC_surv_df,
+    size_class_breaks = size_class_breaks,
     n_observations = sum(nurs_cells$n_initial),
     n_cells = nrow(nurs_cells),
     n_studies = n_distinct(nurs_cells$study),
+    n_bootstrap = N_BOOT_PARAMS,
     data_integration = "cell-level weighted (individual + summary data)",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
@@ -668,8 +686,10 @@ if (nrow(nurs_cells) > 0) {
   nurs_surv_pars <- list(
     SC_surv_results = field_surv_pars$SC_surv_results,
     surv_summary = surv_by_sc,
+    size_class_breaks = size_class_breaks,
     n_observations = 0,
     n_studies = 0,
+    n_bootstrap = N_BOOT_PARAMS,
     note = "No nursery-specific data; using field survival as prior",
     data_source = "field_prior",
     generation_date = Sys.time(),
@@ -688,9 +708,20 @@ cat("  ✓ Saved: nurs_surv_pars.rds\n\n")
 
 cat("Generating nursery growth parameters...\n")
 
-# Filter for nursery growth data (data_type values are "nursery_in" and "nursery_ex", not "nursery")
-nurs_growth_data <- growth_data %>%
-  filter(grepl("nursery", data_type) | grepl("nursery|Nursery", study, ignore.case = TRUE))
+# Nursery / outplant-fragment growth — anything with fragment == "Y" or an
+# explicit nursery data_type. Uses growth_data_all (the unfiltered panel)
+# because the field_growth branch above restricted to fragment == "N".
+nurs_growth_data <- growth_data_all %>%
+  mutate(size_class = cut(size_cm2, breaks = size_class_breaks,
+                           labels = SIZE_LABELS, include.lowest = TRUE),
+         growth_rate = growth_cm2_yr) %>%
+  filter(
+    (!is.na(fragment) & fragment == "Y") |
+    (!is.na(data_type) & grepl("nursery", data_type)) |
+    grepl("nursery|Nursery", study, ignore.case = TRUE)
+  )
+cat(sprintf("  Nursery/fragment growth records: %d from %d studies\n",
+            nrow(nurs_growth_data), n_distinct(nurs_growth_data$study)))
 
 if (nrow(nurs_growth_data) > 0) {
   nurs_growth_by_sc <- nurs_growth_data %>%
@@ -703,11 +734,11 @@ if (nrow(nurs_growth_data) > 0) {
     )
 
   set.seed(42)
-  nurs_growth_trans_df <- bootstrap_growth_transitions(nurs_growth_data, n_boot = 500)
+  nurs_growth_trans_df <- bootstrap_growth_transitions(nurs_growth_data, n_boot = N_BOOT_PARAMS)
 
   # Also bootstrap nursery growth means
   set.seed(42)
-  nurs_growth_results <- bootstrap_growth(nurs_growth_data, n_boot = 500,
+  nurs_growth_results <- bootstrap_growth(nurs_growth_data, n_boot = N_BOOT_PARAMS,
                                            study_col = "study", growth_col = "growth_rate")
 
   # RSE-compatible growth elements
@@ -735,8 +766,11 @@ if (nrow(nurs_growth_data) > 0) {
     trans_summary = nurs_trans_summary,
     summ_list = nurs_summ_list,
     mat_list = nurs_mat_list,
+    size_class_breaks = size_class_breaks,
     n_observations = nrow(nurs_growth_data),
     n_studies = n_distinct(nurs_growth_data$study),
+    n_bootstrap = N_BOOT_PARAMS,
+    data_integration = "cluster_bootstrap (study -> observation); fragment=='Y' + nursery data_type",
     generation_date = Sys.time(),
     ci_type = "cluster_bootstrap_percentile",
     ci_interpretation = "Confidence interval for population mean, not prediction interval for individual outcome",
@@ -750,10 +784,13 @@ if (nrow(nurs_growth_data) > 0) {
     growth_trans_df = field_growth_pars$growth_trans_df,
     growth_results = field_growth_pars$growth_results,
     growth_summary = growth_by_sc,
+    trans_summary = field_growth_pars$trans_summary,
     summ_list = field_growth_pars$summ_list,
     mat_list = field_growth_pars$mat_list,
+    size_class_breaks = size_class_breaks,
     n_observations = 0,
     n_studies = 0,
+    n_bootstrap = N_BOOT_PARAMS,
     note = "No nursery-specific data; using field growth as prior",
     data_source = "field_prior",
     generation_date = Sys.time(),
@@ -788,7 +825,7 @@ if (nrow(lab_surv) > 0) {
 
   # Hierarchical bootstrap lab survival (resample studies, then observations)
   set.seed(42)
-  n_boot <- 500
+  n_boot <- N_BOOT_PARAMS
   lab_studies <- unique(lab_surv$study)
   n_lab_studies <- length(lab_studies)
 
@@ -820,7 +857,7 @@ if (nrow(lab_surv) > 0) {
 } else {
   cat("  No lab survival data\n")
   lab_surv_pars <- list(
-    survival_boot = rep(0.5, 500),  # Uninformative prior
+    survival_boot = rep(0.5, N_BOOT_PARAMS),  # Uninformative prior
     n_observations = 0,
     n_studies = 0,
     note = "No lab survival data; using uninformative prior",
@@ -850,7 +887,7 @@ if (nrow(lab_growth_by_sc) > 0) {
   sc1_growth <- growth_data %>% filter(size_class == "SC1")
 
   set.seed(42)
-  n_boot <- 500
+  n_boot <- N_BOOT_PARAMS
   sc1_studies <- unique(sc1_growth$study)
   n_sc1_studies <- length(sc1_studies)
 
@@ -949,7 +986,7 @@ if (nrow(recruit_cells) > 0) {
 
   # Hierarchical bootstrap (resample studies, then cells within studies)
   set.seed(42)
-  n_boot_recruit <- 1000
+  n_boot_recruit <- N_BOOT_PARAMS
   recruit_boot <- numeric(n_boot_recruit)
 
   for (b in 1:n_boot_recruit) {
@@ -970,7 +1007,8 @@ if (nrow(recruit_cells) > 0) {
   # representing post-settlement survival of microscopic recruits on the reef.
   # Raine can use s_recruit instead of s1 when modeling larval propagation pathways.
   s_recruit_mean <- mean(recruit_boot)
-  s_recruit_boot <- recruit_boot  # Full bootstrap distribution
+  # survival_boot IS the s_recruit bootstrap distribution; we expose a single
+  # source of truth below (note_s_recruit_alias) rather than storing it twice.
 
   # --- Fecundity decomposition for transition matrix sensitivity ---
   # In the Lefkovitch matrix, F[1,j] = net recruits surviving to next census per adult.
@@ -1005,10 +1043,13 @@ if (nrow(recruit_cells) > 0) {
     by_study_annualized = recruit_ann,
 
     # --- RSE model parameter: s_recruit ---
-    # Drop-in alternative to s1 for recruit-based restoration scenarios
+    # Drop-in alternative to s1 for recruit-based restoration scenarios.
+    # NOTE: the full s_recruit bootstrap distribution IS `survival_boot` above
+    # (identical quantity, different name for RSE back-compat). We store the
+    # vector once to avoid silent drift between the two aliases.
     s_recruit = s_recruit_mean,
-    s_recruit_boot = s_recruit_boot,
     s_recruit_ci = quantile(recruit_boot, c(0.025, 0.975)),
+    note_s_recruit_alias = "Use `survival_boot` as the s_recruit bootstrap distribution; `s_recruit` is its mean.",
 
     # --- Context for fecundity decomposition ---
     # settlement_rate is from FUNDEMAR 2025 data (rest_pars.rmd in RSE repo)
@@ -1057,7 +1098,7 @@ if (nrow(recruit_cells) > 0) {
 } else {
   cat("  No restoration recruit data found\n")
   recruit_surv_pars <- list(
-    survival_boot = rep(NA, 1000),
+    survival_boot = rep(NA_real_, N_BOOT_PARAMS),
     n_observations = 0,
     n_studies = 0,
     note = "No restoration recruit data available",
