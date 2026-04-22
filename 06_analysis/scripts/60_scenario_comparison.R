@@ -264,4 +264,36 @@ print_success(sprintf("Saved %s (%d scenarios)", out_path, nrow(rows)))
 saveRDS(scenarios, "06_analysis/output/biological_realism_scenarios.rds")
 print_success("Saved biological_realism_scenarios.rds (full matrix objects)")
 
+# --- RSE-consumable scenario export -----------------------------------------
+# Consolidated, trimmed scenario matrices for the RSE repo to load directly.
+# Structure: named list $S0..$S8, each $matrix (5x5), $lambda, $label, $name.
+# Consumed by parameter_lists/helpers/qe_projection.R.
+scenario_matrices <- setNames(
+  lapply(scenarios, function(sc) {
+    list(
+      name    = sc$scenario,
+      label   = sc$label,
+      lambda  = sc$result$lambda,
+      matrix  = sc$result$matrix,
+      F_sex   = sc$F_sex,
+      survival = sc$S
+    )
+  }),
+  sapply(scenarios, function(sc) sc$scenario)
+)
+attr(scenario_matrices, "source")     <- "60_scenario_comparison.R"
+attr(scenario_matrices, "generated")  <- Sys.time()
+attr(scenario_matrices, "size_class_breaks") <- SIZE_BREAKS
+attr(scenario_matrices, "size_class_labels") <- SIZE_LABELS
+attr(scenario_matrices, "note")       <- paste(
+  "9-scenario biological-realism framework (S0-S8). Each element has a 5x5",
+  "Lefkovitch matrix ready for project_trajectory() / compute_qe() from",
+  "parameter_lists/helpers/qe_projection.R. Size classes SC1-SC5 bounded by",
+  "0, 10, 100, 900, 4000, Inf cm2."
+)
+
+scenario_export_path <- "parameter_lists/scenario_matrices.rds"
+saveRDS(scenario_matrices, scenario_export_path)
+print_success(sprintf("Saved %s (RSE-consumable export)", scenario_export_path))
+
 cat("\nDone.\n")

@@ -12,6 +12,11 @@ This directory contains pre-computed parameter estimates for the Regional Stocha
 | `nurs_growth_pars.rds` | In situ nurseries | Growth by size class |
 | `lab_surv_pars.rds` | Ex situ/lab | Survival by size class |
 | `lab_growth_pars.rds` | Ex situ/lab | Growth by size class |
+| `recruit_surv_pars.rds` | Post-settlement recruits | s_recruit alternative to nursery s1 |
+| `scenario_matrices.rds` | Biological-realism scenarios | 9-scenario 5×5 Lefkovitch matrices (S0–S8) for RSE sensitivity analyses |
+| `helpers/qe_projection.R` | RSE helper | Base-R functions: `project_trajectory()`, `compute_qe()`, `scenario_qe()` |
+
+See [`RSE_COMPATIBILITY.md`](RSE_COMPATIBILITY.md) for the scenario menu, usage examples, and calibration notes.
 
 ## What is the RSE Model?
 

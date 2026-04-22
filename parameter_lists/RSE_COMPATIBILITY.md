@@ -89,3 +89,69 @@ Still needed:
 4. **Re-run all scenarios**: Field survival values changed (rma-based, 2000 bootstrap samples). Lambda shifted from 0.986 to 0.961. Restoration effectiveness comparisons may shift.
 5. **Consider `recruit_surv_pars.rds`**: The new `s_recruit = 0.028` parameter is available for recruit-based restoration scenarios. It's a potential alternative to or supplement for the hardcoded `s1 = 0.70` (which applies to nursery fragments, not microscopic settlers).
 6. **Consider whether lab survival parameters need updating**: The RSE model uses hardcoded `lab_pars$s0 = 0.95` and `lab_pars$s1 = 0.70`. The synthesis repo has `apal_surv_lab_short.csv` (6 rows, 4-30 day intervals) but these are too short-term to directly inform annual lab survival. The current hardcoded values may still be the best available estimates.
+
+---
+
+## Biological-Realism Scenario Framework (April 2026)
+
+A 9-scenario sensitivity analysis (S0–S8) layering literature-sourced biological mechanisms onto the baseline matrix is now available as **drop-in inputs for the RSE model**. The main demography synthesis paper uses all nine; Raine's RSE paper will likely select a subset but the full set is exported so that decision can be made downstream.
+
+### Files added
+
+| File | What |
+|------|------|
+| `parameter_lists/scenario_matrices.rds` | Named list `S0..S8` of trimmed 5×5 Lefkovitch matrices, each with `$matrix`, `$lambda`, `$label`, `$F_sex`, `$survival`. Metadata on size-class breaks in `attr(x, "size_class_breaks")`. |
+| `parameter_lists/helpers/qe_projection.R` | Base-R (no dependencies) helper functions for the RSE: `project_trajectory()`, `compute_qe()`, `scenario_qe()`. |
+
+### Scenario menu
+
+| Scenario | Description | Source |
+|----------|-------------|--------|
+| **S0** Baseline | Current published λ = 0.961 | This synthesis |
+| **S1** +Sexual fecundity | Size-threshold F_sex (SC5 fully reproductive ≥4000 cm²) | Vardi 2011 × Mendoza-Quiroz 2023 |
+| **S2** +Sterility lag | 4-yr post-disturbance reproductive silence | Lirman 2000a |
+| **S3** +Lesion penalty | 20% fecundity penalty for partial-mortality colonies | Piñón-González 2018 |
+| **S4** +Outplant age decay | Year-0 survival penalty for restoration cohorts | Boisvert 2024 (A. cervicornis) |
+| **S5** +Winter SST | Mild-winter × size disease interaction | Rodriguez-Martinez 2014 |
+| **S6** +Depensatory | Low-density SC1/SC2 Allee penalty (snail predation) | Williams 2012 |
+| **S7** +Microhabitat (depth) | Depth covariate survival refugia | Ramos-Romero 2025 |
+| **S8** All combined | S1 + S3 + S7 (realistic refugia scenario) | Framework |
+
+### Usage from the RSE repo
+
+```r
+# Anywhere in RSE scripts (paths relative to the RSE repo root)
+source("path/to/Detmer-2025-coral-parameters/parameter_lists/helpers/qe_projection.R")
+scenarios <- readRDS("path/to/Detmer-2025-coral-parameters/parameter_lists/scenario_matrices.rds")
+
+# 1. Project baseline 50 years deterministically
+traj <- project_trajectory(scenarios$S0$matrix, years = 50)
+
+# 2. Quasi-extinction probability for one scenario
+qe <- compute_qe(scenarios$S4$matrix, years = c(20, 50))
+# -> c(p20 = 0.97, p50 = 1.00)
+
+# 3. QE table across all 9 scenarios
+qe_table <- scenario_qe(scenarios)
+
+# 4. QE for an RSE-specific matrix (e.g. restoration scenario you build)
+A_rse <- build_rse_scenario_matrix(inputs)   # your RSE function
+qe <- compute_qe(A_rse, years = c(20, 50), init = c(200, 100, 50, 20, 10))
+```
+
+### Reproduction of published λ
+
+`scenarios$S0$matrix` reproduces the published λ = 0.961 exactly because script 60 overrides the growth-transition block with the canonical `growth_transitions` from `transition_matrix.rds`. Rebuilding the matrix from current CSVs alone gives λ ≈ 0.982 — use the scenario matrices, not a fresh recompute, to stay anchored to the manuscript's baseline.
+
+### Defaults used in `compute_qe()`
+
+- Initial population: `c(100, 50, 30, 20, 10)` (SC1..SC5, total 210) — matches script 13
+- Quasi-extinction threshold: 10% of initial N (= 21 colonies)
+- Simulation: 2,000 Poisson-stochastic replicates per scenario
+- Captures **demographic** stochasticity only. For **parameter** uncertainty, pass a single bootstrap draw of A from the RSE's resampler into `compute_qe()` and loop externally.
+
+### Calibration notes
+
+- **F_sex** (scenarios S1–S3, S8) uses `SETTLEMENT_EFFICIENCY = 1e-4` to rescale Chamberland 2015 nursery recruit survival (0.028) to wild Caribbean broadcast-spawning rates. This is the only non-literal-from-literature parameter in the framework — mention in RSE Methods if the paper uses F_sex scenarios.
+- **Depth** (S7) uses the midpoint of shallow (2 m) and deep (10 m) GLMM predictions.
+- **Winter SST** (S5) uses the +1 °C anomaly prediction from a `survival ~ log_size × winter_anomaly + (1|study)` GLMM fit on NOAA ERSST v5 region-year data 1982–2024.
