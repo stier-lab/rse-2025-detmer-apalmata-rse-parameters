@@ -118,12 +118,36 @@ p_c <- ggplot(trajectories,
         legend.text = element_text(size = 7),
         plot.title = element_text(size = 10, face = "bold"))
 
+# --- Panel (d): quasi-extinction probability at 20 and 50 years ---
+qe_long <- summary_tab %>%
+  transmute(scenario, label_display,
+            `20 yr` = p_quasi_ext_20yr,
+            `50 yr` = p_quasi_ext_50yr) %>%
+  tidyr::pivot_longer(c(`20 yr`, `50 yr`),
+                       names_to = "horizon", values_to = "p_qe")
+
+p_d <- ggplot(qe_long,
+              aes(x = scenario, y = p_qe, fill = horizon)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+  geom_text(aes(label = sprintf("%.2f", p_qe)),
+            position = position_dodge(width = 0.75),
+            vjust = -0.3, size = 2.4) +
+  scale_fill_manual(values = c(`20 yr` = "#A6BDDB", `50 yr` = "#034E7B"),
+                    name = NULL) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)),
+                     limits = c(0, 1.1), breaks = seq(0, 1, 0.25)) +
+  labs(x = NULL, y = "P(quasi-extinction)",
+       title = "d. Quasi-extinction risk (10% of initial N)") +
+  theme_manuscript() +
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 10, face = "bold"))
+
 # --- Combine and save ---
-fig <- (p_a / p_b / p_c) + plot_layout(heights = c(1.2, 1, 1.2))
+fig <- (p_a / p_b / p_c / p_d) + plot_layout(heights = c(1.2, 1, 1.2, 1.2))
 
 save_manuscript_fig(fig,
                      "FigS29_biological_realism",
-                     width_mm = 170, height_mm = 220,
+                     width_mm = 170, height_mm = 280,
                      fig_dir = "06_analysis/figures/supplementary")
 
 print_success("FigS29 rendered")

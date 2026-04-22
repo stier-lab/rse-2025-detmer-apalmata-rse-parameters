@@ -163,6 +163,39 @@ scenarios <- list(
 )
 
 # --- Compute per-scenario metrics ---
+# Quasi-extinction probability via demographic-stochasticity Poisson simulation.
+# Each year, each element of A %*% n is treated as the expectation of a Poisson
+# draw, giving a demographically stochastic realisation. Returns probabilities
+# at the requested horizons.
+qe_probability <- function(A, n_sim = 2000, years = c(20, 50),
+                            init = c(100, 50, 30, 20, 10), qe_frac = 0.10) {
+  max_year <- max(years)
+  qe_thr <- sum(init) * qe_frac
+  below <- matrix(FALSE, nrow = n_sim, ncol = length(years))
+  colnames(below) <- sprintf("p%d", years)
+  year_idx <- setNames(seq_along(years), sprintf("p%d", years))
+
+  set.seed(42)
+  for (s in seq_len(n_sim)) {
+    n <- init
+    for (t in seq_len(max_year)) {
+      expected <- as.numeric(A %*% n)
+      expected[expected < 0] <- 0
+      n <- suppressWarnings(rpois(length(expected), lambda = expected))
+      if (t %in% years) below[s, year_idx[sprintf("p%d", t)]] <- sum(n) < qe_thr
+    }
+  }
+  colMeans(below)
+}
+
+# Local eigen-based sensitivity matrix (fallback since popbio may not be loaded)
+sensitivity_local <- function(A) {
+  ev <- eigen(A)
+  w <- Re(ev$vectors[, 1])
+  v <- tryCatch(Re(solve(ev$vectors))[1, ], error = function(e) rep(1, nrow(A)))
+  outer(v, w) / sum(v * w)
+}
+
 metric_row <- function(sc) {
   A <- sc$result$matrix
   lam <- sc$result$lambda
@@ -187,22 +220,23 @@ metric_row <- function(sc) {
     e_mat[length(SIZE_LABELS), length(SIZE_LABELS)]
   }, error = function(e) NA_real_)
 
+  # Quasi-extinction probability via demographic-stochasticity simulation.
+  # Initial population matches script 13: c(100, 50, 30, 20, 10) = 210 total.
+  # QE threshold = 10% of initial (= 21 colonies). Simulate 2000 replicates
+  # drawing Poisson realizations from expected transition flows each year.
+  qe <- qe_probability(A, n_sim = 2000, years = c(20, 50),
+                       init = c(100, 50, 30, 20, 10), qe_frac = 0.10)
+
   data.frame(
     scenario = sc$scenario,
     label    = sc$label,
     lambda   = round(lam, 4),
     delta_lambda = round(lam - lambda_base, 4),
     sc5_elasticity = round(e_sc5, 4),
-    sexual_contribution_pct = round(sex_pct, 2)
+    sexual_contribution_pct = round(sex_pct, 2),
+    p_quasi_ext_20yr = round(qe["p20"], 3),
+    p_quasi_ext_50yr = round(qe["p50"], 3)
   )
-}
-
-# Local eigen-based sensitivity matrix (fallback since popbio may not be loaded)
-sensitivity_local <- function(A) {
-  ev <- eigen(A)
-  w <- Re(ev$vectors[, 1])
-  v <- tryCatch(Re(solve(ev$vectors))[1, ], error = function(e) rep(1, nrow(A)))
-  outer(v, w) / sum(v * w)
 }
 
 rows <- do.call(rbind, lapply(scenarios, metric_row))
