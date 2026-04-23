@@ -170,6 +170,9 @@ scripts <- c(
   "45_distributed_lag_disturbance_model.R",
   "46_recurrent_event_frailty_model.R",
   "47_spatiotemporal_hierarchical_model.R",
+  # 49, 49b: Temporal synthesis
+  "49_annual_survival_timeseries.R",
+  "49b_temporal_synthesis_figure.R",
   # 50-61: Biological realism scenario framework
   "50_derive_outplant_age.R",
   "51_winter_sst_anomalies.R",
@@ -252,6 +255,9 @@ script_descriptions <- c(
   "Advanced distributed-lag disturbance model",
   "Advanced recurrent-event frailty model",
   "Advanced spatiotemporal hierarchical model",
+  # 49, 49b: Temporal synthesis
+  "Annual survival time series by study and region",
+  "FigS28: Cross-study temporal synthesis figure",
   # 50-61: Biological realism scenario framework
   "Derive outplant age per colony (restoration studies)",
   "Winter SST anomalies per region-year (ERDDAP or placeholder)",

@@ -941,7 +941,7 @@ canonical_artifact_registry <- function(project_root = NULL) {
       "30_disturbance_sensitivity.R",
       "29_natural_vs_restoration.R",
       "ORPHAN",
-      "50_temporal_synthesis_figure.R",
+      "49b_temporal_synthesis_figure.R",
       "34_disturbance_summaries.R",
       "38_study_window_disturbance_audit.R",
       "48_pipeline_refresh_audit.R",

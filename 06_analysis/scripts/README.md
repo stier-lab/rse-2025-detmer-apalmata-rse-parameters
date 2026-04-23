@@ -29,7 +29,7 @@ Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b variants) in
 | **29--40** | Context + disturbance | Natural/restoration sensitivity, disturbance overlays, audit products, completeness extensions, and Manzello-heatwave scenario layer |
 | **41--47** | Advanced dynamic models | Multistate, joint longitudinal-survival, stochastic IPM, regime-switching, distributed-lag, recurrent-event, and spatiotemporal extensions |
 | **48** | Pipeline audit | Refresh pipeline manifests and generated reporting artifacts |
-| **49--50** | Temporal synthesis | Annual survival time series (49); temporal synthesis figure (50_temporal_synthesis_figure.R — FigS28) |
+| **49, 49b** | Temporal synthesis | Annual survival time series (49); temporal synthesis figure (49b_temporal_synthesis_figure.R — FigS28) |
 | **50--61** | Biological realism framework | 9-scenario sensitivity analysis (S0–S8) integrating sexual fecundity, sterility lag, lesion penalty, outplant-age decay, winter SST, depensatory corallivory, depth refugia → FigS29 |
 
 ## Canonical Entry Points
@@ -216,7 +216,7 @@ These scripts push beyond the main GLMM + matrix-model surface. They are best tr
 |--------|-------------|-------------|
 | `48_pipeline_refresh_audit.R` | Refresh pipeline manifests and generated reporting artifacts; writes pipeline_context snapshots | `pipeline_context_*.csv`, `pipeline_refresh_report.md` |
 | `49_annual_survival_timeseries.R` | Annual survival time series by study and region | `FigS20_annual_survival_timeseries.*` |
-| `50_temporal_synthesis_figure.R` | Cross-study temporal synthesis figure | `FigS28_temporal_synthesis.*` |
+| `49b_temporal_synthesis_figure.R` | Cross-study temporal synthesis figure | `FigS28_temporal_synthesis.*` |
 
 ### 50--61 -- Biological Realism Scenario Framework
 
