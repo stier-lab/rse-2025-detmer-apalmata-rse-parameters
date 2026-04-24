@@ -1,6 +1,6 @@
 # Literature Library — Detmer & Stier *A. palmata* Demography
 
-**80 PDFs** | Organized 2026-03-24 | Gap analysis: `LITERATURE_GAPS.md`
+**81 PDFs** | Organized 2026-03-24 (Schopmeyer 2017 added 2026-04-24) | Gap analysis: `LITERATURE_GAPS.md`
 
 ---
 
@@ -131,6 +131,7 @@ Coral restoration methods, reviews, sister species comparisons.
 | Muller_etal_2025_assisted_gene_flow_Apalmata_preprint.pdf | Muller et al. 2025 *bioRxiv* | AGF crosses, FL approaching regional extinction |
 | Muller_etal_2025_restoration_prevents_extirpation.pdf | Muller et al. 2025 *Conserv Biol* | 2023 heatwave: gene banks prevented extirpation |
 | RamosRomero_etal_2025_Apalmata_Cuba_restoration.pdf | Ramos Romero et al. 2025 *PeerJ* | Cuban reef crest restoration |
+| Schopmeyer_etal_2017_regional_restoration_benchmarks_Acervicornis.pdf | Schopmeyer et al. 2017 *Coral Reefs* | Sister-species origin-effect benchmark: >80% nursery, >70% outplant, 85% donor tissue cover; "outplants behave as wild colonies" |
 | Ware_etal_2020_Acervicornis_outplanting.pdf | Ware et al. 2020 *PLoS ONE* | A. cervicornis outplanting (Weibull models) |
 
 ---

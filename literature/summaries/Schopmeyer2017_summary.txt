@@ -1,0 +1,128 @@
+Schopmeyer SA, Lirman D, Bartels E, Gilliam DS, Goergen EA, Griffin SP,
+Johnson ME, Lustic C, Maxwell K, Walter CS. 2017. Regional restoration
+benchmarks for Acropora cervicornis. Coral Reefs 36: 1047-1057.
+DOI: 10.1007/s00338-017-1596-3.
+
+ROLE IN DETMER-STIER SYNTHESIS
+==============================
+Sister-species reference paper. NOT an A. palmata data source — excluded
+from extraction at full-text screen on species grounds.
+
+Used in manuscript Introduction and Discussion as the canonical A. cervicornis
+regional restoration benchmark against which we test whether origin effects
+(nursery ex-situ vs. in-situ, nursery vs. outplant, natural vs. restoration)
+generalize across acroporids.
+
+STUDY DESIGN
+============
+- 6 Caribbean A. cervicornis restoration programs (Nova Southeastern, UMiami,
+  FWC, Mote Marine, TNC Dry Tortugas, NOAA Puerto Rico)
+- 13 nurseries, 161 genotypes, 20,316 nursery corals, 36,507 outplanted corals
+- Monitoring: 1-2 yr post-fragmentation for donor colonies, 1 yr in nursery,
+  1-2 yr after outplant
+- Data collection period: 2010-2014
+- Excluded disturbance years — benchmarks describe "normal" conditions
+
+KEY QUANTITATIVE FINDINGS (A. cervicornis, non-disturbance)
+===========================================================
+Donor colonies (12 mo after 3-4 branch tips collected):
+  - Mean live tissue cover: 85.0 ± 5.8% (range across regions)
+  - Only 5.1% of donors experienced complete mortality
+  - No significant mortality or growth differences vs. control branches
+    (MIA: donor growth 6.9 ± 0.4 cm/yr vs. control 6.2 ± 0.7 cm/yr, p=0.337)
+  - Causes of tissue loss: breakage (4.2%), predation (2.9%), algal/
+    sponge/hydroid competition (2.1%)
+
+Nursery fragment survival (12 mo in situ):
+  - All regions combined: 90.8 ± 4.5% (range 84.8-96.0%)
+  - n = 1,456 corals, 85 genotypes
+
+Nursery growth and productivity:
+  - Growth (TLE): 10.5-29.5 cm/yr among regions; overall mean 17.8 ± 7.8
+  - Productivity (growth/initial TLE): 2.6-6.7 cm/yr on blocks (FL);
+    52.5 ± 28.8 on floating arrays (PR) - significantly higher, p<0.001
+  - Overall nursery productivity benchmark: 4.3 ± 0.8 cm/yr on blocks
+
+Outplant survival (12 mo after transplantation):
+  - All regions combined: 85.2 ± 9.7% (range 74.7-93.1%)
+  - n across 5 regions: 933 corals, 60 genotypes, 25 sites
+  - 24-mo survival (3 FL regions): BC 66.7%, MIA 79.7%, MK 78.7%
+  - Within-region site variation is large: 1 MIA site had >90% mortality
+    due to Hermodice/Coralliophila predation (p < 0.001 vs. 11 other sites)
+  - Causes of tissue loss: breakage (23.6%), predation (12.5%)
+
+Outplant growth/productivity:
+  - Growth: 25.6-80.6 cm/yr TLE across regions; overall 46.2 ± 20.8
+  - Productivity: 2.6-11.2 cm/yr; overall mean 4.9 ± 3.6
+  - Outplant productivity slightly HIGHER than nursery
+
+PROPOSED BENCHMARKS (first year of A. cervicornis restoration)
+==============================================================
+1. >75% live tissue cover on donor colonies
+2. >80% survivorship of nursery corals
+3. >70% survivorship of outplanted corals
+4. <=10% of biomass collected from healthy large donor colonies
+
+Stop-light framework (applies to each benchmark):
+  GREEN: within 10% of overall mean -> no action required
+  YELLOW: 10-20% below mean -> caution, minor adjustments
+  RED: >20% below mean -> action required (improve methods/design/siting)
+
+Framework only applies in non-disturbance years (no bleaching, no
+major hurricanes, no disease outbreaks).
+
+KEY CLAIMS RELEVANT TO OUR PAPER
+=================================
+1. "Once outplanted, corals behave just as wild colonies" (Abstract)
+   - Origin-insensitivity claim for A. cervicornis at the outplant stage
+   - Supported by: mean outplant survival 85.2% roughly matches reports
+     for wild A. cervicornis in non-disturbance years
+
+2. "Regional departures from the mean can be used as early warning signals"
+   - Framework for site-specific or program-specific diagnostics
+
+3. "No excess damage is caused to donor colonies"
+   - <=10% biomass removal is demographically safe for large healthy donors
+   - Pre-2023; all samples pre-heatwave
+
+OUR ENGAGEMENT IN THE MANUSCRIPT
+=================================
+Introduction: invoke Schopmeyer's origin-insensitivity claim for
+A. cervicornis as the sister-species hypothesis against which our
+A. palmata origin-effect tests are framed.
+
+Discussion: compare quantitatively to our meta-analytic A. palmata pool
+(k=17, 22 effects; `06_analysis/output/expanded_meta_analysis_results.csv`):
+  - Natural: 84.1% -> matches Schopmeyer outplant benchmark (85.2%)
+  - Restoration: 74.5% -> falls in Schopmeyer "yellow" band
+  - Natural-vs-restoration contrast: p=0.238, not significant
+    -> partial support for origin-insensitivity at colony stage
+  - Subtype decomposition reveals origin penalties hidden in pooled avg:
+    - Nursery outplants: 59.8% (A. palmata) -> Schopmeyer "red"
+    - Outplanted colonies: 65.2% -> Schopmeyer "red"
+  - Recruit stage (Chamberland, Mendoza-Quiroz, Fundemar):
+    -> order-of-magnitude origin effects (0.5% ex-situ vs 3.4-6.9% outplant)
+    -> Schopmeyer benchmarks do NOT apply at this life stage because
+       A. cervicornis restoration bypasses ex-situ larval culture
+
+Take-home: Schopmeyer benchmarks are a reasonable target for A. palmata
+ONCE colonies reach SC2+ and are outplanted, but origin penalties dominate
+at earlier stages and within-restoration subtypes. Size- and stage-resolved
+benchmarks are needed for A. palmata.
+
+CAVEATS FOR USE
+===============
+- All data 2010-2014, pre-2023 heatwave
+- "Normal conditions" filter excludes disturbance years entirely; our
+  synthesis includes and explicitly models disturbance
+- Florida + Puerto Rico only; doesn't span the Caribbean range
+- A. cervicornis has branching morphology and modular fragment architecture
+  distinct from A. palmata's plate/branch form; origin effects may differ
+  for mechanistic reasons (wound closure rates, partial mortality dynamics)
+- Benchmarks are frequentist means with regional SDs, not model-based
+  size-resolved predictions - direct comparison at size-class level is not
+  possible from this paper alone
+
+FILE LOCATION
+=============
+literature/pdfs/restoration/Schopmeyer_etal_2017_regional_restoration_benchmarks_Acervicornis.pdf
