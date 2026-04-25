@@ -1,6 +1,6 @@
 # Canonical Statistics
 
-Generated from pipeline run on 2026-04-14 (post-rma fix).
+Generated from pipeline run `20260421_103658` on 2026-04-24 14:48:47.
 
 ## Disturbance
 
@@ -43,7 +43,7 @@ Generated from pipeline run on 2026-04-14 (post-rma fix).
 
 | Metric | Value | Source |
 |---|---|---|
-| `annual_decline_pct_from_bootstrap_mean` | 3.9% | `06_analysis/output/lambda_bootstrap_samples.rds` |
+| `annual_decline_pct_from_bootstrap_mean` | 4.60% | `06_analysis/output/lambda_bootstrap_samples.rds` |
 | `lambda_bootstrap_mean` | 0.9540 | `06_analysis/output/lambda_bootstrap_samples.rds` |
 | `lambda_ci_lower` | 0.816 | `06_analysis/output/population_parameters.csv` |
 | `lambda_ci_upper` | 1.010 | `06_analysis/output/population_parameters.csv` |

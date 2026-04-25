@@ -1,42 +1,51 @@
 section,metric,value,display_value,source_file,note
-survival,n_observations_natural,6141,6141,06_analysis/output/prepared_survival_data.rds,NA
-survival,n_studies_natural,3,3,06_analysis/output/prepared_survival_data.rds,NA
-survival,odds_ratio_log_size,1.4349755240994062,1.435,06_analysis/output/prepared_survival_data.rds,NA
-survival,odds_ratio_ci_lower,1.3882177980560493,1.388,06_analysis/output/prepared_survival_data.rds,NA
-survival,odds_ratio_ci_upper,1.4833081362649603,1.483,06_analysis/output/prepared_survival_data.rds,NA
-survival,tjur_r2_pct,8.39252032058856,8.4%,06_analysis/output/prepared_survival_data.rds,NA
-survival,glm_p_value,2.6899517906999375e-101,p < 0.001,06_analysis/output/prepared_survival_data.rds,NA
-survival,gam_deviance_explained_pct,8.990407871057123,9.0%,06_analysis/output/prepared_survival_data.rds,NA
-growth,rgr_allometry_inflection_cm2,853.0427586077855,853.0 cm²,06_analysis/output/growth_rate_summary.csv,Inflection from 04_growth_rate_comparison.R; not the primary manuscript threshold.
+disturbance,all_data_pooled_survival_pct,75.91,75.9%,06_analysis/output/disturbance_sensitivity_summary.csv,NA
+disturbance,baseline_exclusion_intervals,297,297,06_analysis/output/study_window_disturbance_summary_overall.csv,NA
+disturbance,baseline_exclusion_pooled_survival_pct,75.56,75.6%,06_analysis/output/disturbance_sensitivity_summary.csv,NA
+disturbance,baseline_exclusion_shift_pp,-0.34999999999999476,-0.3 pp,06_analysis/output/disturbance_sensitivity_summary.csv,NA
+disturbance,disturbance_size_interaction_lrt_p,6.934140176701955e-4,p < 0.001,06_analysis/output/disturbance_size_survival_model.csv,NA
+disturbance,study_window_intervals,1072,1072,06_analysis/output/study_window_disturbance_summary_overall.csv,Study-window disturbance audit interval count
+disturbance,study_window_intervals_audited,1072,1072,06_analysis/output/study_window_disturbance_summary_overall.csv,NA
+disturbance,study_window_pct_any_overlap,95.1,95.1%,06_analysis/output/study_window_disturbance_summary_overall.csv,Intervals with any disturbance overlap
 growth,agr_r2_pct,3.608669034267764,3.6%,06_analysis/output/growth_rate_summary.csv,NA
+growth,rgr_allometry_inflection_cm2,853.0427586077855,853.0 cm²,06_analysis/output/growth_rate_summary.csv,Inflection from 04_growth_rate_comparison.R; not the primary manuscript threshold.
 growth,rgr_r2_pct,18.21655143217693,18.2%,06_analysis/output/growth_rate_summary.csv,NA
 growth,rgr_vs_agr_improvement_x,5.047997269684017,5x,06_analysis/output/growth_rate_summary.csv,NA
-population,lambda_deterministic,0.9613236196732564,0.961,06_analysis/output/population_parameters.csv,NA
-population,lambda_ci_lower,0.815716655508045,0.816,06_analysis/output/population_parameters.csv,NA
-population,lambda_ci_upper,1.0102506116031893,1.010,06_analysis/output/population_parameters.csv,NA
-population,p_decline_pct,94.3,94.3%,06_analysis/output/population_parameters.csv,NA
-population,lambda_bootstrap_mean,0.9539546200214046,0.9540,06_analysis/output/lambda_bootstrap_samples.rds,NA
-population,annual_decline_pct_from_bootstrap_mean,4.604537997859537,4.60%,06_analysis/output/lambda_bootstrap_samples.rds,NA
-population,max_elasticity_pct,58.8671290353556,58.9%,06_analysis/output/elasticity_matrix.csv,SC5 -> SC5
+meta_analysis,i_squared_pct,97.2,97.2%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,k_studies,17,17,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,n_effects,22,22,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,n_observations,8805,8805,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,pooled_survival_pct,78,78.0%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,pooled_ci_lower_pct,70.1,70.1%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,pooled_ci_upper_pct,84.3,84.3%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,pooled_survival_pct,78,78.0%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,prediction_interval_lower_pct,39.5,39.5%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,prediction_interval_upper_pct,95.1,95.1%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,i_squared_pct,97.2,97.2%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,tau_squared,0.6233,0.6233,06_analysis/output/expanded_meta_analysis_results.csv,NA
-thresholds,survival_threshold_cm2,7497.658401913974,7497.7 cm²,06_analysis/output/survival_thresholds.csv,definition=min_d2; form=sigmoidal
-thresholds,absolute_growth_threshold_cm2,19.26129239843297,19 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=sigmoidal; definition=min_d2
-thresholds,relative_growth_rate_threshold_cm2,36.889755297267435,37 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=sigmoidal; definition=min_d2
-thresholds,positive_growth_prob_threshold_cm2,410.65102067448834,411 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=dome_shaped; definition=zero_d1
-disturbance,baseline_exclusion_pooled_survival_pct,75.56,75.6%,06_analysis/output/disturbance_sensitivity_summary.csv,Pooled survival after excluding baseline-exclusion intervals
-shrinkage,matrix_compatible_shrinkage_pct,39.366073175503814,39.4%,06_analysis/output/shrinkage_retrogression_subset_summary.csv,Shrinkage frequency in matrix-compatible subset
-restoration,survival_natural_fragment,87.09677419354836,87.1%,06_analysis/output/restoration_subtype_survival_summary.csv,n=3968
+population,annual_decline_pct_from_bootstrap_mean,4.604537997859537,4.60%,06_analysis/output/lambda_bootstrap_samples.rds,NA
+population,lambda_bootstrap_mean,0.9539546200214046,0.9540,06_analysis/output/lambda_bootstrap_samples.rds,NA
+population,lambda_ci_lower,0.815716655508045,0.816,06_analysis/output/population_parameters.csv,NA
+population,lambda_ci_upper,1.0102506116031893,1.010,06_analysis/output/population_parameters.csv,NA
+population,lambda_deterministic,0.9613236196732564,0.961,06_analysis/output/population_parameters.csv,NA
+population,max_elasticity_pct,58.8671290353556,58.9%,06_analysis/output/elasticity_matrix.csv,SC5 -> SC5
+population,p_decline_pct,94.3,94.3%,06_analysis/output/population_parameters.csv,NA
+restoration,all_subtypes_mean_survival_pct,60.036003600360075,60.0%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
+restoration,exclude_natural_mean_survival_pct,60.036003600360075,60.0%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
+restoration,nursery_only_mean_survival_pct,59.81220657277,59.8%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
+restoration,survival_natural_fragment,87.09677419354837,87.1%,06_analysis/output/restoration_subtype_survival_summary.csv,n=3968
 restoration,survival_nursery_outplant,58.695652173913096,58.7%,06_analysis/output/restoration_subtype_survival_summary.csv,n=1012
 restoration,survival_nursery_outplant_recemented,81.13207547169812,81.1%,06_analysis/output/restoration_subtype_survival_summary.csv,n=53
 restoration,survival_outplanted_colony,65.21739130434781,65.2%,06_analysis/output/restoration_subtype_survival_summary.csv,n=46
-disturbance,study_window_intervals,1072,1072,06_analysis/output/study_window_disturbance_summary_overall.csv,Study-window disturbance audit interval count
-disturbance,study_window_pct_any_overlap,95.1,95.1%,06_analysis/output/study_window_disturbance_summary_overall.csv,Intervals with any disturbance overlap
+shrinkage,matrix_compatible_shrinkage_frequency_pct,39.366073175503814,39.4%,06_analysis/output/shrinkage_retrogression_subset_summary.csv,NA
+shrinkage,matrix_compatible_shrinkage_pct,39.366073175503814,39.4%,06_analysis/output/shrinkage_retrogression_subset_summary.csv,Shrinkage frequency in matrix-compatible subset
+survival,gam_deviance_explained_pct,8.990407871057123,9.0%,06_analysis/output/prepared_survival_data.rds,NA
+survival,glm_p_value,2.6899517906999375e-101,p < 0.001,06_analysis/output/prepared_survival_data.rds,NA
+survival,n_observations_natural,6141,6141,06_analysis/output/prepared_survival_data.rds,NA
+survival,n_studies_natural,3,3,06_analysis/output/prepared_survival_data.rds,NA
+survival,odds_ratio_ci_lower,1.3882177980560493,1.388,06_analysis/output/prepared_survival_data.rds,NA
+survival,odds_ratio_ci_upper,1.4833081362649605,1.483,06_analysis/output/prepared_survival_data.rds,NA
+survival,odds_ratio_log_size,1.4349755240994062,1.435,06_analysis/output/prepared_survival_data.rds,NA
+survival,tjur_r2_pct,8.39252032058856,8.4%,06_analysis/output/prepared_survival_data.rds,NA
+thresholds,absolute_growth_threshold_cm2,19.26129239843297,19 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=sigmoidal; definition=min_d2
+thresholds,positive_growth_prob_threshold_cm2,410.65102067448834,411 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=dome_shaped; definition=zero_d1
+thresholds,relative_growth_rate_threshold_cm2,36.889755297267435,37 cm²,06_analysis/output/growth_thresholds.csv,gate=TRUE; form=sigmoidal; definition=min_d2
+thresholds,survival_threshold_cm2,7497.658401913974,7497.7 cm²,06_analysis/output/survival_thresholds.csv,definition=min_d2; form=sigmoidal

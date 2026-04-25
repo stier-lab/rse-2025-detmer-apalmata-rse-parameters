@@ -47,8 +47,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 | FigS24 — Heat stress survival | `31_heat_stress_overlay.R` | `FigS24_heat_stress_survival` | |
 | FigS25 — Disturbance sensitivity | `30_disturbance_sensitivity.R` | `FigS25_disturbance_sensitivity` | |
 | FigS26 — Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison` | |
-| FigS27 — Disturbance summary | (orphan — no generating script) | `FigS27_disturbance_summary` | |
-| FigS28 — Temporal synthesis | `49b_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis` | |
+| FigS28 — Temporal synthesis | `49b_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis` | Gap at FigS27: removed 2026-04-24 (former orphan placeholder, content duplicated FigS18). FigS28/FigS29 retained at original numbers to avoid renumbering 43 cross-refs. |
 | FigS29 — Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism` | 9-scenario sensitivity framework: tornado plot of Δλ, sexual vs fragmentation pathway share, 50-yr projection trajectories |
 
 All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S29) and are saved as both PNG and PDF.
@@ -91,5 +90,5 @@ Scripts that produce data, tables, or verification output only (no figures):
 
 1. **Script 22 ("fig6") vs output (Fig 4):** Historical artifact from earlier numbering.
 2. **Script 21 ("fig3") vs output (FigS8):** Historical artifact from earlier numbering.
-3. **Script 20 output ("Fig4_size_class_survival"):** Collides with real Fig 4. Working figure whose content was absorbed into Fig 2c.
-4. **Script 23 number collision:** `23_figS2_data_gaps.R` (figure) and `23_verification.R` (verification) share number 23.
+3. **Script 23 number collision:** `23_figS2_data_gaps.R` (figure) and `23_verification.R` (verification) share number 23.
+4. **FigS27 gap:** Former orphan placeholder removed 2026-04-24; FigS28/FigS29 not renumbered to avoid touching 43 downstream references.

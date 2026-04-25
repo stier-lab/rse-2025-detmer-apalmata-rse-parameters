@@ -51,7 +51,7 @@ This plan is designed to leave the repo with one manuscript-facing filename per 
 
 ## 5. Keep But Do Not Treat As Final Manuscript Items
 
-- `06_analysis/figures/manuscript/Fig4_size_class_survival.*`
+- `06_analysis/figures/supplementary/exploratory/size_class_survival_synthesis.*` (formerly `figures/manuscript/Fig4_size_class_survival.*`; renamed and relocated 2026-04-24 to drop the misleading Fig4 prefix and clear the manuscript directory)
 - `06_analysis/figures/supplementary/exploratory/disturbance_timeline_highres.*`
 - `06_analysis/figures/supplementary/exploratory/disturbance_regional_severity.*`
 - Advanced dynamic model outputs in `supplementary/exploratory/`

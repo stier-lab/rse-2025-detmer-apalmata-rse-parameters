@@ -166,7 +166,7 @@ These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, an
 |--------|-------------|-------------|
 | `18_fig1_study_landscape.R` | Figure 1: Study landscape (Caribbean map, 16 studies) + Fig S1 size dist | `figures/manuscript/Fig1_*` |
 | `19_fig2_demographic_rates.R` | Figure 2: Demographic rates — survival + RGR vs size | `figures/manuscript/Fig2_*` |
-| `20_fig_size_class_survival_synthesis.R` | Standalone size-class survival synthesis figure used as manuscript-support output | `figures/manuscript/Fig4_size_class_survival.*` |
+| `20_fig_size_class_survival_synthesis.R` | Size-class survival synthesis (working figure; content absorbed into Fig 2c) | `figures/supplementary/exploratory/size_class_survival_synthesis.*`, `output/size_class_survival_synthesis.csv` |
 | `20b_fig_expanded_forest_plot.R` | Figure 3: Caribbean-wide survival synthesis (forest + regional) | `figures/manuscript/Fig3_*` |
 | `20c_fig_regional_survival.R` | Figure S15: Regional survival variation | `figures/supplementary/FigS15_*` |
 | `21_fig3_natural_vs_restoration.R` | Figure S8: Shared-range natural vs restoration comparison | `figures/supplementary/FigS8_*` |

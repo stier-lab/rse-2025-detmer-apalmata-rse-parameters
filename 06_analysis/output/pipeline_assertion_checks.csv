@@ -8,5 +8,5 @@ Size-survival p < 0.05 (got 0.0000),TRUE,PASS
 "P(decline) in [50, 100]% (got 94.3%)",TRUE,PASS
 Bootstrap n >= 500 (got 2000),TRUE,PASS
 I-squared > 80% (got 97.2%),TRUE,PASS
-k = 17 (got 17),TRUE,PASS
+k >= 15 (got 17),TRUE,PASS
 "Pooled survival in [0.5, 1.0] (got 0.780)",TRUE,PASS

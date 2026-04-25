@@ -22,18 +22,19 @@
 #   4. Compute pooled means (study-level, sqrt(n)-weighted) with 95% CI
 #      via logit-scale normal approximation
 #
-# NOTE: This is a support/working figure, NOT manuscript Fig 4. The output
-# filename "Fig4_size_class_survival" is a historical artifact that predates
-# the current figure numbering. Manuscript Fig 4 is the population model
-# produced by 22_fig6_population_model.R. This figure's content (size-class
-# survival synthesis) was absorbed into Fig 2 panel c (script 19).
+# NOTE: This is a support/working figure, NOT manuscript Fig 4. Manuscript
+# Fig 4 is the population model produced by 22_fig6_population_model.R.
+# This figure's content (size-class survival synthesis) was absorbed into
+# Fig 2 panel c (script 19); we keep this script alive because it produces
+# size_class_survival_synthesis.csv (used downstream) and a useful
+# diagnostic figure routed to supplementary/exploratory/.
 #
 # INPUTS:
 #   - 06_analysis/output/prepared_survival_data.rds (individual survival records)
 #   - 05_data/standardized/apal_surv_summ.csv (summary survival data)
 #
 # OUTPUTS:
-#   - 06_analysis/figures/manuscript/Fig4_size_class_survival.{png,pdf}
+#   - 06_analysis/figures/supplementary/exploratory/size_class_survival_synthesis.{png,pdf}
 #   - 06_analysis/output/size_class_survival_synthesis.csv
 #
 # Author: Detmer & Stier Lab
@@ -497,9 +498,12 @@ p <- ggplot() +
     size  = guide_legend(order = 3, override.aes = list(shape = 16, color = "grey40"))
   )
 
-# Save figure
+# Save figure (working figure — content absorbed into Fig 2c; routed to
+# supplementary/exploratory/ and renamed to drop the misleading Fig4_ prefix)
 cat("  Generating figure...\n")
-save_manuscript_fig(p, "Fig4_size_class_survival",
-                    width_mm = 174, height_mm = 115)
+save_manuscript_fig(p, "size_class_survival_synthesis",
+                    width_mm = 174, height_mm = 115,
+                    fig_dir = file.path(get_project_root(),
+                                        "06_analysis/figures/supplementary/exploratory"))
 
 cat("\nDone.\n")
