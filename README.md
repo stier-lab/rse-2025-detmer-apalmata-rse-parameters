@@ -363,6 +363,16 @@ For figure numbering and manuscript-facing build targets, use [07_reporting/manu
 - **Raine Detmer** — Lead Researcher, Data Integration, Population Modeling
 - **Adrian Stier** — Principal Investigator
 
+## Literature & PDFs
+
+PDFs for both repos live in three places:
+
+- **This repo:** `literature/pdfs/` — 145 PDFs organized by role (data_studies, context, methods, restoration, preprints)
+- **RSE repo Google Drive:** [coral-rse/literature/](https://drive.google.com/drive/folders/1PJ_zGH0YfXb1zeJRX-zlaJR4JrUWIYRf) — 235 PDFs for the RSE manuscript
+- **Zotero group library:** [coral_restoration_strategey_evaluation](https://www.zotero.org/groups/5973787/coral_restoration_strategey_evaluation) — combined library with 12 sub-collections (276 items). Shared with the full team.
+
+The RSE repo has a sortable index at `literature/DATABASE.csv` and a fecundity synthesis at `docs/FECUNDITY_LITERATURE_SUMMARY.md`.
+
 ## License
 
 MIT License
