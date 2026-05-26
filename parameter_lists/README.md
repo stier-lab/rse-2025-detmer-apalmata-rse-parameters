@@ -141,13 +141,21 @@ Wild populations on natural reefs. Survival parameters are computed via study-le
 - Survival from 16 studies via `prepared_survival_cells.rds`; growth from 7 individual-level studies
 
 ### Nursery (`nurs_*`)
-In situ coral nurseries (underwater structures). Includes Pausch 2018, Fundemar, and restoration studies.
+In situ coral nurseries and restoration outplants. Includes Pausch 2018, Fundemar, Kuffner 2020, USGS-USVI, and other restoration studies.
 
 **Characteristics:**
-- Primarily fragments
+- Primarily fragments and recently-outplanted recruits
 - Regular maintenance (algae removal)
-- Elevated survival compared to wild
-- Focus on SC1-SC3 size classes
+- Elevated SC1 survival compared to wild
+- Sparse / unreliable data for SC4-SC5
+
+**Filter rules (script 17):**
+- `NOAA_survey` is **excluded** from the nursery tier. NOAA carries 65 cells flagged `population_type == "Restoration fragment"` and 94 growth records with `fragment == "Y"`, but the colonies are hurricane-generated natural fragments in a field survey, not nursery material. Lumping them into the nursery tier biased SC3-SC5 nursery survival downward.
+- Survival inclusion: `population_type == "Restoration fragment"` OR `data_type` contains "nursery" OR `study` name contains "nursery", minus NOAA.
+- Growth inclusion: `fragment == "Y"` OR `data_type` contains "nursery" OR `study` name contains "nursery", minus NOAA. (Growth-side individual data lacks a `population_type` column, so `fragment == "Y"` is the proxy.)
+
+**SC3-SC5 blend rule:**
+SC1-SC2 use nursery-specific values; **SC3-SC5 fall back to field values**, because nursery-tier sample sizes are too small at large size classes (SC5 has n = 7 colonies) to produce stable estimates. The blend is applied to `surv_summary`, `SC_surv_summ_df`, `SC_surv_df`, `SC_surv_results` (survival) and to `growth_trans_df`, `trans_summary`, `summ_list`, `mat_list`, `growth_summary`, `growth_results` (growth). A `blend_note` element on each list documents the rule.
 
 ### Lab (`lab_*`)
 Ex situ facilities (land-based aquaria/tanks). Limited data available.

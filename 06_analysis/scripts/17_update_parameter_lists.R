@@ -614,8 +614,13 @@ cat("  ✓ Saved: field_growth_pars.rds\n\n")
 
 cat("Generating nursery survival parameters (cell-weighted)...\n")
 
-# Filter cells to nursery/restoration data
+# Filter cells to nursery/restoration data.
+# Exclude NOAA_survey explicitly: 65 NOAA cells carry population_type ==
+# "Restoration fragment" but they are hurricane-generated natural fragments in
+# the NOAA survey, not nursery/outplanted material. Lumping them into the
+# nursery tier biases SC3-SC5 nursery survival downward.
 nurs_cells <- surv_cells %>%
+  filter(!grepl("NOAA", study, ignore.case = TRUE)) %>%
   filter(grepl("nursery", data_type, ignore.case = TRUE) |
          population_type == "Restoration fragment" |
          grepl("nursery|Nursery", study, ignore.case = TRUE))
@@ -701,6 +706,46 @@ if (nrow(nurs_cells) > 0) {
   )
 }
 
+# -------------------------------------------------------------------------
+# BLEND: SC3-SC5 fall back to field survival values.
+# Nursery data for large size classes are sparse (SC5 has n = 7 colonies)
+# and dominated by short-monitoring records that bias survival downward.
+# Rule: SC1-SC2 use nursery-specific values; SC3-SC5 use field values.
+# -------------------------------------------------------------------------
+sc_blend_int  <- c(3L, 4L, 5L)
+sc_blend_fct  <- c("SC3", "SC4", "SC5")
+
+if (!is.null(nurs_surv_pars$surv_summary) && !is.null(field_surv_pars$surv_summary)) {
+  nurs_surv_pars$surv_summary <- bind_rows(
+    nurs_surv_pars$surv_summary  %>% filter(!as.character(size_class) %in% sc_blend_fct),
+    field_surv_pars$surv_summary %>% filter( as.character(size_class) %in% sc_blend_fct)
+  ) %>% arrange(size_class)
+}
+if (!is.null(nurs_surv_pars$SC_surv_summ_df) && !is.null(field_surv_pars$SC_surv_summ_df)) {
+  nurs_surv_pars$SC_surv_summ_df <- rbind(
+    nurs_surv_pars$SC_surv_summ_df[!nurs_surv_pars$SC_surv_summ_df$size_class %in% sc_blend_int, ],
+    field_surv_pars$SC_surv_summ_df[ field_surv_pars$SC_surv_summ_df$size_class %in% sc_blend_int, ]
+  )
+  nurs_surv_pars$SC_surv_summ_df <- nurs_surv_pars$SC_surv_summ_df[order(nurs_surv_pars$SC_surv_summ_df$size_class), ]
+}
+if (!is.null(nurs_surv_pars$SC_surv_df) && !is.null(field_surv_pars$SC_surv_df)) {
+  nurs_surv_pars$SC_surv_df <- rbind(
+    nurs_surv_pars$SC_surv_df[!nurs_surv_pars$SC_surv_df$size_class %in% sc_blend_int, ],
+    field_surv_pars$SC_surv_df[ field_surv_pars$SC_surv_df$size_class %in% sc_blend_int, ]
+  )
+}
+if (!is.null(nurs_surv_pars$SC_surv_results) && !is.null(field_surv_pars$SC_surv_results)) {
+  for (sc in as.character(sc_blend_int)) {
+    if (!is.null(field_surv_pars$SC_surv_results[[sc]])) {
+      nurs_surv_pars$SC_surv_results[[sc]] <- field_surv_pars$SC_surv_results[[sc]]
+    }
+  }
+}
+nurs_surv_pars$blend_note <- "SC1-SC2 nursery-specific; SC3-SC5 use field values (sparse nursery data for large size classes)."
+nurs_surv_pars$data_integration <- paste0(nurs_surv_pars$data_integration,
+                                          " | SC3-SC5 blended from field_surv_pars")
+cat("  ✓ Blended SC3-SC5 survival from field values\n")
+
 saveRDS(nurs_surv_pars, file.path(param_dir, "nurs_surv_pars.rds"))
 cat("  ✓ Saved: nurs_surv_pars.rds\n\n")
 
@@ -717,6 +762,7 @@ nurs_growth_data <- growth_data_all %>%
   mutate(size_class = cut(size_cm2, breaks = size_class_breaks,
                            labels = SIZE_LABELS, include.lowest = TRUE),
          growth_rate = growth_cm2_yr) %>%
+  filter(!grepl("NOAA", study, ignore.case = TRUE)) %>%  # exclude NOAA natural fragments (94 records, fragment=='Y' but hurricane-generated, not nursery)
   filter(
     (!is.na(fragment) & fragment == "Y") |
     (!is.na(data_type) & grepl("nursery", data_type)) |
@@ -746,8 +792,12 @@ if (nrow(nurs_growth_data) > 0) {
   # RSE-compatible growth elements
   nurs_trans_summary <- nurs_growth_trans_df %>%
     group_by(from_class, to_class) %>%
-    summarise(mean_prob = mean(prob), Q05 = quantile(prob, 0.05),
-              Q95 = quantile(prob, 0.95), .groups = "drop")
+    summarise(mean_prob = mean(prob),
+              sd_prob   = sd(prob),
+              Q05 = quantile(prob, 0.05),
+              Q95 = quantile(prob, 0.95),
+              .groups = "drop") %>%
+    select(from_class, to_class, mean_prob, sd_prob, Q05, Q95)
   nurs_summ_list <- lapply(SIZE_LABELS, function(from_sc) {
     sub <- nurs_trans_summary %>% filter(from_class == from_sc)
     df <- data.frame(to_class = sub$to_class, mean = sub$mean_prob,
@@ -801,6 +851,58 @@ if (nrow(nurs_growth_data) > 0) {
     note_prediction = "For individual coral predictions, combine parameter uncertainty with binomial/normal observation model"
   )
 }
+
+# -------------------------------------------------------------------------
+# BLEND: SC3-SC5 transitions and growth fall back to field values.
+# Same rule as nursery survival: SC1-SC2 nursery-specific, SC3-SC5 use field
+# because we have essentially no nursery-tier data on large-colony dynamics.
+# Replace any row where the colony STARTS in SC3/SC4/SC5 (i.e., from_class).
+# -------------------------------------------------------------------------
+sc_blend_fct <- c("SC3", "SC4", "SC5")
+
+if (!is.null(nurs_growth_pars$growth_trans_df) && !is.null(field_growth_pars$growth_trans_df)) {
+  nurs_growth_pars$growth_trans_df <- bind_rows(
+    nurs_growth_pars$growth_trans_df  %>% filter(!from_class %in% sc_blend_fct),
+    field_growth_pars$growth_trans_df %>% filter( from_class %in% sc_blend_fct)
+  )
+}
+if (!is.null(nurs_growth_pars$trans_summary) && !is.null(field_growth_pars$trans_summary)) {
+  nurs_growth_pars$trans_summary <- bind_rows(
+    nurs_growth_pars$trans_summary  %>% filter(!from_class %in% sc_blend_fct),
+    field_growth_pars$trans_summary %>% filter( from_class %in% sc_blend_fct)
+  ) %>% arrange(from_class, to_class)
+}
+if (!is.null(nurs_growth_pars$summ_list) && !is.null(field_growth_pars$summ_list)) {
+  for (sc in sc_blend_fct) {
+    if (!is.null(field_growth_pars$summ_list[[sc]])) {
+      nurs_growth_pars$summ_list[[sc]] <- field_growth_pars$summ_list[[sc]]
+    }
+  }
+}
+if (!is.null(nurs_growth_pars$mat_list) && !is.null(field_growth_pars$mat_list)) {
+  for (sc in sc_blend_fct) {
+    if (!is.null(field_growth_pars$mat_list[[sc]])) {
+      nurs_growth_pars$mat_list[[sc]] <- field_growth_pars$mat_list[[sc]]
+    }
+  }
+}
+if (!is.null(nurs_growth_pars$growth_summary) && !is.null(field_growth_pars$growth_summary)) {
+  nurs_growth_pars$growth_summary <- bind_rows(
+    nurs_growth_pars$growth_summary  %>% filter(!as.character(size_class) %in% sc_blend_fct),
+    field_growth_pars$growth_summary %>% filter( as.character(size_class) %in% sc_blend_fct)
+  ) %>% arrange(size_class)
+}
+if (!is.null(nurs_growth_pars$growth_results) && !is.null(field_growth_pars$growth_results)) {
+  for (sc in sc_blend_fct) {
+    if (!is.null(field_growth_pars$growth_results[[sc]])) {
+      nurs_growth_pars$growth_results[[sc]] <- field_growth_pars$growth_results[[sc]]
+    }
+  }
+}
+nurs_growth_pars$blend_note <- "SC1-SC2 nursery-specific; SC3-SC5 transitions and growth use field values."
+nurs_growth_pars$data_integration <- paste0(nurs_growth_pars$data_integration,
+                                            " | SC3-SC5 blended from field_growth_pars")
+cat("  ✓ Blended SC3-SC5 growth/transitions from field values\n")
 
 saveRDS(nurs_growth_pars, file.path(param_dir, "nurs_growth_pars.rds"))
 cat("  ✓ Saved: nurs_growth_pars.rds\n\n")
