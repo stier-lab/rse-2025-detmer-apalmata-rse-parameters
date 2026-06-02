@@ -22,7 +22,6 @@ Manuscript-ready content and internal process docs, separated into two subdirect
 | `claim_output_crosswalk.md` | Links manuscript claims to scripts and outputs |
 | `paper_scope_and_analysis_roadmap.md` | Parent goal, paper goals, remaining roadmap |
 | `analysis_inventory_labels.md` | Core vs supporting vs exploratory labeling |
-| `consistency_audit.md` | Cross-check notes for key values and labels |
 | `methodology_critique_2026-04-14.md` | Sample-size weighting methodology critique |
 | `newcomer_review_2026-04-08.md` | Newcomer review notes |
 | `pre_publication_audit_2026-04-16.md` | Pre-publication audit checklist |
@@ -32,6 +31,5 @@ Manuscript-ready content and internal process docs, separated into two subdirect
 | `data_acquisition_plan.md` | Data acquisition priorities and contacts |
 | `email_draft_neely_data_request.md` | Neely data request email |
 | `email_drafts_data_requests.md` | Batch data request emails |
-| `model_audit/` | Script-by-script statistical QA and diagnostics |
 | `advanced_models/` | Advanced dynamic-model reports (scripts 41--47) |
 | `generated/` | Pipeline-generated reporting (canonical statistics, artifact status) |

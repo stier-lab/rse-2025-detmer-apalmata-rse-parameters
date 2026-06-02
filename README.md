@@ -135,7 +135,6 @@ Detmer-2025-coral-parameters/
 │   └── internal/                     # Process docs, audits, working notes
 │       ├── claim_output_crosswalk.md
 │       ├── paper_scope_and_analysis_roadmap.md
-│       ├── model_audit/
 │       ├── advanced_models/
 │       └── generated/
 ├── literature/                     # 145 PDFs organized by role
