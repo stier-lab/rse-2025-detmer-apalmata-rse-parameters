@@ -545,6 +545,182 @@ stable-population threshold (lambda = 1).
 
 
 ================================================================================
+SUPPLEMENTARY FIGURE S23
+================================================================================
+
+LEGEND:
+Fig. S23 Study-specific annual survival trajectories for the two Florida Keys
+monitoring programs that anchor the natural-colony time series. (a) Mean annual
+survival for the NOAA Florida Keys survey (2004-2024). (b) Mean annual survival
+for the Neely et al. Florida Keys program (2010-2015), where the 2014
+tissue-loss disease interval appears as a sharp survival decline. Both panels
+share a common survival axis so the disease-driven drop can be read against the
+longer NOAA baseline.
+
+METHODS:
+Annual survival was computed from individual-level survival records within each
+program and summarized by monitoring year. The two programs are shown
+separately because they differ in region coverage, monitoring interval, and
+disturbance exposure, and because the Neely disease interval is treated as a
+flagged event in the disturbance sensitivity analysis.
+
+RESULTS:
+Survival in the NOAA series is high and comparatively stable across years,
+whereas the Neely series falls to roughly 0.53 across the 2014 disease interval
+before a partial recovery (aftermath intervals near 0.61). This contrast
+motivates the disturbance-exclusion sensitivity analysis in Fig. S25 and the
+disturbance chronology in Fig. S18.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S24
+================================================================================
+
+LEGEND:
+Fig. S24 Heat stress and Acropora palmata annual survival. (a) Annual survival
+rate by heat stress category (binned degree heating weeks, DHW, in degree
+C-weeks), with sample sizes annotated. (b) Annual survival rate against mean
+annual maximum DHW, with points sized by sample size and a linear fit with 95%
+confidence band. (c) Maximum annual DHW by year for each study and latitude
+band, colored by region, with shaded ribbons marking the bleaching-warning
+(4 to 8 DHW) and bleaching (above 8 DHW) thresholds.
+
+METHODS:
+Degree heating weeks were drawn from satellite heat-stress products and matched
+to each survival interval by region, latitude, and year. Survival records were
+binned into heat stress categories for panel a and regressed on mean annual
+maximum DHW for panel b. Panel c summarizes the heat-stress exposure history of
+the contributing sites.
+
+RESULTS:
+Across the contributing sites, accumulated heat stress rarely reached the
+extreme DHW levels (16 to 20) associated with the 2023 Florida mortality event
+documented by Manzello et al. (2025). The demographic record therefore
+characterizes survival under low-to-moderate heat stress and undersamples
+catastrophic bleaching, which the scenario analysis in Fig. S22 addresses
+explicitly.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S25
+================================================================================
+
+LEGEND:
+Fig. S25 Sensitivity of pooled and size-resolved Acropora palmata survival to
+disturbance-interval handling. (a) Pooled annual survival under alternative
+disturbance-exclusion scenarios, showing the pooled estimate and confidence
+interval for each scenario. (b) Size-resolved survival probability across
+colony size (cm2) for the main scenarios, with model fits, binned observed
+survival sized by sample size, and size-class reference markers.
+
+METHODS:
+Disturbance intervals were flagged from the curated event catalog (Fig. S18).
+Each scenario refits the survival summary after excluding a defined set of
+intervals (the 2014 disease intervals, NOAA storm intervals, or all
+baseline-exclusion events). Scenarios are reported as robustness context rather
+than as a replacement for the primary analysis.
+
+RESULTS:
+Excluding the 2014 disease intervals raises pooled survival from 0.759 to 0.786
+(a shift of 2.7 percentage points), driven almost entirely by the Neely dataset
+(0.718 to 0.850). Excluding NOAA storm intervals changes pooled survival
+negligibly (less than 0.1 percentage point), and excluding all
+baseline-exclusion events lowers it slightly (0.4 percentage points). The
+size-resolved fits are stable across scenarios, indicating that disturbance
+handling shifts the survival level more than the survival-by-size shape.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S26
+================================================================================
+
+LEGEND:
+Fig. S26 Natural versus restoration survival comparison for Acropora palmata.
+(a) Odds ratios contrasting natural and restoration colony survival by region,
+with the overall estimate emphasized and reference annotations indicating which
+population type each side favors. (b) Odds ratios contrasting restoration and
+natural survival by size class. Odds ratios are plotted on a log scale with a
+reference line at one (no difference).
+
+METHODS:
+Region-specific and size-class-specific odds ratios were estimated from the
+individual-level survival data using logistic models. The contrast is presented
+descriptively because population type is strongly confounded with study
+identity, region, and available size range.
+
+RESULTS:
+Most region and size-class odds ratios bracket one with wide confidence
+intervals, and the overall contrast is not statistically significant,
+consistent with the expanded meta-analysis (no significant natural versus
+restoration difference, p = 0.238 at k = 17, 22 effects). The figure reinforces
+that the broad natural versus restoration label should not be read as a single
+causal effect, which the restoration subtype analysis in Fig. S19 develops
+further.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S28
+================================================================================
+
+LEGEND:
+Fig. S28 Temporal synthesis of Acropora palmata population dynamics. (a) Median
+population trajectory (percent of initial size) with 5th to 95th percentile
+ribbon over the projection horizon, by scenario. (b) Annual regime
+classification across monitoring years, with tile color indicating the inferred
+regime and point size indicating the number of observations. (c) Effective
+population growth rate (lambda) across heatwave-return-interval scenarios, shown
+relative to the dashed stable-population reference (lambda = 1).
+
+METHODS:
+Projection trajectories were generated from the stochastic population model
+under each scenario. The regime classification panel summarizes the year-level
+state sequence used to characterize favorable and unfavorable periods.
+Effective lambda was computed by embedding episodic heatwave mortality at the
+indicated return intervals into the projection.
+
+RESULTS:
+Effective lambda declines from 0.93 under the chronic baseline (no heatwave) to
+roughly 0.69 to 0.92 under bleaching scenarios and to about 0.50 under a
+catastrophic 2023-scale event recurring every five years. All heatwave
+scenarios sit below the replacement threshold, so projected trajectories
+decline over the horizon, with quasi-extinction probability rising sharply as
+the heatwave return interval shortens.
+
+
+================================================================================
+SUPPLEMENTARY FIGURE S29
+================================================================================
+
+LEGEND:
+Fig. S29 Biological-realism scenario framework for Acropora palmata population
+growth. (a) Tornado plot of the change in population growth rate (delta lambda)
+relative to the baseline matrix (S0) when each biological mechanism is layered
+in individually and when all are combined. (b) Share of recruit (SC1) inflow
+attributable to the sexual versus fragmentation pathway under each scenario.
+(c) Fifty-year projection trajectories of total colony number (log scale) by
+scenario. (d) Probability of quasi-extinction at 20-year and 50-year horizons
+by scenario.
+
+METHODS:
+Starting from the published baseline matrix (lambda = 0.9613), nine scenarios
+layer literature-sourced mechanisms onto the vital rates: sexual fecundity with
+a size threshold, sterility lag, lesion penalty, outplant-age survival decay,
+winter sea-surface-temperature effects, depensatory corallivory at small sizes,
+microhabitat (depth) refugia, and an all-combined scenario. Each scenario
+recomputes lambda, the SC5 elasticity, the sexual pathway contribution, and
+quasi-extinction probability.
+
+RESULTS:
+The outplant-age survival penalty is the strongest single driver (delta lambda
+= -0.126, lambda = 0.836), while depth refugia is the strongest positive single
+driver (delta lambda = +0.064, lambda = 1.026). With all mechanisms combined,
+the population crosses the replacement threshold (delta lambda = +0.094, lambda
+= 1.055) and quasi-extinction risk falls to near zero. When sexual reproduction
+is active, the sexual pathway supplies roughly 98 percent of recruit inflow,
+underscoring how sensitive projected viability is to fecundity assumptions.
+
+
+================================================================================
 METHODOLOGICAL LIMITATIONS
 ================================================================================
 
