@@ -53,7 +53,7 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
 | Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=17/22 effects), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
-| Supp Figures | 20, 20c, 21, 23-28 | FigS1-S20 |
+| Supp Figures | 18, 20c, 21, 23-28 | FigS1-S15 + S21 (disturbance/temporal/biological-realism phases below add S16-S29; FigS27 intentionally vacant) |
 | Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS22) |
 | Biological Realism | 50-61 | 9-scenario sensitivity framework: sexual fecundity (Vardi 2011, Mendoza-Quiroz 2023), sterility lag (Lirman 2000a), lesion penalty (Piñón-González 2018), outplant decay (Boisvert 2024), winter SST, depensatory corallivory (Williams 2012), depth refugia → FigS29 |
 | Verification | 23_verification | Pipeline integrity checks |
@@ -204,7 +204,7 @@ All outputs follow consistent naming patterns. See `06_analysis/output/README.md
 | Directory | Pattern | Use |
 |-----------|---------|-----|
 | `figures/manuscript/` | `Fig{N}_{snake_case}.{pdf,png}` | Main text (Fig1-Fig4) |
-| `figures/supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | Numbered supplementary (FigS1-FigS28) |
+| `figures/supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | Numbered supplementary (FigS1-FigS29; FigS27 intentionally vacant) |
 | `figures/supplementary/exploratory/` | `{snake_case}.{pdf,png}` | Unnumbered exploratory/diagnostic |
 | `figures/supplementary/diagnostics/` | `{snake_case}.png` | Base R model diagnostics |
 | `figures/supplementary/meta_analysis/` | `{prefix}_{snake_case}.{pdf,png}` | Meta-analysis diagnostics |

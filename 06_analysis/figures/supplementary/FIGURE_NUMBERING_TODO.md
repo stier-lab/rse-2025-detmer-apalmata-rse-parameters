@@ -1,8 +1,8 @@
 # Supplementary Figure Numbering
 
-**STATUS: RESOLVED** (April 16, 2026)
+**STATUS: RESOLVED** (updated 2026-06-03)
 
-All collisions fixed, all placeholders assigned. Final numbering: FigS1–FigS28.
+All collisions fixed. Final numbering: FigS1–FigS29, with **FigS27 intentionally vacant** (former orphan placeholder removed 2026-04-24; FigS28/FigS29 kept at their original numbers to avoid renumbering ~43 downstream cross-references). The supplement therefore contains 28 figures whose highest label is S29.
 
 | Range | Content |
 |-------|---------|
@@ -14,6 +14,8 @@ All collisions fixed, all placeholders assigned. Final numbering: FigS1–FigS28
 | FigS16–FigS20 | Shrinkage, disturbance interaction, disturbance summary, restoration subtypes, time series |
 | FigS21 | Meta-analysis forest plots (was FigS8 collision) |
 | FigS22 | Heatwave scenarios (was FigS15 collision) |
-| FigS23–FigS28 | Disturbance timeline, heat stress, disturbance sensitivity, natural vs restoration extended, disturbance summary, temporal synthesis |
+| FigS23–FigS26 | Disturbance timeline, heat stress survival, disturbance sensitivity, natural vs restoration comparison |
+| FigS27 | *Intentionally vacant* (see status note above) |
+| FigS28–FigS29 | Temporal synthesis; biological-realism scenarios |
 
-See `06_analysis/scripts/utils/01_functions.R` canonical registry for the definitive mapping.
+See `06_analysis/scripts/utils/01_functions.R` (canonical registry) and `07_reporting/manuscript/figure_table_map.md` for the definitive script-to-figure mapping.
