@@ -11,7 +11,7 @@ A synthesis of all existing *Acropora palmata* (Elkhorn Coral) demographic data 
 
 We compiled ~12,000 individual-level observations from 7 studies (including the newly added Neely et al. 2022 FKNMS dataset: 878 colonies, FL Keys 2010-2016) plus 10 additional summary-level studies (17 unique studies contributing 22 study-level effects) across 13 Caribbean regions. The data are standardized to a common size metric (live planar tissue area, cm^2) and analyzed using GAMs, GLMMs, and random-effects meta-analysis. A Lefkovitch population projection matrix translates the size-dependent vital rates into a population growth rate (lambda) and elasticity analysis.
 
-The web platform lives in a separate repo: [stier-lab/Detmer-2025-coral-platform](https://github.com/stier-lab/Detmer-2025-coral-platform).
+This repo is the **empirical parameter source** for the restoration decision-support work. The sibling repo [stier-lab/Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) holds the Restoration Strategy Evaluation model and the interactive web app (`coral-app/`); its R analyses read the demographic parameters produced here and expect this repo cloned alongside it at `../Detmer-2025-coral-parameters/`. (The earlier `Detmer-2025-coral-platform` first-pass app is archived — point readers to coral-RSE, not it.)
 
 ---
 

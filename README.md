@@ -7,7 +7,7 @@ R analysis pipeline for a **population viability assessment** of *Acropora palma
 
 **Central question:** How do *Acropora palmata* survival and growth vary with colony size across the Caribbean, and what does this mean for population viability under chronic disturbance and restoration?
 
-> **Interactive Platform**: An interactive web tool for exploring this data is available in a [separate repository](https://github.com/stier-lab/Detmer-2025-coral-platform).
+> **Restoration Strategy Evaluation & interactive tool**: The sibling repo [stier-lab/Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) builds on these parameters with the RSE decision-support model and an interactive web app (`coral-app/`). Its R analyses read the demographic estimates produced here and expect this repo cloned alongside at `../Detmer-2025-coral-parameters/`. (The earlier `Detmer-2025-coral-platform` first-pass app is archived.)
 
 > **Design Philosophy**: Transparency over false precision. Given extreme heterogeneity across studies, the repo defaults to stratified views, explicit uncertainty, and clear separation between canonical manuscript outputs, supporting analyses, and exploratory extensions.
 
@@ -352,8 +352,9 @@ For figure numbering and manuscript-facing build targets, use [07_reporting/manu
 
 ## Related
 
-- **Interactive Platform**: [stier-lab/Detmer-2025-coral-platform](https://github.com/stier-lab/Detmer-2025-coral-platform) — React + R Plumber web app for exploring this data
+- **Restoration Strategy Evaluation repo**: [stier-lab/Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) — RSE decision-support model plus the `coral-app/` interactive web tool; reads the demographic parameters produced here (expects this repo cloned alongside at `../Detmer-2025-coral-parameters/`)
 - **Target Journal**: *Coral Reefs* (Springer)
+- *Archived:* `stier-lab/Detmer-2025-coral-platform` — superseded first-pass web app; use coral-RSE instead
 
 ---
 
