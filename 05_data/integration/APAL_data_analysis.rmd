@@ -36,16 +36,59 @@ histograms or ridgeline plots (separate for each size class?) where x = proporti
 
 ```{r}
 
-apal_surv_ind <- read.csv("../../standardized_data/apal_surv_ind.csv") # individual survival
-apal_growth_ind <- read.csv("../../standardized_data/apal_growth_ind.csv") # individual growth rates
+apal_surv_ind <- read.csv("../standardized/apal_surv_ind.csv") # individual survival
+apal_growth_ind <- read.csv("../standardized/apal_growth_ind.csv") # individual growth rates
 
-apal_surv_summ <- read.csv("../../standardized_data/apal_surv_summ.csv") # survival from studies that didn't report individual size data
-apal_growth_summ <- read.csv("../../standardized_data/apal_growth_summ.csv") # growth rates from studies that didn't report size individual data
+apal_surv_summ <- read.csv("../standardized/apal_surv_summ.csv") # survival from studies that didn't report individual size data
+apal_growth_summ <- read.csv("../standardized/apal_growth_summ.csv") # growth rates from studies that didn't report size individual data
 
 
 # update sizes for the individual data (use live cm2 where available; if unavailable then just use skeletal cm2 and assume 100% live cover)
 apal_surv_ind <- apal_surv_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
 apal_growth_ind <- apal_growth_ind %>% mutate(size_cm2_1  = if_else(is.na(size_live_cm2)==F, size_live_cm2, size_cm2))
+
+```
+
+
+NEW: calculate upper bound of size class five
+
+```{r}
+# midpoint of SC5: use the 50% quantile of all size class 5 colonies with individual size data
+
+# View(apal_surv_ind)
+# 
+# View(apal_growth_ind)
+# 
+# colnames(apal_surv_ind)[1:14]
+# colnames(apal_growth_ind)[1:14]
+# 
+# max(apal_surv_ind$size_live_cm2, na.rm = T)
+# max(apal_growth_ind$size_live_cm2, na.rm = T)
+# 
+# max(apal_surv_ind$size_cm2_1, na.rm = T)
+# max(apal_growth_ind$size_cm2_1, na.rm = T)
+
+
+# all the rows that are the same with SC5 corals
+same_corals <- inner_join(apal_surv_ind[,1:14], apal_growth_ind[,1:14]) %>% filter(size_live_cm2 >= 4000)
+
+# all the rows that are distinct with SC5 corals
+diff_corals1 <- anti_join(apal_surv_ind[,1:14], apal_growth_ind[,1:14]) %>% filter(size_live_cm2 >= 4000)
+diff_corals2 <- anti_join(apal_growth_ind[,1:14], apal_surv_ind[,1:14]) %>% filter(size_live_cm2 >= 4000)
+
+# View(same_corals)
+# 
+# View(diff_corals2)
+
+# get all the SC5 coral sizes
+
+SC5_sizes <- c(same_corals$size_live_cm2, diff_corals1$size_live_cm2, diff_corals2$size_live_cm2)
+
+quantile(SC5_sizes, 0.5)
+
+hist(SC5_sizes)
+# abline(v = quantile(SC5_sizes, 0.5))
+
 
 ```
 
