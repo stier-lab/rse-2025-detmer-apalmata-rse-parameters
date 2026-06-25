@@ -412,7 +412,13 @@ SC_surv_results <- lapply(1:5, function(i) {
   sc <- SIZE_LABELS[i]
   boot_dist <- boot_survival_by_sc[, i]
   list(
-    mean = mean(boot_dist),
+    # Central value = canonical rma point estimate (same as surv_summary and the
+    # transition matrix), NOT mean(boot_dist). For SC1 (k=3 studies) the
+    # back-transformed bootstrap is right-skewed, so its mean sits ~7pp above the
+    # pooled point estimate; using it made $SC_surv_summ_df$mean (what the RSE
+    # model consumes) disagree with $surv_summary$mean. The bootstrap distribution
+    # still supplies sd, CIs, and the Q05-Q95 quantiles below.
+    mean = surv_by_class$survival[i],
     sd = sd(boot_dist),
     ci_lower = quantile(boot_dist, 0.025),
     ci_upper = quantile(boot_dist, 0.975),
