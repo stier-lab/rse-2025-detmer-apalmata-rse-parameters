@@ -22,8 +22,8 @@ The current *A. palmata* synthesis (`06_analysis/scripts/13_transition_matrix.R`
 ## 2. Objectives
 
 **Primary:**
-- Implement 7 biological-realism extensions as composable scenario toggles
-- Report λ, P(decline), quasi-extinction time, SC5 elasticity, and sexual-replacement fraction for 9 scenarios (baseline + 7 individual + 1 all-combined)
+- Implement 8 biological-realism extensions as composable scenario toggles (S6 depensatory corallivory OFF by default — data-thin; S9 fertilization Allee is an assumption sweep)
+- Report λ, P(decline), quasi-extinction time, SC5 elasticity, and sexual-replacement fraction for 10 scenarios (baseline + 8 individual + 1 all-combined)
 - Produce a tornado-plot supplementary figure ranking assumptions by Δλ magnitude
 
 **Secondary:**
@@ -69,10 +69,15 @@ No changes. Reproduces λ = 0.961 (CI: 0.816–1.010), P(decline) = 94.3%.
 - **Citations:** Rosales et al. 2024 (microbiome stability threshold 31°C; LHP row 34); Rodriguez-Martinez 2014 (disease prevalence by size; LHP rows 19-20).
 - **Implementation:** Extract Jan-Mar monthly mean SST per region centroid from NOAA OI SST v2, compute anomaly vs 1981-2010 baseline. Fit GLM: survival ~ log_size × winter_anomaly + (1|study), using data from 2004-2023. Refit survival vector for disease-epizootic years.
 
-### S6 — Depensatory corallivory (Allee effect)
-- **Hypothesis:** Small-colony survival is density-dependent; at low population densities, *Coralliophila* snails and corallivorous fish concentrate on remaining colonies, driving depensatory mortality that creates a hidden extinction threshold.
-- **Citations:** Williams 2012 (Coralliophila 16 cm²/day consumption; 27% background loss with <2 snails; LHP rows 22-23).
-- **Implementation:** Density-dependent hazard for SC1-SC2: S(D) = S₀ × D/(K+D), where D is local coral density (study × year × group_N proxy) and K is fit via profile-likelihood on SC1-SC2 survival variance across studies. Sensitivity reported over K ∈ {0.5, 1, 2, 4} × observed median.
+### S6 — Depensatory corallivory (Allee effect) — **OFF BY DEFAULT (data-thin; discussion/sensitivity only)**
+- **Status (2026-07-21):** kept as a toggleable option but **NOT enabled in any headline result**. On close reading, the causal claim this scenario needs — *low coral density → higher small-colony mortality* — is **NOT established** in the source. Treat as an illustrative sensitivity, not a supported mechanism.
+- **Hypothesis:** Small-colony survival is density-dependent; at low population densities, *Coralliophila* snails concentrate on remaining colonies, driving depensatory mortality.
+- **What Williams & Miller 2012 actually supports (verified against the paper):**
+  - GROUNDED: snails *concentrate* as coral declines — snail density per m² LAI rose (p<0.0001, r²=0.68) while total snail count stayed flat (p=0.28; Fig 4). Correlational (coral declined from hurricane/disease; snails packed onto less tissue).
+  - HEDGED AGAINST: absolute snail tissue loss stayed ~constant (~0.7 m²/survey), "chronic and **somewhat independent of A. palmata abundance**"; and colony performance "**could not be definitively linked to snail occupation**." Predation only "**likely** to be inversely density dependent."
+  - So the only depensation shown is arithmetic (constant loss ÷ shrinking base → rising *proportion*), NOT a measured rise in per-colony mortality *rate* at low density.
+- **Citations:** Williams & Miller 2012 (Fig 4 concentration; "27% of *background* live-area loss with <2 snails/colony"). Consumption rate **16 cm²/day is Brawley & Adey 1982** (cited within Williams & Miller); Miller 2001 gives 3.37 cm²/day per occupied colony.
+- **Implementation (if enabled):** `S(D)=S₀×D/(K+D)` on SC1-SC2 (script 58) — functional form and K are **modeling assumptions, not fit** (K arbitrary; swept K ∈ {0.5,1,2,4}×median). Report as an assumption sweep only.
 
 ### S7 — Microhabitat / depth / flow
 - **Hypothesis:** Depth and wave-exposure modulate size-survival; high-flow/shallow forereef refugia dissipate heat stress and buffer disturbance (Ramos-Romero 2025 Cuba, Kuffner 2020 Dry Tortugas).
@@ -81,6 +86,13 @@ No changes. Reproduces λ = 0.961 (CI: 0.816–1.010), P(decline) = 94.3%.
 
 ### S8 — All combined
 - **Implementation:** Apply all of S1-S7 simultaneously to a single projection matrix. This scenario tests for multiplicative interactions (e.g., does density-dependence × sterility-lag produce greater-than-additive effects?).
+
+### S9 — Fertilization Allee (density-dependent reproduction) — **assumption sweep, ON as a sensitivity**
+- **Hypothesis:** *A. palmata* is a self-incompatible broadcast spawner, so realised fertilization collapses when compatible spawners are sparse (sperm dilution). Unlike S6 (survival-side, data-thin), this is a *reproduction-side* Allee and is the leading mechanistic explanation for chronic recruitment failure.
+- **Empirical footing (honest):** NO fitted *A. palmata* fertilization-vs-density curve exists (`recruitment_fecundity_scope_note.md`; NotebookLM "Density-Dependent Coral Biology"). Only anchor is **Baums et al. 2006**: sexually-recruiting stands 0.30±0.21 col/m²; depauperate stands 0.13±0.08 col/m². Self-incompatibility → ρ is *compatible-genotype* density.
+- **Implementation (script 59b):** `fertilization_realised = fertilization × φ(ρ)`, `φ(ρ)=ρ/(ρ+h)` (Michaelis-Menten, same form as S6). Half-saturation **h is SWEPT: {0.05,0.10,0.15,0.30} col/m²** (never fit). Evaluated at ρ ∈ {collapsed 0.05, sparse 0.13, dense 0.30, reserve 1.0}. Exports the φ table for the RSE strategy model (`fertilization_allee_phi_rse.csv`).
+- **Result (λ scale):** small — even the strongest Allee (h=0.30, collapsed φ=0.14) moves λ only 0.972→0.963, because sexual recruitment is a minor λ contributor (SETTLEMENT_EFFICIENCY=1e-4; asexual fragmentation dominates). **The real lever is larval OUTPUT for reseeding (RSE reserve question), where φ directly gates whether a sparse reef can self-seed — not asymptotic λ.**
+- **Reporting rule:** "a broodstock reserve / dense outplanting pays *only if* the fertilization half-saturation h exceeds [X]" — never a calibrated φ.
 
 ### Flagged but not implemented (Discussion only)
 
@@ -100,17 +112,18 @@ No changes. Reproduces λ = 0.961 (CI: 0.816–1.010), P(decline) = 94.3%.
 | S3 +Lesion penalty | ✓ | ✓ (1+2+3) | — | Lower than S2 | Piñón-González 2018 |
 | S4 +Outplant age | ✓ | — | age covariate | Lower for restoration-weighted studies | Boisvert et al. 2024 |
 | S5 +Winter SST | ✓ | — | winter anomaly | Increased variance; size-biased | Rosales 2024, Rodriguez-Martinez 2014 |
-| S6 +Depensatory | ✓ | — | density-dep SC1-2 | Nonlinear; larger CI | Williams 2012 |
+| S6 +Depensatory | ✓ (OFF by default) | — | density-dep SC1-2 (assumption; not fit) | Nonlinear; larger CI | Williams & Miller 2012 (concentration pattern only) |
 | S7 +Microhabitat | ✓ | — | depth covariate | Reduced heterogeneity | Ramos-Romero 2025 |
 | S8 All combined | ✓ | ✓ (1+2+3) | all modifiers | Maximal realism | — |
+| S9 +Fertilization Allee | ✓ | ✓ (1)×φ(ρ) | — | Small on λ (sexual minor); large on larval output/reseeding | Baums 2006 (density anchor); h SWEPT |
 
 ## 5. Acceptance criteria
 
 **Technical:**
 - [ ] `Rscript 06_analysis/scripts/run_all.R` completes without error
 - [ ] S0 reproduces current published λ = 0.961 within 1e-3 tolerance
-- [ ] All 9 scenarios produce numeric λ, CI, P(decline), QE_time
-- [ ] `biological_realism_scenarios.csv` has 9 rows × 8 columns
+- [ ] All 10 scenarios produce numeric λ, CI, P(decline), QE_time
+- [ ] `biological_realism_scenarios.csv` has 10 rows × 8 columns
 - [ ] FigS29 renders at 174 mm (submission-ready)
 - [ ] Every new script passes `Rscript -e "parse('...')"` syntax check
 - [ ] No new warnings introduced in existing scripts (Fig 1-4 outputs unchanged)
@@ -142,7 +155,7 @@ No changes. Reproduces λ = 0.961 (CI: 0.816–1.010), P(decline) = 94.3%.
 | NOAA OI SST API unavailable or slow | Medium | Cache locally to `05_data/external/noaa_oi_sst/`; script 51 checks cache first |
 | `years_since_outplant` derivation wrong when first-observation ≠ true outplant date | Medium | Cross-check against study metadata (Pausch 2018 documented outplant date); add per-study overrides |
 | Depensatory K calibration arbitrary | High | Report sensitivity across K ∈ {0.5, 1, 2, 4} × median in FigS29; do not commit to single value |
-| 9-scenario table looks like p-hacking | Medium | Every parameter is pre-specified from literature; no free parameters fit to our data. Include "pre-registration"-style note in the Results |
+| 10-scenario table looks like p-hacking | Medium | Every parameter is pre-specified from literature; no free parameters fit to our data. Include "pre-registration"-style note in the Results |
 | Adding 12 scripts pushes pipeline past 90 min | Low | Scripts 50-59 are independent; run_all.R can parallelize |
 | S8 combined reveals interaction larger than each individual effect | High (interpretively) | Report explicitly; this is a finding not a bug |
 
@@ -186,7 +199,7 @@ Rscript -e "m <- readRDS('06_analysis/output/transition_matrix.rds'); cat('λ ='
 
 # Scenario output check
 Rscript -e "s <- read.csv('06_analysis/output/biological_realism_scenarios.csv'); print(s[, c('scenario','lambda','p_decline','sc5_elasticity')])"
-# expect 9 rows with monotone shifts
+# expect 10 rows with monotone shifts
 
 # Figure render
 ls -la 06_analysis/figures/supplementary/FigS29_biological_realism.{png,pdf}

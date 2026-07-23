@@ -158,6 +158,8 @@ scripts <- c(
   "35_curate_literature_scope.R",
   "36_shrinkage_retrogression_summary.R",
   "37_disturbance_size_interaction.R",
+  "37b_disturbance_type_size_interaction.R",
+  "37c_rse_size_multipliers.R",
   "38_study_window_disturbance_audit.R",
   "39_restoration_subtype_sensitivity.R",
   # 40: Heatwave scenarios (Manzello 2025)
@@ -184,6 +186,7 @@ scripts <- c(
   "57_winter_sst_survival_model.R",
   "58_depensatory_corallivory_layer.R",
   "59_microhabitat_depth_model.R",
+  "59b_fertilization_allee_layer.R",
   "60_scenario_comparison.R",
   "61_fig_biological_realism.R",
   # Verification
@@ -243,6 +246,8 @@ script_descriptions <- c(
   "Literature scope curation",
   "Shrinkage and retrogression synthesis",
   "Disturbance-by-size interaction analysis",
+  "FigS30: Disturbance-TYPE by size class (storm/disease/heatwave)",
+  "Export RSE-ready per-type size-survival multipliers (disease/storm/thermal)",
   "Study-window disturbance audit",
   "Restoration subtype sensitivity analysis",
   # 40: Heatwave scenarios
@@ -269,7 +274,8 @@ script_descriptions <- c(
   "Fit winter-SST survival GLMM (disease epizootic proxy)",
   "Build depensatory corallivory hazard layer (SC1-SC2)",
   "Fit depth covariate survival GLMM (microhabitat refugia)",
-  "9-scenario comparison (S0-S8): lambda + sexual/asexual share",
+  "Fertilization Allee layer (S9): density-dependent phi(rho) sweep + RSE export",
+  "10-scenario comparison (S0-S9): lambda + sexual/asexual share",
   "FigS29: tornado plot + pathway share + 50-yr projection",
   # Verification
   "Pipeline verification",

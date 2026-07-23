@@ -1,0 +1,2 @@
+interaction_lrt_chisq,interaction_lrt_df,interaction_lrt_p,overdispersion_ratio,slope_none,slope_disease,slope_storm,storm_vs_none_slope_p,disease_vs_none_slope_p,heatwave_dhwXsize_beta,heatwave_dhwXsize_p,n_natural,n_heatwave
+18.692364559519774,2,8.729806330230845e-5,0.9658854649506972,0.39449731557705364,0.4455179664552581,0.1463392775997807,7.943800877885118e-5,0.251396893990754,-0.042130416440026866,0.09335371512246352,6620,1994

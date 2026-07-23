@@ -7,11 +7,19 @@
 #   produce three revised survival vectors under low / median / high colony
 #   densities, for the scenario-comparison pipeline (script 60).
 #
+# STATUS (2026-07-21): OFF BY DEFAULT / data-thin. Kept as a toggleable sensitivity
+#   option only. The causal link this layer encodes (low coral density -> higher
+#   SC1-SC2 mortality RATE) is NOT established in the source; Williams & Miller
+#   2012 show only that snails CONCENTRATE as coral declines (Fig 4, correlational)
+#   and explicitly state absolute snail loss is "chronic and somewhat independent
+#   of A. palmata abundance" and "could not be definitively linked to snail
+#   occupation." The S(D)=S0*D/(K+D) form and K are modeling ASSUMPTIONS, not fit.
+#
 # CITATION:
-#   Williams 2012 -- Coralliophila abbreviata feeding rate ~16 cm^2/day;
-#   approximately 27% background colony loss when fewer than 2 snails per
-#   colony; disproportionate small-colony impact on low-density stands.
-#   See apal_life_history_parameters.csv rows 22-23.
+#   Williams & Miller 2012 -- 27% of *background* live-area loss with <2 snails/
+#   colony; snail-per-coral density rises as coral declines (Fig 4). Consumption
+#   16 cm^2/day is Brawley & Adey 1982 (in Williams & Miller); Miller 2001 = 3.37
+#   cm^2/day per occupied colony. See apal_life_history_parameters.csv rows 22-23.
 #
 # HYPOTHESIS:
 #   Small (SC1-SC2) colony survival saturates with overall colony density

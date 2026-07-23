@@ -1,7 +1,7 @@
 # Project Guide
 
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis
-**Tech:** R 4.3+ | 69 analysis scripts | Target journal: *Coral Reefs* (Springer)
+**Tech:** R 4.3+ | 71 analysis scripts | Target journal: *Coral Reefs* (Springer)
 
 ---
 
@@ -53,9 +53,9 @@ All scripts live in `06_analysis/scripts/` and read data from `05_data/`.
 | Robustness | 08-12 | Climate, power, cross-validation, context comparison, model selection |
 | Synthesis | 13-17, 14b | Transition matrix, meta-analysis (k=5 and k=17/22 effects), sensitivity |
 | Main Figures | 18, 19, 20b, 22 | 4 manuscript figures (Fig 1-4) |
-| Supp Figures | 18, 20c, 21, 23-28 | FigS1-S15 + S21 (disturbance/temporal/biological-realism phases below add S16-S29; FigS27 intentionally vacant) |
+| Supp Figures | 18, 20c, 21, 23-28 | FigS1-S15 + S21 (disturbance/temporal/biological-realism phases below add S16-S30; FigS27 intentionally vacant) |
 | Heatwave Scenarios | 40 | Manzello 2025 dose-response + catastrophic heatwave projections (FigS22) |
-| Biological Realism | 50-61 | 9-scenario sensitivity framework: sexual fecundity (Vardi 2011, Mendoza-Quiroz 2023), sterility lag (Lirman 2000a), lesion penalty (Piñón-González 2018), outplant decay (Boisvert 2024), winter SST, depensatory corallivory (Williams 2012), depth refugia → FigS29 |
+| Biological Realism | 50-61 | 10-scenario sensitivity framework (S0-S9): sexual fecundity, sterility lag, lesion penalty, outplant decay, winter SST, depensatory corallivory (S6, OFF by default - data-thin), depth refugia, and fertilization Allee (S9, script 59b, assumption sweep). See biological_realism_PRD.md |
 | Verification | 23_verification | Pipeline integrity checks |
 | Orchestrator | run_all | Runs everything in sequence |
 
@@ -128,7 +128,7 @@ Never use `"SC1_recruit"`, `"SC1 (0-10)"`, or other variants in analysis code.
 | `06_analysis/output/winter_sst_survival.rds` | Script 57 | Winter SST × size survival GLMM (ERSST v5 anomalies) |
 | `06_analysis/output/depensatory_corallivory.rds` | Script 58 | Density-dependent SC1/SC2 survival (Williams 2012) |
 | `06_analysis/output/microhabitat_depth_survival.rds` | Script 59 | Depth covariate survival GLMM |
-| `06_analysis/output/biological_realism_scenarios.csv` | Script 60 | 9-scenario summary: lambda, delta_lambda, elasticity, sexual contribution % |
+| `06_analysis/output/biological_realism_scenarios.csv` | Script 60 | 10-scenario (S0-S9) summary: lambda, delta_lambda, elasticity, sexual contribution % |
 | `05_data/standardized/apal_outplant_age.csv` | Script 50 | years_since_outplant per coral_id |
 | `05_data/standardized/apal_lesion_state.csv` | Script 52 | Per-colony lesion flag from tissue-loss intervals |
 | `05_data/standardized/winter_sst_anomalies.csv` | Script 51 | Winter SST anomalies per region × year (ERSST v5) |
@@ -204,7 +204,7 @@ All outputs follow consistent naming patterns. See `06_analysis/output/README.md
 | Directory | Pattern | Use |
 |-----------|---------|-----|
 | `figures/manuscript/` | `Fig{N}_{snake_case}.{pdf,png}` | Main text (Fig1-Fig4) |
-| `figures/supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | Numbered supplementary (FigS1-FigS29; FigS27 intentionally vacant) |
+| `figures/supplementary/` | `FigS{N}_{snake_case}.{pdf,png}` | Numbered supplementary (FigS1-FigS30; FigS27 intentionally vacant) |
 | `figures/supplementary/exploratory/` | `{snake_case}.{pdf,png}` | Unnumbered exploratory/diagnostic |
 | `figures/supplementary/diagnostics/` | `{snake_case}.png` | Base R model diagnostics |
 | `figures/supplementary/meta_analysis/` | `{prefix}_{snake_case}.{pdf,png}` | Meta-analysis diagnostics |
@@ -287,5 +287,5 @@ Rscript 61_fig_biological_realism.R # Emits FigS29
 | `04_extraction/data_integration_issues.md` | Individual vs. summary data integration: issues, resolution, comparison |
 | `04_extraction/data_flow_diagram.md` | Mermaid diagram of the full data pipeline (individual + summary survival) |
 | `07_reporting/manuscript/figure_legends.txt` | Figure legends, methods, results text |
-| `07_reporting/manuscript/figure_table_map.md` | Script → figure filename map (FigS1–FigS29) |
-| `07_reporting/internal/biological_realism_PRD.md` | Biological-realism scenario framework PRD: 9 scenarios, hypothesis-to-citation map, acceptance criteria |
+| `07_reporting/manuscript/figure_table_map.md` | Script → figure filename map (FigS1–FigS30) |
+| `07_reporting/internal/biological_realism_PRD.md` | Biological-realism scenario framework PRD: 10 scenarios (S0-S9), hypothesis-to-citation map, acceptance criteria |

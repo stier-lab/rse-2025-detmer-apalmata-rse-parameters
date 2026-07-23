@@ -17,7 +17,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 
 ---
 
-## Supplementary Figures (FigS1--FigS29)
+## Supplementary Figures (FigS1--FigS30)
 
 | Figure | Script | Output filename | Notes |
 |--------|--------|-----------------|-------|
@@ -49,6 +49,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 | FigS26 — Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison` | |
 | FigS28 — Temporal synthesis | `49b_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis` | Gap at FigS27: removed 2026-04-24 (former orphan placeholder, content duplicated FigS18). FigS28/FigS29 retained at original numbers to avoid renumbering 43 cross-refs. |
 | FigS29 — Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism` | 9-scenario sensitivity framework: tornado plot of Δλ, sexual vs fragmentation pathway share, 50-yr projection trajectories |
+| FigS30 — Disturbance TYPE x size class | `37b_disturbance_type_size_interaction.R` | `FigS30_disturbance_type_size` | Storm flattens the size-survival slope; disease is a level shift (SC2-SC3 hit hardest); heatwave gradient persists at moderate DHW, compresses at severe. Extends FigS17 (which used generic disturbance states) to typed storm/disease/heatwave. |
 
 All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S29) and are saved as both PNG and PDF.
 

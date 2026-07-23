@@ -1,9 +1,9 @@
 ################################################################################
-# 60_scenario_comparison.R - 9-scenario biological realism comparison
+# 60_scenario_comparison.R - 10-scenario biological realism comparison
 ################################################################################
 #
 # PURPOSE:
-#   Assemble the 9 scenarios (S0-S8) defined in biological_realism_PRD.md and
+#   Assemble the 10 scenarios (S0-S9) defined in biological_realism_PRD.md and
 #   compute lambda, elasticity shares, and sexual-vs-asexual replacement for
 #   each. Emit a single scenario-summary CSV that drives FigS29.
 #
@@ -30,7 +30,7 @@
 
 source("06_analysis/scripts/utils/shared_utilities.R")
 
-print_header("Script 60: Scenario comparison (S0-S8)")
+print_header("Script 60: Scenario comparison (S0-S9)")
 
 # --- Load baseline ---
 tm <- readRDS("06_analysis/output/transition_matrix.rds")
@@ -149,6 +149,13 @@ run_one <- function(name, label, S, F_sex_use = NULL) {
        S = S, F_sex = F_sex_use)
 }
 
+# S9 fertilization Allee: scale sexual fecundity by phi(rho) at a representative
+# sparse reef (Baums 2006 depauperate density rho=0.13 col/m^2) with mid-sweep
+# half-saturation h=0.15. Full h x rho sweep is in script 59b / fertilization_allee.rds.
+# F_sex here is already SETTLEMENT_EFFICIENCY-scaled (above).
+phi_S9   <- 0.13 / (0.13 + 0.15)          # ~0.464
+F_sex_s9 <- F_sex * phi_S9
+
 # --- Define scenarios ---
 scenarios <- list(
   run_one("S0", "Baseline",                  S_base),
@@ -159,7 +166,8 @@ scenarios <- list(
   run_one("S5", "+Winter SST",               S_winter_sst),
   run_one("S6", "+Depensatory (corallivory)", S_dep),
   run_one("S7", "+Microhabitat (depth)",     S_depth),
-  run_one("S8", "All combined",              S_depth,   F_sex_s3)
+  run_one("S8", "All combined",              S_depth,   F_sex_s3),
+  run_one("S9", "+Fertilization Allee (sparse reef)", S_base, F_sex_s9)
 )
 
 # --- Compute per-scenario metrics ---

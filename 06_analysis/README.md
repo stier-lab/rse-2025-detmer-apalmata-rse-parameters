@@ -10,6 +10,9 @@ This directory contains the maintained analytical surface for the *Acropora palm
   Generated result files, canonical prefixes, and interpretation notes.
 - [figures/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/figures/README.md)
   Canonical manuscript and supplementary figures plus support-only variants.
+- [DISTURBANCE_SIZE_DEPENDENCE.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/DISTURBANCE_SIZE_DEPENDENCE.md)
+  How disturbance reshapes the size–survival relationship (scripts 37/37b), and the RSE-ready per-type
+  size multipliers (37c) consumed by the `Detmer-2025-coral-RSE` strategy model.
 
 ## Directory Roles
 

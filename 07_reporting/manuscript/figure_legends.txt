@@ -721,6 +721,56 @@ underscoring how sensitive projected viability is to fecundity assumptions.
 
 
 ================================================================================
+SUPPLEMENTARY FIGURE S30
+================================================================================
+
+LEGEND:
+Fig. S30 Different disturbance types reshape the size-survival relationship of
+Acropora palmata in distinct ways. (a) Model-predicted annual survival versus
+colony size (log scale) under no disturbance, disease, and storm, with observed
+size-class survival overlaid (point area proportional to sample size). (b)
+Change in annual survival relative to the undisturbed baseline, by size class,
+for disease and storm (percentage points; the faded storm SC1 bar is n = 2 and
+uninterpretable). (c) Observational thermal-stress panel: annual survival by
+size class under moderate (DHW < 10) versus severe (DHW >= 10) bleaching-year
+conditions (Wilson 95% intervals). Analysis is restricted to natural colonies.
+
+METHODS:
+Storm and disease were attributed at the colony level from the survival
+`disturbance` field (storm = NOAA intervals; disease = Neely 2014 FKNMS
+catastrophe plus aftermath); both source studies also contribute undisturbed
+intervals, so type effects are partly identified within study via a study random
+effect but remain confounded with region and method. A binomial GLMM
+(`survived ~ log_size * disturbance_type + (1|study)`) tested whether the
+size-survival slope differed by type; slopes and contrasts were formed as linear
+combinations of the fixed effects. Heatwave exposure was attributed
+observationally by overlapping survival study-years with documented bleaching
+events and their satellite DHW (range midpoints); disease-flagged colonies were
+excluded to avoid the 2014 disease/thermal confound, and a
+`survived ~ log_size * DHW` GLMM tested whether the size advantage erodes with
+heat.
+
+RESULTS:
+The size-by-type interaction is significant (LRT chi-sq = 18.7, df = 2,
+p = 8.7e-4; overdispersion ratio = 0.97). Storm flattens the size-survival slope
+from 0.39 to 0.15 log-odds per log-cm2 (storm vs baseline p = 1e-4): large
+colonies lose their survival advantage, consistent with mechanical breakage of
+branching morphology. Disease acts instead as a large downward level shift
+(intercept -2.26, p < 1e-4) with an essentially unchanged slope (disease vs
+baseline p = 0.25), so on the probability scale the largest absolute losses fall
+on SC2-SC3 (-44 and -35 percentage points) while large colonies retain a
+relative refuge; disease and storm slopes differ (p < 1e-4). The thermal panel
+is observational and weaker: the size gradient persists at moderate DHW (SC1 to
+SC5 survival 0.57 to 0.95) but compresses at severe DHW, with a marginal
+DHW-by-size interaction (beta = -0.042, p = 0.09). This synthesis's 2023 FL Keys
+survival is far higher than Manzello et al. (2025) reported (near-total
+mortality), indicating the monitoring data under-captures the catastrophe.
+Because the three types carry opposite size signatures, the size-uniform
+heatwave pulse used in the population model (script 40) is defensible only at
+catastrophic DHW; at moderate DHW it over-penalizes large colonies.
+
+
+================================================================================
 METHODOLOGICAL LIMITATIONS
 ================================================================================
 

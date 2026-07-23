@@ -12,9 +12,9 @@ For the script-by-script diagnostics and outstanding-issues review, see [model_a
 
 ## Numbering Scheme
 
-There are currently **69 top-level R scripts** in this directory. The numbered scripts define the main analytical surface; `00_*` helpers, `23_verification.R`, and `48_pipeline_refresh_audit.R` sit around that numbered core.
+There are currently **71 top-level R scripts** in this directory. The numbered scripts define the main analytical surface; `00_*` helpers, `23_verification.R`, and `48_pipeline_refresh_audit.R` sit around that numbered core.
 
-Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b variants) in pipeline execution order:
+Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b, 37b, 37c, 59b variants) in pipeline execution order:
 
 | Range | Category | Description |
 |-------|----------|-------------|
@@ -30,7 +30,7 @@ Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b variants) in
 | **41--47** | Advanced dynamic models | Multistate, joint longitudinal-survival, stochastic IPM, regime-switching, distributed-lag, recurrent-event, and spatiotemporal extensions |
 | **48** | Pipeline audit | Refresh pipeline manifests and generated reporting artifacts |
 | **49, 49b** | Temporal synthesis | Annual survival time series (49); temporal synthesis figure (49b_temporal_synthesis_figure.R — FigS28) |
-| **50--61** | Biological realism framework | 9-scenario sensitivity analysis (S0–S8) integrating sexual fecundity, sterility lag, lesion penalty, outplant-age decay, winter SST, depensatory corallivory, depth refugia → FigS29 |
+| **50--61** | Biological realism framework | 10-scenario sensitivity analysis (S0–S9) integrating sexual fecundity, sterility lag, lesion penalty, outplant-age decay, winter SST, depensatory corallivory (S6, OFF by default — data-thin), depth refugia, fertilization Allee (S9) → FigS29 |
 
 ## Canonical Entry Points
 
@@ -40,8 +40,8 @@ Scripts are numbered sequentially (00–61, with 14b, 20b, 20c, 31b variants) in
   Builds the prepared panels used by almost every downstream script and validates the maintained standardized inputs against [data_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/standardized/data_registry.csv).
 - `19_fig2_demographic_rates.R`, `20b_fig_expanded_forest_plot.R`, `22_fig6_population_model.R`
   Core manuscript-facing figure builders.
-- `34_disturbance_summaries.R`, `36_shrinkage_retrogression_summary.R`, `37_disturbance_size_interaction.R`, `38_study_window_disturbance_audit.R`, `39_restoration_subtype_sensitivity.R`
-  Completeness layer that supports the disturbance/restoration side of the paper.
+- `34_disturbance_summaries.R`, `36_shrinkage_retrogression_summary.R`, `37_disturbance_size_interaction.R`, `37b_disturbance_type_size_interaction.R`, `37c_rse_size_multipliers.R`, `38_study_window_disturbance_audit.R`, `39_restoration_subtype_sensitivity.R`
+  Completeness layer that supports the disturbance/restoration side of the paper. `37b`/`37c` type the size×disturbance signal and export the RSE-ready multipliers (see [`DISTURBANCE_SIZE_DEPENDENCE.md`](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/DISTURBANCE_SIZE_DEPENDENCE.md)).
 - `23_verification.R`, `48_pipeline_refresh_audit.R`
   Canonical stats/assertion generation plus the final inventory/artifact refresh layer that updates machine-readable reporting outputs.
 
@@ -192,6 +192,8 @@ These scripts carry the project's main nonlinearity work. Scripts `02`, `03`, an
 | `35_curate_literature_scope.R` | Scope-screen life-history and disturbance evidence tables into analysis-ready subsets | `*_analysis.csv` literature tables |
 | `36_shrinkage_retrogression_summary.R` | Standalone synthesis of shrinkage frequency, tissue loss, and retrogression probabilities by size class and study | `shrinkage_retrogression_*.csv`, `retrogression_probability_by_size_class.csv`, `FigS16_shrinkage_retrogression_summary.*` |
 | `37_disturbance_size_interaction.R` | Disturbance × size interaction analysis for survival and positive growth | `disturbance_size_*.csv`, `FigS17_disturbance_size_interaction.*` |
+| `37b_disturbance_type_size_interaction.R` | Disturbance **TYPE** × size interaction (storm/disease/heatwave): how each type reshapes the size–survival slope | `disturbance_type_size_*.csv`, `FigS30_disturbance_type_size.*` |
+| `37c_rse_size_multipliers.R` | Export RSE-ready per-type size-survival multipliers from the 37b fit (consumed by the `Detmer-2025-coral-RSE` strategy model) | `disturbance_type_size_multipliers_rse.csv` |
 | `38_study_window_disturbance_audit.R` | Rebuild and audit study-window overlaps with the curated disturbance timeline | `study_window_disturbance_*.csv`, `TableS2_study_window_disturbance_audit.md` |
 | `39_restoration_subtype_sensitivity.R` | Reclassify broad restoration fragments into defensible subtypes and summarize subtype-specific demography | `restoration_subtype_*.csv`, `FigS19_restoration_subtype_sensitivity.*` |
 | `40_manzello_heatwave_scenarios.R` | Layer catastrophic heatwave mortality thresholds onto the chronic demographic regime via scenario projections | `manzello_dose_response.csv`, `heatwave_scenario_*.csv`, `FigS22_heatwave_scenarios.*` |
@@ -220,7 +222,7 @@ These scripts push beyond the main GLMM + matrix-model surface. They are best tr
 
 ### 50--61 -- Biological Realism Scenario Framework
 
-A 9-scenario sensitivity analysis (S0–S8) layering literature-sourced biological mechanisms onto the baseline Lefkovitch matrix. Scripts are independent of the core manuscript pipeline and produce **FigS29** plus a summary CSV. See `07_reporting/internal/biological_realism_PRD.md` for the hypothesis-to-citation map.
+A 10-scenario sensitivity analysis (S0–S9) layering literature-sourced biological mechanisms onto the baseline Lefkovitch matrix (S6 depensatory corallivory is OFF by default — data-thin; S9 fertilization Allee is an assumption sweep). Scripts are independent of the core manuscript pipeline and produce **FigS29** plus a summary CSV. See `07_reporting/internal/biological_realism_PRD.md` for the hypothesis-to-citation map.
 
 | Script | Description | Key Outputs |
 |--------|-------------|-------------|
@@ -234,7 +236,8 @@ A 9-scenario sensitivity analysis (S0–S8) layering literature-sourced biologic
 | `57_winter_sst_survival_model.R` | GLMM: survival ~ log_size × winter_anomaly + (1|study) (Rodriguez-Martinez 2014) | `winter_sst_survival.rds` |
 | `58_depensatory_corallivory_layer.R` | Density-dependent SC1-SC2 hazard (Williams 2012 Coralliophila rate) | `depensatory_corallivory.rds` |
 | `59_microhabitat_depth_model.R` | GLMM: survival ~ log_size + depth_m + (1|study) (Ramos-Romero 2025 refugia) | `microhabitat_depth_survival.rds` |
-| `60_scenario_comparison.R` | Run all 9 scenarios (S0–S8), compute lambda + sexual/asexual share + elasticity | `biological_realism_scenarios.csv/.rds` |
+| `59b_fertilization_allee_layer.R` | **S9** fertilization Allee: density-dependent fertilization `phi(rho)=rho/(rho+h)` on F_sex (Baums 2006 densities; h SWEPT, assumption). Also exports the RSE-ready phi table | `fertilization_allee.rds`, `fertilization_allee_phi_rse.csv` |
+| `60_scenario_comparison.R` | Run scenarios (S0–S9), compute lambda + sexual/asexual share + elasticity | `biological_realism_scenarios.csv/.rds` |
 | `61_fig_biological_realism.R` | FigS29: tornado plot + reproductive pathway share + 50-yr projection | `FigS29_biological_realism.*` |
 
 ### Utilities -- Verification & Shared Code
