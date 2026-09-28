@@ -1,17 +1,32 @@
-# *Acropora palmata* — Population Viability Assessment
+<p align="center">
+  <img src="assets/acropora-palmata-pickles-reef.jpg" alt="Living elkhorn coral, Acropora palmata, on Pickles Reef" width="100%" />
+</p>
 
-[![R Analysis](https://img.shields.io/badge/R-4.3+-blue.svg)](https://www.r-project.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center"><i>Acropora palmata</i> demography</h1>
 
-R analysis pipeline for a **population viability assessment** of *Acropora palmata* (Elkhorn Coral), updating the Vardi et al. (2012) Lefkovitch projection model with **14,160 individual-level observations** from **7 studies** (including the Neely et al. 2022 FKNMS dataset) and **10 additional summary-level studies** (17 unique studies contributing 22 study-level effects; NOAA split into FL Keys/Curacao/Navassa, Vardi 2011 split into Jamaica/Puerto Rico/Virgin Gorda, Garrison & Ward 2008 split into control/relocated, and Neely 2022 as a single FL Keys effect) across **13 Caribbean regions**. The analytical focus is size-dependent demography, population viability, disturbance regime context, and restoration implications. Manuscript targeting *Coral Reefs*.
+<p align="center">
+  A reproducible Caribbean-wide synthesis of elkhorn coral survival, growth, disturbance, and population viability.
+</p>
 
-**Central question:** How do *Acropora palmata* survival and growth vary with colony size across the Caribbean, and what does this mean for population viability under chronic disturbance and restoration?
+<p align="center">
+  <a href="https://www.r-project.org/"><img src="https://img.shields.io/badge/R-4.3%2B-276DC3?logo=r&logoColor=white" alt="R 4.3 or later" /></a>
+  <img src="https://img.shields.io/badge/Caribbean-13%20regions-0F766E" alt="13 Caribbean regions" />
+  <a href="06_analysis/scripts/run_all.R"><img src="https://img.shields.io/badge/pipeline-scripted-2E8B57" alt="Scripted analysis pipeline" /></a>
+</p>
 
-> **Restoration Strategy Evaluation & interactive tool**: The sibling repo [stier-lab/Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) builds on these parameters with the RSE decision-support model and an interactive web app (`coral-app/`). Its R analyses read the demographic estimates produced here and expect this repo cloned alongside at `../Detmer-2025-coral-parameters/`. (The earlier `Detmer-2025-coral-platform` first-pass app is archived.)
+> **The question:** How do *A. palmata* survival and growth vary with colony size across the Caribbean, and what does that mean for persistence and restoration under chronic disturbance?
 
-> **Design Philosophy**: Transparency over false precision. Given extreme heterogeneity across studies, the repo defaults to stratified views, explicit uncertainty, and clear separation between canonical manuscript outputs, supporting analyses, and exploratory extensions.
+This repository updates the Vardi et al. (2012) Lefkovitch projection model using 14,160 individual-level observations from seven studies and summary-level data from 10 additional studies. It estimates size-dependent vital rates across 13 Caribbean regions, carries uncertainty through hierarchical bootstrap and meta-analysis, and produces the parameter distributions used by the companion Restoration Strategy Evaluation model.
 
-> **Navigation**: Start with [06_analysis/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/README.md) for the analysis surface and [07_reporting/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/README.md) for manuscript-facing documents.
+| What this repository provides | Where to start |
+| --- | --- |
+| Canonical demographic data, reproducible R analyses, manuscript figures, and RSE-ready parameter lists | [Analysis workflow](06_analysis/README.md) · [Manuscript-facing outputs](07_reporting/README.md) · [Quick start](#quick-start) |
+
+**Headline results.** The expanded meta-analysis estimates annual survival at 78.0% (95% CI: 70.1–84.3%) across 17 studies and 22 effects, with high between-study heterogeneity (*I*² = 97.2%). The baseline population model estimates λ = 0.961, indicating decline under the pre-2023 chronic-disturbance regime.
+
+**Design principle.** Transparency over false precision: analyses distinguish manuscript-facing results from supporting and exploratory work, expose heterogeneity, and preserve a traceable path from source studies to model parameters.
+
+**Companion project.** [Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) uses these parameter distributions in a restoration decision-support model and interactive app. Clone both repositories alongside one another so its R analyses can resolve `../Detmer-2025-coral-parameters/`.
 
 ---
 
