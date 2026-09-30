@@ -35,7 +35,8 @@
 #   - Baseline: no heatwave (deterministic projection with our matrix)
 #   - Moderate bleaching: ~8 DHW (~50% mortality) every N years
 #   - Severe bleaching: ~12 DHW (~80% mortality) every N years
-#   - Catastrophic (2023-scale): ~18 DHW (~98% mortality) every N years
+#   - Catastrophic dose-response sensitivity: ~18 DHW (~95.5% fitted mortality)
+#   - Observed 2023 Florida endpoint: 97.8--100% mortality every N years
 #   Return intervals tested: 5, 10, 20, 50 years
 #
 # INPUTS:
@@ -186,18 +187,30 @@ print_subheader("Section 3: Heatwave Scenarios")
 
 # Scenario definitions based on DHW severity
 scenarios <- tibble(
-  scenario = c("baseline", "moderate_bleaching", "severe_bleaching", "catastrophic_2023"),
-  dhw = c(0, 8, 12, 18),
+  scenario = c("baseline", "moderate_bleaching", "severe_bleaching",
+               "catastrophic_2023", "observed_2023_florida"),
+  dhw = c(0, 8, 12, 18, NA_real_),
   description = c(
     "No heatwave (chronic regime only)",
     "Moderate bleaching (~8 DHW, ~ED50)",
     "Severe bleaching (~12 DHW)",
-    "Catastrophic 2023-scale (~18 DHW, ~ED95)"
-  )
+    "Catastrophic dose-response sensitivity (~18 DHW, ~ED95)",
+    "Observed 2023 Florida endpoint (97.8-100% mortality)"
+  ),
+  scenario_basis = c("baseline", "dose_response", "dose_response",
+                     "dose_response", "observed_florida_2023"),
+  heatwave_mortality = c(0, manzello_mortality(c(8, 12, 18)), 0.989),
+  heatwave_survival_lower = c(NA_real_, NA_real_, NA_real_, NA_real_, 0),
+  heatwave_survival_upper = c(NA_real_, NA_real_, NA_real_, NA_real_, 0.022)
 ) %>%
   mutate(
-    heatwave_mortality = manzello_mortality(dhw),
-    heatwave_survival_multiplier = 1 - heatwave_mortality
+    # The observed-endpoint point estimate is the midpoint of the reported
+    # 0--2.2% survival range; Monte Carlo projections sample that range.
+    heatwave_survival_multiplier = if_else(
+      is.na(heatwave_survival_lower),
+      1 - heatwave_mortality,
+      (heatwave_survival_lower + heatwave_survival_upper) / 2
+    )
   )
 
 # Return intervals to test (years between catastrophic events)
@@ -205,8 +218,9 @@ return_intervals <- c(5, 10, 20, 50)
 
 cat("  Heatwave severity scenarios:\n")
 for (i in 1:nrow(scenarios)) {
-  cat(sprintf("    %s: DHW=%.0f, mortality=%.1f%%, survival multiplier=%.3f\n",
-              scenarios$scenario[i], scenarios$dhw[i],
+  dhw_label <- if (is.na(scenarios$dhw[i])) "observed" else sprintf("%.0f", scenarios$dhw[i])
+  cat(sprintf("    %s: DHW=%s, mortality=%.1f%%, survival multiplier=%.3f\n",
+              scenarios$scenario[i], dhw_label,
               scenarios$heatwave_mortality[i] * 100,
               scenarios$heatwave_survival_multiplier[i]))
 }
@@ -232,6 +246,8 @@ all_projections <- list()
 for (s in 1:nrow(scenarios)) {
   scenario_name <- scenarios$scenario[s]
   surv_mult <- scenarios$heatwave_survival_multiplier[s]
+  surv_mult_lower <- scenarios$heatwave_survival_lower[s]
+  surv_mult_upper <- scenarios$heatwave_survival_upper[s]
 
   if (scenario_name == "baseline") {
     # Baseline: single deterministic projection, no heatwave pulse
@@ -299,7 +315,15 @@ for (s in 1:nrow(scenarios)) {
 
         # Apply heatwave pulse
         if (scenario_name != "baseline" && ri > 0 && year %% ri == 0) {
-          pop_sim <- pop_sim * surv_mult
+          # The Florida 2023 endpoint is reported as 97.8--100% mortality.
+          # Propagate this empirical range instead of treating it as a precise
+          # universal rate; dose-response scenarios remain deterministic.
+          event_surv_mult <- if (!is.na(surv_mult_lower)) {
+            runif(1, min = surv_mult_lower, max = surv_mult_upper)
+          } else {
+            surv_mult
+          }
+          pop_sim <- pop_sim * event_surv_mult
         }
         pop_sim <- pmax(pop_sim, 0)
         sim_totals[sim, t] <- sum(pop_sim)
@@ -380,7 +404,9 @@ scenario_summary <- bind_rows(lapply(all_projections, function(x) {
 
 # Add description
 scenario_summary <- scenario_summary %>%
-  left_join(scenarios %>% select(scenario, dhw, description, heatwave_mortality),
+  left_join(scenarios %>% select(scenario, dhw, description, scenario_basis,
+                                 heatwave_mortality, heatwave_survival_lower,
+                                 heatwave_survival_upper),
             by = "scenario")
 
 write_csv(scenario_summary, file.path(output_dir, "heatwave_scenario_summary.csv"))
@@ -456,7 +482,7 @@ p_dose <- ggplot(dose_response_df, aes(x = dhw, y = mortality * 100)) +
 # Panel (b): Population trajectories under catastrophic scenario at different
 # return intervals
 catastrophic_data <- projection_trajectories %>%
-  filter(scenario %in% c("baseline", "catastrophic_2023")) %>%
+  filter(scenario %in% c("baseline", "observed_2023_florida")) %>%
   mutate(
     label_short = case_when(
       scenario == "baseline" ~ "No heatwave",
@@ -507,15 +533,18 @@ p_traj <- ggplot(catastrophic_data, aes(x = year, y = pct_initial_median,
         legend.key.height = unit(3, "mm"),
         legend.box.margin = margin(0, 0, 0, 0, "mm"))
 
-# Panel (c): Effective lambda by severity and return interval
+# Panel (c): Effective lambda by severity and return interval. The final group
+# is the empirically observed Florida endpoint, not a Caribbean-wide forecast.
 # Exclude baseline from this panel
 lambda_data <- scenario_summary %>%
   filter(scenario != "baseline", return_interval_yr > 0) %>%
   mutate(
     severity = factor(scenario,
-                      levels = c("moderate_bleaching", "severe_bleaching", "catastrophic_2023"),
+                      levels = c("moderate_bleaching", "severe_bleaching",
+                                 "catastrophic_2023", "observed_2023_florida"),
                       labels = c("Moderate\n(~8 DHW)", "Severe\n(~12 DHW)",
-                                 "Catastrophic\n(~18 DHW)")),
+                                 "Dose-response\n(~18 DHW)",
+                                 "Observed Florida\n(2023)")),
     return_interval_yr = factor(return_interval_yr)
   )
 
@@ -528,7 +557,7 @@ p_lambda <- ggplot(lambda_data, aes(x = severity, y = effective_lambda,
            label = sprintf("Baseline lambda = %.3f", lambda_det),
            hjust = 0, vjust = -0.6, size = 2.5, color = pal$surv_dark,
            fontface = "italic") +
-  annotate("text", x = 3.45, y = 1,
+  annotate("text", x = 4.45, y = 1,
            label = "stable",
            hjust = 1, vjust = -0.6, size = 2.5, color = "grey40",
            fontface = "italic") +
@@ -581,7 +610,7 @@ cat("  Our Lefkovitch matrix captures the chronic demographic regime (pre-2023),
 cat("  under which A. palmata populations were already declining (lambda = ",
     sprintf("%.3f", lambda_det), ").\n", sep = "")
 cat("  Manzello et al. (2025) shows that extreme heatwaves overwhelm size-dependent\n")
-cat("  survival advantages: 97.8-100% mortality across ALL size classes at 18 DHW.\n\n")
+cat("  survival advantages: observed Florida mortality was 97.8-100% across size classes.\n\n")
 
 cat("  KEY RESULT: Under recurring catastrophic heatwaves (2023-scale):\n")
 
@@ -591,6 +620,15 @@ for (i in 1:nrow(cat_result)) {
               cat_result$return_interval_yr[i],
               cat_result$effective_lambda[i],
               cat_result$p_quasi_extinction_50yr[i] * 100))
+}
+
+cat("\n  OBSERVED 2023 FLORIDA ENDPOINT (regional event, not a Caribbean-wide rate):\n")
+observed_result <- scenario_summary %>% filter(scenario == "observed_2023_florida")
+for (i in 1:nrow(observed_result)) {
+  cat(sprintf("    Every %d yr: effective lambda = %.4f, P(quasi-extinction) = %.1f%%\n",
+              observed_result$return_interval_yr[i],
+              observed_result$effective_lambda[i],
+              observed_result$p_quasi_extinction_50yr[i] * 100))
 }
 
 cat("\n  IMPLICATION: Our elasticity analysis shows that SC5 stasis is the most\n")
