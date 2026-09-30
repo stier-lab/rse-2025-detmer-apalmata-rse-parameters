@@ -56,7 +56,7 @@ We assigned colonies to five size classes: SC1, 0–10 cm²; SC2, 10–100 cm²;
 
 ### Disturbance and restoration classification
 
-We retained all intervals in primary analyses because observed storms, disease, bleaching, cold events, and chronic stressors comprise the demographic context experienced by the study populations. We then linked each interval to a curated Caribbean disturbance timeline. The timeline distinguished acute events used in baseline-exclusion sensitivity analyses from chronic or indirect pressures retained as contextual exposure. We independently rebuilt the interval-to-event linkage and summarized it as a study-window audit (Table S2). We fitted size-by-disturbance interaction models to natural-colony records, thereby avoiding the confounding of disturbance context with restoration material and handling history.
+We retained all intervals in primary analyses because observed storms, disease, bleaching, cold events, and chronic stressors comprise the demographic context experienced by the study populations. We then linked each interval to a curated Caribbean disturbance timeline. The timeline distinguished acute events used in baseline-exclusion sensitivity analyses from chronic or indirect pressures retained as contextual exposure. We independently rebuilt the interval-to-event linkage and summarized it as a study-window audit (Online Resource 1, Table S1). We fitted size-by-disturbance interaction models to natural-colony records, thereby avoiding the confounding of disturbance context with restoration material and handling history.
 
 For restoration analyses, we used study metadata to classify records as natural fragments, nursery outplants, nursery outplants re-cemented after fragmentation, or outplanted colonies. This subtype analysis was an interpretive sensitivity analysis, not a causal comparison of interventions. It was designed to test whether the broad label "restoration fragment" concealed demographic differences among biologically distinct materials.
 
@@ -68,7 +68,7 @@ For the expanded survival synthesis, we annualized interval-level survival using
 
 We constructed a five-class, recruitment-free Lefkovitch transition matrix from the prepared natural-colony transition data. The dominant eigenvalue (lambda) represented conditional annual growth of the observed post-settlement transition subsystem, not a full population forecast. Matrix support was uneven: five studies contributed survival, three contributed growth, SC5 survival was predominantly supported by NOAA records, and fragmentation was represented by Vardi (2011). We quantified the elasticity of lambda to stasis, growth, retrogression, and fragmentation transitions, and propagated sampling uncertainty through hierarchical bootstrap resampling: studies were resampled first, then observations within sampled studies. We used 2,000 valid bootstrap replicates and leave-one-study-out analyses to characterize dependence on the contributing datasets; 43 bootstrap replicates imputed at least one missing size-class survival value, and the resampling did not propagate survival–growth covariance.
 
-We treated the 2023 Florida heatwave as an episodic, Florida-specific survival pulse rather than as a replacement for the chronic-regime matrix. We first used the *A. palmata* dose-response thresholds reported by Manzello et al. [@manzello2025] (ED50 = 7.8 degree-heating weeks [DHW], ED95 = 17.6 DHW) to define 8-, 12-, and 18-DHW sensitivity scenarios. We then added an observed-2023 Florida endpoint: 97.8--100% mortality, represented by a 0--2.2% heatwave-year survival multiplier. The deterministic projection used the midpoint of that range; Monte Carlo projections sampled uniformly across it at each prescribed event. Heatwave pulses were applied after the annual matrix transition to all size classes, consistent with the reported absence of size refuge during the Florida event. We report the geometric mean of annual abundance ratios as effective lambda under recurrence intervals of 5, 10, 20, and 50 years. These scenarios are stress tests for a Florida-like event sequence, not estimates of a Caribbean-wide thermal mortality rate or full population viability.
+We treated the 2023 Florida heatwave as an episodic, Florida-specific survival pulse rather than as a replacement for the chronic-regime matrix. We first used the *A. palmata* dose-response thresholds reported by Manzello et al. [@manzello2025] (ED50 = 7.8 degree-heating weeks [DHW], ED95 = 17.6 DHW) to define 8-, 12-, and 18-DHW sensitivity scenarios. We then added an observed-2023 Florida endpoint: 97.8--100% mortality, represented by a 0--2.2% heatwave-year survival multiplier. The deterministic projection used the midpoint of that range; because the published study reports bounds rather than a colony-level sampling distribution, Monte Carlo projections sampled uniformly across the reported range at each prescribed event. Heatwave pulses were applied after the annual matrix transition to all size classes, consistent with the reported absence of size refuge during the Florida event. We report the geometric mean of annual abundance ratios as effective lambda under recurrence intervals of 5, 10, 20, and 50 years. These intervals span frequent to rare recurrence and are sensitivity values, not estimates of future return periods. The scenarios are stress tests for a Florida-like event sequence, not estimates of a Caribbean-wide thermal mortality rate or full population viability.
 
 ### Reproducibility
 
@@ -82,7 +82,7 @@ The synthesis combined individual-level monitoring with study-level records acro
 
 ### Survival and growth were nonlinear functions of colony size
 
-Survival increased with colony size, although the fitted relationship explained a modest share of individual survival variation (Fig. 2a). The survival model identified a high-size inflection near 7,498 cm², but leave-one-study-out estimates were broad, indicating that the exact location of this threshold was not stable across the study mix. Relative growth rate showed a sharper early ontogenetic transition: the estimated inflection occurred near 37 cm², while the probability of positive growth crossed its threshold near 411 cm² (Fig. 2b; Fig. S5). Relative growth captured size dependence more effectively than absolute growth rate, whose variance increased strongly with colony size (Fig. S6).
+Survival increased with colony size, although the fitted relationship explained a modest share of individual survival variation (Fig. 2a). The survival model identified a high-size inflection near 7,498 cm², but leave-one-study-out estimates were broad, indicating that the exact location of this threshold was not stable across the study mix. Relative growth rate showed a sharper early ontogenetic transition: the estimated inflection occurred near 37 cm², while the probability of positive growth crossed its threshold near 411 cm² (Online Resource 1, Fig. S1). Relative growth captured size dependence more effectively than absolute growth rate, whose variance increased strongly with colony size.
 
 Study-level survival estimates by size class reinforced this pattern but also showed substantial overlap among classes and studies (Fig. 2c). Size therefore structured demographic performance, but it did not supply a region- or disturbance-independent prediction of fate. The widest variability occurred among the smaller and intermediate classes, where study context, disturbance history, and population type varied most strongly.
 
@@ -90,19 +90,19 @@ Study-level survival estimates by size class reinforced this pattern but also sh
 
 The expanded synthesis estimated pooled annual survival at 78.7% (95% CI: 70.4--85.1%; 95% prediction interval: 37.4--95.8%) across 17 studies and 22 study-region effects (Fig. 3a). Tier 1 and Tier 2 effects were both annualized before aggregation. Heterogeneity was high (I² = 97.6%), so the pooled value summarizes the assembled evidence rather than a Caribbean-wide constant.
 
-Natural-colony effects had higher pooled survival than restoration-fragment effects (84.1% versus 74.5%), but the difference was not statistically supported in the expanded meta-analysis. Regional variation remained substantial within population types (Fig. 3b; Fig. S15). The overlap-zone comparison likewise showed that study identity and sampling context could not be separated cleanly from population origin (Fig. S8). These analyses do not support a single general survival penalty or benefit of restoration origin.
+Natural-colony effects had higher pooled survival than restoration-fragment effects (84.1% versus 74.5%), but the difference was not statistically supported in the expanded meta-analysis. Regional variation remained substantial within population types (Fig. 3b). The overlap-zone comparison likewise showed that study identity and sampling context could not be separated cleanly from population origin (Online Resource 1, Fig. S2). These analyses do not support a single general survival penalty or benefit of restoration origin.
 
 ### Shrinkage and retrogression were common components of demographic performance
 
-Colonies often survived while losing tissue. In the matrix-compatible growth dataset, 39.4% of records showed shrinkage (Fig. S16). Shrinkage frequency increased from 18.2% in SC1 to 47.5% in SC5, demonstrating that large colonies were not simply stable endpoints. Retrogression probabilities were 15.2% in SC2, 16.8% in SC3, 17.2% in SC4, and 9.1% in SC5. Thus, large colonies persisted more reliably than small colonies, but partial mortality still moved a measurable fraction of survivors backward through the size structure.
+Colonies often survived while losing tissue. In the matrix-compatible growth dataset, 39.4% of records showed shrinkage (Online Resource 1, Fig. S3). Shrinkage frequency increased from 18.2% in SC1 to 47.5% in SC5, demonstrating that large colonies were not simply stable endpoints. Retrogression probabilities were 15.2% in SC2, 16.8% in SC3, 17.2% in SC4, and 9.1% in SC5. Thus, large colonies persisted more reliably than small colonies, but partial mortality still moved a measurable fraction of survivors backward through the size structure.
 
 ### Size--survival associations differed among exposure categories
 
-The study-window audit covered 1,072 demographic intervals, 95.1% of which overlapped at least one curated disturbance or chronic-pressure record (Table S2). The survival relationship with colony size differed among intervals with no curated disturbance, context-only pressure, and acute baseline-exclusion exposure (likelihood-ratio test, \(p<0.001\); Fig. S17). Growth-side interaction evidence was weaker and is therefore treated as supportive rather than definitive. Excluding all acute baseline-exclusion intervals changed the pooled survival estimate by only −0.3 percentage points, indicating that the main pooled result was not driven solely by locally identified acute events. Instead, disturbance exposure was pervasive across the monitored demographic regime.
+The study-window audit covered 1,072 demographic intervals, 95.1% of which overlapped at least one curated disturbance or chronic-pressure record (Online Resource 1, Table S1). The survival relationship with colony size differed among intervals with no curated disturbance, context-only pressure, and acute baseline-exclusion exposure (likelihood-ratio test, \(p<0.001\); Online Resource 1, Fig. S4). Growth-side interaction evidence was weaker and is therefore treated as supportive rather than definitive. Excluding all acute baseline-exclusion intervals changed the pooled survival estimate by only −0.3 percentage points, indicating that the main pooled result was not driven solely by locally identified acute events. Instead, disturbance exposure was pervasive across the monitored demographic regime.
 
 ### Restoration performance depended on subtype
 
-The subtype-coded dataset contained 5,079 records from five studies (Fig. S19): 3,968 natural fragments from one study, 1,012 nursery outplants from two studies, 53 re-cemented nursery outplants from one study, and 46 direct outplants from one study. Natural fragments had weighted survival of 87.1%, compared with 58.7% for nursery outplants, 81.1% for nursery outplants re-cemented after fragmentation, and 65.2% for outplanted colonies. Excluding natural fragments reduced mean survival across subtype-coded records from 81.2% to 60.0%. These contrasts show why a broad restoration-fragment category is not an adequate biological description of the material represented in the synthesis; they are descriptive because the subtype groups are highly unbalanced.
+The subtype-coded dataset contained 5,079 records from five studies (Online Resource 1, Fig. S5): 3,968 natural fragments from one study, 1,012 nursery outplants from two studies, 53 re-cemented nursery outplants from one study, and 46 direct outplants from one study. Natural fragments had weighted survival of 87.1%, compared with 58.7% for nursery outplants, 81.1% for nursery outplants re-cemented after fragmentation, and 65.2% for outplanted colonies. Excluding natural fragments reduced mean survival across subtype-coded records from 81.2% to 60.0%. These contrasts show why a broad restoration-fragment category is not an adequate biological description of the material represented in the synthesis; they are descriptive because the subtype groups are highly unbalanced.
 
 ### Large-adult persistence dominated conditional transition dynamics
 
@@ -110,7 +110,7 @@ The recruitment-free transition matrix estimated a deterministic lambda of 0.961
 
 ### Florida-scale heatwaves sharply reduced effective lambda
 
-The thermal-event layer did not alter the chronic-regime matrix lambda; it estimated the conditional consequence of recurrent survival pulses. Under the observed 2023 Florida endpoint, effective lambda was 0.355, 0.576, 0.769, and 0.846 when a Florida-like event recurred every 5, 10, 20, and 50 years, respectively (Fig. S22). The corresponding 50-year quasi-extinction probabilities were 100% in these simulations because the baseline subsystem was already declining. The 18-DHW dose-response sensitivity scenario was less severe than the observed endpoint because its fitted mortality was 95.5%, rather than the 97.8--100% mortality reported from the Florida Keys and Dry Tortugas. These results should not be extrapolated as a Caribbean-wide forecast: they show that recovery trajectories conditional on the compiled post-settlement matrix are highly vulnerable to recurrence of an event of the observed Florida magnitude.
+The thermal-event layer did not alter the chronic-regime matrix lambda; it estimated the conditional consequence of recurrent survival pulses. Under the observed 2023 Florida endpoint, effective lambda was 0.355, 0.576, 0.769, and 0.846 when a Florida-like event recurred every 5, 10, 20, and 50 years, respectively (Online Resource 1, Fig. S6). The corresponding 50-year quasi-extinction probabilities were 100% in these simulations because the baseline subsystem was already declining. The 18-DHW dose-response sensitivity scenario was less severe than the observed endpoint because its fitted mortality was 95.5%, rather than the 97.8--100% mortality reported from the Florida Keys and Dry Tortugas. These results should not be extrapolated as a Caribbean-wide forecast: they show that recovery trajectories conditional on the compiled post-settlement matrix are highly vulnerable to recurrence of an event of the observed Florida magnitude.
 
 ## Discussion
 
@@ -167,117 +167,9 @@ curation and analyses. J.F.S., D.B., A.C., and R.I.S.-B. contributed domain
 expertise, data resources, and interpretation. All authors reviewed and
 approved the manuscript.
 
-```{=latex}
-\clearpage
-\begin{landscape}
-\small
-```
+## Online resources
 
-# Table S1. Disturbance and stressor chronology used in the demographic synthesis
-
-This compact, landscape-ready version is embedded in the manuscript.
-
-| Period | Event and geography | Exposure class | Use in baseline sensitivity | Demographic relevance |
-|:---|:---|:---|:---|:---|
-| 1961 | Hurricane Hattie, Belize | Hurricane; local acute event | Exclude | 80% *A. palmata* destruction; long algal shift |
-| 1978–1984 | White-band disease epizootic, Caribbean-wide | Disease; chronic regime | Context only | Foundational collapse of acroporid stands |
-| 1983–1984 | *Diadema* mass mortality, Caribbean-wide | Disease; acute event | Exclude | Loss of herbivory and macroalgal phase shift |
-| 1992 | Hurricane Andrew, Florida Keys | Hurricane; local acute event | Exclude | Colony breakage and fragmentation-driven recovery |
-| 1997 | Cuevones grounding, Mexico | Vessel grounding; local acute event | Exclude | Coral cover fell from 14% to 1%; recruitment remained absent |
-| 1999–2019 | Coastal eutrophication, middle Florida Keys | Pollution; chronic pressure | Context only | Reduced habitat suitability and persistence |
-| 2005 | Hurricane season, Florida Keys | Hurricane; local acute event | Exclude | Nearly 50% tissue loss, primarily through breakage |
-| 2005–2006 | Thermal anomaly, USVI and Florida | Bleaching; acute event | Exclude | Mass bleaching followed by disease outbreak |
-| 2005–2010 | Snail predation trap, Florida Keys | Biotic pressure; chronic pressure | Context only | Concentrated tissue loss on surviving fragments |
-| 2005–2021 | Playa Baracoa pollution, Cuba | Pollution; chronic pressure | Context only | Wastewater, macroalgal cover, and low colony density |
-| 2010 | Cold-water event, Florida Keys | Cold snap; local acute event | Exclude | Mass mortality of wild colonies and outplants |
-| 2011–2025 | Sargassum brown tides, Caribbean-wide | Chronic pressure | Context only | Leachate toxicity, larval effects, and hypoxia |
-| 2014–2017 | Third global bleaching event, Caribbean-wide | Bleaching; chronic regime | Context only | Prolonged thermal stress and elevated mortality |
-| 2017 | Hurricane Irma, Florida Keys and USVI | Hurricane; regional acute event | Exclude | Physical damage and framework displacement |
-| 2017 | M/V *Noemi* grounding, Puerto Rico | Vessel grounding; local acute event | Exclude | Physical destruction of wild thickets |
-| 2018–2025 | SCTLD outbreak, Mexico | Disease; indirect framework pressure | Context only | Collapse of framework species and shifted carbonate budget |
-| 2022 | Second *Diadema* die-off, USVI and Caribbean | Disease; regional acute event | Exclude | Rapid loss of algal control |
-| 2023 | Marine heatwave, Caribbean-wide | Bleaching; acute event | Exclude | Functional extinction in Florida and severe regional loss |
-
-**Notes.** The chronology contains 18 documented events or pressures spanning
-7 broad regions and 8 event classes. Eleven are treated as baseline exclusions,
-and seven as chronic or contextual pressure. The categories describe exposure
-context; they do not identify a single causal effect for each event.
-
-```{=latex}
-\end{landscape}
-\clearpage
-```
-
-
-```{=latex}
-\clearpage
-\begin{landscape}
-\small
-```
-
-# Table S2. Study-window disturbance coverage audit
-
-This audit rebuilds the curated disturbance overlay on prepared survival intervals and summarizes overlap by study window.
-
-**Overall coverage.**
-
-- Intervals audited: 1,072
-- Studies represented: 7
-- Zero-overlap intervals: 53
-- One-event intervals: 74
-- Multi-event intervals: 945
-- Baseline-exclusion intervals: 297
-
-**Study-level coverage.**
-
-| Study | Intervals | No overlap | One event | Two or more events | Local metadata only | Timeline overlay | Both sources | Baseline exclusion | Any overlap (%) |
-|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| NOAA_survey | 842 | 50 | 59 | 733 | 12 | 716 | 76 | 228 | 94.1 |
-| neely_et_al_2022 | 98 | 3 | 0 | 95 | 0 | 56 | 39 | 10 | 96.9 |
-| pausch_et_al_2018 | 70 | 0 | 0 | 70 | 0 | 70 | 0 | 46 | 100.0 |
-| USGS_USVI_exp | 27 | 0 | 15 | 12 | 0 | 27 | 0 | 12 | 100.0 |
-| kuffner_et_al_2020 | 27 | 0 | 0 | 27 | 0 | 27 | 0 | 0 | 100.0 |
-| mendoza_quiroz_et_al_2023 | 7 | 0 | 0 | 7 | 0 | 7 | 0 | 0 | 100.0 |
-| fundemar_fragments | 1 | 0 | 0 | 1 | 0 | 1 | 0 | 1 | 100.0 |
-
-**Rebuild check.** Exact field mismatches found: 0.
-
-**Notes.** Overlap refers to curated acute events or chronic pressures within a
-demographic interval. “Baseline exclusion” identifies intervals excluded in the
-acute-event sensitivity analysis; it does not imply that all remaining
-intervals were undisturbed.
-
-```{=latex}
-\end{landscape}
-\clearpage
-```
-
-
-```{=latex}
-\clearpage
-\begin{landscape}
-\footnotesize
-```
-
-# Table S3. Size-class synthesis for *Acropora palmata*
-
-This landscape supplementary table links size-structured estimates to their
-biological and restoration interpretation. It is designed as a reading table,
-not a substitute for the underlying estimates and uncertainty intervals.
-
-| Size class (live area) | Principal risk | Observed demographic pattern | Transition leverage | Restoration implication |
-|:---|:---|:---|:---|:---|
-| SC1 (0–10 cm²) | Early mortality; disturbance exposure; sparse coverage outside Florida | Entry point to the matrix; shrinkage also occurs | Aggregated survival elasticity: 0.004 | Use as nursery or recruitment substrate, not a transition-model endpoint |
-| SC2 (10–100 cm²) | Post-transplant stress, fragmentation, disease, and backward transitions | Substantial churn; 23.8% shrinkage and 15.2% retrogression | Aggregated survival elasticity: 0.024; losses can prevent entry to larger classes | Prioritize acclimation, early stabilization, and rapid growth through this stage |
-| SC3 (100–900 cm²) | Partial mortality, storm damage, and disturbance-driven retrogression | Mid-size instability; 40.5% shrinkage and 16.8% retrogression | Aggregated survival elasticity: 0.106; contributes to the flow into adult stages | Protect recovery windows from disturbance-linked backward transitions |
-| SC4 (900–4,000 cm²) | Shrinkage, breakage, and loss before reproductive size | Bridge to adulthood; 44.5% shrinkage and 17.2% retrogression | Aggregated survival elasticity: 0.208 | A strong target when colonies can be protected through the transition to SC5 |
-| SC5 (>4,000 cm²) | Loss or shrinkage of reproductive adults; fragmentation | Highest leverage; 47.5% shrinkage, 9.1% retrogression, and negative mean net growth in the matrix-compatible subset | Aggregated survival elasticity: 0.602; SC5→SC5 stasis matrix-cell elasticity: 0.589; fragmentation elasticity: 0.051 | Highest conservation priority: retain mature colonies and minimize physical disturbance |
-
-```{=latex}
-\end{landscape}
-\clearpage
-```
-
+**Online Resource 1 (ESM_1.pdf).** Concise supporting analyses for the *Acropora palmata* demographic synthesis: the study-window disturbance audit and six supplementary figures. Extended diagnostics and source outputs remain available in the public repository.
 
 ## Figure legends
 

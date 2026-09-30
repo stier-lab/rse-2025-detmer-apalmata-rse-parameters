@@ -17,7 +17,22 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 
 ---
 
-## Supplementary Figures (FigS1--FigS30)
+## Submission supplement (Online Resource 1)
+
+The journal submission contains one concise supplementary PDF, `paper/submission/supplement/ESM_1.pdf`. Its six figures are cited in the main manuscript as `Online Resource 1, Fig. S1` through `Fig. S6`.
+
+| Figure | Script | Output filename | Notes |
+|--------|--------|-----------------|-------|
+| Fig. S1 — Growth-size diagnostics | `25_supp_S5_S6_S7_thresholds_growth.R` | `FigS1_growth_diagnostics` | New seven-panel synthesis of threshold and growth-scale diagnostics |
+| Fig. S2 — Population origin and study identity | `21_fig3_natural_vs_restoration.R` | `FigS8_natural_vs_restoration` | Retained source filename; submission label is Fig. S2 |
+| Fig. S3 — Shrinkage and retrogression | `36_shrinkage_retrogression_summary.R` | `FigS16_shrinkage_retrogression_summary` | Submission label is Fig. S3 |
+| Fig. S4 — Disturbance x size | `37_disturbance_size_interaction.R` | `FigS17_disturbance_size_interaction` | Submission label is Fig. S4 |
+| Fig. S5 — Restoration subtype sensitivity | `39_restoration_subtype_sensitivity.R` | `FigS19_restoration_subtype_sensitivity` | Submission label is Fig. S5 |
+| Fig. S6 — Heatwave scenarios | `40_manzello_heatwave_scenarios.R` | `FigS22_heatwave_scenarios` | Submission label is Fig. S6 |
+
+## Extended diagnostics (not submitted)
+
+The files below remain in the repository for reproducibility and reviewer access, but are not part of the numbered journal supplement.
 
 | Figure | Script | Output filename | Notes |
 |--------|--------|-----------------|-------|

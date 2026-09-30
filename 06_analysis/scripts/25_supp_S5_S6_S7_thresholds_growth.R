@@ -591,6 +591,21 @@ save_manuscript_fig(fig_s6, "FigS6_agr_vs_rgr",
                     fig_dir = fig_dir)
 cat("  Done: FigS6_agr_vs_rgr\n")
 
+# Submission supplement: combine the threshold and growth-scale diagnostics
+# into one seven-panel figure. The separately saved source figures remain
+# repository diagnostics, while this compact version is Fig. S1 in ESM_1.
+fig_s1_growth_diagnostics <- (fig_s5a + fig_s5b + fig_s5c) /
+  (fig_s6a + fig_s6b) /
+  (fig_s6c + fig_s6d) +
+  plot_layout(heights = c(0.8, 1, 1)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.tag = element_text(size = 11, face = "bold", family = "sans"))
+
+save_manuscript_fig(fig_s1_growth_diagnostics, "FigS1_growth_diagnostics",
+                    width_mm = 174, height_mm = 230,
+                    fig_dir = fig_dir)
+cat("  Done: FigS1_growth_diagnostics\n")
+
 # =============================================================================
 # FIGURE S7: ALLOMETRY (2x2)
 # =============================================================================
