@@ -3,7 +3,7 @@
 _Last reviewed: 2026-09-28 · branch `codex-pipeline-refresh-automation`. Consult `git status` for the working-tree state; this repository intentionally tracks regenerated analysis outputs._
 
 ## What this is
-Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dependent demography in the Caribbean elkhorn coral *Acropora palmata***, targeting *Coral Reefs*. It re-parameterizes a Vardi et al. (2012) 5×5 Lefkovitch projection matrix from ~14,100 individual-level observations (7 studies) plus summary-level data (17 unique studies / 22 study-level effects across 13 Caribbean regions). Headline results: pooled annual survival **0.780 (95% CI 0.701–0.843)** under extreme heterogeneity (**I² = 97.2%**); deterministic **λ = 0.9613** (P(λ<1) = 0.94); baseline quasi-extinction P = 0.82 over 50 yr; every modeled heatwave regime drives near-certain quasi-extinction. This repo is the **empirical parameter source** for the sibling restoration model [Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) (expects this repo cloned at `../Detmer-2025-coral-parameters/`).
+Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dependent demography in the Caribbean elkhorn coral *Acropora palmata***, targeting *Coral Reefs*. It re-parameterizes a Vardi et al. (2012) 5×5 Lefkovitch projection matrix from ~14,100 individual-level observations (7 studies) plus summary-level data (17 unique studies / 22 study-level effects across 13 Caribbean regions). Headline results: pooled annual survival **0.787 (95% CI 0.704–0.851; PI 0.374–0.958)** under extreme heterogeneity (**I² = 97.6%**), from the interval-annualized three-level `rma.mv()`; deterministic **λ = 0.9613** (P(λ<1) = 0.94); baseline (no-heatwave) quasi-extinction P = 0.71 over 50 yr; every modeled heatwave regime drives near-certain quasi-extinction. This repo is the **empirical parameter source** for the sibling restoration model [Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) (expects this repo cloned at `../Detmer-2025-coral-parameters/`).
 
 ## Data
 | Dataset | Location | Range / sites | Notes |
@@ -33,7 +33,7 @@ Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dep
 
 - **Entry point:** `make pipeline` (wraps `06_analysis/scripts/run_all.R`)
 - **Verification gate:** `make verify` refreshes canonical statistics and runs source/prose/model-inventory checks; `make display-check` validates the figure/table index.
-- **Headline outputs:** `output/transition_matrix.csv`, `output/population_parameters.csv` (λ=0.9613), `output/expanded_meta_analysis_results.csv` (survival 0.780, I²=97.2%), `output/biological_realism_scenarios.csv`
+- **Headline outputs:** `output/transition_matrix.csv`, `output/population_parameters.csv` (λ=0.9613), `output/expanded_meta_analysis_results.csv` (survival 0.787, I²=97.6%), `output/biological_realism_scenarios.csv`
 
 ## Current state
 - **Done:** full pipeline runs; 4 main figs + S1–S30 (S27 vacant); expanded meta, heatwave, and 10-scenario biological-realism framework all integrated. Recent commits fixed SC1 survival mean (use rma point estimate), SC5 midpoint, and figure-legend sync.
