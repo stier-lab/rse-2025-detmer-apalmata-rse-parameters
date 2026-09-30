@@ -1,6 +1,6 @@
 # Orientation — Detmer-2025-coral-parameters
 
-_Last updated: 2026-07-21 · branch `codex-pipeline-refresh-automation` · clean tree_
+_Last reviewed: 2026-09-28 · branch `codex-pipeline-refresh-automation`. Consult `git status` for the working-tree state; this repository intentionally tracks regenerated analysis outputs._
 
 ## What this is
 Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dependent demography in the Caribbean elkhorn coral *Acropora palmata***, targeting *Coral Reefs*. It re-parameterizes a Vardi et al. (2012) 5×5 Lefkovitch projection matrix from ~14,100 individual-level observations (7 studies) plus summary-level data (17 unique studies / 22 study-level effects across 13 Caribbean regions). Headline results: pooled annual survival **0.780 (95% CI 0.701–0.843)** under extreme heterogeneity (**I² = 97.2%**); deterministic **λ = 0.9613** (P(λ<1) = 0.94); baseline quasi-extinction P = 0.82 over 50 yr; every modeled heatwave regime drives near-certain quasi-extinction. This repo is the **empirical parameter source** for the sibling restoration model [Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) (expects this repo cloned at `../Detmer-2025-coral-parameters/`).
@@ -31,7 +31,8 @@ Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dep
 11. **50–61** biological-realism 10-scenario framework (S0–S9) → **FigS29**
 12. **23_verification**, **48** audit; **run_all.R** orchestrates (~60–75 min)
 
-- **Entry point:** `06_analysis/scripts/run_all.R`
+- **Entry point:** `make pipeline` (wraps `06_analysis/scripts/run_all.R`)
+- **Verification gate:** `make verify` refreshes canonical statistics and runs source/prose/model-inventory checks; `make display-check` validates the figure/table index.
 - **Headline outputs:** `output/transition_matrix.csv`, `output/population_parameters.csv` (λ=0.9613), `output/expanded_meta_analysis_results.csv` (survival 0.780, I²=97.2%), `output/biological_realism_scenarios.csv`
 
 ## Current state
@@ -45,10 +46,10 @@ Raine Detmer's PRISMA-structured systematic review + meta-analysis of **size-dep
 - **Disturbance × size** currently collapses to 3 generic *states* (script 37), NOT by type. Colony-level survival data is typed only for **disease** and **storm** (both confounded with single studies: Neely FL Keys / NOAA). Storm mortality concentrates in large SC4/SC5 (248 SC5 obs); disease is more size-even. Bleaching/cold-snap exist only at event level.
 
 ## Stack & reproduction
-R 4.3+; `renv.lock` present (renv out-of-sync, run `renv::restore()`). All scripts `source("utils/shared_utilities.R")`. Reproduce: `cd 06_analysis/scripts && Rscript run_all.R`. Constants (`SIZE_BREAKS`, palette) and matrix helpers live in `utils/00c_*`, `utils/03_matrix_functions.R`.
+R 4.3+; `renv.lock` is present. The lockfile was generated under R 4.5.2; use that version (or an explicitly validated compatible R version) and complete `renv::restore()` before running the R verification gate. All scripts `source("utils/shared_utilities.R")`. Reproduce with `make pipeline`, then `make verify` and `make display-check`. Constants (`SIZE_BREAKS`, palette) and matrix helpers live in `utils/00c_*`, `utils/03_matrix_functions.R`.
 
 ## Related
 - Sibling model + web app: [Detmer-2025-coral-RSE](https://github.com/stier-lab/Detmer-2025-coral-RSE) + `coral-app/`
 - Catalog: `~/repo-catalog/repos/stier-lab__Detmer-2025-coral-parameters.md`
-- PRD: `07_reporting/internal/biological_realism_PRD.md`; figure map: `07_reporting/manuscript/figure_table_map.md`
+- PRD: `07_reporting/internal/biological_realism_PRD.md`; figure map: `07_reporting/manuscript/figure_table_map.md`; model inventory: `07_reporting/internal/model_inventory.tsv`
 - Memory: `project_rse_param_reconciliations`, `project_data_integration_rework`, `project_neely_data_request`

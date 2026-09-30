@@ -181,7 +181,7 @@ cat("  Panel (b) growth diagnostics built\n")
 # --- Combine S3 ---
 p_s3 <- p_s3a / p_s3b +
   plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 12, face = "bold", family = "sans"))
+  theme(plot.tag = element_text(size = 12, face = "bold", family = "Arial"))
 
 save_manuscript_fig(p_s3, "FigS3_model_diagnostics",
                     width_mm = 174, height_mm = 180, fig_dir = supp_dir)
@@ -312,7 +312,7 @@ shared_legend <- cowplot::get_legend(p_legend_src)
 # --- Combine S4 with shared legend ---
 p_s4_panels <- (p_s4a / p_s4b) +
   plot_annotation(tag_levels = "a") &
-  theme(plot.tag = element_text(size = 12, face = "bold", family = "sans"))
+  theme(plot.tag = element_text(size = 12, face = "bold", family = "Arial"))
 
 p_s4_final <- cowplot::plot_grid(
   p_s4_panels,
@@ -325,15 +325,14 @@ p_s4_final <- cowplot::plot_grid(
 png_path_s4 <- file.path(supp_dir, "FigS4_model_selection.png")
 pdf_path_s4 <- file.path(supp_dir, "FigS4_model_selection.pdf")
 
+check_coral_reefs_figure(p_s4_final, 174, 190, "FigS4_model_selection")
 ggsave(png_path_s4, plot = p_s4_final,
-       width = 174, height = 190, units = "mm", dpi = 300, bg = "white")
+       width = 174, height = 190, units = "mm", dpi = 600, bg = "white")
 
-pdf_device <- tryCatch(
-  { grDevices::cairo_pdf; cairo_pdf },
-  error = function(e) "pdf"
-)
+# Base PDF avoids a macOS Cairo CID-font failure triggered by cowplot's legend
+# grob while retaining a vector submission asset.
 ggsave(pdf_path_s4, plot = p_s4_final,
-       width = 174, height = 190, units = "mm", bg = "white", device = pdf_device)
+       width = 174, height = 190, units = "mm", bg = "white", device = "pdf")
 
 cat(sprintf("  Saved: FigS4_model_selection (.png + .pdf) -- 174 x 190 mm\n"))
 

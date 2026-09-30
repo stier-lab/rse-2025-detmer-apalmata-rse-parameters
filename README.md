@@ -5,7 +5,7 @@
 <h1 align="center"><i>Acropora palmata</i> demography</h1>
 
 <p align="center">
-  A reproducible Caribbean-wide synthesis of elkhorn coral survival, growth, disturbance, and population viability.
+  A reproducible Caribbean-wide synthesis of elkhorn coral survival, growth, disturbance, and conditional transition dynamics.
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@ This repository updates the Vardi et al. (2012) Lefkovitch projection model usin
 | --- | --- |
 | Canonical demographic data, reproducible R analyses, manuscript figures, and RSE-ready parameter lists | [Analysis workflow](06_analysis/README.md) · [Manuscript-facing outputs](07_reporting/README.md) · [Quick start](#quick-start) |
 
-**Headline results.** The expanded meta-analysis estimates annual survival at 78.0% (95% CI: 70.1–84.3%) across 17 studies and 22 effects, with high between-study heterogeneity (*I*² = 97.2%). The baseline population model estimates λ = 0.961, indicating decline under the pre-2023 chronic-disturbance regime.
+**Current analysis status.** The interval-annualized meta-analysis estimates pooled annual survival at 78.7% (95% CI: 70.4–85.1%; 95% prediction interval: 37.4–95.8%; 17 studies, 22 effects). The recruitment-free post-settlement transition subsystem has deterministic λ = 0.961 (bootstrap interval: 0.816–1.010). This is not a forecast of whole-population viability because sexual recruitment and external recruitment are fixed at zero. A clean-clone rerun under the locked R environment remains a release requirement.
 
 **Design principle.** Transparency over false precision: analyses distinguish manuscript-facing results from supporting and exploratory work, expose heterogeneity, and preserve a traceable path from source studies to model parameters.
 
@@ -34,13 +34,13 @@ This repository updates the Vardi et al. (2012) Lefkovitch projection model usin
 
 ### Parent Goal
 
-Build a Caribbean-wide, size-structured understanding of *Acropora palmata* demography that is good enough to support defensible inference about population viability, disturbance exposure, and restoration decision-making.
+Build a Caribbean-wide, size-structured understanding of *Acropora palmata* demography that is good enough to support defensible inference about conditional transition dynamics, disturbance exposure, and restoration decision-making.
 
 ### Paper Goals
 
 1. Quantify how demographic rates vary across colony size, including survival, growth, shrinkage, and fragmentation.
 2. Test whether those size relationships are nonlinear, with thresholds or inflection points rather than simple linear scaling.
-3. Translate size-structured demographic rates into population-viability consequences, especially the size classes and transitions that drive `λ`, decline risk, and recovery potential.
+3. Translate size-structured demographic rates into conditional post-settlement transition dynamics, especially the size classes and transitions that drive `λ` in the recruitment-free subsystem.
 4. Treat disturbance as part of the demographic regime facing *A. palmata*, including hurricanes, disease, heatwaves, cold events, predators, and chronic stressors.
 5. Map disturbance through Caribbean time and space, then connect disturbance windows to observed demographic performance.
 6. Compare natural-colony and restoration-fragment demography, including when differences persist after accounting for size.
@@ -48,7 +48,7 @@ Build a Caribbean-wide, size-structured understanding of *Acropora palmata* demo
 8. Quantify heterogeneity and transferability across studies, regions, and years so pooled estimates are interpreted with appropriate caution.
 9. Make uncertainty and data gaps explicit, especially for recruitment, fecundity, chronic stress, and large-adult dynamics outside Florida.
 
-For a more detailed goal-to-analysis roadmap, see [07_reporting/internal/paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/paper_scope_and_analysis_roadmap.md).
+For a more detailed goal-to-analysis roadmap, see [the paper roadmap](07_reporting/internal/paper_scope_and_analysis_roadmap.md).
 
 ---
 
@@ -66,7 +66,7 @@ This repository follows a **PRISMA-first layout** where top-level directories ma
 | `06_analysis/` | Analysis | 69 top-level R scripts, generated outputs, figures, and directory indexes |
 | `07_reporting/` | Reporting | Manuscript methods + narrative drafts, figure legends, build maps, crosswalks, advanced-model reports, and support tables |
 
-This organization ensures every step from literature search to final analysis is traceable and reproducible, consistent with PRISMA 2020 guidelines. For data-surface navigation, start with [05_data/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/README.md).
+This organization ensures every step from literature search to final analysis is traceable and reproducible, consistent with PRISMA 2020 guidelines. For data-surface navigation, start with [05_data/README.md](05_data/README.md).
 
 ---
 
@@ -74,21 +74,21 @@ This organization ensures every step from literature search to final analysis is
 
 | Finding | Value | Interpretation |
 |---------|-------|----------------|
-| **Population Growth Rate (λ)** | 0.961 (CI: 0.816–1.010) | Deterministic λ below replacement; 94.3% bootstrap probability of decline |
+| **Conditional transition λ** | 0.961 (CI: 0.816–1.010) | Recruitment-free post-settlement subsystem; 94.3% of bootstrap replicates had λ < 1, not a real-world decline probability |
 | **Most Critical Parameter** | SC5 Stasis | Large-adult persistence contributes 58.9% of matrix-cell elasticity |
 | **Survival Nonlinearity** | Threshold ~7,498 cm² | Supported sigmoidal survival response, but weakly stable across study folds |
 | **Core Growth Nonlinearity** | RGR threshold at 36.9 cm² | The steepest proportional-growth shift occurs early in ontogeny |
 | **Shrinkage Frequency** | 39.4% | Matrix-compatible growth records frequently show tissue loss rather than simple positive growth |
-| **Disturbance × Size** | Survival interaction `p = 6.93e-4` | Disturbance modifies the size-survival relationship rather than acting as background noise |
-| **Study Heterogeneity (I²)** | 97.2% (expanded meta-analysis, k=17) | Extreme between-study variation |
-| **Expanded Meta-Analysis** | k=17 (22 effects), 78.0% | CI: 70.1–84.3% pooled annual survival |
-| **Natural vs Restoration** | 84.1% vs 74.5% | 9.5 pp difference, p=0.238 |
+| **Disturbance × Size** | Survival interaction `p = 6.93e-4` | Size–survival associations differed among curated exposure categories; this observational comparison does not estimate a causal disturbance effect |
+| **Study Heterogeneity (I²)** | 97.6% | Between-study variation is substantial; the prediction interval is 37.4–95.8% |
+| **Expanded Meta-Analysis** | 78.7% (k=17; 22 effects) | Tier-1 and Tier-2 inputs use the same interval-annualized time scale |
+| **Natural vs Restoration** | 85.4% vs 74.5% | 10.9 pp difference, p=0.199; the comparison is underpowered and not statistically supported |
 | **Updates Vardi (2012)** | Lefkovitch matrix | Largest dataset for species |
 | **Pre-2023 baseline** | All vital rates pre-date the 2023 Florida heatwave | Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida at 16-20 DHW. This matrix describes the chronic regime before that event. |
-| **Zero fecundity assumption** | λ = 0.961 assumes no sexual recruitment | Fragmentation is the only reproduction pathway in the model. Even minimal fecundity (1 recruit/adult/yr) would push λ above 1.0. |
+| **Recruitment assumption** | λ = 0.961 assumes no sexual or external recruitment | Fragmentation is the only recruitment pathway represented; λ is therefore conditional rather than a full population forecast. |
 | **Biological-realism framework (FigS29)** | 9-scenario sensitivity analysis | Layered seven literature-sourced mechanisms (Vardi 2011 size threshold; Mendoza-Quiroz 2023 oocyte density; Lirman 2000a sterility lag; Piñón-González 2018 lesion penalty; Boisvert 2024 outplant decay; Rodriguez-Martinez 2014 winter SST; Williams 2012 depensatory corallivory; depth refugia). Biggest driver: outplant-age penalty Δλ = −0.126; depth refugia +0.064; "all combined" Δλ = +0.094. |
 
-> For manuscript-facing interpretation, use [07_reporting/manuscript/manuscript_narrative_integration.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/manuscript_narrative_integration.md), [07_reporting/internal/claim_output_crosswalk.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/claim_output_crosswalk.md), and [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).
+> For manuscript-facing interpretation, use [the manuscript draft](07_reporting/manuscript/acropora_palmata_demography_manuscript_draft.md), [the claim-to-output crosswalk](07_reporting/internal/claim_output_crosswalk.md), and [the figure/table map](07_reporting/manuscript/figure_table_map.md).
 
 ---
 
@@ -126,7 +126,7 @@ Detmer-2025-coral-parameters/
 │   │   ├── 08-12_*.R                   # Robustness & evaluation
 │   │   ├── 13-17_*.R, 14b_*.R          # Synthesis (matrix, meta-analysis k=17/22 effects)
 │   │   ├── 18-22_*.R, 20b/c_*.R        # Manuscript figures (Fig 1-4)
-│   │   ├── 23-28_*.R                   # Supplementary figures S2-S14
+│   │   ├── 23-28_*.R                   # Core supplementary figures S2-S14 (later extensions add S15-S30)
 │   │   ├── 29-40_*.R, 31b, 49_*.R      # Context, disturbance, completeness, temporal scenarios
 │   │   ├── 41-47_*.R                   # Advanced dynamic model extensions
 │   │   ├── 48_pipeline_refresh_audit.R # Pipeline manifest refresh
@@ -166,22 +166,45 @@ Detmer-2025-coral-parameters/
 ### Prerequisites
 
 - **R** (≥ 4.3) with packages: `tidyverse`, `mgcv`, `lme4`, `metafor`, `patchwork`, `gratia`
+- Optional but recommended: use the top-level `Makefile` targets for CAFI-style
+  rebuild and verification gates.
+
+Restore the pinned project library before running R targets:
+
+```bash
+Rscript -e 'renv::restore(prompt = FALSE)'
+```
+
+The current lockfile was created with R 4.5.2. Use that version, or validate a
+compatible R installation, before treating a completed restore as reproducible.
+
+### Workflow Targets
+
+```bash
+make pipeline       # full maintained analysis pipeline
+make verify         # refresh canonical stats, then run source/prose gates
+make display-check  # validate figure/table index against rendered files + legends
+make submit-check   # verify + display-check + strict renv status
+```
+
+The display-item source of truth is
+[display_items.tsv](07_reporting/manuscript/display_items.tsv).
+Qualitative manuscript assertions that should not drift silently live in
+[claims.tsv](07_reporting/manuscript/claims.tsv).
 
 ### Run the Analysis Pipeline
 
 ```bash
-cd 06_analysis/scripts
-
 # Run the complete maintained pipeline
 # Long-running; matrix bootstrap and advanced models dominate runtime.
 # This is the canonical refresh path after adding or updating site data.
-Rscript run_all.R
+make pipeline
 
 # Or run individual scripts
-Rscript 01_data_preparation.R
-Rscript 13_transition_matrix.R
-Rscript 14b_expanded_meta_analysis.R
-Rscript 18_fig1_study_landscape.R
+Rscript 06_analysis/scripts/01_data_preparation.R
+Rscript 06_analysis/scripts/13_transition_matrix.R
+Rscript 06_analysis/scripts/14b_expanded_meta_analysis.R
+Rscript 06_analysis/scripts/18_fig1_study_landscape.R
 ```
 
 ### Run the Nonlinearity Workflow Only
@@ -200,16 +223,17 @@ The maintained pipeline is now set up so that new site data can flow through the
 
 1. Add or update raw source files under `05_data/original/`.
 2. Standardize them in a dedicated `06_analysis/scripts/00_standardize_<site>.R` script that appends or rebuilds the canonical standardized tables.
-3. Register any new or changed standardized table in [data_registry.csv](/Users/adrianstier/Detmer-2025-coral-parameters/05_data/standardized/data_registry.csv).
-4. Rerun `Rscript 06_analysis/scripts/run_all.R`.
+3. Register any new or changed standardized table in [data_registry.csv](05_data/standardized/data_registry.csv).
+4. Rerun `make pipeline`.
 
 After rerun, check these canonical refresh artifacts:
 
-- [standardized_data_inventory.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/standardized_data_inventory.csv)
-- [canonical_statistics.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_statistics.csv)
-- [pipeline_assertion_checks.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/pipeline_assertion_checks.csv)
-- [canonical_artifact_status.csv](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/output/canonical_artifact_status.csv)
-- [pipeline_refresh_report.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/generated/pipeline_refresh_report.md)
+- [standardized_data_inventory.csv](06_analysis/output/standardized_data_inventory.csv)
+- [canonical_statistics.csv](06_analysis/output/canonical_statistics.csv)
+- [pipeline_assertion_checks.csv](06_analysis/output/pipeline_assertion_checks.csv)
+- [canonical_artifact_status.csv](06_analysis/output/canonical_artifact_status.csv)
+- [pipeline_refresh_report.md](07_reporting/internal/generated/pipeline_refresh_report.md)
+- [model_inventory.tsv](07_reporting/internal/model_inventory.tsv) and [statistical_model_inventory.md](07_reporting/internal/statistical_model_inventory.md)
 
 ### Verify Script Syntax
 
@@ -314,7 +338,7 @@ All data in this repository has a documented chain of custody:
 
 3. **Expanded search data** (`05_data/expanded_search/`): Extracted from published PDFs (March 2026) and independently verified against source documents. Audit results documented in [`04_extraction/extraction_protocol.md`](04_extraction/extraction_protocol.md) Section 8.
 
-4. **Analysis outputs** (`06_analysis/output/`): Generated by the R pipeline. Regenerate with `Rscript run_all.R`. Use [06_analysis/output/README.md](06_analysis/output/README.md) to distinguish canonical manuscript outputs from support-only and exploratory files.
+4. **Analysis outputs** (`06_analysis/output/`): Generated by the R pipeline. Regenerate from the repository root with `make pipeline` (or run `Rscript run_all.R` from `06_analysis/scripts/`). Use [06_analysis/output/README.md](06_analysis/output/README.md) to distinguish canonical manuscript outputs from support-only and exploratory files.
 
 ### Inclusion/exclusion criteria
 
@@ -339,6 +363,21 @@ Rscript 14b_expanded_meta_analysis.R  # Meta-analysis k=17 (22 effects)
 ```
 
 For figure numbering and manuscript-facing build targets, use [07_reporting/manuscript/figure_table_map.md](07_reporting/manuscript/figure_table_map.md).
+
+### Reviewer preflight
+
+Run the dependency restore before treating any generated output as reproduced,
+then run the complete gate from the repository root:
+
+```bash
+Rscript -e 'renv::restore(prompt = FALSE)'
+make submit-check
+```
+
+`make submit-check` verifies the canonical numerical outputs, qualitative
+claims, model inventory, display-item map, and lockfile state. A failure means
+the review snapshot has not yet been reproduced and should not be archived as a
+release.
 
 ---
 
@@ -390,12 +429,22 @@ The RSE repo has a sortable index at `literature/DATABASE.csv` and a fecundity s
 
 ## License
 
-MIT License
+The code is released under the [MIT License](LICENSE). Source data retain the
+terms imposed by their original providers; see the data-use statement below.
+
+### Data-use statement
+
+The repository contains compiled and standardized data from multiple sources.
+Reuse must follow the source-level attribution, licensing, and data-sharing
+conditions recorded in `04_extraction/` and the standardized-data registry.
+Do not treat this code license as permission to redistribute restricted source
+data.
 
 ## Citation
 
 ```
-Detmer, R. & Stier, A. (2025). Size-structured population demography of Acropora
-palmata: a Caribbean synthesis and updated population viability assessment.
-GitHub: https://github.com/stier-lab/Detmer-2025-coral-parameters
+Stier, A. C., Detmer, A. R., Samhouri, J. F., Bradley, D., Croquer, A.,
+& Sellares-Blasco, R. I. (2026). *Acropora palmata* demography: Caribbean survival,
+growth, disturbance, and conditional transition dynamics. GitHub:
+https://github.com/stier-lab/Detmer-2025-coral-parameters
 ```

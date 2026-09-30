@@ -31,13 +31,13 @@ NOAA_survey,Navassa,18.4,-75,2009,2.72,minor,ERDDAP verified (noaacrwdhwDaily),s
 NOAA_survey,Florida Keys,25,-80.4,2009,0.79,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Curacao,12.3,-69.1,2009,NA,NA,no_data,no_data_in_response
 NOAA_survey,Curacao,12.1,-68.9,2009,NA,NA,no_data,no_data_in_response
-NOAA_survey,Curacao,12.1,-69,2010,5,moderate,original: original: Literature LUT: Skirving et al. 2019 (re-query failed) (re-query failed),http_503
-NOAA_survey,Florida Keys,25.2,-80.2,2010,7,moderate,original: original: Literature LUT: Manzello 2015 (re-query failed) (re-query failed),http_503
-NOAA_survey,Florida Keys,25.1,-80.3,2010,7,moderate,original: original: Literature LUT: Manzello 2015 (re-query failed) (re-query failed),http_503
+NOAA_survey,Curacao,12.1,-69,2010,16.93,major,ERDDAP verified (noaacrwdhwDaily),success
+NOAA_survey,Florida Keys,25.2,-80.2,2010,1.01,minor,ERDDAP verified (noaacrwdhwDaily),success
+NOAA_survey,Florida Keys,25.1,-80.3,2010,1.79,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25,-80.3,2010,0.98,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25,-80.4,2010,1.96,minor,ERDDAP verified (noaacrwdhwDaily),success
-NOAA_survey,Curacao,12.3,-69.1,2010,5,moderate,original: original: Literature LUT: Skirving et al. 2019 (re-query failed) (re-query failed),no_data_in_response
-NOAA_survey,Curacao,12.1,-68.9,2010,5,moderate,original: original: Literature LUT: Skirving et al. 2019 (re-query failed) (re-query failed),no_data_in_response
+NOAA_survey,Curacao,12.3,-69.1,2010,5,moderate,original: original: original: Literature LUT: Skirving et al. 2019 (re-query failed) (re-query failed) (re-query failed),no_data_in_response
+NOAA_survey,Curacao,12.1,-68.9,2010,5,moderate,original: original: original: Literature LUT: Skirving et al. 2019 (re-query failed) (re-query failed) (re-query failed),no_data_in_response
 NOAA_survey,Florida Keys,25.3,-80.2,2010,1.19,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Curacao,12.1,-69,2011,4.92,moderate,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25.2,-80.2,2011,1.85,minor,ERDDAP verified (noaacrwdhwDaily),success
@@ -75,7 +75,7 @@ NOAA_survey,Florida Keys,25.2,-80.2,2015,2.82,minor,ERDDAP verified (noaacrwdhwD
 NOAA_survey,Florida Keys,25.1,-80.3,2015,3.83,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25,-80.3,2015,3.5700000000000003,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25,-80.4,2015,4.07,moderate,ERDDAP verified (noaacrwdhwDaily),success
-NOAA_survey,Curacao,12.1,-68.9,2015,4,moderate,original: original: Literature LUT: NOAA CRW 2015 (re-query failed) (re-query failed),no_data_in_response
+NOAA_survey,Curacao,12.1,-68.9,2015,4,moderate,original: original: original: Literature LUT: NOAA CRW 2015 (re-query failed) (re-query failed) (re-query failed),no_data_in_response
 NOAA_survey,Florida Keys,25.3,-80.2,2015,2.83,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25.2,-80.2,2016,0.15,minor,ERDDAP verified (noaacrwdhwDaily),success
 NOAA_survey,Florida Keys,25.1,-80.3,2016,0.32,minor,ERDDAP verified (noaacrwdhwDaily),success

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 # =============================================================================
-# FIGURE 4: POPULATION VIABILITY ASSESSMENT (4-panel: (a | b) / (c | d))
+# FIGURE 4: CONDITIONAL TRANSITION DYNAMICS (4-panel: (a | b) / (c | d))
 # =============================================================================
 #
 # PURPOSE: Generate Figure 4 for the manuscript showing the Lefkovitch
@@ -53,7 +53,7 @@ require_output <- function(path) {
 
 cat("\n")
 cat("================================================================\n")
-cat("  FIGURE 4: Population Viability Assessment (a|b / c|d)\n")
+cat("  FIGURE 4: Conditional Transition Dynamics (a|b / c|d)\n")
 cat("================================================================\n\n")
 
 # =============================================================================
@@ -293,15 +293,15 @@ if (exists("pop_params")) {
 
 cat(sprintf("  Bootstrap: n = %d valid, median = %.3f\n", length(boot_vals), median(boot_vals)))
 cat(sprintf("  95%% CI: [%.3f, %.3f]\n", ci_95[1], ci_95[2]))
-cat(sprintf("  P(decline): %.1f%%\n", p_decline * 100))
+cat(sprintf("  Bootstrap share with lambda < 1: %.1f%%\n", p_decline * 100))
 
-# Bicolor fill: decline vs growth
+# Bicolor fill: bootstrap values below versus at/above replacement.
 boot_df <- data.frame(lambda = boot_vals) %>%
-  mutate(status = ifelse(lambda < 1, "decline", "growth"))
+  mutate(status = ifelse(lambda < 1, "below replacement", "at/above replacement"))
 
 # Use subtitle below the panel for summary stats instead of in-panel text box.
 # Split into two lines so the text fits within the half-panel width.
-stats_subtitle <- sprintf("\u03BB = %.3f; 95%% CI [%.3f, %.3f]; P(decline) = %.1f%%\nSC5 support %.1f%% NOAA; %s of %s valid",
+stats_subtitle <- sprintf("\u03BB = %.3f; 95%% CI [%.3f, %.3f]; bootstrap share \u03BB < 1 = %.1f%%\nSC5 support %.1f%% NOAA; %s of %s valid",
                          det_lambda, ci_95[1], ci_95[2], p_decline * 100,
                          sc5_noaa_share,
                          comma(length(boot_vals)), comma(n_boot_total))
@@ -316,9 +316,9 @@ fig4c <- ggplot(boot_df, aes(x = lambda, fill = status)) +
   geom_vline(xintercept = det_lambda, linetype = "dashed",
              color = pal$surv_dark, linewidth = 0.8) +
   scale_fill_manual(
-    values = c("decline" = pal$accent, "growth" = pal$surv_mid),
-    labels = c("decline" = expression(lambda < 1),
-                "growth" = expression(lambda >= 1)),
+    values = c("below replacement" = pal$accent, "at/above replacement" = pal$surv_mid),
+    labels = c("below replacement" = expression(lambda < 1),
+                "at/above replacement" = expression(lambda >= 1)),
     name = NULL
   ) +
   annotate("text", x = 1.015, y = Inf,
@@ -420,4 +420,4 @@ fig4 <- (fig4a | fig4b) / (fig4c | fig4d) +
 
 save_manuscript_fig(fig4, "Fig4_population_model", width_mm = 174, height_mm = 180)
 
-cat("\nDone: Figure 4 — Population Viability Assessment (4-panel)\n")
+cat("\nDone: Figure 4 — Conditional Transition Dynamics (4-panel)\n")

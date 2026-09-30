@@ -1,0 +1,27 @@
+# Keep renv dependency discovery focused on source code.
+# Generated outputs, raw data, PDFs, and alternate figure variants should not
+# affect the package lockfile.
+
+06_analysis/output/
+06_analysis/figures/
+07_reporting/internal/generated/
+literature/
+tmp/
+temp/
+logs/
+
+05_data/original/
+05_data/expanded_search/
+
+*.csv
+*.tsv
+*.rds
+*.RData
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+
+06_analysis/scripts/*_DARK.R

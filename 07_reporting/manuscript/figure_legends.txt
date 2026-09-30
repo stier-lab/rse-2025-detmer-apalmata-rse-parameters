@@ -90,7 +90,7 @@ FIGURE 3
 LEGEND:
 Fig. 3 Caribbean-wide survival synthesis for Acropora palmata. (a) Forest plot
 of annual survival probability from the expanded meta-analysis (k = 17 studies,
-22 effects, N = 8,805). Studies are grouped by population type. Point size is
+22 study-region effects). Studies are grouped by population type. Point size is
 proportional to random-effects weight. Diamonds show subgroup and overall
 pooled estimates. The dashed vertical line marks the overall pooled survival.
 The shaded band indicates the 95% prediction interval. (b) Geographic
@@ -100,22 +100,21 @@ estimates for regions with multiple contributing studies.
 
 METHODS:
 We conducted a two-tier random-effects meta-analysis combining individual-level
-and summary-level survival effects. Effect sizes were computed as proportional
-log-odds and fit with REML estimation and the Knapp-Hartung adjustment.
-Non-annual survival rates were annualized assuming constant hazard. Panel b
+and summary-level survival effects. Both tiers were annualized at the observed
+monitoring-interval level under a constant-hazard assumption before aggregation.
+Effect sizes were computed as proportional log-odds and fit with a three-level
+REML model with study and within-study effect structure and t-based inference;
+an independent-effect Knapp-Hartung model was a sensitivity analysis. Panel b
 uses the same meta-analytic framework to summarize regions with multiple
 contributing effects.
 
 RESULTS:
-The expanded synthesis yields a pooled annual survival of 78.0% (95% CI:
-70.1-84.3%), but the 95% prediction interval is wide (39.5-95.1%), consistent
-with extreme heterogeneity across studies and regions (I2 = 97.2%). Natural
-colony effects show higher pooled survival than restoration-fragment effects
-(84.1% vs 74.5%), but the difference is not statistically significant and
-should be interpreted as heterogeneous rather than universal. Geographic
-variation remains substantial even within population type, reinforcing that the
-pooled value is a conditional Caribbean summary, not a region-independent
-constant.
+The annualized expanded synthesis must be rerun before the pooled estimate,
+confidence interval, prediction interval, heterogeneity statistic, and subgroup
+contrasts are reported. The prior mixed-interval result is not retained as an
+annual-survival estimate. Geographic variation is expected to remain substantial
+within population type, so any pooled value is a conditional summary rather than
+a region-independent constant.
 
 
 ================================================================================
@@ -123,8 +122,8 @@ FIGURE 4
 ================================================================================
 
 LEGEND:
-Fig. 4 Population viability assessment for Acropora palmata. (a) Estimated 5x5
-Lefkovitch transition matrix. Cell values show annual transition probabilities
+Fig. 4 Conditional transition dynamics for Acropora palmata. (a) Estimated
+five-class, recruitment-free Lefkovitch transition matrix. Cell values show annual transition probabilities
 between size classes. Fill color indicates probability magnitude. Diagonal
 elements represent stasis, below-diagonal transitions represent growth, and
 above-diagonal transitions represent retrogression. (b) Elasticity
@@ -133,13 +132,15 @@ contribution of stasis, growth, retrogression, and fragmentation to total
 elasticity for each size class. (c) Bootstrap distribution of population growth
 rate (`lambda`); bars are colored by whether each replicate indicates decline
 (`lambda < 1`) or growth (`lambda >= 1`). (d) Leave-one-study-out sensitivity
-analysis for `lambda`.
+analysis for `lambda`. The bootstrap distribution describes uncertainty in
+compiled transition rates, not a probability of real-world decline.
 
 METHODS:
-We constructed a five-class Lefkovitch transition matrix using the prepared
-natural-colony transition data and the size classes adopted throughout the
-project. The dominant eigenvalue was used as the deterministic population
-growth rate (`lambda`). Elasticity analysis decomposed the sensitivity of
+We constructed a five-class, recruitment-free Lefkovitch transition matrix
+using the prepared natural-colony transition data and the size classes adopted
+throughout the project. The dominant eigenvalue represented conditional annual
+growth of the observed post-settlement subsystem, not full population viability.
+Elasticity analysis decomposed the sensitivity of
 `lambda` into stasis, growth, retrogression, and fragmentation components.
 Bootstrap uncertainty was estimated via hierarchical resampling with 2,000
 valid replicates, and leave-one-study-out sensitivity analysis was used to
@@ -150,13 +151,13 @@ The transition matrix shows that stasis dominates all size classes, but
 retrogression is not negligible. A dedicated shrinkage synthesis indicates that
 39.4% of matrix-compatible growth records involve tissue loss, and observed
 retrogression probabilities are 15.2% in SC2, 16.8% in SC3, 17.2% in SC4, and
-9.1% in SC5. Large-adult persistence remains the dominant viability lever:
+9.1% in SC5. Large-adult persistence remains the dominant conditional transition lever:
 SC5-to-SC5 stasis accounts for 58.9% of matrix-cell elasticity, and aggregated
-SC5 survival elasticity is 58.9%. The current deterministic `lambda` is 0.961,
-with a bootstrap 95% interval of 0.816-1.010 and a 94.3% bootstrap
-probability of decline. Leave-one-study-out sensitivity spans `lambda` =
-0.882-0.993, showing that the viability estimate remains conditional on a small
-set of natural-colony transition datasets.
+SC5 survival elasticity is 60.2%. The deterministic `lambda` is 0.961, with a
+bootstrap 95% interval of 0.816-1.010; 94.3% of bootstrap replicates had
+`lambda < 1`. Leave-one-study-out sensitivity spans `lambda` = 0.882-0.993,
+showing that the conditional estimate depends on a small set of natural-colony
+transition datasets.
 
 
 ================================================================================

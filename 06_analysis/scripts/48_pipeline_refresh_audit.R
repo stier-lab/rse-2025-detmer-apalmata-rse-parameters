@@ -125,7 +125,8 @@ restore_file <- file.path(output_dir, "restoration_subtype_sensitivity.csv")
 if (file.exists(restore_file)) {
   restore <- read_csv(restore_file, show_col_types = FALSE)
   subtype_rows <- list(
-    all_subtypes = "All restoration subtypes",
+    all_subtypes = "All subtype-coded records",
+    all_restoration_subtypes = "All restoration subtypes",
     exclude_natural = "Exclude natural fragments",
     nursery_only = "Nursery outplants only"
   )

@@ -1,4 +1,4 @@
 component,analysis_mode,n_obs,n_studies,n_regions,n_study_years,estimate,p_value,aic,bic,log_likelihood,overdispersion_ratio,overdispersed,inference_support,note
 support_summary,screening,7413,6,6,44,NA,NA,NA,NA,NA,NA,NA,moderate,"Verified DHW cache is preferred when present, but current support is often literature-LUT backed and is supported here by 6 studies, 6 regions, and 44 study-years."
-dhw_glmm,inferential_screen,7410,6,6,44,-0.10345732048170911,3.310108211093959e-17,6796.502977509229,6824.145320382389,-3394.2514887546145,0.9910328867272631,FALSE,moderate,DHW GLMM fit on DHW-matched survival subset.
-study_level_correlation,inferential_screen,42,6,6,42,-0.2737493542866875,0.07938915624337897,NA,NA,NA,NA,NA,moderate,Study-level DHW-survival correlation; treat as descriptive when support is sparse.
+dhw_glmm,inferential_screen,7410,6,6,44,-0.0974830040319281,1.0568395612007816e-16,6799.617895010389,6827.260237883549,-3395.8089475051943,0.9890352309290761,FALSE,moderate,DHW GLMM fit on DHW-matched survival subset.
+study_level_correlation,inferential_screen,42,6,6,42,-0.2995579207447861,0.053943908829268854,NA,NA,NA,NA,NA,moderate,Study-level DHW-survival correlation; treat as descriptive when support is sparse.

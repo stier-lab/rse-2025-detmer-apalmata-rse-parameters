@@ -1,8 +1,8 @@
 model,model_class,family,nobs,df_residual,logLik,AIC,BIC,overdispersion_ratio,overdispersed,singular_fit,note
 within_region_meta_analysis,rma.uni,random-effects meta-analysis,3,NA,-1.964316343877631,7.928632687755262,5.314927048875153,NA,NA,NA,"OR = 1.85, p = 0.2382"
-florida_keys_glm_interaction,glm,binomial,1701,1697,-1040.870789039544,2089.741578079088,2111.4974644486715,1.0022861951041873,FALSE,NA,"Descriptive only: two studies, perfect study/population confounding, no valid small-cluster inference"
-florida_keys_glm_main_effects,glm,binomial,1701,1698,-1045.3993629234828,2096.7987258469657,2113.1156406241535,1.0013266573436261,FALSE,NA,Comparator without interaction term
-florida_keys_glm_study_fixed_effects,glm,binomial,1701,1697,-1040.870789039544,2089.741578079088,2111.4974644486715,NA,NA,NA,Study fixed-effects comparator for perfect confounding check
+florida_keys_glm_interaction,glm,binomial,1701,1697,-1040.8707890395444,2089.741578079089,2111.4974644486724,1.002286195104186,FALSE,NA,"Descriptive only: two studies, perfect study/population confounding, no valid small-cluster inference"
+florida_keys_glm_main_effects,glm,binomial,1701,1698,-1045.3993629234826,2096.798725846965,2113.115640624153,1.001326657343626,FALSE,NA,Comparator without interaction term
+florida_keys_glm_study_fixed_effects,glm,binomial,1701,1697,-1040.8707890395444,2089.741578079089,2111.4974644486724,NA,NA,NA,Study fixed-effects comparator for perfect confounding check
 florida_keys_glmm_interaction,glmerMod,binomial,1701,1696,-1040.8707890395456,2091.741578079091,2118.9364360410705,1.0028771657383118,FALSE,TRUE,Comparison model; expected singular fit because study and population type are aliased
 florida_keys_glmm_main_effects,glmerMod,binomial,1701,1697,-1045.3993629234828,2098.7987258469657,2120.5546122165492,NA,NA,TRUE,Main-effects random-intercept comparator
 size_class_SC1,glmerMod,binomial,63,NA,NA,87.67125161158653,94.10065579076112,0.9177043500858858,FALSE,FALSE,"OR = 0.89, p = 0.9346, studies = 5"

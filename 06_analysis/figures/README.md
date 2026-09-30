@@ -45,8 +45,9 @@ Use [07_reporting/manuscript/figure_table_map.md](/Users/adrianstier/Detmer-2025
 | Fig. S26 Natural vs restoration comparison | `29_natural_vs_restoration.R` | `FigS26_natural_vs_restoration_comparison.*` |
 | Fig. S28 Temporal synthesis | `49b_temporal_synthesis_figure.R` | `FigS28_temporal_synthesis.*` |
 | Fig. S29 Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism.*` |
+| Fig. S30 Disturbance type x size class | `37b_disturbance_type_size_interaction.R` | `FigS30_disturbance_type_size.*` |
 
-*FigS27 number is intentionally vacant — former orphan placeholder removed 2026-04-24; downstream cross-refs to FigS28/FigS29 retained at original numbers.*
+*FigS27 number is intentionally vacant — former orphan placeholder removed 2026-04-24; downstream cross-references to FigS28-FigS30 retain their original numbers.*
 
 ## Exploratory And Support-Only Figures (`supplementary/exploratory/`)
 

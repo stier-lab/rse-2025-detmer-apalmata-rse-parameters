@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it as below."
+title: "Acropora palmata demography: Caribbean survival, growth, disturbance, and conditional transition dynamics"
+type: software
+authors:
+  - family-names: Stier
+    given-names: Adrian C.
+  - family-names: Detmer
+    given-names: A. Raine
+  - family-names: Samhouri
+    given-names: Jameal F.
+  - family-names: Bradley
+    given-names: Darcy
+  - family-names: Croquer
+    given-names: Aldo
+  - family-names: Sellares-Blasco
+    given-names: Rita I.
+repository-code: "https://github.com/stier-lab/Detmer-2025-coral-parameters"
+license: MIT
+date-released: 2026-09-28

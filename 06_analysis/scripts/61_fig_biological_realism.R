@@ -147,7 +147,9 @@ fig <- (p_a / p_b / p_c / p_d) + plot_layout(heights = c(1.2, 1, 1.2, 1.2))
 
 save_manuscript_fig(fig,
                      "FigS29_biological_realism",
-                     width_mm = 170, height_mm = 280,
+                     # Coral Reefs permits a maximum figure height of 234 mm;
+                     # 230 mm preserves room for the external legend.
+                     width_mm = 170, height_mm = 230,
                      fig_dir = "06_analysis/figures/supplementary")
 
 print_success("FigS29 rendered")

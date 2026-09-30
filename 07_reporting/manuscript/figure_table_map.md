@@ -11,7 +11,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 | Fig 1 — Study landscape | `18_fig1_study_landscape.R` | `Fig1_study_landscape` (.png, .pdf) |
 | Fig 2 — Demographic rates | `19_fig2_demographic_rates.R` | `Fig2_demographic_rates` (.png, .pdf) |
 | Fig 3 — Caribbean synthesis | `20b_fig_expanded_forest_plot.R` | `Fig3_caribbean_synthesis` (.png, .pdf) |
-| Fig 4 — Population viability | `22_fig6_population_model.R` | `Fig4_population_model` (.png, .pdf) |
+| Fig 4 — Conditional transition dynamics | `22_fig6_population_model.R` | `Fig4_population_model` (.png, .pdf) |
 
 **Notes:** Script 22 filename says "fig6" but its output is Fig 4 (historical artifact). Script 21 filename says "fig3" but its output is FigS8. Neither script has been renamed to avoid breaking `run_all.R`.
 
@@ -51,7 +51,7 @@ Canonical mapping of every manuscript and supplementary figure/table to its gene
 | FigS29 — Biological realism scenarios | `61_fig_biological_realism.R` | `FigS29_biological_realism` | 9-scenario sensitivity framework: tornado plot of Δλ, sexual vs fragmentation pathway share, 50-yr projection trajectories |
 | FigS30 — Disturbance TYPE x size class | `37b_disturbance_type_size_interaction.R` | `FigS30_disturbance_type_size` | Storm flattens the size-survival slope; disease is a level shift (SC2-SC3 hit hardest); heatwave gradient persists at moderate DHW, compresses at severe. Extends FigS17 (which used generic disturbance states) to typed storm/disease/heatwave. |
 
-All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S29) and are saved as both PNG and PDF.
+All output files live under `06_analysis/figures/manuscript/` (Fig 1--4) or `06_analysis/figures/supplementary/` (FigS1--S30, with FigS27 intentionally vacant) and are saved as both PNG and PDF.
 
 ---
 
@@ -92,4 +92,4 @@ Scripts that produce data, tables, or verification output only (no figures):
 1. **Script 22 ("fig6") vs output (Fig 4):** Historical artifact from earlier numbering.
 2. **Script 21 ("fig3") vs output (FigS8):** Historical artifact from earlier numbering.
 3. **Script 23 number collision:** `23_figS2_data_gaps.R` (figure) and `23_verification.R` (verification) share number 23.
-4. **FigS27 gap:** Former orphan placeholder removed 2026-04-24; FigS28/FigS29 not renumbered to avoid touching 43 downstream references.
+4. **FigS27 gap:** Former orphan placeholder removed 2026-04-24; FigS28-FigS30 were not renumbered to avoid touching 43 downstream references.

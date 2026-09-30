@@ -20,7 +20,7 @@
 #   08-12  = Robustness & supplementary (climate, power, CV, context, model selection)
 #   13-17  = Synthesis (matrix, meta-analysis, heterogeneity, sensitivity, parameters)
 #   18-23  = Manuscript figures and data-gap figure
-#   24-28  = Supplementary figures (S3-S14)
+#   24-28  = Core supplementary figures (S3-S14; script 26 also emits S21)
 #   29-40  = Context, disturbance, restoration, completeness, scenario extensions
 #   41-47  = Advanced dynamic model extensions
 #   23     = Verification
@@ -141,7 +141,7 @@ scripts <- c(
   "22_fig6_population_model.R",
   # 23: Data gaps figure
   "23_figS2_data_gaps.R",
-  # 24-28: Supplementary figures (S3-S14)
+  # 24-28: Core supplementary figures (S3-S14; script 26 also emits S21)
   "24_supp_S3_S4.R",
   "25_supp_S5_S6_S7_thresholds_growth.R",
   "26_supp_S8_S9.R",
@@ -229,7 +229,7 @@ script_descriptions <- c(
   "Figure 4: Population model & sensitivity",
   # 23: Data gaps figure
   "Figure S2: Data gaps heatmap",
-  # 24-28: Supplementary figures (S3-S14)
+  # 24-28: Core supplementary figures (S3-S14; script 26 also emits S21)
   "Supplementary S3-S4: Model diagnostics & selection",
   "Supplementary S5-S7: Thresholds & growth",
   "Supplementary S21 & S9: Forest plots and heterogeneity",

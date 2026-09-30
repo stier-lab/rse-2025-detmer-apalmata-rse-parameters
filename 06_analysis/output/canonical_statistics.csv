@@ -28,7 +28,8 @@ population,lambda_ci_upper,1.0102506116031893,1.010,06_analysis/output/populatio
 population,lambda_deterministic,0.9613236196732564,0.961,06_analysis/output/population_parameters.csv,NA
 population,max_elasticity_pct,58.8671290353556,58.9%,06_analysis/output/elasticity_matrix.csv,SC5 -> SC5
 population,p_decline_pct,94.3,94.3%,06_analysis/output/population_parameters.csv,NA
-restoration,all_subtypes_mean_survival_pct,60.036003600360075,60.0%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
+restoration,all_restoration_subtypes_mean_survival_pct,60.036003600360075,60.0%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
+restoration,all_subtypes_mean_survival_pct,81.17739712541847,81.2%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
 restoration,exclude_natural_mean_survival_pct,60.036003600360075,60.0%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
 restoration,nursery_only_mean_survival_pct,59.81220657277,59.8%,06_analysis/output/restoration_subtype_sensitivity.csv,NA
 restoration,survival_natural_fragment,87.09677419354837,87.1%,06_analysis/output/restoration_subtype_survival_summary.csv,n=3968

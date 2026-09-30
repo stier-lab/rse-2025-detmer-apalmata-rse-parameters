@@ -522,23 +522,46 @@ theme_manuscript <- function(base_size = 11) {
   pal <- MANUSCRIPT_PALETTE
   ggplot2::theme_minimal(base_size = base_size) %+replace%
     ggplot2::theme(
-      text             = ggplot2::element_text(family = "sans", color = pal$slate_dark),
+      # Coral Reefs figures are printed at 84 or 174 mm. Use an explicit,
+      # open sans-serif family and a restrained hierarchy that remains legible
+      # at final size; titles belong in the manuscript legend, not the panel.
+      text             = ggplot2::element_text(family = "Arial", color = pal$slate_dark),
       plot.title       = ggplot2::element_blank(),
       plot.subtitle    = ggplot2::element_blank(),
-      axis.title       = ggplot2::element_text(size = 11),
-      axis.text        = ggplot2::element_text(size = 9, color = "grey30"),
-      strip.text       = ggplot2::element_text(size = 10, face = "bold"),
+      axis.title       = ggplot2::element_text(size = base_size, face = "plain",
+                                                margin = ggplot2::margin(t = 3, r = 4)),
+      axis.text        = ggplot2::element_text(size = max(6, base_size - 2), color = "grey30"),
+      strip.text       = ggplot2::element_text(size = max(7, base_size - 1), face = "bold"),
       axis.line        = ggplot2::element_line(color = "grey30", linewidth = 0.4),
-      panel.grid.major = ggplot2::element_line(color = pal$grid, linewidth = 0.4),
+      axis.ticks       = ggplot2::element_line(color = "grey35", linewidth = 0.3),
+      panel.grid.major = ggplot2::element_line(color = "#E8EDF1", linewidth = 0.35),
       panel.grid.minor = ggplot2::element_blank(),
       panel.background = ggplot2::element_rect(fill = "white", color = NA),
       plot.background  = ggplot2::element_rect(fill = "white", color = NA),
       legend.position  = "bottom",
       legend.box       = "horizontal",
       legend.key.size  = ggplot2::unit(4, "mm"),
-      plot.margin      = ggplot2::margin(10, 10, 10, 10, "mm"),
-      plot.tag         = ggplot2::element_text(size = 12, face = "bold", color = pal$slate_dark)
+      plot.margin      = ggplot2::margin(5, 7, 5, 7, "mm"),
+      plot.tag         = ggplot2::element_text(size = base_size + 1, face = "bold", color = pal$slate_dark),
+      plot.tag.position = c(0, 1)
     )
+}
+
+check_coral_reefs_figure <- function(plot, width_mm, height_mm, filename = "figure") {
+  if (width_mm > 174) {
+    stop(sprintf("%s is %.0f mm wide; Coral Reefs double-column maximum is 174 mm.",
+                 filename, width_mm))
+  }
+  if (height_mm > 234) {
+    stop(sprintf("%s is %.0f mm high; Coral Reefs maximum is 234 mm.",
+                 filename, height_mm))
+  }
+  legend_position <- plot$theme$legend.position
+  if (is.numeric(legend_position)) {
+    warning(sprintf("%s uses an in-panel numeric legend position; move it outside the data area.",
+                    filename))
+  }
+  invisible(TRUE)
 }
 
 geom_sc_boundaries <- function(bounds = c(10, 100, 900, 4000)) {
@@ -563,15 +586,20 @@ save_manuscript_fig <- function(plot, filename, width_mm = 170, height_mm = 120,
   png_path <- file.path(fig_dir, paste0(filename, ".png"))
   pdf_path <- file.path(fig_dir, paste0(filename, ".pdf"))
 
+  check_coral_reefs_figure(plot, width_mm, height_mm, filename)
+
   ggplot2::ggsave(png_path, plot = plot,
-                  width = width_mm, height = height_mm, units = "mm", dpi = 300, bg = "white")
+                  width = width_mm, height = height_mm, units = "mm", dpi = 600, bg = "white")
 
   pdf_device <- if (capabilities("cairo")) cairo_pdf else "pdf"
   ggplot2::ggsave(pdf_path, plot = plot,
                   width = width_mm, height = height_mm, units = "mm",
                   bg = "white", device = pdf_device)
 
-  cat(sprintf("  Saved: %s (.png + .pdf) -- %d x %d mm\n", filename, width_mm, height_mm))
+  # The vector PDF is the preferred Coral Reefs submission asset for plots.
+  # The PNG is a 600-dpi combination-figure derivative for visual QA and any
+  # raster upload requested by Editorial Manager.
+  cat(sprintf("  Saved: %s (.png + vector .pdf) -- %d x %d mm\n", filename, width_mm, height_mm))
 }
 
 # =============================================================================

@@ -1,0 +1,48 @@
+# Canonical display-item index.
+# Edit this file first when a figure or table is added, removed, renumbered,
+# or moved between manuscript and supplement.
+#
+# tier      : main | supplementary | supp_table | support_table
+# number    : reader-facing number within that tier. Fig. S27 is intentionally
+#             vacant; see figure_table_map.md.
+# stem      : rendered basename, or "-" for markdown-only table entries.
+# render_dir: manuscript | supplementary | tables | -
+# driver    : script/source that produces it.
+# cite      : exact citation label expected in legends/prose.
+id	tier	number	stem	render_dir	driver	cite	short_title
+fig1	main	1	Fig1_study_landscape	manuscript	06_analysis/scripts/18_fig1_study_landscape.R	Fig. 1	Study landscape
+fig2	main	2	Fig2_demographic_rates	manuscript	06_analysis/scripts/19_fig2_demographic_rates.R	Fig. 2	Size-dependent demographic rates
+fig3	main	3	Fig3_caribbean_synthesis	manuscript	06_analysis/scripts/20b_fig_expanded_forest_plot.R	Fig. 3	Caribbean survival synthesis
+fig4	main	4	Fig4_population_model	manuscript	06_analysis/scripts/22_fig6_population_model.R	Fig. 4	Conditional transition dynamics
+figS1	supplementary	1	FigS1_size_distribution	supplementary	06_analysis/scripts/18_fig1_study_landscape.R	Fig. S1	Size distribution
+figS2	supplementary	2	FigS2_data_gaps	supplementary	06_analysis/scripts/23_figS2_data_gaps.R	Fig. S2	Data gaps
+figS3	supplementary	3	FigS3_model_diagnostics	supplementary	06_analysis/scripts/24_supp_S3_S4.R	Fig. S3	Model diagnostics
+figS4	supplementary	4	FigS4_model_selection	supplementary	06_analysis/scripts/24_supp_S3_S4.R	Fig. S4	Model selection
+figS5	supplementary	5	FigS5_threshold_analysis	supplementary	06_analysis/scripts/25_supp_S5_S6_S7_thresholds_growth.R	Fig. S5	Threshold analysis
+figS6	supplementary	6	FigS6_agr_vs_rgr	supplementary	06_analysis/scripts/25_supp_S5_S6_S7_thresholds_growth.R	Fig. S6	AGR versus RGR
+figS7	supplementary	7	FigS7_allometry	supplementary	06_analysis/scripts/25_supp_S5_S6_S7_thresholds_growth.R	Fig. S7	Allometry
+figS8	supplementary	8	FigS8_natural_vs_restoration	supplementary	06_analysis/scripts/21_fig3_natural_vs_restoration.R	Fig. S8	Natural versus restoration
+figS9	supplementary	9	FigS9_heterogeneity	supplementary	06_analysis/scripts/26_supp_S8_S9.R	Fig. S9	Heterogeneity
+figS10	supplementary	10	FigS10_context_comparison	supplementary	06_analysis/scripts/27_supp_S10_S11.R	Fig. S10	Context comparison
+figS11	supplementary	11	FigS11_climate_demography	supplementary	06_analysis/scripts/27_supp_S10_S11.R	Fig. S11	Climate demography
+figS12	supplementary	12	FigS12_sensitivity	supplementary	06_analysis/scripts/28_supp_S12_S13_S14.R	Fig. S12	Sensitivity
+figS13	supplementary	13	FigS13_cross_validation	supplementary	06_analysis/scripts/28_supp_S12_S13_S14.R	Fig. S13	Cross-validation
+figS14	supplementary	14	FigS14_population_projections	supplementary	06_analysis/scripts/28_supp_S12_S13_S14.R	Fig. S14	Population projections
+figS15	supplementary	15	FigS15_regional_survival	supplementary	06_analysis/scripts/20c_fig_regional_survival.R	Fig. S15	Regional survival
+figS16	supplementary	16	FigS16_shrinkage_retrogression_summary	supplementary	06_analysis/scripts/36_shrinkage_retrogression_summary.R	Fig. S16	Shrinkage and retrogression
+figS17	supplementary	17	FigS17_disturbance_size_interaction	supplementary	06_analysis/scripts/37_disturbance_size_interaction.R	Fig. S17	Disturbance by size
+figS18	supplementary	18	FigS18_disturbance_summary	supplementary	06_analysis/scripts/34_disturbance_summaries.R	Fig. S18	Disturbance summary
+figS19	supplementary	19	FigS19_restoration_subtype_sensitivity	supplementary	06_analysis/scripts/39_restoration_subtype_sensitivity.R	Fig. S19	Restoration subtype sensitivity
+figS20	supplementary	20	FigS20_annual_survival_timeseries	supplementary	06_analysis/scripts/49_annual_survival_timeseries.R	Fig. S20	Annual survival time series
+figS21	supplementary	21	FigS21_forest_plots	supplementary	06_analysis/scripts/26_supp_S8_S9.R	Fig. S21	Forest plots
+figS22	supplementary	22	FigS22_heatwave_scenarios	supplementary	06_analysis/scripts/40_manzello_heatwave_scenarios.R	Fig. S22	Heatwave scenarios
+figS23	supplementary	23	FigS23_disturbance_timeline	supplementary	06_analysis/scripts/32_disturbance_survival_analysis.R	Fig. S23	Disturbance timeline
+figS24	supplementary	24	FigS24_heat_stress_survival	supplementary	06_analysis/scripts/31_heat_stress_overlay.R	Fig. S24	Heat stress survival
+figS25	supplementary	25	FigS25_disturbance_sensitivity	supplementary	06_analysis/scripts/30_disturbance_sensitivity.R	Fig. S25	Disturbance sensitivity
+figS26	supplementary	26	FigS26_natural_vs_restoration_comparison	supplementary	06_analysis/scripts/29_natural_vs_restoration.R	Fig. S26	Natural versus restoration comparison
+figS28	supplementary	28	FigS28_temporal_synthesis	supplementary	06_analysis/scripts/49b_temporal_synthesis_figure.R	Fig. S28	Temporal synthesis
+figS29	supplementary	29	FigS29_biological_realism	supplementary	06_analysis/scripts/61_fig_biological_realism.R	Fig. S29	Biological realism scenarios
+figS30	supplementary	30	FigS30_disturbance_type_size	supplementary	06_analysis/scripts/37b_disturbance_type_size_interaction.R	Fig. S30	Disturbance type by size class
+tableS1	supp_table	1	TableS1_disturbance_chronology	tables	06_analysis/scripts/34_disturbance_summaries.R	Table S1	Disturbance chronology
+tableS2	supp_table	2	TableS2_study_window_disturbance_audit	tables	06_analysis/scripts/38_study_window_disturbance_audit.R	Table S2	Study-window disturbance audit
+tableS3	supp_table	3	size_class_synthesis_table	tables	07_reporting/manuscript/tables/size_class_synthesis_table.md	Table S3	Size-class synthesis

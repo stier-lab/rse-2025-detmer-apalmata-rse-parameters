@@ -1,6 +1,6 @@
 # Canonical Statistics
 
-Generated from pipeline run `20260421_103658` on 2026-04-24 14:48:47.
+Generated from pipeline run `20260809_154657` on 2026-08-10 14:03:50.
 
 ## Disturbance
 
@@ -55,7 +55,8 @@ Generated from pipeline run `20260421_103658` on 2026-04-24 14:48:47.
 
 | Metric | Value | Source |
 |---|---|---|
-| `all_subtypes_mean_survival_pct` | 60.0% | `06_analysis/output/restoration_subtype_sensitivity.csv` |
+| `all_restoration_subtypes_mean_survival_pct` | 60.0% | `06_analysis/output/restoration_subtype_sensitivity.csv` |
+| `all_subtypes_mean_survival_pct` | 81.2% | `06_analysis/output/restoration_subtype_sensitivity.csv` |
 | `exclude_natural_mean_survival_pct` | 60.0% | `06_analysis/output/restoration_subtype_sensitivity.csv` |
 | `nursery_only_mean_survival_pct` | 59.8% | `06_analysis/output/restoration_subtype_sensitivity.csv` |
 | `survival_natural_fragment` | 87.1% | `06_analysis/output/restoration_subtype_survival_summary.csv` |

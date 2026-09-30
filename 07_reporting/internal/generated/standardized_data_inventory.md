@@ -1,6 +1,6 @@
 # Standardized Data Inventory
 
-Generated from pipeline run `20260421_103658` on 2026-04-24 14:48:47.
+Generated from pipeline run `20260809_154657` on 2026-08-10 14:03:50.
 
 | File | Role | Rows | Studies | Regions | Year Range | Duplicate Keys |
 |---|---:|---:|---:|---:|---|---:|
@@ -12,7 +12,7 @@ Generated from pipeline run `20260421_103658` on 2026-04-24 14:48:47.
 | `apal_surv_lab_short.csv` | canonical_input | 6 | 2 | 2 | 2008-2012 | 2 |
 | `apal_disturbance_stressor_timeline.csv` | curated_support | 18 |  | 10 | 1961-2023 | 0 |
 | `caribbean_disturbance_events.csv` | curated_support | 93 |  | 13 | 1979-2024 | 0 |
-| `ibtracs_storm_exposure.csv` | generated_support | 616 |  | 15 | 1979-2025 | 8 |
+| `ibtracs_storm_exposure.csv` | generated_support | 617 |  | 15 | 1979-2026 | 8 |
 | `literature_disturbance_evidence.csv` | generated_support | 41 |  | 15 | 1961-2023 | 0 |
 | `literature_disturbance_evidence_analysis.csv` | generated_support | 37 |  | 13 | 1961-2023 | 0 |
 | `apal_life_history_parameters.csv` | generated_support | 42 |  | 12 |  |  |

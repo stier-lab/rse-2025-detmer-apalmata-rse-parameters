@@ -1,17 +1,24 @@
-# Table S3: Size-Class Synthesis for *Acropora palmata*
+```{=latex}
+\clearpage
+\begin{landscape}
+\footnotesize
+```
 
-This table synthesizes the current size-structured outputs into a manuscript-facing interpretation of risk, demographic behavior, population-viability leverage, and restoration relevance. Values are drawn from `shrinkage_retrogression_size_class_summary.csv`, `disturbance_size_survival_summary.csv`, `vital_rate_elasticity.csv`, `transition_sample_sizes.csv`, `population_parameters.csv`, and `restoration_subtype_survival_summary.csv`.
+# Table S3. Size-class synthesis for *Acropora palmata*
 
-| Size class | Main risks | Main demographic pattern | Population-viability implication | Restoration implication |
-|---|---|---|---|---|
-| `SC1` 0-10 cm2 | Early mortality, disturbance exposure, and weak size-class coverage outside Florida | Lowest leverage class; shrinkage still occurs, but the class mostly functions as the entry point into the matrix | Very low survival elasticity (`0.005`); changes in SC1 survival matter less than adult persistence for `lambda` | Useful as nursery/recruitment substrate, but should be treated as a pipeline stage rather than a viability endpoint |
-| `SC2` 10-100 cm2 | Post-transplant stress, fragmentation, disease, and backward size transitions | Bridge class with substantial churn; matrix-compatible shrinkage frequency is `23.8%`, and retrogression is `15.2%` | Low elasticity (`0.023`), but losses here can block progression into larger size classes | Prioritize acclimation, early stabilization, and rapid growth out of the small-juvenile stage |
-| `SC3` 100-900 cm2 | Partial mortality, storm damage, and disturbance-driven retrogression | Mid-size instability is pronounced; shrinkage frequency is `40.5%` and retrogression is `16.8%` | Intermediate survival elasticity (`0.109`); this class affects the flow of colonies into subadult and adult stages | Disturbance timing matters here; management should reduce the chance of backward transitions during recovery windows |
-| `SC4` 900-4,000 cm2 | Disturbance-linked shrinkage, breakage, and the loss of colonies on the cusp of reproductive size | Strong demographic bridge to adulthood; shrinkage frequency is `44.5%` and retrogression is `17.2%` | High survival elasticity (`0.217`); protecting this class materially improves progression into SC5 | Good restoration target if colonies can be protected long enough to cross the reproductive threshold |
-| `SC5` >4,000 cm2 | Loss of reproductive adults, fragmentation, and disturbance-induced shrinkage of the most valuable colonies | Highest leverage class; shrinkage frequency is `47.5%`, retrogression is `9.1%`, and mean net growth is negative in the current matrix-compatible subset | Dominant survival elasticity (`0.588`) plus fragmentation elasticity (`0.052`); SC5 persistence is the main lambda lever | Highest conservation priority: protect mature colonies, minimize physical disturbance, and retain adult structure where possible |
+This landscape supplementary table links size-structured estimates to their
+biological and restoration interpretation. It is designed as a reading table,
+not a substitute for the underlying estimates and uncertainty intervals.
 
-## Notes
+| Size class (live area) | Principal risk | Observed demographic pattern | Transition leverage | Restoration implication |
+|:---|:---|:---|:---|:---|
+| SC1 (0–10 cm²) | Early mortality; disturbance exposure; sparse coverage outside Florida | Entry point to the matrix; shrinkage also occurs | Aggregated survival elasticity: 0.004 | Use as nursery or recruitment substrate, not a transition-model endpoint |
+| SC2 (10–100 cm²) | Post-transplant stress, fragmentation, disease, and backward transitions | Substantial churn; 23.8% shrinkage and 15.2% retrogression | Aggregated survival elasticity: 0.024; losses can prevent entry to larger classes | Prioritize acclimation, early stabilization, and rapid growth through this stage |
+| SC3 (100–900 cm²) | Partial mortality, storm damage, and disturbance-driven retrogression | Mid-size instability; 40.5% shrinkage and 16.8% retrogression | Aggregated survival elasticity: 0.106; contributes to the flow into adult stages | Protect recovery windows from disturbance-linked backward transitions |
+| SC4 (900–4,000 cm²) | Shrinkage, breakage, and loss before reproductive size | Bridge to adulthood; 44.5% shrinkage and 17.2% retrogression | Aggregated survival elasticity: 0.208 | A strong target when colonies can be protected through the transition to SC5 |
+| SC5 (>4,000 cm²) | Loss or shrinkage of reproductive adults; fragmentation | Highest leverage; 47.5% shrinkage, 9.1% retrogression, and negative mean net growth in the matrix-compatible subset | Aggregated survival elasticity: 0.602; SC5→SC5 stasis matrix-cell elasticity: 0.589; fragmentation elasticity: 0.051 | Highest conservation priority: retain mature colonies and minimize physical disturbance |
 
-- The table should be read as a synthesis of current study composition, not a universal Caribbean constant.
-- The underlying outputs are Florida-heavy, so exact values are conditional on the available size structure and disturbance history.
-- Disturbance interpretation is especially important for SC3-SC5, where partial mortality can move colonies backward without immediate whole-colony death.
+```{=latex}
+\end{landscape}
+\clearpage
+```

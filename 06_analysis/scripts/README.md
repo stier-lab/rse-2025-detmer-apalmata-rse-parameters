@@ -5,6 +5,7 @@ R analysis pipeline for *Acropora palmata* size-structured demographic parameter
 For directory-level navigation, see [06_analysis/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/06_analysis/README.md).
 For the parent goal, paper goals, and current completeness roadmap, see [paper_scope_and_analysis_roadmap.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/paper_scope_and_analysis_roadmap.md).
 For the current core/supporting/exploratory labeling, see [analysis_inventory_labels.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/analysis_inventory_labels.md).
+For the maintained statistical model-family ledger, see [model_inventory.tsv](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/model_inventory.tsv) and [statistical_model_inventory.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/statistical_model_inventory.md).
 For the retained manuscript-facing figure/table set, see [figure_table_map.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/manuscript/figure_table_map.md).
 For the script-by-script diagnostics and outstanding-issues review, see [model_audit/README.md](/Users/adrianstier/Detmer-2025-coral-parameters/07_reporting/internal/model_audit/README.md).
 
@@ -352,12 +353,12 @@ The maintained pattern is:
 │   │   ├── Fig3_*.png/.pdf         # Main text
 │   │   └── Fig4_*.png/.pdf         # Main text
 │   │
-│   └── supplementary/              # Canonical supplement (FigS1-S28)
+│   └── supplementary/              # Canonical supplement (FigS1-S30; FigS27 intentionally vacant)
 │       ├── FigS1_*.png/.pdf        # Size distribution (from 18)
 │       ├── FigS2_*.png/.pdf        # Data gaps heatmap (from 23)
 │       ├── FigS3--S15_*.png/.pdf   # Diagnostics, robustness, and regional survival
 │       ├── FigS16--S20_*.png/.pdf  # Shrinkage, disturbance, restoration, and time series figures
-│       ├── FigS21--S28_*.png/.pdf  # Forest plots, heatwave, disturbance, and context extensions
+│       ├── FigS21--S30_*.png/.pdf  # Forest plots, heatwave, disturbance, and context extensions
 │       ├── exploratory/            # Unnumbered support figures (advanced models, diagnostics)
 │       ├── diagnostics/
 │       └── meta_analysis/

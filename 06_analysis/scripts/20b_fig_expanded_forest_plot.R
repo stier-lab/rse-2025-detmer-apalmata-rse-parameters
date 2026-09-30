@@ -558,6 +558,8 @@ save_manuscript_fig(
   plot = fig3,
   filename = "Fig3_caribbean_synthesis",
   width_mm = 174,
+  # The legend is supplied separately in the manuscript; the 230-mm figure is
+  # below the Coral Reefs 234-mm maximum.
   height_mm = 230,
   fig_dir = fig_dir
 )

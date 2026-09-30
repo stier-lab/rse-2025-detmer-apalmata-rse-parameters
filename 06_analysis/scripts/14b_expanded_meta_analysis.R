@@ -90,86 +90,73 @@ cat(sprintf("  Loaded %d Tier 1 studies from individual-level data\n", nrow(tier
 cat(sprintf("  Studies: %s\n", paste(tier1$study, collapse = ", ")))
 cat(sprintf("  Total N (Tier 1): %d\n\n", sum(tier1$n)))
 
-# ===========================================================================
-# FIX: Document Tier 1/Tier 2 annualization inconsistency (critique audit 2026-03-29)
-#
-# IMPORTANT: Tier 1 survival_rate is a RAW POOLED PROPORTION computed across all
-# survey intervals (e.g., NOAA pools 2004-2024). The individual observations have
-# variable-length intervals, but the study-level survival_rate = n_survived / n_total
-# does NOT annualize per interval. In contrast, Tier 2 rates are annualized via
-# S_annual = S_raw^(1/t) assuming a constant-hazard (exponential) model.
-#
-# Expected direction of bias: Most Tier 1 intervals are approximately annual
-# (median ~1 year), so bias is small. However, NOAA includes some multi-year
-# intervals. For intervals >1 year, the raw proportion UNDERESTIMATES annual
-# survival (a colony surviving 2 years at 90%/yr has a 2-year survival of 81%,
-# but the raw rate treats 81% as if it were a 1-year rate). For intervals <1 year,
-# the raw proportion OVERESTIMATES annual survival. The net direction depends on
-# the interval distribution, but the bias is expected to be modest given that
-# most intervals cluster near 1 year.
-# ===========================================================================
+# Annualize Tier 1 on the same constant-hazard scale used for Tier 2.  A
+# binary outcome cannot be annualized observation-by-observation (0 and 1 stay
+# 0 and 1 under exponentiation), so we first estimate survival within each
+# observed monitoring interval and annualize that interval-level proportion.
+# We then aggregate annualized interval effects within study × region, weighted
+# by the number of observations. This replaces the legacy raw pooled-proportion
+# Tier 1 effect, which mixed interval lengths with Tier 2 annualized effects.
+annualize_survival <- function(surv, interval_yr) {
+  ifelse(surv <= 0, 0,
+         ifelse(surv >= 1, 1, surv^(1 / interval_yr)))
+}
 
-# FIX: Split NOAA by region (critique audit 2026-03-29)
-# Previously NOAA was collapsed into a single effect, while Vardi 2011 was split
-# into 3 regional effects. This was asymmetric. NOAA spans Florida Keys, Curacao,
-# and Navassa — three geographically distinct Caribbean regions with different
-# environmental conditions. We now split NOAA into separate regional effects,
-# consistent with the Vardi treatment.
+# Keep the pre-specified Tier-1 study membership and effect definition used by
+# the original expanded synthesis: five study-level effects plus NOAA split by
+# its three natural-colony regions.  The source RDS contains additional studies
+# and NOAA restoration records that are useful elsewhere in the project but
+# were not part of that registered Tier-1 effect set.  Including them here
+# would change the estimand while fixing the time-scale issue.
+tier1_individual <- readRDS(file.path(output_dir, "prepared_survival_data.rds")) %>%
+  filter(
+    study %in% unique(tier1$study),
+    !is.na(survived), !is.na(time_interval_yr), time_interval_yr > 0,
+    !is.na(region), !is.na(population_type),
+    study != "NOAA_survey" | population_type == "Natural colony"
+  ) %>%
+  mutate(effect_region = if_else(study == "NOAA_survey", region, "All sampled regions"))
 
-# First, separate NOAA from non-NOAA Tier 1 studies
-tier1_non_noaa <- tier1 %>%
-  filter(study != "NOAA_survey") %>%
-  transmute(
-    study = study,
-    region = region,
-    n_total = n_total,
-    n_first_census = n_total,
-    n_survived = n_survived,
-    survival_rate = survival_rate,
-    mean_size_cm2 = mean_size_cm2,
-    population_type = population_type,
-    survey_yr = year_end,
-    fragment = ifelse(population_type == "Natural colony", "N", "Y"),
-    data_tier = "Tier 1 (individual)"
-  )
-
-# Split NOAA into regional effects using the individual-level data
-# We need the raw individual data to compute per-region statistics
-surv_ind <- read_csv(file.path(get_project_root(), "05_data/standardized", "apal_surv_ind.csv"),
-                     show_col_types = FALSE)
-
-noaa_ind <- surv_ind %>% filter(study == "NOAA_survey")
-
-noaa_by_region <- noaa_ind %>%
-  group_by(region) %>%
+tier1_interval_effects <- tier1_individual %>%
+  group_by(study, effect_region, population_type, time_interval_yr) %>%
   summarise(
-    study = paste0("NOAA_survey_", tolower(gsub(" ", "_", first(region)))),
-    n_total = n(),
-    n_first_census = n(),
-    n_survived = sum(survived),
-    survival_rate = mean(survived),
+    n_interval = n(),
+    survival_interval = mean(survived),
+    survival_annual = annualize_survival(survival_interval, first(time_interval_yr)),
     mean_size_cm2 = mean(size_cm2, na.rm = TRUE),
-    population_type = "Natural colony",
     survey_yr = max(survey_yr, na.rm = TRUE),
-    fragment = "N",
-    data_tier = "Tier 1 (individual)",
     .groups = "drop"
   )
 
-cat(sprintf("  Split NOAA into %d regional effects:\n", nrow(noaa_by_region)))
-for (i in 1:nrow(noaa_by_region)) {
-  cat(sprintf("    %s: n=%d, surv=%.1f%%\n",
-              noaa_by_region$study[i], noaa_by_region$n_total[i],
-              noaa_by_region$survival_rate[i] * 100))
-}
-
-# Standardize column names for NOAA regional effects
-noaa_std <- noaa_by_region %>%
-  select(study, region, n_total, n_first_census, n_survived, survival_rate,
+tier1_std <- tier1_interval_effects %>%
+  group_by(study, effect_region, population_type) %>%
+  summarise(
+    n_total = sum(n_interval),
+    n_first_census = sum(n_interval),
+    survival_rate = weighted.mean(survival_annual, n_interval),
+    mean_size_cm2 = weighted.mean(mean_size_cm2, n_interval),
+    survey_yr = max(survey_yr, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    region = effect_region,
+    study_id = study,
+    # An effect identifier must be unique within a parent study for rma.mv().
+    # Retain the original study ID separately so regional effects stay nested.
+    study = if_else(
+      study == "NOAA_survey",
+      paste0(study, "__", tolower(gsub("[^A-Za-z0-9]+", "_", region))),
+      study
+    ),
+    n_survived = pmin(pmax(round(survival_rate * n_total), 0L), n_total),
+    fragment = if_else(population_type == "Natural colony", "N", "Y"),
+    data_tier = "Tier 1 (individual; interval-annualized)"
+  ) %>%
+  select(study, study_id, region, n_total, n_first_census, n_survived, survival_rate,
          mean_size_cm2, population_type, survey_yr, fragment, data_tier)
 
-# Combine non-NOAA Tier 1 + NOAA regional effects
-tier1_std <- bind_rows(tier1_non_noaa, noaa_std)
+cat(sprintf("  Rebuilt %d pre-specified Tier 1 effects from %d annualized interval cells\n\n",
+            nrow(tier1_std), nrow(tier1_interval_effects)))
 
 # ==============================================================================
 # SECTION 2: PROCESS SUMMARY DATA INTO STUDY-LEVEL EFFECTS
@@ -212,15 +199,6 @@ cat(sprintf("\n  Remaining: %d rows from %d studies\n",
 # (or study-region for vardi_2011)
 
 cat("\n  Processing each summary study:\n\n")
-
-# Helper: annualize survival assuming constant hazard (exponential model)
-# surv_annual = surv_raw^(1/time_interval_yr)
-# Edge cases: surv=0 -> 0, surv=1 -> 1
-annualize_survival <- function(surv, interval_yr) {
-  ifelse(surv <= 0, 0,
-         ifelse(surv >= 1, 1,
-                surv^(1 / interval_yr)))
-}
 
 # Helper: weighted mean with n_initial weights, handling NAs
 wmean <- function(x, w) {
@@ -728,10 +706,10 @@ cat(paste(rep("-", 60), collapse = ""), "\n\n")
 
 combined <- bind_rows(tier1_std, tier2_std)
 
-cat(sprintf("  Combined dataset: k = %d study-level effects\n", nrow(combined)))
-cat(sprintf("  Total N = %d observations\n", sum(combined$n_total)))
+cat(sprintf("  Combined dataset: k = %d study-region effects\n", nrow(combined)))
+cat(sprintf("  Total effective N = %d interval observations\n", sum(combined$n_total)))
 cat(sprintf("  Tier 1: %d effects, Tier 2: %d effects\n",
-            sum(combined$data_tier == "Tier 1 (individual)"),
+            sum(grepl("Tier 1", combined$data_tier)),
             sum(grepl("Tier 2", combined$data_tier))))
 cat(sprintf("  Natural colonies: k = %d\n",
             sum(combined$population_type == "Natural colony")))
@@ -765,12 +743,12 @@ combined_es <- combined_es %>%
     surv_upper = plogis(log_odds + 1.96 * se_log_odds),
     # FIX: study_id maps regional effects back to parent study (critique audit 2026-03-29)
     # Needed for three-level model and for reporting k studies vs k effects
-    study_id = case_when(
+    study_id = coalesce(study_id, case_when(
       grepl("^vardi_2011_", study) ~ "vardi_2011",
       grepl("^NOAA_survey_", study) ~ "NOAA_survey",
       grepl("^garrison_ward_2008_", study) ~ "garrison_ward_2008",
       TRUE ~ study
-    )
+    ))
   )
 
 cat("\n  Study-level effect sizes (expanded):\n")
@@ -1237,7 +1215,10 @@ if (!is.null(tf)) {
 # --- Compare to Tier 1 only ---
 cat("\n--- COMPARISON: Tier 1 Only vs Tier 1+2 Combined ---\n")
 
-tier1_only <- combined_es %>% filter(data_tier == "Tier 1 (individual)")
+# Tier 1 effects are now explicitly labelled as interval-annualized.  Match the
+# tier prefix rather than an obsolete literal label so this sensitivity model
+# cannot silently receive zero effects after a provenance-label update.
+tier1_only <- combined_es %>% filter(grepl("^Tier 1", data_tier))
 rma_tier1 <- rma(
   yi = tier1_only$log_odds,
   vi = tier1_only$var_log_odds,
@@ -1888,7 +1869,7 @@ pop_colors <- c(
 # FIX: Add EXPANDED tier to shape mapping (critique audit 2026-03-29)
 # Previously missing "Tier 2 (summary) [EXPANDED]" caused unmapped points
 tier_shapes <- c(
-  "Tier 1 (individual)" = 16,           # Filled circle
+  "Tier 1 (individual; interval-annualized)" = 16,  # Filled circle
   "Tier 2 (summary)" = 17,              # Filled triangle
   "Tier 2 (summary) [EXPANDED]" = 18    # Filled diamond — expanded search data
 )
@@ -2146,7 +2127,7 @@ results_summary <- data.frame(
     as.character(k_studies),
     as.character(k_expanded),
     as.character(sum(combined_es$n_total)),
-    as.character(sum(combined_es$data_tier == "Tier 1 (individual)")),
+    as.character(sum(grepl("^Tier 1", combined_es$data_tier))),
     as.character(sum(grepl("Tier 2", combined_es$data_tier))),
     as.character(sum(combined_es$population_type == "Natural colony")),
     as.character(sum(combined_es$population_type == "Restoration fragment")),
@@ -2263,8 +2244,8 @@ cat("\nIMPORTANT CAVEATS:\n")
 cat("  1. Summary data has variable quality (histogram-estimated n, non-standard intervals)\n")
 cat("  2. Adding summary studies changes composition: more restoration fragment studies\n")
 cat("  3. Annualization assumes constant hazard (exponential survival model)\n")
-cat("  4. Tier 1/Tier 2 annualization inconsistency: Tier 1 = raw pooled proportion,\n")
-cat("     Tier 2 = annualized via S^(1/t). See Section 1 comment block for details.\n")
+cat("  4. Tier 1 and Tier 2 effects are both annualized via S^(1/t) before\n")
+cat("     aggregation; this assumes a constant hazard over each monitoring interval.\n")
 cat("  5. Some n_initial are estimated from figures, not exact counts\n")
 cat("  6. Studies span 2+ decades (1980-2024), different regions, and varied methods\n")
 cat("  7. Vardi 2011 and NOAA regions treated as correlated effects within parent study\n")

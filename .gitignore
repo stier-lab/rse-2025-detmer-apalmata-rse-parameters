@@ -53,6 +53,15 @@
 # Serena plugin cache
 # Temporary files
 06_analysis/scripts/*.pdf
+# Presentation-only dark-theme variants are generated for talks, not the
+# manuscript-facing Coral Reefs build.
+06_analysis/scripts/*_DARK.R
+# Timestamped run logs and summaries are diagnostic artifacts. The
+# corresponding *_current.csv files remain tracked as canonical state.
+06_analysis/output/model_rerun_summary_*.tsv
+06_analysis/output/pipeline_context_[0-9]*.csv
+06_analysis/output/pipeline_log_*.csv
+06_analysis/output/session_info.txt
 # Compatibility symlink for integration .rmd (../../standardized_data/ -> 05_data/standardized/)
 standardized_data
 analysis/figures/publication/

@@ -1340,15 +1340,17 @@ cat(sprintf("  λ 95%% CI: [%.4f, %.4f]\n",
             quantile(lambda_boot, 0.025), quantile(lambda_boot, 0.975)))
 cat(sprintf("  CV: %.1f%%\n", sd(lambda_boot) / mean(lambda_boot) * 100))
 
-# Probability of decline
+# Bootstrap frequency below replacement is a property of the resampled,
+# recruitment-free transition subsystem; it is not a real-world probability of
+# population decline.
 p_decline <- mean(lambda_boot < 1)
-cat(sprintf("\n  P(λ < 1) = P(decline): %.1f%%\n", p_decline * 100))
+cat(sprintf("\n  Bootstrap share with λ < 1: %.1f%%\n", p_decline * 100))
 
 # FIX: Report discard approach alongside for comparison (critique audit 2026-03-29)
 if (n_discard_valid > 30) {
   p_decline_discard <- mean(lambda_boot_discard_valid < 1)
   cat(sprintf("\n  --- Discard approach (old, for comparison) ---\n"))
-  cat(sprintf("  λ mean: %.4f, 95%% CI: [%.4f, %.4f], P(decline): %.1f%%\n",
+  cat(sprintf("  λ mean: %.4f, 95%% CI: [%.4f, %.4f], bootstrap share λ < 1: %.1f%%\n",
               mean(lambda_boot_discard_valid),
               quantile(lambda_boot_discard_valid, 0.025),
               quantile(lambda_boot_discard_valid, 0.975),
@@ -2529,7 +2531,7 @@ cat(sprintf("  Bias-corrected CI: [%.4f, %.4f]\n", lambda_ci_bc[1], lambda_ci_bc
 cat(sprintf("  Parametric uncertainty λ = %.4f (95%% CI: %.4f-%.4f)  [NOT environmental stochasticity]\n",
             stochastic_lambda, stochastic_lambda_ci[1], stochastic_lambda_ci[2]))
 cat(sprintf("  Annual change: %.1f%%\n", (lambda - 1) * 100))
-cat(sprintf("  P(decline): %.0f%%\n\n", p_decline * 100))
+cat(sprintf("  Bootstrap share with λ < 1: %.0f%%\n\n", p_decline * 100))
 
 cat("SURVIVAL BY SIZE CLASS:\n")
 for (i in 1:5) {
@@ -2583,7 +2585,7 @@ if (!is.null(loso_results) && "lambda" %in% names(loso_results)) {
 } else {
   cat("     LOSO sensitivity: not yet available (run script 16 first)\n")
 }
-cat(sprintf("  4. P(decline) = %.1f%% is conditional on NOAA-dominated vital rates.\n",
+cat(sprintf("  4. Bootstrap share with λ < 1 = %.1f%%; it is conditional on NOAA-dominated vital rates.\n",
             p_decline * 100))
 cat(sprintf("  5. Lambda = %.4f is a sample-size-weighted composite, not a\n", lambda))
 cat("     biologically coherent single-population growth rate.\n\n")

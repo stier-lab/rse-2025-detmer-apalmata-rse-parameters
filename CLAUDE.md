@@ -3,6 +3,24 @@
 **Project:** *Acropora palmata* Size-Dependent Demography Synthesis
 **Tech:** R 4.3+ | 71 analysis scripts | Target journal: *Coral Reefs* (Springer)
 
+## Workflow Gates
+
+Use the CAFI-style top-level targets for routine work:
+
+```bash
+make pipeline       # full maintained pipeline
+make verify         # refresh canonical stats + source/prose gates
+make display-check  # figure/table index against rendered files + legends
+make submit-check   # verify + display-check + strict renv::status()
+```
+
+`07_reporting/manuscript/display_items.tsv` is the display-item index to edit
+first when figures or tables move. `07_reporting/manuscript/claims.tsv` is the
+qualitative-claim ledger; add a row whenever a sentence becomes load-bearing
+and should fail if the computed result changes.
+`07_reporting/internal/model_inventory.tsv` is the statistical-model ledger;
+add or update a row whenever a maintained script gains a model/test family.
+
 ---
 
 ## What This Is
@@ -26,6 +44,7 @@ These apply to **every** analysis change:
 - **Fragmentation data from one study** (Vardi 2011, 13 rows). Cannot be improved without new data.
 - **All Florida vital rates are pre-2023 collapse.** Manzello et al. (2025, *Science*) documented functional extinction of *A. palmata* from Florida after the 2023 heatwave (97.8-100% mortality at 16-20 DHW). Our transition matrix describes the chronic demographic regime that operated before this event. Heatwave scenario analysis (Script 40) layers Manzello's dose-response onto the population model.
 - Any new binomial GLMM needs an **overdispersion check** (`sum(pearson_resid^2) / rdf`).
+- Any new maintained model/test family needs an entry in `07_reporting/internal/model_inventory.tsv`; `make verify` enforces script coverage, display IDs, and output paths.
 - Meta-analysis: always use `test = "knha"` in `rma()` calls (Knapp-Hartung adjustment) for independent models; three-level `rma.mv()` is the primary model. Moderator analyses are exploratory at k=17 (22 effects).
 - **Size measurement varies across studies**: L x W x %live (NOAA, Pausch), photo tracing (USGS, Kuffner), diameter^2 (Mendoza-Quiroz). Pooled analyses assume comparability.
 - **Mortality definitions are heterogeneous and not harmonized.** NOAA = no tissue AND skeleton gone (conservative); Kuffner = >=50% tissue loss (aggressive); others = no live tissue. No sensitivity analysis stratifying by mortality definition has been run. This is a known limitation.
