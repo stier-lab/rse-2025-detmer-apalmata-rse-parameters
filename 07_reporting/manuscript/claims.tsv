@@ -5,8 +5,8 @@
 # metric_a / metric_b : metric names in 06_analysis/output/canonical_statistics.csv
 # predicate           : Python expression over numeric a and optional b
 id	claim	file	sentence_contains	metric_a	metric_b	predicate
-cl1	Shrinkage is common in matrix-compatible growth records	manuscript_narrative_integration.md	Shrinkage is common rather than exceptional	matrix_compatible_shrinkage_pct	-	a >= 30
-cl2	Disturbance modifies size-dependent survival	manuscript_narrative_integration.md	size-by-disturbance survival effects were significant	disturbance_size_interaction_lrt_p	-	a < 0.05
-cl3	The study-window disturbance audit has high overlap coverage	manuscript_narrative_integration.md	95.1% showing some disturbance overlap	study_window_pct_any_overlap	-	a >= 90
-cl4	All subtype-coded records have higher mean survival than restoration-only subtypes	manuscript_narrative_integration.md	with subtype-coded records averaging 0.812 survival overall	all_subtypes_mean_survival_pct	exclude_natural_mean_survival_pct	a > b
-cl6	The conditional transition subsystem has lambda below replacement	figure_legends.txt	The deterministic `lambda` is 0.961	lambda_deterministic	p_decline_pct	a < 1 and b > 90
+cl1	Shrinkage is common in matrix-compatible growth records	acropora_palmata_demography_manuscript_draft.md	39.4% of records showed shrinkage	matrix_compatible_shrinkage_pct	-	a >= 30
+cl2	Size--survival associations differ among observational exposure categories	acropora_palmata_demography_manuscript_draft.md	relationship with colony size differed among intervals	disturbance_size_interaction_lrt_p	-	a < 0.05
+cl3	The study-window disturbance audit has high overlap coverage	acropora_palmata_demography_manuscript_draft.md	95.1% of which overlapped at least one curated disturbance	study_window_pct_any_overlap	-	a >= 90
+cl4	Subtype-coded survival is higher when natural fragments are included	acropora_palmata_demography_manuscript_draft.md	from 81.2% to 60.0%	all_subtypes_mean_survival_pct	exclude_natural_mean_survival_pct	a > b
+cl6	The conditional transition subsystem has lambda below replacement	acropora_palmata_demography_manuscript_draft.md	deterministic lambda of 0.961	lambda_deterministic	p_decline_pct	a < 1 and b > 90

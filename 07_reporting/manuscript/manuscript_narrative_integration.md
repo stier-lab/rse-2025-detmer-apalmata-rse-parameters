@@ -1,5 +1,7 @@
 # Manuscript Narrative Draft
 
+> **Superseded.** The canonical draft is `acropora_palmata_demography_manuscript_draft.md`; this retained working note contains historical values and must not be used for reporting.
+
 ## Core Message
 
 The paper’s central claim should be that *Acropora palmata* demography is strongly size structured, nonlinear, and disturbance dependent, and that those dependencies matter for population viability and restoration planning. The new analyses strengthen three linked points: partial mortality and retrogression are common enough to matter biologically, disturbance modifies size-dependent performance rather than acting as background noise, and restoration outcomes depend on subtype and context rather than one generic “fragment” effect (`06_analysis/output/shrinkage_retrogression_size_class_summary.csv`, `06_analysis/output/disturbance_size_survival_model.csv`, `06_analysis/output/restoration_subtype_sensitivity.csv`).

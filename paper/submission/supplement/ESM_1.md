@@ -15,6 +15,8 @@ header-includes:
 **Journal:** *Coral Reefs*  
 **Corresponding author:** A. Raine Detmer, Department of Ecology, Evolution, and Marine Biology, University of California, Santa Barbara, California, USA. Contact details are provided in the manuscript title page.
 
+**Corresponding author email:** [insert corresponding-author email]. **ORCID iDs:** [insert ORCID iDs].
+
 ## Contents
 
 1. Studies contributing to the synthesis (Table S1)

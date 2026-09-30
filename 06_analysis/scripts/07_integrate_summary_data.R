@@ -112,6 +112,9 @@ growth_summ <- read_csv(file.path(data_dir, "apal_growth_summ.csv"),
                         show_col_types = FALSE)
 if (names(growth_summ)[1] %in% c("...1", "X1", "")) growth_summ <- growth_summ %>% select(-1)
 
+surv_summ <- surv_summ %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
+growth_summ <- growth_summ %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
+
 cat(sprintf("  Summary survival: %d records from %d studies\n",
             nrow(surv_summ), n_distinct(surv_summ$study)))
 cat(sprintf("  Summary growth: %d records from %d studies\n",

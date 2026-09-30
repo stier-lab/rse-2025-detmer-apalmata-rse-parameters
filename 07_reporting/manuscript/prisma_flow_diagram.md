@@ -33,7 +33,7 @@ Numbers derived from `03_screening/full_text_screening.csv` (104 data rows) and 
 | Full-text assessed | 98 unique papers + 3 data repositories = 101 | `full_text_screening.csv`: 52 original + 33 expanded + 13 formal/expanded database (2026-03-29) |
 | Full-text excluded with reasons | 82 unique excluded studies (86 CSV rows; see reconciliation) | Categorized below |
 | **INCLUDED** | | |
-| Studies included in synthesis | 17 studies contributing 22 study-level effects | 7 Tier 1 individual + 7 Tier 2 hand-extracted + 3 Tier 2 expanded search |
+| Studies included in review | 18 studies; 17 contributing 22 study-level survival effects | 7 Tier 1 individual + 8 Tier 2 hand-extracted + 3 Tier 2 expanded search; Mendoza-Quiroz contributes vital-rate data but not a survival-synthesis effect |
 
 ---
 
@@ -162,7 +162,7 @@ Categorized from the `reason` and `notes` fields in `full_text_screening.csv`:
  ║  17 studies contributing 22 study-level effects                                 ║
  ║                                                                                 ║
  ║  Tier 1 (individual-level):   7 studies (8 effects), ~7,800 survival records   ║
- ║  Tier 2 (summary, hand):      7 studies (10 effects)                            ║
+ ║  Tier 2 (summary, hand):      8 studies (10 effects)                            ║
  ║  Tier 2 (summary, AI):        3 studies (3 effects)                             ║
  ║                                                                                 ║
  ║  Multi-region splits:                                                           ║
@@ -256,7 +256,7 @@ flowchart TD
     F --> G
 
     subgraph included["INCLUDED: 17 studies, 22 effects"]
-        H["<b>Tier 1 individual:</b> 7 studies (8 effects)<br/><b>Tier 2 hand-extracted:</b> 7 studies (10 effects)<br/><b>Tier 2 expanded search:</b> 3 studies (3 effects)<br/><br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda<br/>Neely 2022: FL Keys (direct data sharing)"]
+        H["<b>Tier 1 individual:</b> 7 studies (8 effects)<br/><b>Tier 2 hand-extracted:</b> 8 studies (10 effects)<br/><b>Tier 2 expanded search:</b> 3 studies (3 effects)<br/><br/>17 studies contribute 22 survival effects; Mendoza-Quiroz contributes vital-rate data only.<br/>NOAA split: FL Keys / Curacao / Navassa<br/>Vardi 2011 split: Jamaica / PR / Virgin Gorda<br/>Neely 2022: FL Keys (direct data sharing)"]
     end
 
     F --> H

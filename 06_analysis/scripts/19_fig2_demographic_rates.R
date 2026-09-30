@@ -94,8 +94,8 @@ surv_nat <- surv_nat %>%
 cat(sprintf("  Natural survival records: %s\n", comma(nrow(surv_nat))))
 
 surv_gam <- survival_models$gam_model
-surv_r2 <- summary(surv_gam)$r.sq
-cat(sprintf("  Survival GAM R² = %.1f%%\n", surv_r2 * 100))
+surv_deviance_explained <- summary(surv_gam)$dev.expl
+cat(sprintf("  Survival GAM deviance explained = %.1f%%\n", surv_deviance_explained * 100))
 
 surv_pred <- survival_models$prediction_grid %>%
   as_tibble() %>%
@@ -161,7 +161,7 @@ fig2a <- ggplot() +
     tag = "a"
   ) +
   annotate("text", x = 1.5, y = 0.95,
-           label = sprintf("R\u00B2 = %.1f%%", surv_r2 * 100),
+           label = sprintf("Deviance explained = %.1f%%", surv_deviance_explained * 100),
            hjust = 0, size = 2.5, color = "grey50") +
   theme_manuscript(base_size = 10) +
   theme(
@@ -214,8 +214,8 @@ growth_rgr <- growth_clean %>%
 cat(sprintf("  Natural growth records: %s\n", comma(nrow(growth_rgr))))
 
 rgr_gam <- growth_models$model_gam_rgr
-rgr_r2 <- summary(rgr_gam)$r.sq
-cat(sprintf("  RGR GAM R² = %.1f%%\n", rgr_r2 * 100))
+rgr_deviance_explained <- summary(rgr_gam)$dev.expl
+cat(sprintf("  RGR GAM deviance explained = %.1f%%\n", rgr_deviance_explained * 100))
 
 rgr_pred <- growth_models$prediction_grid %>%
   as_tibble() %>%
@@ -299,7 +299,7 @@ fig2b <- ggplot() +
   ) +
   coord_cartesian(ylim = c(rgr_y_lower, rgr_y_upper)) +
   annotate("text", x = 1.5, y = rgr_y_upper * 0.92,
-           label = sprintf("R\u00B2 = %.1f%%", rgr_r2 * 100),
+           label = sprintf("Deviance explained = %.1f%%", rgr_deviance_explained * 100),
            hjust = 0, size = 2.5, color = "grey50") +
   labs(x = expression("Colony size (cm"^2*")"),
        y = expression("Relative growth rate (yr"^-1*")"),
@@ -441,6 +441,6 @@ fig2 <- (fig2a / fig2b / fig2c) +
 
 save_manuscript_fig(fig2, "Fig2_demographic_rates", width_mm = 174, height_mm = 220)
 
-cat(sprintf("\n  Survival: R² = %.1f%% (n = %s)\n", surv_r2 * 100, comma(nrow(surv_nat))))
-cat(sprintf("  RGR: R² = %.1f%% (n = %s)\n", rgr_r2 * 100, comma(nrow(growth_rgr))))
+cat(sprintf("\n  Survival: deviance explained = %.1f%% (n = %s)\n", surv_deviance_explained * 100, comma(nrow(surv_nat))))
+cat(sprintf("  RGR: deviance explained = %.1f%% (n = %s)\n", rgr_deviance_explained * 100, comma(nrow(growth_rgr))))
 cat("\nDone: Figure 2 — Size-Dependent Vital Rates (3-panel)\n")

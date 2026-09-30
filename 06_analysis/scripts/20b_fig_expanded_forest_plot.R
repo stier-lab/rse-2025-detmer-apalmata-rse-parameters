@@ -111,7 +111,13 @@ name_map <- c(
 study_effects <- study_effects %>%
   mutate(
     # Normalize region spellings (USVI -> US Virgin Islands)
-    region = ifelse(region == "USVI", "US Virgin Islands", region),
+    region = case_when(
+      study %in% c("neely_et_al_2022", "pausch_et_al_2018", "kuffner_et_al_2020") ~ "Florida Keys",
+      study == "USGS_USVI_exp" ~ "US Virgin Islands",
+      study == "fundemar_fragments" ~ "Dominican Republic",
+      region == "USVI" ~ "US Virgin Islands",
+      TRUE ~ region
+    ),
     # Short region abbreviation for forest labels (saves horizontal space)
     region_short = case_when(
       region == "US Virgin Islands"     ~ "USVI",
@@ -367,7 +373,7 @@ p_forest <- ggplot() +
   annotate("text",
            x = (x_plot_min + x_plot_max) / 2, y = y_heterogen,
            label = sprintf(
-             "I^2 = %.0f%%, tau^2 = %.2f, Q = %.0f (p<0.001)",
+             "I² = %.0f%%, tau² = %.2f, Q = %.0f (p<0.001)",
              i_sq, tau_sq, q_stat
            ),
            hjust = 0.5, size = 2.2, color = "grey40") +

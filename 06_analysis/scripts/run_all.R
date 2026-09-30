@@ -297,6 +297,9 @@ results <- data.frame(
 
 fail_fast <- context_df$fail_fast[1]
 pipeline_failed <- FALSE
+# Launch child scripts with this R installation.  A bare `Rscript` can resolve
+# to a different installation on PATH and silently bypass the project lockfile.
+rscript_bin <- file.path(R.home("bin"), "Rscript")
 
 for (i in seq_along(scripts)) {
   script_path <- file.path("06_analysis/scripts", scripts[i])
@@ -310,7 +313,7 @@ for (i in seq_along(scripts)) {
 
   # Run each script as a subprocess to prevent search path pollution
   # (library() calls in one script can mask functions needed by later scripts)
-  exit_code <- system2("Rscript", args = script_path, stdout = "", stderr = "")
+  exit_code <- system2(rscript_bin, args = script_path, stdout = "", stderr = "")
   script_end <- Sys.time()
   duration <- as.numeric(difftime(script_end, script_start, units = "secs"))
   results$duration_sec[i] <- round(duration, 1)

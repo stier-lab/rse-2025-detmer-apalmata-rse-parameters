@@ -171,14 +171,8 @@ cat(sprintf("  Studies present: %s\n",
             paste(sort(unique(summ_raw$study)), collapse = ", ")))
 
 # --- Step 2a: Exclusions ---
-# Exclude studies that represent a fundamentally different life stage or context
-excluded_studies <- c(
-  "fundemar_recruits",          # Post-settlement recruits at 0.006 cm^2, near-zero survival
-  "chamberland_et_al_2015",     # Post-settlement recruits at 0.008 cm^2, 6% survival
-  "mendoza_quiroz_et_al_2023",  # Lab-reared recruits (1% and 24% survival); natural colony
-                                 # data already in Tier 1 individual dataset
-  "papke_et_al_2021"            # Micro-fragments at 0.5 cm^2 in lab/nursery
-)
+# Shared extraction-audit exclusions are defined in 00c_analysis_constants.R.
+excluded_studies <- AUDIT_EXCLUDED_STUDIES
 
 n_excluded <- sum(summ_raw$study %in% excluded_studies)
 cat(sprintf("\n  Excluding %d rows from %d studies (recruits, lab micro-fragments):\n",

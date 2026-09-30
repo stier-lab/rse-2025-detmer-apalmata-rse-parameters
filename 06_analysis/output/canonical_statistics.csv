@@ -3,7 +3,7 @@ disturbance,all_data_pooled_survival_pct,75.91,75.9%,06_analysis/output/disturba
 disturbance,baseline_exclusion_intervals,297,297,06_analysis/output/study_window_disturbance_summary_overall.csv,NA
 disturbance,baseline_exclusion_pooled_survival_pct,75.56,75.6%,06_analysis/output/disturbance_sensitivity_summary.csv,NA
 disturbance,baseline_exclusion_shift_pp,-0.34999999999999476,-0.3 pp,06_analysis/output/disturbance_sensitivity_summary.csv,NA
-disturbance,disturbance_size_interaction_lrt_p,6.934140176701955e-4,p < 0.001,06_analysis/output/disturbance_size_survival_model.csv,NA
+disturbance,disturbance_size_interaction_lrt_p,6.934140178325895e-4,p < 0.001,06_analysis/output/disturbance_size_survival_model.csv,NA
 disturbance,study_window_intervals,1072,1072,06_analysis/output/study_window_disturbance_summary_overall.csv,Study-window disturbance audit interval count
 disturbance,study_window_intervals_audited,1072,1072,06_analysis/output/study_window_disturbance_summary_overall.csv,NA
 disturbance,study_window_pct_any_overlap,95.1,95.1%,06_analysis/output/study_window_disturbance_summary_overall.csv,Intervals with any disturbance overlap
@@ -11,16 +11,16 @@ growth,agr_r2_pct,3.608669034267764,3.6%,06_analysis/output/growth_rate_summary.
 growth,rgr_allometry_inflection_cm2,853.0427586077855,853.0 cm²,06_analysis/output/growth_rate_summary.csv,Inflection from 04_growth_rate_comparison.R; not the primary manuscript threshold.
 growth,rgr_r2_pct,18.21655143217693,18.2%,06_analysis/output/growth_rate_summary.csv,NA
 growth,rgr_vs_agr_improvement_x,5.047997269684017,5x,06_analysis/output/growth_rate_summary.csv,NA
-meta_analysis,i_squared_pct,97.2,97.2%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,i_squared_pct,97.6,97.6%,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,k_studies,17,17,06_analysis/output/expanded_meta_analysis_results.csv,NA
 meta_analysis,n_effects,22,22,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,n_observations,8805,8805,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,pooled_ci_lower_pct,70.1,70.1%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,pooled_ci_upper_pct,84.3,84.3%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,pooled_survival_pct,78,78.0%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,prediction_interval_lower_pct,39.5,39.5%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,prediction_interval_upper_pct,95.1,95.1%,06_analysis/output/expanded_meta_analysis_results.csv,NA
-meta_analysis,tau_squared,0.6233,0.6233,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,n_observations,8607,8607,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,pooled_ci_lower_pct,70.39999999999999,70.4%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,pooled_ci_upper_pct,85.1,85.1%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,pooled_survival_pct,78.7,78.7%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,prediction_interval_lower_pct,37.4,37.4%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,prediction_interval_upper_pct,95.8,95.8%,06_analysis/output/expanded_meta_analysis_results.csv,NA
+meta_analysis,tau_squared,0.7213,0.7213,06_analysis/output/expanded_meta_analysis_results.csv,NA
 population,annual_decline_pct_from_bootstrap_mean,4.604537997859537,4.60%,06_analysis/output/lambda_bootstrap_samples.rds,NA
 population,lambda_bootstrap_mean,0.9539546200214046,0.9540,06_analysis/output/lambda_bootstrap_samples.rds,NA
 population,lambda_ci_lower,0.815716655508045,0.816,06_analysis/output/population_parameters.csv,NA

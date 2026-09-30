@@ -13,6 +13,7 @@ FIG_DIRS = {
     "supplementary": ROOT / "06_analysis" / "figures" / "supplementary",
 }
 TABLE_DIR = MSRC / "tables"
+ESM = ROOT / "paper" / "submission" / "supplement" / "ESM_1.md"
 ALLOW_SUPP_GAP = {27}
 
 
@@ -28,6 +29,7 @@ def main():
     figure_legends = (MSRC / "figure_legends.txt").read_text()
     figure_map = (MSRC / "figure_table_map.md").read_text()
     table_readme = (TABLE_DIR / "README.md").read_text() if (TABLE_DIR / "README.md").exists() else ""
+    esm_text = ESM.read_text()
 
     indexed_figures = set()
     for item in items:
@@ -66,7 +68,7 @@ def main():
     if main_nums != list(range(1, len(main_nums) + 1)):
         errors.append(f"main figure numbering is {main_nums}, expected dense 1..{len(main_nums)}")
 
-    supp_nums = sorted(int(item["number"]) for item in items if item["tier"] == "supplementary")
+    supp_nums = sorted({int(item["number"]) for item in items if item["tier"] == "supplementary"})
     expected_supp = [n for n in range(1, max(supp_nums) + 1) if n not in ALLOW_SUPP_GAP]
     if supp_nums != expected_supp:
         errors.append(
@@ -77,6 +79,26 @@ def main():
         errors.append("Fig. S27 is intentionally vacant but appears in figure_legends.txt")
     if "FigS27" not in figure_map:
         errors.append("figure_table_map.md should document the intentional FigS27 gap")
+
+    # The concise uploaded ESM is deliberately numbered independently from the
+    # repository's extended diagnostic series.  Keep that crosswalk explicit.
+    expected_esm = {
+        "FigS1_growth_diagnostics": "S1",
+        "FigS8_natural_vs_restoration": "S2",
+        "FigS16_shrinkage_retrogression_summary": "S3",
+        "FigS17_disturbance_size_interaction": "S4",
+        "FigS19_restoration_subtype_sensitivity": "S5",
+        "FigS22_heatwave_scenarios": "S6",
+        "Studies contributing to the synthesis": "S1",
+        "TableS2_study_window_disturbance_audit": "S2",
+    }
+    actual_esm = {item["stem"] if item["stem"] != "-" else item["short_title"]: item.get("esm_number", "")
+                  for item in items if item.get("esm_number", "")}
+    if actual_esm != expected_esm:
+        errors.append(f"ESM mapping is {actual_esm}, expected {expected_esm}")
+    for stem, number in expected_esm.items():
+        if stem.startswith("Fig") and stem not in esm_text:
+            errors.append(f"ESM Fig. {number} does not embed {stem}")
 
     if errors:
         print(f"FAIL - {len(errors)} display-item issue(s):")

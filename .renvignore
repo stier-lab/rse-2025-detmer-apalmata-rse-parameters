@@ -12,6 +12,10 @@ logs/
 
 05_data/original/
 05_data/expanded_search/
+# Historical integration notebooks are retained as source provenance, not run
+# by the maintained pipeline; their optional Shiny examples are not project
+# dependencies.
+05_data/integration/
 
 *.csv
 *.tsv

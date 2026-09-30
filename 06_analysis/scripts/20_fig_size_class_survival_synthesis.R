@@ -119,20 +119,7 @@ surv_summ <- read_csv(
 )
 cat(sprintf("  Loaded %d summary survival rows\n", nrow(surv_summ)))
 
-# Exclusions per instructions:
-#   - fundemar_recruits: lab-settled recruits, microscopic sizes (< 0.02 cm²)
-#   - chamberland_et_al_2015: lab study, no size data
-#   - mendoza_quiroz_et_al_2023 summary: already in individual data, lab-reared
-#   - papke_et_al_2021: no usable size data
-exclude_studies <- c("fundemar_recruits", "chamberland_et_al_2015",
-                     "mendoza_quiroz_et_al_2023", "papke_et_al_2021",
-                     # Removed in the 2026-03-26 extraction audit (see
-                     # 14b_expanded_meta_analysis.R and 04_extraction/):
-                     "roth_et_al_2013",     # same Haulover Bay colonies as rogers_muller_2012
-                     "ramos_et_al_2024",    # partial-mortality prevalence, not colony survival
-                     "muller_et_al_2008",   # imprecise survival, no sizes
-                     "sutherland_et_al_2016") # NOAA overlap
-surv_summ <- surv_summ %>% filter(!study %in% exclude_studies)
+surv_summ <- surv_summ %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
 cat(sprintf("  After exclusions: %d rows from %d studies\n",
             nrow(surv_summ), n_distinct(surv_summ$study)))
 

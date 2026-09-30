@@ -36,6 +36,22 @@ N_STUDIES <- 17L
 N_EFFECTS <- 22L   # total study-level effects in expanded meta-analysis
 NOAA_DATA_FRACTION <- 0.78  # NOAA = 78% of individual-level observations
 
+# Summary-data rows excluded by the 2026-03-26 extraction audit.  This is the
+# single source of truth for analysis scripts that read the standardized
+# summary survival or growth files.  The exclusions remove non-comparable
+# life stages (settlers/recruits and micro-fragments), duplicate/overlapping
+# records, and records that do not estimate whole-colony survival.
+AUDIT_EXCLUDED_STUDIES <- c(
+  "roth_et_al_2013",
+  "ramos_et_al_2024",
+  "muller_et_al_2008",
+  "sutherland_et_al_2016",
+  "fundemar_recruits",
+  "chamberland_et_al_2015",
+  "papke_et_al_2021",
+  "mendoza_quiroz_et_al_2023"
+)
+
 # --- Bootstrap settings ---
 # Canonical number of bootstrap iterations for lambda CI, sensitivity, etc.
 # Defined here for future centralisation; individual scripts may still use

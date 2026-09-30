@@ -90,6 +90,7 @@ surv_summ <- read_csv(
   show_col_types = FALSE
 )
 if (names(surv_summ)[1] %in% c("...1", "X1", "")) surv_summ <- surv_summ %>% dplyr::select(-1)
+surv_summ <- surv_summ %>% dplyr::filter(!study %in% AUDIT_EXCLUDED_STUDIES)
 
 # --- Extract unique site-year from individual data ---
 site_years_ind <- surv_ind %>%

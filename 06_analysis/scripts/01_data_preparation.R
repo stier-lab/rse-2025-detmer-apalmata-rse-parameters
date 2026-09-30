@@ -192,6 +192,7 @@ surv_summ_file <- file.path(data_dir, "apal_surv_summ.csv")
 if (file.exists(surv_summ_file)) {
   surv_summ <- read_csv(surv_summ_file, show_col_types = FALSE)
   if (names(surv_summ)[1] %in% c("...1", "X1", "")) surv_summ <- surv_summ %>% select(-1)
+  surv_summ <- surv_summ %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
   cat(sprintf("  Survival (summary): %d records\n", nrow(surv_summ)))
 } else {
   surv_summ <- NULL

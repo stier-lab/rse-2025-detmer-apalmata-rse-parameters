@@ -1,6 +1,6 @@
 # Canonical Statistics
 
-Generated from pipeline run `20260809_154657` on 2026-08-10 14:03:50.
+Generated from pipeline run `20260930_151646` on 2026-09-30 15:41:56.
 
 ## Disturbance
 
@@ -28,16 +28,16 @@ Generated from pipeline run `20260809_154657` on 2026-08-10 14:03:50.
 
 | Metric | Value | Source |
 |---|---|---|
-| `i_squared_pct` | 97.2% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `i_squared_pct` | 97.6% | `06_analysis/output/expanded_meta_analysis_results.csv` |
 | `k_studies` | 17 | `06_analysis/output/expanded_meta_analysis_results.csv` |
 | `n_effects` | 22 | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `n_observations` | 8805 | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `pooled_ci_lower_pct` | 70.1% | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `pooled_ci_upper_pct` | 84.3% | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `pooled_survival_pct` | 78.0% | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `prediction_interval_lower_pct` | 39.5% | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `prediction_interval_upper_pct` | 95.1% | `06_analysis/output/expanded_meta_analysis_results.csv` |
-| `tau_squared` | 0.6233 | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `n_observations` | 8607 | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `pooled_ci_lower_pct` | 70.4% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `pooled_ci_upper_pct` | 85.1% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `pooled_survival_pct` | 78.7% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `prediction_interval_lower_pct` | 37.4% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `prediction_interval_upper_pct` | 95.8% | `06_analysis/output/expanded_meta_analysis_results.csv` |
+| `tau_squared` | 0.7213 | `06_analysis/output/expanded_meta_analysis_results.csv` |
 
 ## Population
 

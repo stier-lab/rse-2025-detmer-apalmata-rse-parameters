@@ -466,9 +466,9 @@ p_dose <- ggplot(dose_response_df, aes(x = dhw, y = mortality * 100)) +
   annotate("text", x = ED50 + 0.4, y = 42,
            label = paste0("ED50 = ", ED50, " DHW"),
            hjust = 0, size = 2.6, color = "grey30") +
-  annotate("text", x = ED95 + 0.4, y = 88,
+  annotate("text", x = ED95 - 0.4, y = 88,
            label = paste0("ED95 = ", ED95, " DHW"),
-           hjust = 0, size = 2.6, color = "grey30") +
+           hjust = 1, size = 2.6, color = "grey30") +
   annotate("text", x = 18.2, y = 22,
            label = "2023 FL Keys\n(16-20 DHW)",
            size = 2.4, color = "red4", lineheight = 0.9) +

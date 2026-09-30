@@ -63,6 +63,7 @@ expanded_studies <- read.csv(file.path(project_root,
 # Summary survival data (for Tier 2 coordinates)
 summ_data <- read.csv(file.path(project_root,
   "05_data/standardized/apal_surv_summ.csv"))
+summ_data <- summ_data %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
 
 n_studies_ind <- n_distinct(surv_data$study)
 n_studies_all <- n_distinct(expanded_studies$study)

@@ -80,6 +80,9 @@ cat("Loading raw summary data for context diversity...\n")
 surv_summ <- tryCatch({
   read.csv(file.path(data_dir, "apal_surv_summ.csv"))
 }, error = function(e) NULL)
+if (!is.null(surv_summ)) {
+  surv_summ <- surv_summ %>% filter(!study %in% AUDIT_EXCLUDED_STUDIES)
+}
 
 # METHODOLOGICAL NOTE: All data aggregated to study-level summaries before
 # statistical testing. This prevents mixing binary (0/1) individual records
