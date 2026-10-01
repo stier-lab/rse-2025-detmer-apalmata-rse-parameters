@@ -1,5 +1,5 @@
 model_name,n_obs,n_params,dispersion_ratio,overdispersed,is_singular,convergence_ok,optimizer_messages
-GLMM_study,5336,3,1.011012206500293,FALSE,FALSE,TRUE,NA
-GLMM_study_location,5336,4,0.8956471279103142,FALSE,FALSE,TRUE,NA
-GLMM_study_location_year,5336,5,1.0209169093178605,FALSE,FALSE,TRUE,NA
-GLMM_coral_study_location_year,5336,6,1.0211082442444208,FALSE,TRUE,FALSE,boundary (singular) fit: see help('isSingular')
+GLMM_study,5284,3,1.018793885056132,FALSE,FALSE,TRUE,NA
+GLMM_study_location,5284,4,0.9022926264744414,FALSE,FALSE,TRUE,NA
+GLMM_study_location_year,5284,5,1.027727871402128,FALSE,FALSE,TRUE,NA
+GLMM_coral_study_location_year,5284,6,1.0279234366384737,FALSE,TRUE,FALSE,boundary (singular) fit: see help('isSingular')

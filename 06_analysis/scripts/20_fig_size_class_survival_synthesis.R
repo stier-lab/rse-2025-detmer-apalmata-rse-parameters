@@ -87,7 +87,7 @@ surv_ind <- surv_ind %>%
   mutate(
     pop_type = case_when(
       population_type == "Natural colony"       ~ "Natural",
-      population_type == "Restoration fragment"  ~ "Restoration",
+      is_restoration_population(population_type) ~ "Restoration",
       TRUE                                       ~ "Unknown"
     )
   )

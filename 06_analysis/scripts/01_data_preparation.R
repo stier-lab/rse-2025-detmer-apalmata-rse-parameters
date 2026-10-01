@@ -267,13 +267,16 @@ surv_clean <- surv_ind %>%
     survived = as.integer(survived),
     # Create region-year identifier
     region_year = paste(region, survey_yr, sep = "_"),
-    # Data type factor
-    data_type = factor(data_type, levels = c("field", "nursery_in")),
-    # Fragment status - critical for stratified analysis
-    # Y = outplanted fragment, N = natural colony
+    # Harmonize the legacy `nursery` code before applying canonical levels.
+    # Without this step, Mendoza-Quiroz nursery records become missing.
+    data_type = factor(recode(data_type, nursery = "nursery_in"),
+                       levels = c("field", "nursery_in")),
+    # Fragment status records asexual fragmentation only.  It must not be used
+    # as a proxy for restoration origin: Mendoza-Quiroz et al. (2023) contains
+    # sexually propagated nursery/outplant cohorts with fragment == "N".
     is_fragment = (fragment == "Y"),
-    # Population type for stratification
-    population_type = ifelse(is_fragment, "Restoration fragment", "Natural colony"),
+    # Detailed, provenance-based population origin for stratification.
+    population_type = classify_population_type(study, fragment),
     # Mortality definition varies by study (see docs/Data_Methodology_Reference.md)
     mortality_definition = case_when(
       study == "NOAA_survey" ~ "no_tissue_or_skeleton",
@@ -398,8 +401,12 @@ growth_clean <- growth_ind %>%
       growth_metric >= -10 & growth_metric <= 10 ~ "stable",
       growth_metric > 10 ~ "growth"
     ),
+    # Use the same provenance-based origin classification as survival data.
+    # Asexual-fragment status remains available separately in `fragment`.
+    population_type = classify_population_type(study, fragment),
     region_year = paste(region, survey_yr, sep = "_"),
-    data_type = factor(data_type, levels = c("field", "nursery_in"))
+    data_type = factor(recode(data_type, nursery = "nursery_in"),
+                       levels = c("field", "nursery_in"))
   )
 
 # =============================================================================

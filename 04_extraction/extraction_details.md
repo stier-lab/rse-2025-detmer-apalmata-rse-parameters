@@ -181,6 +181,8 @@
 - Ex situ (lab) recruit survival from Table 1 (2011 and 2012 cohorts) → enters `apal_surv_summ.csv`
 - Ex situ recruit sizes from supplementary data (2012 cohort only)
 
+**Population-origin classification:** The 52 included records are in-situ nursery and reef-outplant cohorts of sexually propagated recruits. They are coded `fragment = N` because they are not asexual fragments, but are classified in prepared data as `Restoration outplant (sexual recruit)`, not `Natural colony`. The ex-situ new-settler component remains excluded from the main survival synthesis.
+
 **Assumptions:**
 - **Size conversion for nursery and Cuevones reef:** Size given as maximum diameter only. Converted to planar area using empirically estimated W:L ratio from Picudas reef data (which has both length and width): `area = d² × W:L_ratio`. This is neither circular (`π(d/2)²`) nor strictly square (`d²`), but uses the species-specific allometry from the same study.
 - **Picudas reef:** Length and width both available; area = L × W (direct).

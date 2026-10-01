@@ -139,6 +139,14 @@ tier1_std <- tier1_interval_effects %>%
     .groups = "drop"
   ) %>%
   mutate(
+    # Preserve the biological source class while collapsing restoration pathways
+    # only for the pre-specified two-level meta-analytic moderator.
+    population_type_detail = population_type,
+    population_type = if_else(
+      is_restoration_population(population_type),
+      "Restoration fragment",
+      population_type
+    ),
     region = effect_region,
     study_id = study,
     # An effect identifier must be unique within a parent study for rma.mv().
@@ -153,7 +161,7 @@ tier1_std <- tier1_interval_effects %>%
     data_tier = "Tier 1 (individual; interval-annualized)"
   ) %>%
   select(study, study_id, region, n_total, n_first_census, n_survived, survival_rate,
-         mean_size_cm2, population_type, survey_yr, fragment, data_tier)
+         mean_size_cm2, population_type, population_type_detail, survey_yr, fragment, data_tier)
 
 cat(sprintf("  Rebuilt %d pre-specified Tier 1 effects from %d annualized interval cells\n\n",
             nrow(tier1_std), nrow(tier1_interval_effects)))

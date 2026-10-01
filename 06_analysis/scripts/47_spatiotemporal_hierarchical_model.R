@@ -526,7 +526,7 @@ if (!"population_type" %in% names(surv_data)) {
   surv_data <- surv_data %>%
     mutate(
       is_fragment = ifelse("fragment" %in% names(.), fragment == "Y", FALSE),
-      population_type = ifelse(is_fragment, "Restoration fragment", "Natural colony")
+      population_type = classify_population_type(study, fragment)
     )
 }
 
@@ -534,7 +534,7 @@ if (!"population_type" %in% names(growth_data)) {
   growth_data <- growth_data %>%
     mutate(
       is_fragment = ifelse("fragment" %in% names(.), fragment == "Y", FALSE),
-      population_type = ifelse(is_fragment, "Restoration fragment", "Natural colony")
+      population_type = classify_population_type(study, fragment)
     )
 }
 

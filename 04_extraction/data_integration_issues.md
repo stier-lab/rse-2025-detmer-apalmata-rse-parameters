@@ -130,7 +130,7 @@ Raine's reaction: "I like that idea. And it seems easy to explain to when writin
 
 - Total cells: 1,442 (1,166 individual + 276 summary) from 16 studies, N=26,921
 - Natural colony cells (for script 13): 1,086 (1,065 individual + 21 summary) from 5 studies, N=7,165
-- Restoration studies properly classified: fundemar_recruits, chamberland (both lab and field rows), mendoza_quiroz (lab) now "Restoration recruit" — not in the natural-colony matrix
+- Restoration studies properly classified: fundemar_recruits, chamberland (both lab and field rows), and all Mendoza-Quiroz in-situ nursery/reef-outplant records. Mendoza-Quiroz is retained as `Restoration outplant (sexual recruit)` rather than being inferred as natural from `fragment = N`; its ex-situ recruit rows remain `Restoration recruit`. Neither enters the natural-colony matrix.
 - 30 summary cells have size ranges spanning multiple size classes (flagged via `size_range_spans_classes` column)
 - Nursery/restoration parameters (script 17): 140 cells from 11 studies, N=3,277
 

@@ -85,6 +85,11 @@ build_restoration_subtype_map <- function() {
     "fundemar_fragments", "nursery_outplant", "Nursery outplants",
     "Nursery fragments on PVC tables in a restoration nursery",
     "Direct restoration nursery fragments shared by FUNDEMAR.",
+    "high",
+
+    "mendoza_quiroz_et_al_2023", "sexual_recruit_outplant", "Sexually propagated outplants",
+    "In-situ nursery juveniles and reef outplants; not asexual fragments",
+    "Mendoza-Quiroz et al. (2023) source workbook identifies nursery and outplanted cohorts.",
     "high"
   ) %>%
     arrange(match(study, c(
@@ -92,7 +97,8 @@ build_restoration_subtype_map <- function() {
       "pausch_et_al_2018",
       "USGS_USVI_exp",
       "kuffner_et_al_2020",
-      "fundemar_fragments"
+      "fundemar_fragments",
+      "mendoza_quiroz_et_al_2023"
     )))
 }
 
@@ -152,13 +158,13 @@ surv_data <- load_survival_data()
 growth_data <- load_growth_data()
 
 surv_rest <- surv_data %>%
-  filter(fragment == "Y" | population_type == "Restoration fragment" | study %in% restore_mapping$study) %>%
+  filter(fragment == "Y" | is_restoration_population(population_type) | study %in% restore_mapping$study) %>%
   assign_restoration_subtype(restore_mapping)
 
 growth_rest <- growth_data %>%
   filter(
     fragment == "Y" | study %in% restore_mapping$study |
-      ("population_type" %in% names(growth_data) && population_type == "Restoration fragment")
+      ("population_type" %in% names(growth_data) && is_restoration_population(population_type))
   ) %>%
   assign_restoration_subtype(restore_mapping)
 

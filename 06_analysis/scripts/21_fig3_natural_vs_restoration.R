@@ -61,18 +61,16 @@ if ("population_type" %in% names(surv_data)) {
   cat("  Using 'population_type' column\n")
 } else if ("fragment" %in% names(surv_data)) {
   surv_data <- surv_data %>%
-    mutate(population_type = ifelse(fragment == "N",
-                                     "Natural colony",
-                                     "Restoration fragment"))
+    mutate(population_type = classify_population_type(study, fragment))
 }
 
 # Remove NOAA "fragments" — naturally broken colonies, not outplants
 # (59 of 73 unique NOAA fragment IDs also appear as natural colonies)
 noaa_frags_n <- sum(surv_data$study == "NOAA_survey" &
-                     surv_data$population_type == "Restoration fragment", na.rm = TRUE)
+                     is_restoration_population(surv_data$population_type), na.rm = TRUE)
 cat(sprintf("  Removing %d NOAA 'fragment' records\n", noaa_frags_n))
 surv_data <- surv_data %>%
-  filter(!(study == "NOAA_survey" & population_type == "Restoration fragment"))
+  filter(!(study == "NOAA_survey" & is_restoration_population(population_type)))
 
 surv_data <- surv_data %>%
   mutate(log_size = log10(size_cm2))
@@ -87,16 +85,14 @@ if ("population_type" %in% names(growth_data)) {
   # already present
 } else if ("fragment" %in% names(growth_data)) {
   growth_data <- growth_data %>%
-    mutate(population_type = ifelse(fragment == "N",
-                                     "Natural colony",
-                                     "Restoration fragment"))
+    mutate(population_type = classify_population_type(study, fragment))
 }
 
 noaa_frags_growth <- sum(growth_data$study == "NOAA_survey" &
-                          growth_data$population_type == "Restoration fragment", na.rm = TRUE)
+                          is_restoration_population(growth_data$population_type), na.rm = TRUE)
 cat(sprintf("  Removing %d NOAA growth 'fragment' records\n", noaa_frags_growth))
 growth_data <- growth_data %>%
-  filter(!(study == "NOAA_survey" & population_type == "Restoration fragment"))
+  filter(!(study == "NOAA_survey" & is_restoration_population(population_type)))
 
 if (!"rgr" %in% names(growth_data) || all(is.na(growth_data$rgr))) {
   growth_data <- growth_data %>%
@@ -144,7 +140,7 @@ natural_range <- surv_data %>%
   filter(population_type == "Natural colony") %>%
   summarise(lo = quantile(log_size, 0.01), hi = quantile(log_size, 0.99))
 restoration_range <- surv_data %>%
-  filter(population_type == "Restoration fragment") %>%
+  filter(is_restoration_population(population_type)) %>%
   summarise(lo = quantile(log_size, 0.01), hi = quantile(log_size, 0.99))
 
 overlap_lo <- max(natural_range$lo, restoration_range$lo)

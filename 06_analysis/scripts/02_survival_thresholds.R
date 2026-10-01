@@ -106,6 +106,14 @@ cat("Loading prepared data...\n")
 
 surv_data <- readRDS(file.path(output_dir, "prepared_survival_data.rds"))
 
+# Keep the detailed origin in the prepared file, while retaining the
+# pre-specified two-level comparison for this legacy threshold analysis.
+surv_data <- surv_data %>%
+  mutate(
+    population_type_detail = population_type,
+    population_type = collapse_population_type(population_type)
+  )
+
 cat(sprintf("  Total records (raw): %d\n", nrow(surv_data)))
 
 # Filter sub-annual intervals (inflates survival, especially SC5)

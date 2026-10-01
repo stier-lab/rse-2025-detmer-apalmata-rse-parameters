@@ -15,10 +15,10 @@ fundemar_fragments,SC1,Restoration,2,1,0.5,Individual
 fundemar_fragments,SC2,Restoration,42,37,0.8809523809523809,Individual
 kuffner_et_al_2020,SC1,Restoration,4,3,0.75,Individual
 kuffner_et_al_2020,SC2,Restoration,49,40,0.8163265306122449,Individual
-mendoza_quiroz_et_al_2023,SC1,Natural,9,9,1,Individual
-mendoza_quiroz_et_al_2023,SC2,Natural,22,22,1,Individual
-mendoza_quiroz_et_al_2023,SC3,Natural,17,17,1,Individual
-mendoza_quiroz_et_al_2023,SC4,Natural,4,4,1,Individual
+mendoza_quiroz_et_al_2023,SC1,Restoration,9,9,1,Individual
+mendoza_quiroz_et_al_2023,SC2,Restoration,22,22,1,Individual
+mendoza_quiroz_et_al_2023,SC3,Restoration,17,17,1,Individual
+mendoza_quiroz_et_al_2023,SC4,Restoration,4,4,1,Individual
 neely_et_al_2022,SC1,Natural,43,20,0.46511627906976744,Individual
 neely_et_al_2022,SC2,Natural,490,255,0.5204081632653061,Individual
 neely_et_al_2022,SC3,Natural,834,584,0.7002398081534772,Individual

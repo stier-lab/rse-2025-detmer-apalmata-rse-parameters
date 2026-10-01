@@ -8,7 +8,10 @@ if len(sys.argv) < 3:
 
 manuscript = Path(sys.argv[1]).read_text()
 bibliography = '\n'.join(Path(path).read_text() for path in sys.argv[2:])
-used = set(re.findall(r'@([A-Za-z0-9_:-]+)', manuscript))
+# A citation key begins with ``@`` but an e-mail address may also contain one.
+# Requiring a non-word, non-dot prefix retains Pandoc citations while excluding
+# addresses such as ``astier@ucsb.edu`` in the correspondence block.
+used = set(re.findall(r'(?<![A-Za-z0-9_.])@([A-Za-z0-9_:-]+)', manuscript))
 defined = set(re.findall(r'^@[A-Za-z]+\{([^,]+),', bibliography, flags=re.M))
 missing = sorted(used - defined)
 if missing:

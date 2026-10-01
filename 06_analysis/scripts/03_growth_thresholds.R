@@ -107,6 +107,11 @@ dir.create(fig_dir_supp_diagnostics, showWarnings = FALSE, recursive = TRUE)
 cat("Loading prepared data...\n")
 
 growth_data_raw <- readRDS(file.path(output_dir, "prepared_growth_data.rds"))
+growth_data_raw <- growth_data_raw %>%
+  mutate(
+    population_type_detail = population_type,
+    population_type = collapse_population_type(population_type)
+  )
 
 cat(sprintf("  Total records: %d\n", nrow(growth_data_raw)))
 cat(sprintf("  Mean growth: %.1f cm²/yr\n", mean(growth_data_raw$growth_cm2_yr)))
@@ -220,7 +225,7 @@ if (!"population_type" %in% names(growth_data)) {
   growth_data <- growth_data %>%
     mutate(
       is_fragment = ifelse("fragment" %in% names(.), fragment == "Y", FALSE),
-      population_type = ifelse(is_fragment, "Restoration fragment", "Natural colony")
+      population_type = classify_population_type(study, fragment)
     )
 }
 

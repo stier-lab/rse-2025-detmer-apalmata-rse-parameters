@@ -1,3 +1,3 @@
 group,n_studies,n_total,lambda
-all_studies,5,7165,0.9613236196732564
-standard_no_live_tissue,4,3291,0.9516355426098186
+all_studies,4,7113,0.959489041708648
+standard_no_live_tissue,3,3239,0.9464103758709534

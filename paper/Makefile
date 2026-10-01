@@ -7,4 +7,4 @@ render: assemble
 	bash scripts/render_manuscript.sh
 
 verify: assemble
-	python3 scripts/check_citations.py manuscript/combined_manuscript.md manuscript/references.bib
+	python3 scripts/check_citations.py manuscript/combined_manuscript.md manuscript/references.bib manuscript/palmata_library.bib

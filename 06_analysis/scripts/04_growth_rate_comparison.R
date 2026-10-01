@@ -97,6 +97,11 @@ dir.create(fig_dir_supp, showWarnings = FALSE, recursive = TRUE)
 
 cat("Loading growth data...\n")
 growth_data <- readRDS(file.path(output_dir, "prepared_growth_data.rds"))
+growth_data <- growth_data %>%
+  mutate(
+    population_type_detail = population_type,
+    population_type = collapse_population_type(population_type)
+  )
 
 cat(sprintf("  Total records: %d\n", nrow(growth_data)))
 cat(sprintf("  Studies: %s\n", paste(unique(growth_data$study), collapse = ", ")))

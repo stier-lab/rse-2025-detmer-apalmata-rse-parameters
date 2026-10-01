@@ -52,6 +52,39 @@ AUDIT_EXCLUDED_STUDIES <- c(
   "mendoza_quiroz_et_al_2023"
 )
 
+# --- Population-origin classification ---
+# `fragment` records physical fragmentation, not every restoration pathway.
+# Mendoza-Quiroz et al. (2023) followed sexually propagated colonies through
+# in-situ nursery and reef-outplant stages.  Those observations are restoration
+# material, but are not asexual fragments.  Keep the detailed source class in
+# prepared data and use `is_restoration_population()` whenever analyses require
+# the two-level natural-versus-restoration contrast.
+MENDOZA_QUIROZ_STUDY_ID <- "mendoza_quiroz_et_al_2023"
+RESTORATION_POPULATION_TYPES <- c(
+  "Restoration fragment",
+  "Restoration outplant (sexual recruit)",
+  "Restoration recruit"
+)
+
+classify_population_type <- function(study, fragment) {
+  population_type <- ifelse(fragment == "Y", "Restoration fragment", "Natural colony")
+  population_type[study == MENDOZA_QUIROZ_STUDY_ID] <-
+    "Restoration outplant (sexual recruit)"
+  population_type
+}
+
+is_restoration_population <- function(population_type) {
+  population_type %in% RESTORATION_POPULATION_TYPES
+}
+
+collapse_population_type <- function(population_type) {
+  ifelse(
+    is_restoration_population(population_type),
+    "Restoration fragment",
+    population_type
+  )
+}
+
 # --- Bootstrap settings ---
 # Canonical number of bootstrap iterations for lambda CI, sensitivity, etc.
 # Defined here for future centralisation; individual scripts may still use
